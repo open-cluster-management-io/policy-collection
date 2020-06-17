@@ -1,2 +1,2 @@
 # policy-examples
-A collection of policy examples for Advanced Cluster Management
+A collection of sample policies for Advanced Cluster Management
