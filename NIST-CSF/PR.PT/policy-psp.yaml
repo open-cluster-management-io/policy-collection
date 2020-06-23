@@ -71,7 +71,8 @@ metadata:
   name: placement-policy-podsecuritypolicy
 spec:
   clusterConditions:
-  - type: OK
+  - status: "True"
+    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       []  # select all clusters

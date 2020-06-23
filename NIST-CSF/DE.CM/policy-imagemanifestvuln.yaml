@@ -214,7 +214,8 @@ metadata:
   name: placement-policy-imagemanifestvuln
 spec:
   clusterConditions:
-  - type: OK
+  - status: "True"
+    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       []  # select all clusters

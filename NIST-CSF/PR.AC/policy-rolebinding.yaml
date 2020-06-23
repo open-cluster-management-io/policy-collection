@@ -56,7 +56,8 @@ metadata:
   name: placement-policy-rolebinding
 spec:
   clusterConditions:
-  - type: OK
+  - status: "True"
+    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       []  # select all clusters
