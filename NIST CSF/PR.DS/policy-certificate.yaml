@@ -4,7 +4,7 @@ metadata:
   name: policy-certificate
   annotations:
     policy.open-cluster-management.io/standards: NIST-CSF
-    policy.open-cluster-management.io/categories: PR.DS DataSecurity
+    policy.open-cluster-management.io/categories: PR.DS Data Security
     policy.open-cluster-management.io/controls: PR.DS-2 Data-in-transit
 spec:
   remediationAction: inform
