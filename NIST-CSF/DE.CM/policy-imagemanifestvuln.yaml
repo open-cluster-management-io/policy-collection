@@ -5,7 +5,7 @@ metadata:
   annotations:
     policy.open-cluster-management.io/standards: NIST-CSF
     policy.open-cluster-management.io/categories: DE.CM Security Continuous Monitoring
-    policy.open-cluster-management.io/controls: DE.CM-8 Vulnerability scans
+    policy.open-cluster-management.io/controls: DE.CM-8 Vulnerability Scans
 spec:
   remediationAction: inform
   disabled: false
@@ -217,4 +217,4 @@ spec:
   - type: OK
   clusterSelector:
     matchExpressions:
-      []
+      []  # select all clusters

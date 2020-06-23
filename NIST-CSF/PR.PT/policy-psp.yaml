@@ -74,4 +74,4 @@ spec:
   - type: OK
   clusterSelector:
     matchExpressions:
-      []
+      []  # select all clusters
