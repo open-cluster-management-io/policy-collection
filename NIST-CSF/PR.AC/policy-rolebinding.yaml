@@ -60,4 +60,4 @@ spec:
     type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      []  # select all clusters
+      []  # selects all clusters if not specified
