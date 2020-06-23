@@ -1,2 +1,2 @@
-# policy-collections
-Collections of policy examples for Open Cluster Management
+# Policy Collection
+A collection of policy examples for Open Cluster Management
