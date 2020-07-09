@@ -14,5 +14,3 @@ Check the [CONTRIBUTING Doc](docs/contributing.md) for how to contribute to the 
 You can reach the maintainers of this project at:
 
 - [#xxx on Slack](https://slack.com/signin?redir=%2Fmessages%2Fxxx)
-
-------
