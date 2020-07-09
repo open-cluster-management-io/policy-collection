@@ -9,7 +9,7 @@ This repo hosts policies for Open Cluster Management. You can find policies from
 
 ## Community, discussion, contribution, and support
 
-Check the [CONTRIBUTING Doc](docs/contributing.md) for how to contribute to the repo.
+Check the [CONTRIBUTING Doc](docs/CONTRIBUTING.md) for how to contribute to the repo.
 
 You can reach the maintainers of this project at:
 
