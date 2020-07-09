@@ -1,7 +1,7 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-trustedcontainer
+  name: policy-trusted-container
   annotations:
     policy.open-cluster-management.io/standards: NIST-CSF
     policy.open-cluster-management.io/categories: PR.PT Protective Technology
@@ -31,20 +31,20 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-trustedcontainer
+  name: binding-policy-trusted-container
 placementRef:
-  name: placement-policy-trustedcontainer
+  name: placement-policy-trusted-container
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-trustedcontainer
+- name: policy-trusted-container
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-trustedcontainer
+  name: placement-policy-trusted-container
   spec:
     clusterConditions:
     - status: "True"

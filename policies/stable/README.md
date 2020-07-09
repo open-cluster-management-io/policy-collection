@@ -17,6 +17,7 @@ Policies in this folder are organized by [NIST Cybersecurity Framework](https://
     * [policy-rolebinding](./PR.AC/policy-rolebinding.yaml)
   * PR.AT
   * PR.DS
+    * [policy-certificate](./PR.DS/policy-certificate.yaml)
   * PR.IP
     * [policy-limitmemory](./PR.IP/policy-limitmemory.yaml)
     * [policy-namespace](./PR.IP/policy-namespace.yaml)
