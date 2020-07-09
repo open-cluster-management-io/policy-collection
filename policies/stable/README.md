@@ -1,7 +1,7 @@
 # Policies -- Stable
 Policies in this folder are organized by [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework). For more information, please read [Framework V1.1 PDF](https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf).
 
-## Policies Organized by Categories
+## Policies organized by categories
 
 * Identify
   * ID.AM

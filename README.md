@@ -1,7 +1,7 @@
 # Policy Collection
 A collection of policy examples for Open Cluster Management
 
-## Repo Structure
+## Repo structure
 This repo hosts policies for Open Cluster Management. You can find policies from following folders:
 
 * [stable](policies/stable) -- policies officially supported
