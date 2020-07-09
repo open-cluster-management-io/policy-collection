@@ -1,8 +1,8 @@
 # Contributing Policies
-This doc provide intructions on how to contribute policies to [policy-collection](..) repo.
+This doc provide intructions on how to contribute policies to [policy-collection](../) repo.
 
 ## Contributing
-You can contribute policies by submitting a PR in [policy-collection](..) repo. Your PR will be reviewed by the [OWNERS](../OWNERS) of the repo.
+You can contribute policies by submitting a PR in [policy-collection](../) repo. Your PR will be reviewed by the [OWNERS](../OWNERS) of the repo.
 
 ## Guidelines
 1. Follow the PR template when submitting the PR for review
