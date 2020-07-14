@@ -4,8 +4,8 @@ A collection of policy examples for Open Cluster Management
 ## Repo structure
 This repo hosts policies for Open Cluster Management. You can find policies from following folders:
 
-* [stable](policies/stable) -- policies officially supported
-* [community](policies/community) -- policies contributed from community
+* [stable](stable) -- policies officially supported
+* [community](community) -- policies contributed from community
 
 ## Community, discussion, contribution, and support
 
