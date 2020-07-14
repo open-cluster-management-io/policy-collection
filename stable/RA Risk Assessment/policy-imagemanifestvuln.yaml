@@ -3,9 +3,9 @@ kind: Policy
 metadata:
   name: policy-imagemanifestvuln
   annotations:
-    policy.open-cluster-management.io/standards: NIST-CSF
-    policy.open-cluster-management.io/categories: DE.CM Security Continuous Monitoring
-    policy.open-cluster-management.io/controls: DE.CM-8 Vulnerability Scans
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: RA Risk Assessment
+    policy.open-cluster-management.io/controls: RA-5 Vulnerability Scanning
 spec:
   remediationAction: inform
   disabled: false

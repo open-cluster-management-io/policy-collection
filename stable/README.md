@@ -1,43 +1,34 @@
 # Policies -- Stable
-Policies in this folder are organized by [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework). For more information, please read [Framework V1.1 PDF](https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf).
+Policies in this folder are organized by [NIST Special Publication 800-53](https://nvd.nist.gov/800-53). For more information, please read [NIST.SP.800-53r4](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf).
 
-## Policies organized by categories
+## Policies organized by security control catalog
 
-* Identify
-  * ID.AM
-  * ID.BE
-  * ID.GV
-  * ID.RA
-  * ID.RM
-  * ID.SC
-* Protect
-  * PR.AC
-    * [policy-limitclusteradmin](./PR.AC/policy-limitclusteradmin.yaml)
-    * [policy-role](./PR.AC/policy-role.yaml)
-    * [policy-rolebinding](./PR.AC/policy-rolebinding.yaml)
-  * PR.AT
-  * PR.DS
-    * [policy-certificate](./PR.DS/policy-certificate.yaml)
-  * PR.IP
-    * [policy-limitmemory](./PR.IP/policy-limitmemory.yaml)
-    * [policy-namespace](./PR.IP/policy-namespace.yaml)
-  * PR.MA
-  * PR.PT
-    * [policy-pod](./PR.PT/policy-pod.yaml)
-    * [policy-psp](./PR.PT/policy-psp.yaml)
-    * [policy-scc](./PR.PT/policy-scc.yaml)
-* Detect
-  * DE.AE
-  * DE.CM
-    * [policy-imagemanifestvuln](./DE.CM/policy-imagemanifestvuln.yaml)
-  * DE.DP
-* Respond
-  * RS.RP
-  * RS.CO
-  * RS.AN
-  * RS.IM
-* Recover
-  * RC.RP
-  * RC.IM
-  * RC.CO
+* ACCESS CONTROL
+  * [policy-limitclusteradmin](./AC%20Access%20Control/policy-limitclusteradmin.yaml)
+  * [policy-role](./AC%20Access%20Control/policy-role.yaml)
+  * [policy-rolebinding](./AC%20Access%20Control/policy-rolebinding.yaml)
+* AWARENESS AND TRAINING
+* AUDIT AND ACCOUNTABILIT
+* SECURITY ASSESSMENT AND AUTHORIZATION
+* CONFIGURATION MANAGEMENT
+  * [policy-limitmemory](./CM%20Configuration%20Management/policy-limitmemory.yaml)
+  * [policy-namespace](./CM%20Configuration%20Management/policy-namespace.yaml)
+  * [policy-pod](./CM%20Configuration%20Management/policy-pod.yaml)
+  * [policy-psp](./CM%20Configuration%20Management/policy-psp.yaml)
+  * [policy-scc](./CM%20Configuration%20Management/policy-scc.yaml)
+* CONTINGENCY PLANNING
+* IDENTIFICATION AND AUTHENTICATION
+* INCIDENT RESPONSE
+* MAINTENANCE
+* MEDIA PROTECTION
+* PHYSICAL AND ENVIRONMENTAL PROTECTION
+* PLANNING
+* PERSONNEL SECURITY
+* RISK ASSESSMENT
+  * [policy-imagemanifestvuln](./RA%20Risk%20Assessment/policy-imagemanifestvuln.yaml)
+* SYSTEM AND SERVICES ACQUISITION
+* SYSTEM AND COMMUNICATIONS PROTECTION
+  * [policy-certificate](./SC%20System%20and%20Communications%20Protection/policy-certificate.yaml)
+* SYSTEM AND INFORMATION INTEGRITY
+
 

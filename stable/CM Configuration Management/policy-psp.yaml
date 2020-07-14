@@ -3,9 +3,9 @@ kind: Policy
 metadata:
   name: policy-podsecuritypolicy
   annotations:
-    policy.open-cluster-management.io/standards: NIST-CSF
-    policy.open-cluster-management.io/categories: PR.PT Protective Technology
-    policy.open-cluster-management.io/controls: PR.PT-3 Least Functionality
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-7 Least Functionality
 spec:
   remediationAction: inform
   disabled: false

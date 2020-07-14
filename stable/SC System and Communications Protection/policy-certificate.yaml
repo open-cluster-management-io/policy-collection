@@ -1,45 +1,45 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-limitclusteradmin
+  name: policy-certificate
   annotations:
-    policy.open-cluster-management.io/standards: NIST-CSF
-    policy.open-cluster-management.io/categories: PR.AC Identity Management Authentication and Access Control
-    policy.open-cluster-management.io/controls: PR.AC-4 Access Control
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: SC System and Communications Protection
+    policy.open-cluster-management.io/controls: SC-8 Transmission Confidentiality and Integrity
 spec:
   remediationAction: inform
   disabled: false
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
-        kind: IamPolicy # limit clusteradminrole and report violation
+        kind: certificate # cert management expiration
         metadata:
-          name: policy-limitclusteradmin-example
+          name: policy-certificate-example
         spec:
-          severity: medium
           namespaceSelector:
-            include: ["*"]
-            exclude: ["kube-*", "openshift-*"]
+            include: ["default"]
+            exclude: ["kube-*"]
           remediationAction: inform # will be overridden by remediationAction in parent policy
-          maxClusterRoleBindingUsers: 5
+          severity: low
+          minimumDuration: 300h
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-limitclusteradmin
+  name: binding-policy-certificate
 placementRef:
-  name: placement-policy-limitclusteradmin
+  name: placement-policy-certificate
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-limitclusteradmin
+- name: policy-certificate
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-limitclusteradmin
+  name: placement-policy-certificate
 spec:
   clusterConditions:
   - status: "True"

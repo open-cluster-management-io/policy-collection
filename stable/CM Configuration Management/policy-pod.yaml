@@ -1,11 +1,11 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-role
+  name: policy-pod
   annotations:
-    policy.open-cluster-management.io/standards: NIST-CSF
-    policy.open-cluster-management.io/categories: PR.AC Identity Management Authentication and Access Control
-    policy.open-cluster-management.io/controls: PR.AC-4 Access Control
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
   remediationAction: inform
   disabled: false
@@ -14,42 +14,44 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-role-example
+          name: policy-pod-example
         spec:
           remediationAction: inform # will be overridden by remediationAction in parent policy
-          severity: high
+          severity: low
           namespaceSelector:
             exclude: ["kube-*"]
             include: ["default"]
           object-templates:
-            - complianceType: mustonlyhave # role definition should exact match
+            - complianceType: musthave
               objectDefinition:
-                apiVersion: rbac.authorization.k8s.io/v1
-                kind: Role
+                apiVersion: v1
+                kind: Pod # nginx pod must exist
                 metadata:
-                  name: sample-role
-                rules:
-                  - apiGroups: ["extensions", "apps"]
-                    resources: ["deployments"]
-                    verbs: ["get", "list", "watch", "delete","patch"]
+                  name: sample-nginx-pod
+                spec:
+                  containers:
+                  - image: nginx:1.7.9
+                    name: nginx
+                    ports:
+                    - containerPort: 80
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-role
+  name: binding-policy-pod
 placementRef:
-  name: placement-policy-role
+  name: placement-policy-pod
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-role
+- name: policy-pod
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-role
+  name: placement-policy-pod
 spec:
   clusterConditions:
   - status: "True"

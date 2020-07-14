@@ -1,45 +1,45 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-certificate
+  name: policy-limitclusteradmin
   annotations:
-    policy.open-cluster-management.io/standards: NIST-CSF
-    policy.open-cluster-management.io/categories: PR.DS Data Security
-    policy.open-cluster-management.io/controls: PR.DS-2 Data-in-transit
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
 spec:
   remediationAction: inform
   disabled: false
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
-        kind: certificate # cert management expiration
+        kind: IamPolicy # limit clusteradminrole and report violation
         metadata:
-          name: policy-certificate-example
+          name: policy-limitclusteradmin-example
         spec:
+          severity: medium
           namespaceSelector:
-            include: ["default"]
-            exclude: ["kube-*"]
+            include: ["*"]
+            exclude: ["kube-*", "openshift-*"]
           remediationAction: inform # will be overridden by remediationAction in parent policy
-          severity: low
-          minimumDuration: 300h
+          maxClusterRoleBindingUsers: 5
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-certificate
+  name: binding-policy-limitclusteradmin
 placementRef:
-  name: placement-policy-certificate
+  name: placement-policy-limitclusteradmin
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-certificate
+- name: policy-limitclusteradmin
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-certificate
+  name: placement-policy-limitclusteradmin
 spec:
   clusterConditions:
   - status: "True"

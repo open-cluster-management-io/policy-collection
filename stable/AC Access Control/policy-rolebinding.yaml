@@ -1,11 +1,11 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-namespace
+  name: policy-rolebinding
   annotations:
-    policy.open-cluster-management.io/standards: NIST-CSF
-    policy.open-cluster-management.io/categories: PR.IP Information Protection Processes and Procedures
-    policy.open-cluster-management.io/controls: PR.IP-1 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
 spec:
   remediationAction: inform
   disabled: false
@@ -14,38 +14,46 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-namespace-example
+          name: policy-rolebinding-example
         spec:
           remediationAction: inform # will be overridden by remediationAction in parent policy
-          severity: low
+          severity: high
           namespaceSelector:
             exclude: ["kube-*"]
             include: ["default"]
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                kind: Namespace # must have namespace 'prod'
-                apiVersion: v1
+                kind: RoleBinding # role binding must exist
+                apiVersion: rbac.authorization.k8s.io/v1
                 metadata:
-                  name: prod
+                  name: sample-rolebinding
+                subjects:
+                - kind: User
+                  name: admin # Name is case sensitive
+                  apiGroup: rbac.authorization.k8s.io
+                roleRef:
+                  kind: Role #this must be Role or ClusterRole
+                  name: operator # this must match the name of the Role or ClusterRole you wish to bind to
+                  apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-namespace
+  name: binding-policy-rolebinding
 placementRef:
-  name: placement-policy-namespace
+  name: placement-policy-rolebinding
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-namespace
+- name: policy-rolebinding
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-namespace
+  name: placement-policy-rolebinding
 spec:
   clusterConditions:
   - status: "True"
