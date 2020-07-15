@@ -58,4 +58,4 @@ spec:
     type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      []  # selects all clusters if not specified
+      - {key: environment, operator: In, values: ["dev"]}
