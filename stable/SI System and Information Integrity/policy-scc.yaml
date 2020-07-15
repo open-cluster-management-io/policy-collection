@@ -4,8 +4,8 @@ metadata:
   name: policy-securitycontextconstraints
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
-    policy.open-cluster-management.io/categories: CM Configuration Management
-    policy.open-cluster-management.io/controls: CM-7 Least Functionality
+    policy.open-cluster-management.io/categories: SI System and Information Integrity
+    policy.open-cluster-management.io/controls: SI-3 Malicious Code Protection
 spec:
   remediationAction: inform
   disabled: false

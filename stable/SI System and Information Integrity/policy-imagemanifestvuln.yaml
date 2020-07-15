@@ -4,8 +4,8 @@ metadata:
   name: policy-imagemanifestvuln
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
-    policy.open-cluster-management.io/categories: RA Risk Assessment
-    policy.open-cluster-management.io/controls: RA-5 Vulnerability Scanning
+    policy.open-cluster-management.io/categories: SI System and Information Integrity
+    policy.open-cluster-management.io/controls: SI-4 Information System Monitoring
 spec:
   remediationAction: inform
   disabled: false
