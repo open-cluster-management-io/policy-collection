@@ -4,16 +4,16 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
 ## Policies organized by security control catalog
 
 * Access Control
-  * [policy-limitclusteradmin](./AC%20Access%20Control/policy-limitclusteradmin.yaml)
-  * [policy-role](./AC%20Access%20Control/policy-role.yaml)
-  * [policy-rolebinding](./AC%20Access%20Control/policy-rolebinding.yaml)
+  * [policy-limitclusteradmin](./AC-Access-Control/policy-limitclusteradmin.yaml)
+  * [policy-role](./AC-Access-Control/policy-role.yaml)
+  * [policy-rolebinding](./AC-Access-Control/policy-rolebinding.yaml)
 * Awareness and Training
 * Audit and Accountability
 * Security Assessment and Authorization
 * Configuration Management
-  * [policy-limitmemory](./CM%20Configuration%20Management/policy-limitmemory.yaml)
-  * [policy-namespace](./CM%20Configuration%20Management/policy-namespace.yaml)
-  * [policy-pod](./CM%20Configuration%20Management/policy-pod.yaml)
+  * [policy-limitmemory](./CM-Configuration-Management/policy-limitmemory.yaml)
+  * [policy-namespace](./CM-Configuration-Management/policy-namespace.yaml)
+  * [policy-pod](./CM-Configuration-Management/policy-pod.yaml)
 * Contingency Planning
 * Identification and Authentication
 * Incident Response
@@ -25,9 +25,9 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
 * Risk Assessment
 * System and Services Acquisition
 * System and Communications Protection
-  * [policy-certificate](./SC%20System%20and%20Communications%20Protection/policy-certificate.yaml)
+  * [policy-certificate](./SC-System-and-Communications-Protection/policy-certificate.yaml)
 * System and Information Integrity
-  * [policy-imagemanifestvuln](./SI%20System%20and%20Information%20Integrity/policy-imagemanifestvuln.yaml)
-  * [policy-psp](./SI%20System%20and%20Information%20Integrity/policy-psp.yaml)
-  * [policy-scc](./SI%20System%20and%20Information%20Integrity/policy-scc.yaml)
+  * [policy-imagemanifestvuln](./SI-System-and-Information-Integrity/policy-imagemanifestvuln.yaml)
+  * [policy-psp](./SI-System-and-Information-Integrity/policy-psp.yaml)
+  * [policy-scc](./SI-System-and-Information-Integrity/policy-scc.yaml)
 
