@@ -1,7 +1,8 @@
 # Policies -- Community
-Policies in this folder are organized by [NIST Special Publication 800-53](https://nvd.nist.gov/800-53). For more information, please read [NIST.SP.800-53r4](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf).
+Policies in this folder are organized by [NIST Special Publication 800-53](https://nvd.nist.gov/800-53). For more information, read [NIST.SP.800-53r4](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf).
 
-## Policies organized by security control catalog
+## Security control catalog
+View a list of policies that are organized by the security control catalog.
 
 * Access Control
 * Awareness and Training

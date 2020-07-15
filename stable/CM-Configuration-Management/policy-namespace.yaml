@@ -16,7 +16,7 @@ spec:
         metadata:
           name: policy-namespace-example
         spec:
-          remediationAction: inform # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by spec.remediationAction
           severity: low
           namespaceSelector:
             exclude: ["kube-*"]

@@ -16,7 +16,7 @@ spec:
         metadata:
           name: policy-imagemanifestvuln-example-csv
         spec:
-          remediationAction: inform # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by spec.remediationAction
           severity: high
           namespaceSelector:
             exclude: ["kube-*"]
@@ -158,7 +158,7 @@ spec:
         metadata:
           name: policy-imagemanifestvuln-example-sub
         spec:
-          remediationAction: inform # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by spec.remediationAction
           severity: high
           namespaceSelector:
             exclude: ["kube-*"]
@@ -184,7 +184,7 @@ spec:
         metadata:
           name: policy-imagemanifestvuln-example-imv
         spec:
-          remediationAction: inform # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by spec.remediationAction
           severity: high
           namespaceSelector:
             exclude: ["kube-*"]

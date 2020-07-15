@@ -1,11 +1,11 @@
 # Contributing Policies
-This doc provide intructions on how to contribute policies to [policy-collection](https://github.com/open-cluster-management/policy-collection) repo.
+This doc provides instruction on how to contribute policies to the [policy-collection](https://github.com/open-cluster-management/policy-collection) repo.
 
 ## Contributing
-You can contribute policies by submitting a PR in [policy-collection](https://github.com/open-cluster-management/policy-collection) repo. Your PR will be reviewed by the [OWNERS](../OWNERS) of the repo.
+You can contribute policies by submitting a pull request (PR) in the [policy-collection](https://github.com/open-cluster-management/policy-collection) repo. Your PR must be reviewed by the [OWNERS](../OWNERS) of the repo.
 
 ## Guidelines
-1. Follow the PR template when submitting the PR for review
-1. Policies should be contributed to [community](../policies/community) folder.
-1. Policies should be at least mapped to [NIST.SP.800-53r4](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf) as this is how policies in this repo are organized. 
-1. In addition to policy yamls, you should provide documentation to explain what the policies do and how to use them.
+View the following requirement list to contribute to the [policy-collection](https://github.com/open-cluster-management/policy-collection) repo:
+* Contributed policies must be added to the [community](../policies/community) folder.
+* Policies must be mapped to [NIST.SP.800-53r4](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf) as this is how policies in this repo are organized. 
+* You must provide the policy YAML and documentation that explains what the policies do, and how to use them.

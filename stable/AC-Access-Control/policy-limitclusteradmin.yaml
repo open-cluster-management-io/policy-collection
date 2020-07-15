@@ -20,7 +20,7 @@ spec:
           namespaceSelector:
             include: ["*"]
             exclude: ["kube-*", "openshift-*"]
-          remediationAction: inform # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by spec.remediationAction
           maxClusterRoleBindingUsers: 5
 ---
 apiVersion: policy.open-cluster-management.io/v1

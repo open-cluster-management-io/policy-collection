@@ -19,7 +19,7 @@ spec:
           namespaceSelector:
             include: ["default"]
             exclude: ["kube-*"]
-          remediationAction: inform # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by spec.remediationAction
           severity: low
           minimumDuration: 300h
 ---
