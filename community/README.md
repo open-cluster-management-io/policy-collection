@@ -8,7 +8,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
 * Audit and Accountability
 * Security Assessment and Authorization
 * Configuration Management
-  * [Trusted Container Policy](./CM%20Configuration%20Management/policy-trusted-container.yaml) -- Ensure running pods are using trusted images. For more information, please read [Trusted Container Policy Controller](https://github.com/ycao56/trusted-container-policy-controller).
+  * [Trusted Container Policy](./CM%20Configuration%20Management/policy-trusted-container.yaml) -- Detect if running pods are using trusted images. For more information, please read [Trusted Container Policy Controller](https://github.com/ycao56/trusted-container-policy-controller).
 * Contingency Planning
 * Identification and Authentication
 * Incident Response
