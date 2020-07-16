@@ -39,20 +39,20 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-limitrange
+  name: binding-policy-limitmemory
 placementRef:
-  name: placement-policy-limitrange
+  name: placement-policy-limitmemory
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-limitrange
+- name: policy-limitmemory
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-limitrange
+  name: placement-policy-limitmemory
 spec:
   clusterConditions:
   - status: "True"
