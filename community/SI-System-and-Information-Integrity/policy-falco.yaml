@@ -2,19 +2,13 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-falco
-  namespace: falco-manager
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/categories: SI System and Information Integrity
     policy.open-cluster-management.io/controls: SI-5 Security Alerts, Advisories, and Directives
 spec:
-  complianceType: musthave
   remediationAction: enforce
   disabled: false
-  namespaces:
-    exclude: ["kube-*"]
-    include: ["*"]
-
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
@@ -35,7 +29,6 @@ spec:
                 metadata:
                   name: falco-operator
                 spec: {}
-
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -272,7 +265,6 @@ spec:
                       supported: false
                     - type: AllNamespaces
                       supported: false
-
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -287,28 +279,14 @@ spec:
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                apiVersion: policy.open-cluster-management.io/v1
-                kind: ConfigurationPolicy
+                apiVersion: operators.coreos.com/v1
+                kind: OperatorGroup
                 metadata:
-                  name: policy-falco-operatorgroup
+                  name: falco-operatorgroup
+                  namespace: falco-operator
                 spec:
-                  remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-                  severity: low
-                  namespaceSelector:
-                    exclude: ["kube-*"]
-                    include: ["*"]
-                  object-templates:
-                    - complianceType: musthave
-                      objectDefinition:
-                        apiVersion: operators.coreos.com/v1
-                        kind: OperatorGroup
-                        metadata:
-                          name: falco-operatorgroup
-                          namespace: falco-operator
-                        spec:
-                          targetNamespaces:
-                          - falco-operator
-
+                  targetNamespaces:
+                  - falco-operator
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -335,7 +313,6 @@ spec:
                   source: certified-operators
                   sourceNamespace: openshift-marketplace
                   startingCSV: falco-operator.v1.2.0
-
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -361,7 +338,6 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: binding-policy-falco
-  namespace: falco-manager
 placementRef:
   name: placement-policy-falco
   kind: PlacementRule
@@ -375,10 +351,10 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-falco
-  namespace: falco-manager
 spec:
   clusterConditions:
-  - type: OK
+  - status: "True"
+    type: ManagedClusterConditionAvailable
   clusterSelector:
-    matchLabels:
-      falco: "true"
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
