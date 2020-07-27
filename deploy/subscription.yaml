@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: policies-github-path
+  namespace: policies
+data:
+  path: stable
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  name: demo-policies
+  namespace: policies
+spec:
+  channel: policies/deploy-stable-policies
+  placement:
+    local: true
+  packageFilter:
+    filterRef:
+      name: policies-github-path

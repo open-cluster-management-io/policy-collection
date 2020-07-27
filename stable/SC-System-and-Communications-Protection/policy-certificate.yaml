@@ -12,7 +12,7 @@ spec:
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
-        kind: certificate # cert management expiration
+        kind: CertificatePolicy # cert management expiration
         metadata:
           name: policy-certificate-example
         spec:
