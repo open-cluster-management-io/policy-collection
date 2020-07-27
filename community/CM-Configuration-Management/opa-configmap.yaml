@@ -74,7 +74,6 @@ spec:
                 kind: ConfigMap
                 metadata:
                   name: nopod
-                  namespace: opa
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -94,7 +93,6 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-opa
-  namespace: policies
 spec:
   clusterConditions:
   - status: "True"
