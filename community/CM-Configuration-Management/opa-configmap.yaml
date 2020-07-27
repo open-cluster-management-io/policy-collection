@@ -79,7 +79,6 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: binding-policy-opa
-  namespace: policies
 placementRef:
   name: placement-policy-opa
   kind: PlacementRule
