@@ -4,8 +4,8 @@ metadata:
   name: policy-opa
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
-    policy.open-cluster-management.io/categories: PR.IP Information Protection Processes and Procedures, PR.PT Protective Technology
-    policy.open-cluster-management.io/controls: PR.IP-1 Baseline Configuration, PR.PT-3 Least Functionality
+    policy.open-cluster-management.io/categories: SI System and Information Integrity
+    policy.open-cluster-management.io/controls: SI-5 Security Alerts, Advisories, and Directives
 spec:
   remediationAction: enforce
   disabled: false
