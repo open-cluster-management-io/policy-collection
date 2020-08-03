@@ -19,3 +19,15 @@ patches:
     version: v1
     kind: ConfigMap
     name: policies-github-path
+- path: channel_patch.json
+  target:
+    group: apps.open-cluster-management.io
+    version: v1
+    kind: Subscription
+    name: demo-policies
+- path: url_patch.json
+  target:
+    group: apps.open-cluster-management.io
+    version: v1
+    kind: Channel
+    name: deploy-stable-policies
