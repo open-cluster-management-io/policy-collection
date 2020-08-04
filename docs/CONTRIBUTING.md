@@ -1,7 +1,7 @@
 # Contributing Policies
 This doc provides instruction on how to contribute policies to the `policy-collection` repo.
 
-You can contribute policies by submitting a pull request (PR) in the `policy-collection` repo. Your PR must be reviewed by the [OWNERS](../OWNERS) of the repo.
+You can contribute policies by submitting a pull request (PR) in the `policy-collection` repo. Your PR must be reviewed by the [OWNERS](../OWNERS) of the repo. Contributors own full responsibility for all aspects of secure engineering for their contributions and need to provide an email address to report security issues found in their contributions.
 
 ## Guidelines
 View the following requirement list to contribute to the `policy-collection` repo:
