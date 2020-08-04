@@ -7,15 +7,10 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
-  complianceType: musthave
   remediationAction: inform
   disabled: false
-  namespaces:
-    exclude: ["kube-*"]
-    include: ["default"]
   policy-templates:
-    - complianceType: musthave
-      objectDefinition:
+    - objectDefinition:
         apiVersion: policies.ibm.com/v1alpha1
         kind: TrustedContainerPolicy
         metadata:
