@@ -7,9 +7,9 @@ This repo hosts policies for Open Cluster Management. You can find policies from
 * [stable](stable) -- Policies in the `stable` folder are supported by [Red Hat Advanced Cluster Management for Kubernetes](https://www.redhat.com/en/technologies/management/advanced-cluster-management).
 * [community](community) -- Policies in the `community` folder are contributed from the open source community. 
 
-## Syncing policy-collection to a cluster
+## Using GitOps to deploy policies to a cluster
 
-Fork this repository; you will use the forked version of this repo as the target to run the sync against. This makes it easier to add custom policies to the `community` folder.
+Fork this repository; you will use the forked version of this repo as the target to run the sync against. This is to avoid unintended changes to be applied to your cluster automatically. To get latest policies from the policy-collection repo, you can pull the latest changes from policy-collection to your own repo through a pull request. Any further changes to your repo will automatically be applied to your cluster.
 
 Make sure you have [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) installed and that you are logged into your hub cluster in terminal.
 
