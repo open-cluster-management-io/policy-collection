@@ -10,6 +10,7 @@ View a list of policies that are organized by the security control catalog.
 * Security Assessment and Authorization
 * Configuration Management
   * [Trusted Container policy](./CM-Configuration-Management/policy-trusted-container.yaml): Use the trusted container policy to detect if running pods are using trusted images. For more information, see [Trusted Container Policy Controller](https://github.com/ycao56/trusted-container-policy-controller).
+  * [Trusted Node policy](./CM-Configuration-Management/policy-trusted-node.yaml): Use the trusted node policy to detect if there are untrusted/unattested nodes in the cluster. For more information, see [Trusted Node Policy Controller](https://github.com/lumjjb/trusted-node-policy-controller).
   * [OPA Sample policy](./CM-Configuration-Management/policy-opa-sample.yaml): Use the Open Policy Agent (OPA) Sample policy to view example of how an OPA policy can be created using ConfigMap. You can also view an example of adding a `REGO` script into a ConfigMap, which is evaluated by the OPA. For more information on this approach, see the [example repository](https://github.com/ycao56/mcm-opa). Note: OPA must be installed to use the OPA ConfigMap policy.
 * Contingency Planning
 * Identification and Authentication
