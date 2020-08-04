@@ -13,7 +13,7 @@ resources:
   - channel.yaml
   - subscription.yaml
 
-patches:
+patchesJson6902:
 - path: dir_patch.json
   target:
     version: v1

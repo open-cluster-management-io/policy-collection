@@ -13,7 +13,7 @@ echo "$CHANNEL_CFG" > channel_patch.json
 KUST_CFG=$(cat "kustomization_template.yaml" | sed "s/##NAMESPACE##/${3:-policies}/g")
 echo "$KUST_CFG" > kustomization.yaml
 
-kustomize build . > resources.yaml
+kubectl kustomize . > resources.yaml
 kubectl apply -f resources.yaml
 
 rm dir_patch.json
