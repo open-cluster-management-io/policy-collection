@@ -1,0 +1,33 @@
+# kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# namespace to deploy all Resources to
+namespace: ##NAMESPACE##
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+# list of Resource Config to be Applied
+resources:
+  - channel.yaml
+  - subscription.yaml
+
+patches:
+- path: dir_patch.json
+  target:
+    version: v1
+    kind: ConfigMap
+    name: policies-github-path
+- path: channel_patch.json
+  target:
+    group: apps.open-cluster-management.io
+    version: v1
+    kind: Subscription
+    name: demo-policies
+- path: url_patch.json
+  target:
+    group: apps.open-cluster-management.io
+    version: v1
+    kind: Channel
+    name: deploy-stable-policies
