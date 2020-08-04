@@ -9,6 +9,8 @@ This repo hosts policies for Open Cluster Management. You can find policies from
 
 ## Syncing policy-collection to a cluster
 
+Fork this repository; you will use the forked version of this repo as the target to run the sync against. This makes it easier to add custom policies to the `community` folder.
+
 Make sure you have [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) installed and that you are logged into your hub cluster in terminal.
 
 Run `kubectl create ns policies` to create a "policies" ns on hub. If you prefer to call the namespace something else, you can run `kubectl create ns <custom ns>` instead.
