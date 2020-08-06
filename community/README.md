@@ -125,4 +125,4 @@ Some policy consumers are packaged as [operators](https://coreos.com/operators/)
 For a more specific example of this method of deploying a policy consumer from the operator hub, see [policy-falco](./SI-System-and-Information-Integrity/policy-falco.yaml).
 
 ### Other custom policy consumers
-Occasionally, policies in this folder may be consumed by controllers that do not fall into either of the two categories above. To get the most out of these policies, consult the "prerequisites" section in the catalog below.
+Occasionally, policies in this folder may be consumed by controllers that do not fall into either of the two categories above. To get the most out of these policies, consult the "prerequisites" section in the catalog above.
