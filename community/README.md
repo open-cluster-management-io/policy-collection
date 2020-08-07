@@ -116,13 +116,13 @@ Custom policy controllers are created from forks of the [sample policy controlle
 - Run the following command to set up the operator and service account that runs the controller on your cluster: `kubectl apply -f deploy/`
 
 ### Policy consumers on operator hub
-Some policy consumers are packaged as [operators](https://coreos.com/operators/) and are available on the [Operator hub](https://operatorhub.io/). These consumers can simply be deployed by creating a policy with child [configuration policies](https://github.com/open-cluster-management/config-policy-controller) to handle the install. These configuration policies may include:
-- Create a namespace to deploy the operator on, if necessary
-- ClusterServiceVersion with install capabilities to install the operator from the operator hub
-- Create an OperatorGroup
-- Create a Subscription
-- Create the custom resource defined by the consumer to enforce custom policies
+Some policy consumers are packaged as [operators](https://coreos.com/operators/) and are available on the [Operator hub](https://operatorhub.io/). These consumers can simply be deployed by creating a policy with child [configuration policies](https://github.com/open-cluster-management/config-policy-controller) to handle the install. The configuration policies might include the following information:
+- A namespace to deploy the operator on, if necessary
+- A ClusterServiceVersion with install capabilities to install the operator from the operator hub
+- A OperatorGroup
+- A Subscription
+- The custom resource defined by the consumer to enforce custom policies
 For a more specific example of this method of deploying a policy consumer from the operator hub, see [policy-falco](./SI-System-and-Information-Integrity/policy-falco.yaml).
 
 ### Other custom policy consumers
-Occasionally, policies in this folder might be consumed by controllers that do not fall into either of the two categories previously mentioned. To get the most out of these policies, consult the "prerequisites" section in the catalog above.
+Occasionally, policies in this folder might be consumed by controllers that do not fall into either of the two categories previously mentioned. To get the most out of these policies, see the [Security control catalog](#security-control-catalog)
