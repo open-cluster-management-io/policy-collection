@@ -29,11 +29,11 @@ spec:
                   no_pod.rego: |-
                     package kubernetes.admission
                     deny[msg] {
-                      input.request.kind.kind == "Pod"
-                      input.request.namespace == "opa"
-                      image := input.request.object.spec.containers[_].image
-                      not startswith(image, "hooli.com")
-                      msg := sprintf("image fails to come from trusted registry: %v", [image])
+                        input.request.kind.kind == "Pod"
+                        input.request.namespace == "opa"
+                        image := input.request.object.spec.containers[_].image
+                        not startswith(image, "hooli.com")
+                        msg := sprintf("image fails to come from trusted registry: %v", [image])
                     }
                 kind: ConfigMap
                 metadata:
