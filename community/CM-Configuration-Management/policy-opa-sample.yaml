@@ -48,7 +48,7 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-opa
+- name: policy-opa-sample
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
