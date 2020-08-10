@@ -29,7 +29,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>N/A</td>
   </tr>
   <tr>
-    <td rowspan="3">Configuration Management</td>
+    <td rowspan="4">Configuration Management</td>
     <td><a href="./CM-Configuration-Management/policy-trusted-container.yaml">Trusted Container policy</a>: Use the trusted container policy to detect if running pods are using trusted images.</td>
     <td><a href="https://github.com/ycao56/trusted-container-policy-controller">Trusted Container Policy Controller</a></td>
   </tr>
@@ -38,8 +38,12 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td><a href="https://github.com/lumjjb/trusted-node-policy-controller">Trusted Node Policy Controller</a></td>
   </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-opa-sample.yaml">OPA Sample policy</a>: Use the Open Policy Agent (OPA) Sample policy to view an example of how an OPA policy can be <br>created using ConfigMap. You can also view an example of adding a `REGO` script into a ConfigMap, which is evaluated by the OPA.</td>
+    <td><a href="./CM-Configuration-Management/policy-opa-sample.yaml">OPA Sample policy</a>: Use the Open Policy Agent (OPA) Sample policy to view an example of how an OPA policy can be created. You can also view an example of adding a `REGO` script into a ConfigMap, which is evaluated by the OPA.</td>
     <td>See the <a href="https://github.com/ycao56/mcm-opa">OPA example repository</a>. **Note**: OPA must be installed to use the OPA ConfigMap policy.</td>
+  </tr>
+  <tr>
+    <td><a href="./CM-Configuration-Management/policy-gatekeeper-sample.yaml">Gatekeeper Sample policy</a>: Use the Gate Sample policy to view an example of how a gatekeeper policy can be applied to a managed cluster</td>
+    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper</a>. **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
   </tr>
   <tr>
     <td>Contingency Planning</td>
