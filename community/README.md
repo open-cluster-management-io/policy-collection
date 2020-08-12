@@ -29,7 +29,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>N/A</td>
   </tr>
   <tr>
-    <td rowspan="4">Configuration Management</td>
+    <td rowspan="5">Configuration Management</td>
     <td><a href="./CM-Configuration-Management/policy-trusted-container.yaml">Trusted Container policy</a>: Use the trusted container policy to detect if running pods are using trusted images.</td>
     <td><a href="https://github.com/ycao56/trusted-container-policy-controller">Trusted Container Policy Controller</a></td>
   </tr>
@@ -45,6 +45,10 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td><a href="./CM-Configuration-Management/policy-gatekeeper-sample.yaml">Gatekeeper Sample policy</a>: Use the Gate Sample policy to view an example of how a gatekeeper policy can be applied to a managed cluster</td>
     <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper</a>. **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
   </tr>
+  <tr>
+    <td><a href="./CM-Configuration-Management/policy-machineconfig-chrony.yaml">MachineConfig Chrony Sample: </a> The policy configures /etc/chrony.conf on certain machines </a>.</td> 
+    <td>Based on this <a href="https://jaosorior.dev/2019/modifying-node-configurations-in-openshift-4.x/"> blog and example </a>.**Note**: The policy requires the Managed-Cluster to be Openshift</td>
+    </tr>
   <tr>
     <td>Contingency Planning</td>
     <td>N/A</td>
