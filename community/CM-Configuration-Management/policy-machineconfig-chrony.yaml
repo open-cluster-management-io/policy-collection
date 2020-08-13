@@ -1,0 +1,71 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: add-chrony
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: add-chrony-worker
+        spec:
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: machineconfiguration.openshift.io/v1
+                kind: MachineConfig
+                metadata:
+                  name: 50-worker-chrony
+                spec:
+                  labels:
+                    machineconfiguration.openshift.io/role: worker
+                  config:
+                    ignition:
+                      version: 2.2.0
+                    storage:
+                      files:
+                      - contents:
+                          filesystem: root
+                          mode: 420
+                          path: /etc/chrony.conf
+                          source: >-
+                            data:,server%200.fedora.pool.ntp.org%0A%0Aserver%201.fedora.pool.ntp.org%0A%0Aserver%202.fedora.pool.ntp.org%0A%0Adriftfile%20/var/lib/chrony/drift%0A%0Amakestep%201.0%203%0A%0Artcsync%0A%0Akeyfile%20/etc/chrony.keys%0A%0Aleapsectz%20right/UTC%0A%0Alogdir%20/var/log/chrony%0A
+          remediationAction: enforce
+          severity: low
+  remediationAction: enforce
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-add-chrony
+placementRef:
+  name: placement-add-chrony
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: add-chrony
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-add-chrony
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: env, operator: In, values: ["dev"]}
