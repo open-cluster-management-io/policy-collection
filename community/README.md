@@ -29,7 +29,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>N/A</td>
   </tr>
   <tr>
-    <td rowspan="5">Configuration Management</td>
+    <td rowspan="7">Configuration Management</td>
     <td><a href="./CM-Configuration-Management/policy-trusted-container.yaml">Trusted Container policy</a>: Use the trusted container policy to detect if running pods are using trusted images.</td>
     <td><a href="https://github.com/ycao56/trusted-container-policy-controller">Trusted Container Policy Controller</a></td>
   </tr>
@@ -49,6 +49,15 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td><a href="./CM-Configuration-Management/policy-machineconfig-chrony.yaml">MachineConfig Chrony Sample: </a> The policy configures /etc/chrony.conf on certain machines </a>.</td> 
     <td>Based on this <a href="https://jaosorior.dev/2019/modifying-node-configurations-in-openshift-4.x/"> blog and example </a>.**Note**: The policy requires the Managed-Cluster to be Openshift</td>
     </tr>
+  <tr>
+    <td><a href="./CM-Configuration-Management/policy-network-policy-samples.yaml">Network-Policy-Samples:</a> The policy gives examples of different NetworkPolicies </a>.</td>
+    <td>Based on the <a href "https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>.**Note**: The policy might be modified to the actual usecases </td>
+    </tr>
+  <tr>
+    <td><a href="./CM-Configuration-Management/policy-egress-firewall-sample.yaml">Egress-Policy-Sample:</a> With the egress firewall you can define rules (per project) to allow or deny traffic
+(TCP or UDP) to the outside network </a>.</td>
+    <td>Based on the <a href "https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>.**Note**: The policy might be modified to the actual usecases </td>
+    </tr>  
   <tr>
     <td>Contingency Planning</td>
     <td>N/A</td>
