@@ -38,8 +38,8 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td><a href="https://github.com/lumjjb/trusted-node-policy-controller">Trusted Node Policy Controller</a></td>
   </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-opa-sample.yaml">OPA Sample policy</a>: Use the Open Policy Agent (OPA) Sample policy to view an example of how an OPA policy can be created. You can also view an example of adding a <i>REGO</> script into a ConfigMap, which is evaluated by the OPA.</td>
-    <td>See the <a href="https://github.com/ycao56/mcm-opa">OPA example repository</i>. <b>Note</b>: OPA must be installed to use the OPA ConfigMap policy.</td>
+    <td><a href="./CM-Configuration-Management/policy-opa-sample.yaml">OPA Sample policy</a>: Use the Open Policy Agent (OPA) Sample policy to view an example of how an OPA policy can be created. You can also view an example of adding a <i>REGO</i> script into a ConfigMap, which is evaluated by the OPA.</td>
+    <td>See the <a href="https://github.com/ycao56/mcm-opa">OPA example repository</a>. <b>Note</b>: OPA must be installed to use the OPA ConfigMap policy.</td>
   </tr>
   <tr>
     <td><a href="./CM-Configuration-Management/policy-gatekeeper-sample.yaml">Gatekeeper Sample policy</a>: Use the Gate Sample policy to view an example of how a gatekeeper policy can be applied to a managed cluster</td>
