@@ -58,7 +58,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>See the <a href "https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>: Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
     </tr>  
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-image-policy-sample.yaml">Example for Configuring an Image-Policy: </a> With this Policy you can define from this repository OpenShift is allowed to pull images.</td>
+    <td><a href="./CM-Configuration-Management/policy-image-policy-sample.yaml">Example for Configuring an Image-Policy: </a> Use the Image policy to define which images can be pulled from the OpenShift repository.</td>
     <td>See the <a href "https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>: Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
     </tr>
   <tr>
