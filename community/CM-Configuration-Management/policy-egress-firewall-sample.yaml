@@ -1,0 +1,71 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: egress-example
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: egress-example
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: network.openshift.io/v1
+                kind: EgressNetworkPolicy
+                metadata:
+                  name: demo-firewall
+                spec:
+                  egress:
+                    - type: Allow
+                      to:
+                        cidrSelector: 192.168.12.0/24
+                    - type: Allow
+                      to: 
+                        dnsName: db-srv.example.com
+                    - type: Allow
+                      to: 
+                        dnsName: analytics.example.com
+                    - type: Deny
+                      to: 
+                        cidrSelector: 0.0.0.0/0
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-egress-example
+placementRef:
+  name: placement-egress-example
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: egress-example
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-egress-example
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: env, operator: In, values: ["dev"]}
