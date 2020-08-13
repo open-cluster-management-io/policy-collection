@@ -38,16 +38,16 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td><a href="https://github.com/lumjjb/trusted-node-policy-controller">Trusted Node Policy Controller</a></td>
   </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-opa-sample.yaml">OPA Sample policy</a>: Use the Open Policy Agent (OPA) Sample policy to view an example of how an OPA policy can be created. You can also view an example of adding a `REGO` script into a ConfigMap, which is evaluated by the OPA.</td>
-    <td>See the <a href="https://github.com/ycao56/mcm-opa">OPA example repository</a>. **Note**: OPA must be installed to use the OPA ConfigMap policy.</td>
+    <td><a href="./CM-Configuration-Management/policy-opa-sample.yaml">OPA Sample policy</a>: Use the Open Policy Agent (OPA) Sample policy to view an example of how an OPA policy can be created. You can also view an example of adding a <i>REGO</i> script into a ConfigMap, which is evaluated by the OPA.</td>
+    <td>See the <a href="https://github.com/ycao56/mcm-opa">OPA example repository</a>. <b>Note</b>: OPA must be installed to use the OPA ConfigMap policy.</td>
   </tr>
   <tr>
     <td><a href="./CM-Configuration-Management/policy-gatekeeper-sample.yaml">Gatekeeper Sample policy</a>: Use the Gate Sample policy to view an example of how a gatekeeper policy can be applied to a managed cluster</td>
-    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper</a>. **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
+    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
   </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-machineconfig-chrony.yaml">MachineConfig Chrony Sample: </a> The policy configures /etc/chrony.conf on certain machines </a>.</td> 
-    <td>Based on this <a href="https://jaosorior.dev/2019/modifying-node-configurations-in-openshift-4.x/"> blog and example </a>.**Note**: The policy requires the Managed-Cluster to be Openshift</td>
+    <td><a href="./CM-Configuration-Management/policy-machineconfig-chrony.yaml">MachineConfig Chrony Sample policy: </a> Use the MachineConfig Chrony policy to configure <i>/etc/chrony.conf</i> on certain machines </a>.</td> 
+    <td>For more information see, <a href="https://jaosorior.dev/2019/modifying-node-configurations-in-openshift-4.x/"> Modifying node configurations in OpenShift 4.x blog</a>. <b>Note</b>: The policy requires that the managed cluster is OpenShift Container Platform.</td>
     </tr>
   <tr>
     <td><a href="./CM-Configuration-Management/policy-network-policy-samples.yaml">Network-Policy-Samples:</a> The policy gives examples of different NetworkPolicies </a>.</td>
@@ -125,7 +125,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
 </table>
 
 ## Deploying community policies to your cluster
-While the policies in [stable](../stable) all have out-of-the-box support installed with RHACM, community policies are maintained by the open source community. You might need to deploy extra policy consumers in order for community policies to work as intended. If you are seeing the error `no matches for kind "<resource name>" in version "<group>/<version>"`, you must deploy the CustomResourceDefiniton (CRD) for the policy before you create it. If some of the policies in this folder are not behaving properly, you must deploy the corresponding policy consumers to handle them.
+While the policies in the [stable](../stable) folder all have out-of-the-box support installed with Red Hat Advanced Cluster Management, community policies are maintained by the open source community. You might need to deploy extra policy consumers in order for community policies to work as intended. If you are seeing the error `no matches for kind "<resource name>" in version "<group>/<version>"`, you must deploy the CustomResourceDefiniton (CRD) for the policy before you create it. If some of the policies in this folder are not behaving properly, you must deploy the corresponding policy consumers to handle them.
 
 ### Custom policy controllers
 Custom policy controllers are created from forks of the [sample policy controller repo](https://github.com/open-cluster-management/multicloud-operators-policy-controller), and as such the process for deploying them is essentially the same as the process for deploying the sample controller. 
