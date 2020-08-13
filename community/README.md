@@ -50,13 +50,12 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>For more information see, <a href="https://jaosorior.dev/2019/modifying-node-configurations-in-openshift-4.x/"> Modifying node configurations in OpenShift 4.x blog</a>. <b>Note</b>: The policy requires that the managed cluster is OpenShift Container Platform.</td>
     </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-network-policy-samples.yaml">Network-Policy-Samples:</a> The policy gives examples of different NetworkPolicies </a>.</td>
-    <td>Based on the <a href "https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>.**Note**: The policy might be modified to the actual usecases </td>
+    <td><a href="./CM-Configuration-Management/policy-network-policy-samples.yaml">Network-Policy-Samples:</a> Use the Network policy to **insert task accomplished**. View examples of Network policies, see <a href="./CM-Configuration-Management/policy-network-policy-samples.yaml">Network-Policy-Samples.</a>
+    <td>See the <a href "https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>. <b>Note</b>: The policy might be modified to the actual usecases </td>
     </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-egress-firewall-sample.yaml">Egress-Policy-Sample:</a> With the egress firewall you can define rules (per project) to allow or deny traffic
-(TCP or UDP) to the outside network </a>.</td>
-    <td>Based on the <a href "https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>.**Note**: The policy might be modified to the actual usecases </td>
+    <td><a href="./CM-Configuration-Management/policy-egress-firewall-sample.yaml">Egress-Policy-Sample:</a> With the egress firewall you can define rules (per project) to allow or deny traffic (TCP or UDP) to the external network.</td>
+    <td>See the <a href "https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>: Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
     </tr>  
   <tr>
     <td>Contingency Planning</td>
