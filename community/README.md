@@ -50,7 +50,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>For more information see, <a href="https://jaosorior.dev/2019/modifying-node-configurations-in-openshift-4.x/"> Modifying node configurations in OpenShift 4.x blog</a>. <b>Note</b>: The policy requires that the managed cluster is OpenShift Container Platform.</td>
     </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-network-policy-samples.yaml">Network-Policy-Samples:</a> Use the Network policy to **insert task accomplished**. View examples of Network policies, see <a href="./CM-Configuration-Management/policy-network-policy-samples.yaml">Network-Policy-Samples.</a>
+    <td><a href="./CM-Configuration-Management/policy-network-policy-samples.yaml">Network-Policy-Samples:</a> Use the Network policy to specify how groups of pods are allowed to communicate with each other and other network endpoints. For examples of Network policies, see <a href="./CM-Configuration-Management/policy-network-policy-samples.yaml">Network-Policy-Samples.</a>
     <td>See the <a href "https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>. <b>Note</b>: The policy might be modified to the actual usecases </td>
     </tr>
   <tr>
