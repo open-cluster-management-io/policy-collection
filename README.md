@@ -27,3 +27,19 @@ Check the [CONTRIBUTING Doc](docs/CONTRIBUTING.md) on how to contribute to the r
 You can reach the maintainers of this project at:
 
 - [#xxx on Slack](https://slack.com/signin?redir=%2Fmessages%2Fxxx)
+
+**Blogs**: Read our blogs for more information and best practices for Red Hat Advanced Cluster Management for Kubernetes governance capability:
+
+* [Comply to standards using the policy based governance of Red Hat Advanced Cluster Management for Kubernetes](https://www.openshift.com/blog/comply-to-standards-using-policy-based-governance-of-red-hat-advanced-cluster-management-for-kubernetes)
+
+* [Develop your own policy controller to integrate with Red Hat Advanced CLuster Management for Kubernetes](https://www.openshift.com/blog/develop-your-own-policy-controller-to-integrate-with-red-hat-advanced-cluster-management-for-kubernetes)
+
+* [How to Integrate Open Policy Agent with Red Hat Advanced Cluster Management for Kubernetes policy framework](https://www.openshift.com/blog/how-to-integrate-open-policy-agent-with-red-hat-advanced-cluster-management-for-kubernetes-policy-framework)
+
+**Resources**: View the following resources for more information on the components and mechanisms are implemented in the product governance framework.
+
+* [Product documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.0/)
+
+* National Cyber security Center of Excellence (NCCoE) blog, [Policy Based Governance in Trusted Container Platform](https://www.nccoe.nist.gov/news/policy-based-governance-trusted-container-platform)
+
+* IBM Developer blog, [Policy based governance for open hybrid cloud](http://ibm.biz/policy-based-governance-for-open-hybrid-cloud)
