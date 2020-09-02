@@ -29,7 +29,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>N/A</td>
   </tr>
   <tr>
-    <td rowspan="8">Configuration Management</td>
+    <td rowspan="9">Configuration Management</td>
     <td><a href="./CM-Configuration-Management/policy-trusted-container.yaml">Trusted Container policy</a>: Use the trusted container policy to detect if running pods are using trusted images.</td>
     <td><a href="https://github.com/ycao56/trusted-container-policy-controller">Trusted Container Policy Controller</a></td>
   </tr>
@@ -62,6 +62,10 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>See the <a href "https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>: Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
     </tr>
   <tr>
+    <td><a href="./CM-Configuration-Management/policy-encrypt-etcd-sample.yaml">Example of Encrypting ETCD via Policy </a> Use this policy to encrypt ETCD. It needs careful testing</td>
+    <td>See the <a href "https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation </a>: ETCD encrytion will encrypt Secrets, ConfigMaps, Routes and  OAuth access tokens</td>
+    </tr>
+   <tr>
     <td>Contingency Planning</td>
     <td>N/A</td>
     <td>N/A</td>
