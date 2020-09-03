@@ -55,15 +55,15 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     </tr>
   <tr>
     <td><a href="./CM-Configuration-Management/policy-egress-firewall-sample.yaml">Egress-Policy-Sample:</a> With the egress firewall you can define rules (per project) to allow or deny traffic (TCP or UDP) to the external network.</td>
-    <td>See the <a href "https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>: Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
+    <td>See the <a href "https://access.redhat.com/articles/5059881"> OpenShift Security Guide:</a> Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
     </tr>  
   <tr>
     <td><a href="./CM-Configuration-Management/policy-image-policy-sample.yaml">Example for Configuring an Image-Policy: </a> Use the Image policy to define the repositories from where OpenShift can pull images.</td> 
     <td>See the <a href "https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>: Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
     </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-encrypt-etcd-sample.yaml">Example of Encrypting ETCD via Policy </a> Use this policy to encrypt ETCD. It needs careful testing</td>
-    <td>See the <a href "https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation </a>: ETCD encrytion will encrypt Secrets, ConfigMaps, Routes and  OAuth access tokens</td>
+    <td><a href="./CM-Configuration-Management/policy-encrypt-etcd-sample.yaml">Example of Encrypting ETCD using a policy:</a> Use this policy to encrypt ETCD. It needs careful testing</td> <!--What's does this mean?-->
+    <td>See the <a href "https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation </a>: Use ETCD encrytion to encrypt Secrets, ConfigMaps, Routes and  OAuth access tokens.</td>
     </tr>
    <tr>
     <td>Contingency Planning</td>
