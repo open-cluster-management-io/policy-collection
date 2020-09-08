@@ -20,7 +20,9 @@ From within this directory in terminal, run `cd deploy` to access the deployment
 - `path`: the name of the folder in the policy-collection repo that you'd like to pull policies from. Defaults to `stable`.
 - `namespace`: the namespace you'd like to deploy the policies on, which should be the same as the one you created earlier. Defaults to `policies`.
 
-The policies get deployed to all connected Managed Clusters (to be accurate: ManagedClusterConditionAvailable should be set to True) that has a label of `dev` by default. If this needs to be changed, edit the `PlacementRule,clusterSelector,matchExpressions` in the policies that are being used. Note - the deployment is rolled out to Managed clusters which are connected at this point as well as those that may be connected at a later time to the Hub.
+When the `ManagedClusterConditionAvailable` parameter is set to `true`, the policies are deployed to all connected managed clusters that have `dev` for the `default` parameter. If the `ManagedClusterConditionAvailable` parameter needs to be updated, update the following resources: `PlacementRule`, `clusterSelector`, `matchExpressions` in policies that are in use.
+
+**Note**: The deployment is rolled out to managed clusters.
 
 ## Community, discussion, contribution, and support
 
