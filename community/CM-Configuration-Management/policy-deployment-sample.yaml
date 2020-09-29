@@ -3,7 +3,7 @@ kind: Policy
 metadata:
   name: policy-deployment
   annotations:
-    policy.open-cluster-management.io/standards: NIST-CSF
+    policy.open-cluster-management.io/standards: NIST 800-53
     policy.open-cluster-management.io/categories: PR.PT Protective Technology
     policy.open-cluster-management.io/controls: PR.PT-3 Least Functionality
 spec:
