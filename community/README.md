@@ -65,7 +65,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td><a href="./CM-Configuration-Management/policy-encrypt-etcd-sample.yaml">Example of Encrypting ETCD using a policy:</a> Use an encryption policy to encrypt sensitive resources such as Secrets, ConfigMaps, Routes and  OAuth access tokens in your cluster. </td> 
     <td>See the <a href "https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation </a> to learn how to enable ETCD post install.</td>
     </tr>
-    <td><a href="./CM-Configuration-Management/policy-deployment-sample.yaml">Example of creating a Deployment Object.</a> This example generates 5 replicas of nginx-pods </td>
+    <td><a href="./CM-Configuration-Management/policy-deployment-sample.yaml">Example of creating a Deployment Object:</a> This example generates 5 replicas of `nginx-pods`. </td>
     <td>See the <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"> Kubernetes Documentation </a> to learn more about Deployments.</td>
     </tr>
    <tr>
