@@ -45,7 +45,7 @@ View a list of policies that are supported by [Red Hat Advanced Cluster Manageme
   </tr>
   <tr>
     <td><a href="./CM-Configuration-Management/policy-etcdencryption.yaml">policy-etcdencryption</a></td> 
-    <td>Use an encryption policy to encrypt sensitive resources such as Secrets, ConfigMaps, Routes and  OAuth access tokens in your cluster. <br>See the <a href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation </a> to learn how to enable ETCD post install.</td>
+    <td>Use an encryption policy to encrypt sensitive resources such as Secrets, ConfigMaps, Routes and OAuth access tokens in your cluster. <br>See the <a href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation </a> to learn how to enable ETCD encryption post install.</td>
   </tr>
   <tr>
     <td><a href="./CM-Configuration-Management/policy-namespace.yaml">policy-namespace</a></td>
