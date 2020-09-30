@@ -55,11 +55,11 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     </tr>
   <tr>
     <td><a href="./CM-Configuration-Management/policy-egress-firewall-sample.yaml">Egress-Policy-Sample:</a> With the egress firewall you can define rules (per project) to allow or deny traffic (TCP or UDP) to the external network.</td>
-    <td>See the <a href="https://access.redhat.com/articles/5059881"> OpenShift Security Guide:</a> Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
+    <td>See the <a href="https://access.redhat.com/articles/5059881"> OpenShift Security Guide.</a> Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
     </tr>  
   <tr>
     <td><a href="./CM-Configuration-Management/policy-image-policy-sample.yaml">Example to configure an image policy: </a> Use the image policy to define the repositories from where OpenShift can pull images.</td> 
-    <td>See the <a href="https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>: Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
+    <td>See the <a href="https://access.redhat.com/articles/5059881"> OpenShift Security Guide. </a> Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
     </tr>
   <tr>
     <td><a href="./CM-Configuration-Management/policy-encrypt-etcd-sample.yaml">Example of encrypting ETCD with a policy:</a> Use an encryption policy to encrypt sensitive resources such as Secrets, ConfigMaps, Routes and  OAuth access tokens in your cluster. </td> 
@@ -67,7 +67,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     </tr>
   <tr>
     <td><a href="./CM-Configuration-Management/policy-cluster-proxy-sample.yaml">Example of configuring a cluster-wide proxy with a policy:</a> Use this policy to configure a cluster-wide proxy. </td> 
-    <td>See the <a href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.</td>
+    <td>See the <a href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation. </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.</td>
     </tr>
   <tr>
     <td><a href="./CM-Configuration-Management/policy-cluster-dns-sample.yaml">Example of configuring DNS with a policy:</a> Use this policy to configure DNS in your OpenShift Cluster. For example, you can remove public DNS. </td> 
@@ -75,7 +75,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     </tr>
   <tr>
     <td><a href="./CM-Configuration-Management/policy-cluster-network-sample.yaml">Example of configuring the Cluster Network Operator with a policy:</a>  Use this policy to configure the network of your OpenShift Cluster.</td> 
-    <td>See the <a href="https://docs.openshift.com/container-platform/4.5/post_installation_configuration/network-configuration.html#nw-operator-cr_post-install-network-configuration"> OpenShift Documentation </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.</td>
+    <td>See the <a href="https://docs.openshift.com/container-platform/4.5/post_installation_configuration/network-configuration.html#nw-operator-cr_post-install-network-configuration"> OpenShift Documentation. </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.</td>
     </tr>
   <tr>  
     <td><a href="./CM-Configuration-Management/policy-deployment-sample.yaml">Example of creating a deployment object:</a> This example generates 5 replicas of `nginx-pods`. </td>
