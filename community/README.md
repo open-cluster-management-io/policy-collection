@@ -29,7 +29,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>N/A</td>
   </tr>
   <tr>
-    <td rowspan="12">Configuration Management</td>
+    <td rowspan="13">Configuration Management</td>
     <td><a href="./CM-Configuration-Management/policy-trusted-container.yaml">Trusted Container policy</a>: Use the trusted container policy to detect if running pods are using trusted images.</td>
     <td><a href="https://github.com/ycao56/trusted-container-policy-controller">Trusted Container Policy Controller</a></td>
   </tr>
