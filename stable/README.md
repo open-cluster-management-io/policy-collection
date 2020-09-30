@@ -17,9 +17,11 @@ View a list of policies that are supported by [Red Hat Advanced Cluster Manageme
   </tr>
   <tr>
     <td><a href="./AC-Access-Control/policy-role.yaml">policy-role</a></td>
+    <td></td>
   </tr>
     <tr>
     <td><a href="./AC-Access-Control/policy-rolebinding.yaml">policy-rolebinding</a></td>
+    <td></td>
   </tr>
   <tr>
     <td>Awareness and Training</td>
@@ -47,9 +49,11 @@ View a list of policies that are supported by [Red Hat Advanced Cluster Manageme
   </tr>
   <tr>
     <td><a href="./CM-Configuration-Management/policy-namespace.yaml">policy-namespace</a></td>
+    <td></td>
   </tr>
     <tr>
     <td><a href="./CM-Configuration-Management/policy-pod.yaml">policy-pod</a></td>
+    <td></td>
   </tr>
   <tr>
     <td>Contingency Planning</td>
