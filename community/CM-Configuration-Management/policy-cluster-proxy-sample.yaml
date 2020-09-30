@@ -4,8 +4,8 @@ metadata:
   name: policy-config-proxy
   annotations:
     policy.open-cluster-management.io/standards: NIST 800-53
-    policy.open-cluster-management.io/categories: PR.IP Information Protection Processes and Procedures
-    policy.open-cluster-management.io/controls: PR.IP-1 Baseline Configuration
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline 
 spec:
   remediationAction: inform
   disabled: false
