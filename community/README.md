@@ -29,7 +29,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>N/A</td>
   </tr>
   <tr>
-    <td rowspan="13">Configuration Management</td>
+    <td rowspan="12">Configuration Management</td>
     <td><a href="./CM-Configuration-Management/policy-trusted-container.yaml">Trusted Container policy</a>: Use the trusted container policy to detect if running pods are using trusted images.</td>
     <td><a href="https://github.com/ycao56/trusted-container-policy-controller">Trusted Container Policy Controller</a></td>
   </tr>
@@ -60,10 +60,6 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
   <tr>
     <td><a href="./CM-Configuration-Management/policy-image-policy-sample.yaml">Example to configure an image policy: </a> Use the image policy to define the repositories from where OpenShift can pull images.</td> 
     <td>See the <a href="https://access.redhat.com/articles/5059881"> OpenShift Security Guide. </a> Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
-    </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-encrypt-etcd-sample.yaml">Example of encrypting ETCD with a policy:</a> Use an encryption policy to encrypt sensitive resources such as Secrets, ConfigMaps, Routes and  OAuth access tokens in your cluster. </td> 
-    <td>See the <a href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation </a> to learn how to enable ETCD post install.</td>
     </tr>
   <tr>
     <td><a href="./CM-Configuration-Management/policy-cluster-proxy-sample.yaml">Example of configuring a cluster-wide proxy with a policy:</a> Use this policy to configure a cluster-wide proxy. </td> 
