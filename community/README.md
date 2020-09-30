@@ -58,27 +58,27 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>See the <a href="https://access.redhat.com/articles/5059881"> OpenShift Security Guide:</a> Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
     </tr>  
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-image-policy-sample.yaml">Example for Configuring an Image-Policy: </a> Use the Image policy to define the repositories from where OpenShift can pull images.</td> 
+    <td><a href="./CM-Configuration-Management/policy-image-policy-sample.yaml">Example to configure an image policy: </a> Use the image policy to define the repositories from where OpenShift can pull images.</td> 
     <td>See the <a href="https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>: Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
     </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-encrypt-etcd-sample.yaml">Example of Encrypting ETCD using a policy:</a> Use an encryption policy to encrypt sensitive resources such as Secrets, ConfigMaps, Routes and  OAuth access tokens in your cluster. </td> 
+    <td><a href="./CM-Configuration-Management/policy-encrypt-etcd-sample.yaml">Example of encrypting ETCD with a policy:</a> Use an encryption policy to encrypt sensitive resources such as Secrets, ConfigMaps, Routes and  OAuth access tokens in your cluster. </td> 
     <td>See the <a href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation </a> to learn how to enable ETCD post install.</td>
     </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-cluster-proxy-sample.yaml">Example of Configuring a Cluster-Wide Proxy via policy:</a> Use this policy to Configure a Cluster-Wide-Proxy. </td> 
-    <td>See the <a href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment</td>
+    <td><a href="./CM-Configuration-Management/policy-cluster-proxy-sample.yaml">Example of configuring a cluster-wide proxy with a policy:</a> Use this policy to configure a cluster-wide proxy. </td> 
+    <td>See the <a href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.</td>
     </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-cluster-dns-sample.yaml">Example of Configuring DNS using a policy:</a> Use this policy to configure DNS in your OpenShift Cluster and for example remove public DNS. </td> 
-    <td>See the <a href="https://docs.openshift.com/container-platform/4.5/post_installation_configuration/network-configuration.html#private-clusters-setting-dns-private_post-install-network-configuration"> OpenShift Documentation </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment</td>
+    <td><a href="./CM-Configuration-Management/policy-cluster-dns-sample.yaml">Example of configuring DNS with a policy:</a> Use this policy to configure DNS in your OpenShift Cluster. For example, you can remove public DNS. </td> 
+    <td>See the <a href="https://docs.openshift.com/container-platform/4.5/post_installation_configuration/network-configuration.html#private-clusters-setting-dns-private_post-install-network-configuration"> OpenShift Documentation </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.</td>
     </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-cluster-network-sample.yaml">Example of Cluster Network Operator configuration:</a>  Use this policy to configure the Network of your OpenShift Cluster.</td> 
-    <td>See the <a href="https://docs.openshift.com/container-platform/4.5/post_installation_configuration/network-configuration.html#nw-operator-cr_post-install-network-configuration"> OpenShift Documentation </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment</td>
+    <td><a href="./CM-Configuration-Management/policy-cluster-network-sample.yaml">Example of configuring the Cluster Network Operator with a policy:</a>  Use this policy to configure the network of your OpenShift Cluster.</td> 
+    <td>See the <a href="https://docs.openshift.com/container-platform/4.5/post_installation_configuration/network-configuration.html#nw-operator-cr_post-install-network-configuration"> OpenShift Documentation </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.</td>
     </tr>
   <tr>  
-    <td><a href="./CM-Configuration-Management/policy-deployment-sample.yaml">Example of creating a Deployment Object:</a> This example generates 5 replicas of `nginx-pods`. </td>
+    <td><a href="./CM-Configuration-Management/policy-deployment-sample.yaml">Example of creating a deployment object:</a> This example generates 5 replicas of `nginx-pods`. </td>
     <td>See the <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"> Kubernetes Documentation </a> to learn more about Deployments.</td>
     </tr>
   <tr>
