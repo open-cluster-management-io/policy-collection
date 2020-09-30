@@ -77,7 +77,11 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td><a href="./CM-Configuration-Management/policy-cluster-network-sample.yaml">Example of Cluster Network Operator configuration:</a>  Use this policy to configure the Network of your OpenShift Cluster.</td> 
     <td>See the <a href="https://docs.openshift.com/container-platform/4.5/post_installation_configuration/network-configuration.html#nw-operator-cr_post-install-network-configuration"> OpenShift Documentation </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment</td>
     </tr>
-   <tr>
+  <tr>  
+    <td><a href="./CM-Configuration-Management/policy-deployment-sample.yaml">Example of creating a Deployment Object:</a> This example generates 5 replicas of `nginx-pods`. </td>
+    <td>See the <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"> Kubernetes Documentation </a> to learn more about Deployments.</td>
+    </tr>
+  <tr>
     <td>Contingency Planning</td>
     <td>N/A</td>
     <td>N/A</td>
