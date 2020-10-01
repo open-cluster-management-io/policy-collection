@@ -117,8 +117,8 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
   </tr>
   <tr>
     <td>System and Communications Protection</td>
-    <td>N/A</td>
-    <td>N/A</td>
+    <td><a href="./SC-System-and-Communications-Protection/policy-ocp4-certs.yaml">OpenShift Certificate Expiration Policy</a>: Monitor the OpenShift 4.x namespaces to validate certificates managed by the infrastructure are rotated as expected.</td>
+    <td>OpenShift 4</td>
   </tr>
   <tr>
     <td rowspan="2">System and Information Integrity</td>

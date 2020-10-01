@@ -3,9 +3,9 @@ kind: Policy
 metadata:
   name: policy-cert-ocp4
   annotations:
-    policy.open-cluster-management.io/standards: NIST-CSF
-    policy.open-cluster-management.io/categories: PR.DS Data Security
-    policy.open-cluster-management.io/controls: PR.DS-2 Data-in-transit
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: SC System and Communications Protection
+    policy.open-cluster-management.io/controls: SC-12 Cryptographic Key Establishment and Management
 spec:
   remediationAction: inform
   disabled: false
@@ -29,7 +29,6 @@ spec:
           - openshift-cluster-samples-operator
           - openshift-cluster-storage-operator
           - openshift-cluster-version
-          - openshift-config-managed
           - openshift-config-operator
           - openshift-console
           - openshift-console-operator
@@ -40,14 +39,8 @@ spec:
           - openshift-etcd
           - openshift-etcd-operator
           - openshift-image-registry
-          - openshift-ingress
           - openshift-ingress-operator
           - openshift-insights
-          - openshift-kube-apiserver
-          - openshift-kube-apiserver-operator
-          - openshift-kube-controller-manager
-          - openshift-kube-controller-manager-operator
-          - openshift-kube-scheduler
           - openshift-kube-scheduler-operator
           - openshift-kube-storage-version-migrator-operator
           - openshift-machine-api
@@ -57,7 +50,45 @@ spec:
           - openshift-multus
         remediationAction: inform
         minimumDuration: 400h
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: CertificatePolicy
+      metadata:
+        name: openshift-cert-policy-ingress
+      spec:
+        namespaceSelector:
+          include:
+          - openshift-ingress
+        remediationAction: inform
+        minimumDuration: 24h
         minimumCADuration: 400h
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: CertificatePolicy
+      metadata:
+        name: openshift-cert-policy-csr
+      spec:
+        namespaceSelector:
+          include:
+          - openshift-kube-apiserver-operator
+          - openshift-kube-controller-manager-operator
+        remediationAction: inform
+        minimumDuration: 400h
+        minimumCADuration: 24h
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: CertificatePolicy
+      metadata:
+        name: openshift-cert-policy-mgr
+      spec:
+        namespaceSelector:
+          include:
+          - openshift-config-managed
+          - openshift-kube-apiserver
+          - openshift-kube-scheduler
+          - openshift-kube-controller-manager
+        remediationAction: inform
+        minimumDuration: 24h
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
