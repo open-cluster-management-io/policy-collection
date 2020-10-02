@@ -1,13 +1,13 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: etcd-encryption-policy
+  name: policy-etcdencryption
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
-  remediationAction: enforce
+  remediationAction: inform
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -16,7 +16,7 @@ spec:
         metadata:
           name: enable-etcd-encryption
         spec:
-          remediationAction: enforce
+          remediationAction: inform
           severity: low
           namespaceSelector:
             exclude:
@@ -37,20 +37,20 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-etcd-encryption-policy
+  name: binding-policy-etcdencryption
 placementRef:
-  name: placement-etcd-encryption-policy
+  name: placement-policy-etcdencryption
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: etcd-encryption-policy
+- name: policy-etcdencryption
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-etcd-encryption-policy
+  name: placement-policy-etcdencryption
 spec:
   clusterConditions:
   - status: "True"
