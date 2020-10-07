@@ -167,7 +167,6 @@ spec:
                     object.  This Operator requires no additional configuration after
                     deployment, and will begin watching pods and populating `ImageManifestVulns`
                     immediately once installed.
-                  replaces: container-security-operator.v3.3.1
                   selector:
                     matchLabels:
                       alm-owner-container-security-operator: container-security-operator
