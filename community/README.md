@@ -46,6 +46,18 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
   </tr>
   <tr>
+    <td><a href="./CM-Configuration-Management/policy-gatekeeper-container-image-latest.yaml">Gatekeeper Container Image Latest Tag</a>: Gatekeeper policy to enforce containers in deployable resources do not use images with the <i>latest</i> tag</td>
+    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
+  </tr>
+  <tr>
+    <td><a href="./CM-Configuration-Management/policy-gatekeeper-container-livenessprobenotset.yaml">Gatekeeper Liveness Probe Not Set</a>: Gatekeeper policy to enforce pods have a <a href="https://docs.openshift.com/container-platform/latest/applications/application-health.html">Liveness Probe</a></td>
+    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
+  </tr>
+  <tr>
+    <td><a href="./CM-Configuration-Management/policy-gatekeeper-container-readinessprobenotset.yaml">Gatekeeper Readiness Probe Not Set</a>: Gatekeeper policy to enforce pods have a <a href="https://docs.openshift.com/container-platform/latest/applications/application-health.html">Readiness Probe</a></td>
+    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
+  </tr>
+  <tr>
     <td><a href="./CM-Configuration-Management/policy-machineconfig-chrony.yaml">MachineConfig Chrony Sample policy: </a> Use the MachineConfig Chrony policy to configure <i>/etc/chrony.conf</i> on certain machines </a>.</td> 
     <td>For more information see, <a href="https://jaosorior.dev/2019/modifying-node-configurations-in-openshift-4.x/"> Modifying node configurations in OpenShift 4.x blog</a>. <b>Note</b>: The policy requires that the managed cluster is OpenShift Container Platform.</td>
     </tr>
