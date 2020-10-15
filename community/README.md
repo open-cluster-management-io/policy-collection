@@ -29,7 +29,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>N/A</td>
   </tr>
   <tr>
-    <td rowspan="12">Configuration Management</td>
+    <td rowspan="13">Configuration Management</td>
     <td><a href="./CM-Configuration-Management/policy-trusted-container.yaml">Trusted Container policy</a>: Use the trusted container policy to detect if running pods are using trusted images.</td>
     <td><a href="https://github.com/ycao56/trusted-container-policy-controller">Trusted Container Policy Controller</a></td>
   </tr>
@@ -76,6 +76,10 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
   <tr>  
     <td><a href="./CM-Configuration-Management/policy-deployment-sample.yaml">Example of creating a deployment object:</a> This example generates 5 replicas of `nginx-pods`. </td>
     <td>See the <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"> Kubernetes Documentation </a> to learn more about Deployments.</td>
+    </tr>
+  <tr>
+    <td><a href="./CM-Configuration-Management/policy-deployment-sample.yaml">Example of a policy to configure GitHub-Authentication</a> Use this policy if you like to login in your OpenShift-Cluster using GitHub-Authentication</td> 
+    <td>See the <a href="https://docs.openshift.com/container-platform/4.5/authentication/identity_providers/configuring-github-identity-provider.html"> OpenShift Documentation </a> to learn more about how it can be configured.</td>
     </tr>
   <tr>
     <td>Contingency Planning</td>
