@@ -2,7 +2,6 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-disallowed-roles
-  namespace: default
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/categories: AC Access Control
@@ -39,7 +38,6 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: binding-policy-disallowed-roles
-  namespace: default
 placementRef:
   name: placement-policy-disallowed-roles
   kind: PlacementRule
@@ -53,7 +51,6 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-disallowed-roles
-  namespace: default
 spec:
   clusterConditions:
   - status: "True"
