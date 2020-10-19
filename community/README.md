@@ -38,27 +38,27 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td><a href="https://github.com/lumjjb/trusted-node-policy-controller">Trusted Node Policy Controller</a></td>
   </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-opa-sample.yaml">OPA Sample policy</a>: Use the Open Policy Agent (OPA) Sample policy to view an example of how an OPA policy can be created. You can also view an example of adding a <i>REGO</i> script into a ConfigMap, which is evaluated by the OPA.</td>
+    <td><a href="./CM-Configuration-Management/policy-opa-sample.yaml">OPA sample policy</a>: Use the Open Policy Agent (OPA) Sample policy to view an example of how an OPA policy can be created. You can also view an example of adding a <i>REGO</i> script into a ConfigMap, which is evaluated by the OPA.</td>
     <td>See the <a href="https://github.com/ycao56/mcm-opa">OPA example repository</a>. <b>Note</b>: OPA must be installed to use the OPA ConfigMap policy.</td>
   </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-gatekeeper-sample.yaml">Gatekeeper Sample policy</a>: Use the Gate Sample policy to view an example of how a gatekeeper policy can be applied to a managed cluster</td>
+    <td><a href="./CM-Configuration-Management/policy-gatekeeper-sample.yaml">Gatekeeper sample policy</a>: Use the Gatekeeper sample policy to view an example of how a gatekeeper policy can be applied to a managed cluster</td>
     <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
   </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-gatekeeper-container-image-latest.yaml">Gatekeeper Container Image Latest Tag</a>: Gatekeeper policy to enforce containers in deployable resources do not use images with the <i>latest</i> tag</td>
-    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
+    <td><a href="./CM-Configuration-Management/policy-gatekeeper-container-image-latest.yaml">Gatekeeper container image with the latest tag</a>: Use the Gatekeeper policy to enforce containers in deployable resources to not use images with the <i>latest</i> tag.</td>
+    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper documentation</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
   </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-gatekeeper-container-livenessprobenotset.yaml">Gatekeeper Liveness Probe Not Set</a>: Gatekeeper policy to enforce pods have a <a href="https://docs.openshift.com/container-platform/latest/applications/application-health.html">Liveness Probe</a></td>
-    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
+    <td><a href="./CM-Configuration-Management/policy-gatekeeper-container-livenessprobenotset.yaml">Gatekeeper liveness probe not set</a>: Use the Gatekeeper policy to enforce pods that have a <a href="https://docs.openshift.com/container-platform/latest/applications/application-health.html">liveness probe.</a></td>
+    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper documentation</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
   </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-gatekeeper-container-readinessprobenotset.yaml">Gatekeeper Readiness Probe Not Set</a>: Gatekeeper policy to enforce pods have a <a href="https://docs.openshift.com/container-platform/latest/applications/application-health.html">Readiness Probe</a></td>
-    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
+    <td><a href="./CM-Configuration-Management/policy-gatekeeper-container-readinessprobenotset.yaml">Gatekeeper readiness probe not set</a>: Use the Gatekeeper policy to enforce pods that have a <a href="https://docs.openshift.com/container-platform/latest/applications/application-health.html">readiness probe.</a></td>
+    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper documentation</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
   </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-machineconfig-chrony.yaml">MachineConfig Chrony Sample policy: </a> Use the MachineConfig Chrony policy to configure <i>/etc/chrony.conf</i> on certain machines </a>.</td> 
+    <td><a href="./CM-Configuration-Management/policy-machineconfig-chrony.yaml">MachineConfig Chrony sample policy: </a> Use the MachineConfig Chrony policy to configure <i>/etc/chrony.conf</i> on certain machines </a>.</td> 
     <td>For more information see, <a href="https://jaosorior.dev/2019/modifying-node-configurations-in-openshift-4.x/"> Modifying node configurations in OpenShift 4.x blog</a>. <b>Note</b>: The policy requires that the managed cluster is OpenShift Container Platform.</td>
     </tr>
   <tr>
@@ -66,7 +66,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>See the <a href="https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>. <b>Note</b>: The policy might be modified to the actual usecases </td>
     </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-egress-firewall-sample.yaml">Egress-Policy-Sample:</a> With the egress firewall you can define rules (per project) to allow or deny traffic (TCP or UDP) to the external network.</td>
+    <td><a href="./CM-Configuration-Management/policy-egress-firewall-sample.yaml">Egress sample policy:</a> With the egress firewall you can define rules (per project) to allow or deny traffic (TCP or UDP) to the external network.</td>
     <td>See the <a href="https://access.redhat.com/articles/5059881"> OpenShift Security Guide.</a> Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
     </tr>  
   <tr>
