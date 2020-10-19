@@ -30,7 +30,7 @@ Check the [CONTRIBUTING Doc](docs/CONTRIBUTING.md) on how to contribute to the r
 
 You can reach the maintainers of this project at:
 
-- [#xxx on Slack](https://slack.com/signin?redir=%2Fmessages%2Fxxx)
+- acm-contact@redhat.com
 
 **Blogs**: Read our blogs for more information and best practices for Red Hat Advanced Cluster Management for Kubernetes governance capability:
 
