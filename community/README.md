@@ -11,7 +11,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
   <tr>
     <td>Access Control</td>
     <td><a href="./AC-Access-Control/policy-roles-no-wildcards.yaml">Disallowed roles policy</a>: Use the disallowed roles policy to make sure no pods are being granted full access in violation of least privilege.</td>
-    <td>Check <a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">Using RBAC Authorization</a> to learn more about Kubernetes RBAC authorization using roles.</td>
+    <td>Check <a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">Using RBAC Authorization</a> to learn more about Kubernetes RBAC authorization.</td>
   </tr>
   <tr>
     <td>Awareness and Training</td>
