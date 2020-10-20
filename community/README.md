@@ -78,8 +78,8 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>See the <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"> Kubernetes Documentation </a> to learn more about Deployments.</td>
     </tr>
   <tr>
-    <td><a href="./CM-Configuration-Management/policy-deployment-sample.yaml">Example of a policy to configure GitHub-Authentication</a> Use this policy if you like to login in your OpenShift-Cluster using GitHub-Authentication</td> 
-    <td>See the <a href="https://docs.openshift.com/container-platform/4.5/authentication/identity_providers/configuring-github-identity-provider.html"> OpenShift Documentation </a> to learn more about how it can be configured.</td>
+    <td><a href="./CM-Configuration-Management/policy-deployment-sample.yaml">Example of a policy to configure GitHub-Authentication:</a> Use this policy to log in to your OpenShift cluster with GitHub-Authentication.</td> 
+    <td>See the OpenShift Documentation, <a href="https://docs.openshift.com/container-platform/4.5/authentication/identity_providers/configuring-github-identity-provider.html"> Configuring a GitHub or GitHub Enterprise identify provider</a> to learn more information.</td>
     </tr>
   <tr>
     <td>Contingency Planning</td>
