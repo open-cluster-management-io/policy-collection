@@ -25,25 +25,25 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
 ### Access Control
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 [Disallowed roles policy](./AC-Access-Control/policy-roles-no-wildcards.yaml) | Use the disallowed roles policy to make sure no pods are being granted full access in violation of least privilege. | Check [Using RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) to learn more about Kubernetes RBAC authorization.
 
 ### Audit and Accountability
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ### Awareness and Training
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ### Configuration Management
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 [Trusted Container policy](./CM-Configuration-Management/policy-trusted-container.yaml) | Use the trusted container policy to detect if running pods are using trusted images. | [Trusted Container Policy Controller](https://github.com/ycao56/trusted-container-policy-controller)
 [Trusted Node policy](./CM-Configuration-Management/policy-trusted-node.yaml) | Use the trusted node policy to detect if there are untrusted or unattested nodes in the cluster. | [Trusted Node Policy Controller](https://github.com/lumjjb/trusted-node-policy-controller)
 [OPA sample policy](./CM-Configuration-Management/policy-opa-sample.yaml) | Use the Open Policy Agent (OPA) Sample policy to view an example of how an OPA policy can be created. You can also view an example of adding a _REGO_ script into a ConfigMap, which is evaluated by the OPA. | See the [OPA example repository](https://github.com/ycao56/mcm-opa). **Note**: OPA must be installed to use the OPA ConfigMap policy.
@@ -63,86 +63,86 @@ Policy  | Description | Prerequisites
 ### Contingency Planning
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ### Identification and Authentication
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ### Incident Response
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ### Maintenance
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ### Media Protection
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ### Personnel Security
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ### Physical and Environmental Protection
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ### Planning
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ### Program Management
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ### Risk Assessment
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ### Security Assessment and Authorization
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ### System and Communications Protection
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 [OpenShift Certificate Expiration Policy](./SC-System-and-Communications-Protection/policy-ocp4-certs.yaml) | Monitor the OpenShift 4.x namespaces to validate that certificates managed by the infrastructure are rotated as expected. | OpenShift 4
 
 ### System and Information Integrity
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 [Falco Cloud-Native runtime security](./SI-System-and-Information-Integrity/policy-falco.yaml) | Falco parses Linux system calls from the kernel at runtime, and asserts the stream against a powerful rules engine. If a rule is violated a Falco alert is triggered. | [The Falco Project](https://falco.org/)
 [Sysdig Agent](./SI-System-and-Information-Integrity/policy-sysdig.yaml) | The Sysdig Secure DevOps Platform converges security and compliance with performance and capacity monitoring to create a secure DevOps workflow. It uses the same data to monitor and secure, so you can correlate system activity with Kubernetes services. | Check [Sysdig](https://sysdig.com/) and start a [Free Trial](https://go.sysdig.com/IBM-OpenShift-Everywhere.html)
 
 ### System and Services Acquisition
 
 Policy  | Description | Prerequisites
---------- | ----------- | -------------
+------- | ----------- | -------------
 No policies yet       |  | 
 
 ## Deploying community policies to your cluster
