@@ -29,7 +29,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>N/A</td>
   </tr>
   <tr>
-    <td rowspan="15">Configuration Management</td>
+    <td rowspan="16">Configuration Management</td>
     <td><a href="./CM-Configuration-Management/policy-trusted-container.yaml">Trusted Container policy</a>: Use the trusted container policy to detect if running pods are using trusted images.</td>
     <td><a href="https://github.com/ycao56/trusted-container-policy-controller">Trusted Container Policy Controller</a></td>
   </tr>
@@ -89,6 +89,10 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td><a href="./CM-Configuration-Management/policy-deployment-sample.yaml">Example of creating a deployment object:</a> This example generates 5 replicas of `nginx-pods`. </td>
     <td>See the <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"> Kubernetes Documentation </a> to learn more about Deployments.</td>
     </tr>
+  <tr>  
+    <td><a href="./CM-Configuration-Management/policy-compliance-operator-e8-scan.yaml">Scan your cluster with the E8 (Essential 8) security profile:</a> This example creates a ScanSettingBinding that the ComplianceOperator uses to scan the cluster for compliance with the E8 benchmark. </td>
+    <td>See the <a href="https://github.com/openshift/compliance-operator"> Compliance Operator repo </a> to learn more about the operator.</td>
+  </tr>
   <tr>
     <td>Contingency Planning</td>
     <td>N/A</td>
