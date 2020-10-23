@@ -242,7 +242,7 @@ spec:
                               configMap:
                                 name: etcd-backup-script
                                 defaultMode: 493
-                  schedule: '*/1 * * * *'
+                  schedule: '0 */6 * * *'
                   startingDeadlineSeconds: 200
                   suspend: false
           remediationAction: inform
