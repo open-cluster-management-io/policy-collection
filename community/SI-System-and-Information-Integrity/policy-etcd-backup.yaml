@@ -2,7 +2,6 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: etcd-backup
-  namespace: openshift-config
   annotations:
     policy.open-cluster-management.io/categories: NIST SP 800-53
     policy.open-cluster-management.io/controls: CM Configuration Management 
@@ -28,7 +27,6 @@ spec:
                 kind: ServiceAccount
                 metadata:
                   name: approver
-                  namespace: openshift-config
             - complianceType: musthave
               objectDefinition:
                 apiVersion: rbac.authorization.k8s.io/v1
@@ -41,7 +39,6 @@ spec:
                   kind: ClusterRole
                 subjects:
                   - name: approver
-                    namespace: openshift-config
                     kind: ServiceAccount
             - complianceType: musthave
               objectDefinition:
@@ -49,7 +46,6 @@ spec:
                 kind: PersistentVolumeClaim
                 metadata:
                   name: etcd-backup
-                  namespace: openshift-config
                 spec:
                   accessModes:
                     - ReadWriteOnce
@@ -149,14 +145,12 @@ spec:
                 kind: ConfigMap
                 metadata:
                   name: etcd-backup-script
-                  namespace: openshift-config
             - complianceType: musthave
               objectDefinition:
                 apiVersion: batch/v1beta1
                 kind: CronJob
                 metadata:
                   name: cronjob-etcd-backup
-                  namespace: openshift-config
                   labels:
                     purpose: etcd-backup
                 spec:
