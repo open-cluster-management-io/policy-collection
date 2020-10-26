@@ -25,8 +25,8 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
   </tr>
   <tr>
     <td>Security Assessment and Authorization</td>
-    <td>N/A</td>
-    <td>N/A</td>
+    <td><a href="./CA-Security-Assessment-and-Authorization/policy-compliance-operator-install-upstream.yaml">Install Upstream Compliance Operator policy</a>: Use the upstream compliance operator installation, <tt>policy-comp-operator</tt> policy, to enable continuous compliance monitoring for your cluster. After you install this operator, you must select what benchmark you want to comply to, and create an appropriate objects for the scans to be ran. </td>
+    <td><a href="https://github.com/openshift/compliance-operator">Compliance Operator</a></td>
   </tr>
   <tr>
     <td rowspan="15">Configuration Management</td>
