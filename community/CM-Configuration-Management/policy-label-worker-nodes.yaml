@@ -6,7 +6,6 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
   name: policy-clustercnf10-tag-workers
-  namespace: default
 spec:
   disabled: false
   policy-templates:
