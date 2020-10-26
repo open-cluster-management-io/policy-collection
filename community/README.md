@@ -29,7 +29,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td>N/A</td>
   </tr>
   <tr>
-    <td rowspan="15">Configuration Management</td>
+    <td rowspan="19">Configuration Management</td>
     <td><a href="./CM-Configuration-Management/policy-trusted-container.yaml">Trusted Container policy</a>: Use the trusted container policy to detect if running pods are using trusted images.</td>
     <td><a href="https://github.com/ycao56/trusted-container-policy-controller">Trusted Container Policy Controller</a></td>
   </tr>
@@ -89,6 +89,25 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td><a href="./CM-Configuration-Management/policy-deployment-sample.yaml">Example of creating a deployment object:</a> This example generates 5 replicas of `nginx-pods`. </td>
     <td>See the <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"> Kubernetes Documentation </a> to learn more about Deployments.</td>
     </tr>
+ <tr>
+    <td><a href="./CM-Configuration-Management/policy-pao-operator.yaml">Example of installing Performance Addon Operator:</a> Use this policy to install the Performance Addon Operator which provides the ability to enable advanced node performance tunings on a set of nodes.</td> 
+    <td>See the <a href="https://github.com/alosadagrande/acm-cnf/tree/master/acm-manifests/performance-operator"> ACM & Performance Addon Operator repository documentation. </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.
+  </td>
+ </tr>
+  <tr>
+    <td><a href="./CM-Configuration-Management/policy-ptp-operator.yaml">Example of installing PTP Operator:</a> Use this policy to install the Precision Time Protocol (PTP) Operator which creates and manages the linuxptp services on a set of nodes.</td> 
+    <td>See the <a href="https://github.com/alosadagrande/acm-cnf/tree/master/acm-manifests/ptp"> ACM & PTP Operator repository documentation. </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.
+  </td>
+ </tr>
+   <tr>
+    <td><a href="./CM-Configuration-Management/policy-sriov-operator.yaml">Example of installing SR-IOV Network Operator:</a> Use this policy to install the Single Root I/O Virtualization (SR-IOV) Network Operator which  manages the SR-IOV network devices and network attachments in your clusters.</td> 
+    <td>See the <a href="https://github.com/alosadagrande/acm-cnf/tree/master/acm-manifests/sriov-operator"> ACM & SR-IOV Network Operator repository documentation. </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.
+  </td>
+ </tr>
+     <td><a href="./CM-Configuration-Management/policy-label-worker-nodes.yaml">Example of labelling nodes of a cluster:</a> Use this policy to label nodes in your managed clusters. Notice you must know the name of the node or nodes to label. </td> 
+    <td>See the <a href="https://docs.openshift.com/container-platform/4.5/nodes/nodes/nodes-nodes-working.html#nodes-nodes-working-updating_nodes-nodes-working"> OpenShift Documentation. </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment. 
+  </td>
+ </tr>
   <tr>
     <td>Contingency Planning</td>
     <td>N/A</td>
