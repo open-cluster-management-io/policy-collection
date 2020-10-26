@@ -12,22 +12,22 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
 ## Security control catalog
 
 - [AC - Access Control](#access-control)
-- [AU - Audit and Accountability](#audit-and-accountability)
 - [AT - Awareness and Training](#awareness-and-training)
+- [AU - Audit and Accountability](#audit-and-accountability)
+- [CA - Security Assessment and Authorization](#security-assessment-and-authorization)
 - [CM - Configuration Management](#configuration-management)
 - [CP - Contingency Planning](#contingency-planning)
 - [IA - Identification and Authentication](#identification-and-authentication)
 - [IR - Incident Response](#incident-response)
 - [MA - Maintenance](#maintenance)
 - [MP - Media Protection](#media-protection)
-- [PS - Personnel Security](#personnel-security)
 - [PE - Physical and Environmental Protection](#physical-and-environmental-protection)
 - [PL - Planning](#planning)
+- [PS - Personnel Security](#personnel-security)
 - [RA - Risk Assessment](#risk-assessment)
-- [CA - Security Assessment and Authorization](#security-assessment-and-authorization)
+- [SA - System and Services Acquisition](#system-and-services-acquisition)
 - [SC - System and Communications Protection](#system-and-communications-protection)
 - [SI - System and Information Integrity](#system-and-information-integrity)
-- [SA - System and Services Acquisition](#system-and-services-acquisition)
 
 ### Access Control
 
@@ -35,17 +35,23 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [Disallowed roles policy](./AC-Access-Control/policy-roles-no-wildcards.yaml) | Use the disallowed roles policy to make sure no pods are being granted full access in violation of least privilege. | Check [Using RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) to learn more about Kubernetes RBAC authorization.
 
+### Awareness and Training
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
 ### Audit and Accountability
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 No policies yet       |  | 
 
-### Awareness and Training
+### Security Assessment and Authorization
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-No policies yet       |  | 
+[Install Upstream Compliance Operator policy](./CA-Security-Assessment-and-Authorization/policy-compliance-operator-install-upstream.yaml) | Use the upstream compliance operator installation, `policy-comp-operator` policy, to enable continuous compliance monitoring for your cluster. After you install this operator, you must select what benchmark you want to comply to, and create the appropriate objects for the scans to be run. | [Compliance Operator](https://github.com/openshift/compliance-operator)
 
 ### Configuration Management
 
@@ -98,11 +104,6 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 No policies yet       |  | 
 
-### Personnel Security
-
-Policy  | Description | Prerequisites
-------- | ----------- | -------------
-No policies yet       |  | 
 
 ### Physical and Environmental Protection
 
@@ -116,17 +117,23 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 No policies yet       |  | 
 
+### Personnel Security
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
 ### Risk Assessment
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 No policies yet       |  | 
 
-### Security Assessment and Authorization
+### System and Services Acquisition
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-[Install Upstream Compliance Operator policy](./CA-Security-Assessment-and-Authorization/policy-compliance-operator-install-upstream.yaml) | Use the upstream compliance operator installation, `policy-comp-operator` policy, to enable continuous compliance monitoring for your cluster. After you install this operator, you must select what benchmark you want to comply to, and create the appropriate objects for the scans to be run. | [Compliance Operator](https://github.com/openshift/compliance-operator)
+No policies yet       |  | 
 
 ### System and Communications Protection
 
@@ -140,12 +147,6 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [Falco Cloud-Native runtime security](./SI-System-and-Information-Integrity/policy-falco.yaml) | Falco parses Linux system calls from the kernel at runtime, and asserts the stream against a powerful rules engine. If a rule is violated a Falco alert is triggered. | [The Falco Project](https://falco.org/)
 [Sysdig Agent](./SI-System-and-Information-Integrity/policy-sysdig.yaml) | The Sysdig Secure DevOps Platform converges security and compliance with performance and capacity monitoring to create a secure DevOps workflow. It uses the same data to monitor and secure, so you can correlate system activity with Kubernetes services. | Check [Sysdig](https://sysdig.com/) and start a [Free Trial](https://go.sysdig.com/IBM-OpenShift-Everywhere.html)
-
-### System and Services Acquisition
-
-Policy  | Description | Prerequisites
-------- | ----------- | -------------
-No policies yet       |  | 
 
 ## Deploying community policies to your cluster
 While the policies in the [stable](../stable) folder all have out-of-the-box support installed with Red Hat Advanced Cluster Management, community policies are maintained by the open source community. You might need to deploy extra policy consumers in order for community policies to work as intended. If you are seeing the error `no matches for kind "<resource name>" in version "<group>/<version>"`, you must deploy the CustomResourceDefiniton (CRD) for the policy before you create it. If some of the policies in this folder are not behaving properly, you must deploy the corresponding policy consumers to handle them.
