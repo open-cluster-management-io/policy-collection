@@ -23,7 +23,6 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
 - [PS - Personnel Security](#personnel-security)
 - [PE - Physical and Environmental Protection](#physical-and-environmental-protection)
 - [PL - Planning](#planning)
-- [PM - Program Management](#program-management)
 - [RA - Risk Assessment](#risk-assessment)
 - [CA - Security Assessment and Authorization](#security-assessment-and-authorization)
 - [SC - System and Communications Protection](#system-and-communications-protection)
@@ -111,12 +110,6 @@ Policy  | Description | Prerequisites
 No policies yet       |  | 
 
 ### Planning
-
-Policy  | Description | Prerequisites
-------- | ----------- | -------------
-No policies yet       |  | 
-
-### Program Management
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
