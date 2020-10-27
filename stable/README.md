@@ -1,120 +1,131 @@
 # Policies -- Stable
-Policies in this folder are organized by [NIST Special Publication 800-53](https://nvd.nist.gov/800-53). NIST SP 800-53 Rev 4 also includes mapping to the ISO/IEC 27001 controls. For more information, read _Appendix H_ in [NIST.SP.800-53r4](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf).
+Policies in this folder are supported by [Red Hat Advanced Cluster Management for Kubernetes](https://www.redhat.com/en/technologies/management/advanced-cluster-management) and organized by [NIST Special Publication 800-53](https://nvd.nist.gov/800-53). NIST SP 800-53 Rev 4 also includes mapping to the ISO/IEC 27001 controls. For more information, read _Appendix H_ in [NIST.SP.800-53r4](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf).
 
 ## Security control catalog
-View a list of policies that are supported by [Red Hat Advanced Cluster Management for Kubernetes](https://www.redhat.com/en/technologies/management/advanced-cluster-management) and organized by the security control catalog.
 
-<table>
-  <tr>
-    <th>Security Control</th>
-    <th>Policies</th>
-    <th>Prerequisites</th>
-  </tr>
-  <tr>
-    <td rowspan="3">Access Control</td>
-    <td><a href="./AC-Access-Control/policy-limitclusteradmin.yaml">policy-limitclusteradmin</a></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td><a href="./AC-Access-Control/policy-role.yaml">policy-role</a></td>
-    <td></td>
-  </tr>
-    <tr>
-    <td><a href="./AC-Access-Control/policy-rolebinding.yaml">policy-rolebinding</a></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Awareness and Training</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Audit and Accountability</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Security Assessment and Authorization</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td rowspan="4">Configuration Management</td>
-    <td><a href="./CM-Configuration-Management/policy-limitmemory.yaml">policy-limitmemory</a></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-etcdencryption.yaml">policy-etcdencryption</a></td> 
-    <td>Use an encryption policy to encrypt sensitive resources such as Secrets, ConfigMaps, Routes and OAuth access tokens in your cluster. <br>See the <a href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation </a> to learn how to enable ETCD encryption post install.</td>
-  </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-namespace.yaml">policy-namespace</a></td>
-    <td></td>
-  </tr>
-    <tr>
-    <td><a href="./CM-Configuration-Management/policy-pod.yaml">policy-pod</a></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Contingency Planning</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Identification and Authentication</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Incident Response</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Maintenance</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Physical and Environmental Protection</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Planning</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Personnel Security</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Risk Assessment</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>System and Services Acquisition</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>System and Communications Protection</td>
-    <td><a href="./SC-System-and-Communications-Protection/policy-certificate.yaml">policy-certificate</a></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td rowspan="3">System and Information Integrity</td>
-    <td><a href="./SI-System-and-Information-Integrity/policy-imagemanifestvuln.yaml">policy-imagemanifestvuln</a></td><td></td>
-  </tr>
-  <tr>
-    <td><a href="./SI-System-and-Information-Integrity/policy-psp.yaml">policy-psp</a></td>
-    <td></td>
-  </tr>
-    <tr>
-    <td><a href="./SI-System-and-Information-Integrity/policy-scc.yaml">policy-scc</a></td>
-    <td></td>
-  </tr>
-</table>
+- [AC - Access Control](#access-control)
+- [AT - Awareness and Training](#awareness-and-training)
+- [AU - Audit and Accountability](#audit-and-accountability)
+- [CA - Security Assessment and Authorization](#security-assessment-and-authorization)
+- [CM - Configuration Management](#configuration-management)
+- [CP - Contingency Planning](#contingency-planning)
+- [IA - Identification and Authentication](#identification-and-authentication)
+- [IR - Incident Response](#incident-response)
+- [MA - Maintenance](#maintenance)
+- [MP - Media Protection](#media-protection)
+- [PE - Physical and Environmental Protection](#physical-and-environmental-protection)
+- [PL - Planning](#planning)
+- [PS - Personnel Security](#personnel-security)
+- [RA - Risk Assessment](#risk-assessment)
+- [SA - System and Services Acquisition](#system-and-services-acquisition)
+- [SC - System and Communications Protection](#system-and-communications-protection)
+- [SI - System and Information Integrity](#system-and-information-integrity)
+
+### Access Control
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+[policy-limitclusteradmin](./AC-Access-Control/policy-limitclusteradmin.yaml) |  |
+[policy-role](./AC-Access-Control/policy-role.yaml) |  |
+[policy-rolebinding](./AC-Access-Control/policy-rolebinding.yaml) |  |
+
+### Awareness and Training
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Audit and Accountability
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Security Assessment and Authorization
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Configuration Management
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+[policy-etcdencryption](./CM-Configuration-Management/policy-etcdencryption.yaml) | Use an encryption policy to encrypt sensitive resources such as Secrets, ConfigMaps, Routes and OAuth access tokens in your cluster.  | See the [OpenShift Documentation](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd) to learn how to enable ETCD encryption post install.
+[policy-limitmemory](./CM-Configuration-Management/policy-limitmemory.yaml) |  |
+[policy-namespace](./CM-Configuration-Management/policy-namespace.yaml) |  |
+[policy-pod](./CM-Configuration-Management/policy-pod.yaml) |  |
+
+### Contingency Planning
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Identification and Authentication
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Incident Response
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Maintenance
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Media Protection
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Physical and Environmental Protection
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Planning
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Personnel Security
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Risk Assessment
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### System and Services Acquisition
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### System and Communications Protection
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+[policy-certificate](./SC-System-and-Communications-Protection/policy-certificate.yaml) |  |
+
+### System and Information Integrity
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+[policy-imagemanifestvuln](./SI-System-and-Information-Integrity/policy-imagemanifestvuln.yaml) |  |
+[policy-psp](./SI-System-and-Information-Integrity/policy-psp.yaml) |  |
+[policy-scc](./SI-System-and-Information-Integrity/policy-scc.yaml) |  |
