@@ -1,163 +1,155 @@
 # Policies -- Community
 Policies in this folder are organized by [NIST Special Publication 800-53](https://nvd.nist.gov/800-53). NIST SP 800-53 Rev 4 also includes mapping to the ISO/IEC 27001 controls. For more information, read _Appendix H_ in [NIST.SP.800-53r4](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf).
 
+## Table of Contents
+
+- [Policy catalog (grouped by security control)](#security-control-catalog)
+- [Deploying community policies to your cluster](#deploying-community-policies-to-your-cluster)
+  - [Custom policy controllers](#custom-policy-controllers)
+  - [Policy consumers on operator hub](#policy-consumers-on-operator-hub)
+
+
 ## Security control catalog
-<table>
-  <tr>
-    <th>Security control</th>
-    <th>Policies</th>
-    <th>Prerequisites</th>
-  </tr>
-  <tr>
-    <td>Access Control</td>
-    <td><a href="./AC-Access-Control/policy-roles-no-wildcards.yaml">Disallowed roles policy</a>: Use the disallowed roles policy to make sure no pods are being granted full access in violation of least privilege.</td>
-    <td>Check <a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">Using RBAC Authorization</a> to learn more about Kubernetes RBAC authorization.</td>
-  </tr>
-  <tr>
-    <td>Awareness and Training</td>
-    <td>N/A</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>Audit and Accountability</td>
-    <td>N/A</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>Security Assessment and Authorization</td>
-    <td>N/A</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td rowspan="15">Configuration Management</td>
-    <td><a href="./CM-Configuration-Management/policy-trusted-container.yaml">Trusted Container policy</a>: Use the trusted container policy to detect if running pods are using trusted images.</td>
-    <td><a href="https://github.com/ycao56/trusted-container-policy-controller">Trusted Container Policy Controller</a></td>
-  </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-trusted-node.yaml">Trusted Node policy</a>: Use the trusted node policy to detect if there are untrusted or unattested nodes in the cluster.</td>
-    <td><a href="https://github.com/lumjjb/trusted-node-policy-controller">Trusted Node Policy Controller</a></td>
-  </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-opa-sample.yaml">OPA sample policy</a>: Use the Open Policy Agent (OPA) Sample policy to view an example of how an OPA policy can be created. You can also view an example of adding a <i>REGO</i> script into a ConfigMap, which is evaluated by the OPA.</td>
-    <td>See the <a href="https://github.com/ycao56/mcm-opa">OPA example repository</a>. <b>Note</b>: OPA must be installed to use the OPA ConfigMap policy.</td>
-  </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-gatekeeper-sample.yaml">Gatekeeper sample policy</a>: Use the Gatekeeper sample policy to view an example of how a gatekeeper policy can be applied to a managed cluster</td>
-    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
-  </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-gatekeeper-container-image-latest.yaml">Gatekeeper container image with the latest tag</a>: Use the Gatekeeper policy to enforce containers in deployable resources to not use images with the <i>latest</i> tag.</td>
-    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper documentation</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
-  </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-gatekeeper-container-livenessprobenotset.yaml">Gatekeeper liveness probe not set</a>: Use the Gatekeeper policy to enforce pods that have a <a href="https://docs.openshift.com/container-platform/latest/applications/application-health.html">liveness probe.</a></td>
-    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper documentation</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
-  </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-gatekeeper-container-readinessprobenotset.yaml">Gatekeeper readiness probe not set</a>: Use the Gatekeeper policy to enforce pods that have a <a href="https://docs.openshift.com/container-platform/latest/applications/application-health.html">readiness probe.</a></td>
-    <td>See the <a href="https://github.com/open-policy-agent/gatekeeper">Gatekeeper documentation</a>. <b>Note</b>: Gatekeeper controllers must be installed to use the gatekeeper policy.</td>
-  </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-machineconfig-chrony.yaml">MachineConfig Chrony sample policy: </a> Use the MachineConfig Chrony policy to configure <i>/etc/chrony.conf</i> on certain machines </a>.</td> 
-    <td>For more information see, <a href="https://jaosorior.dev/2019/modifying-node-configurations-in-openshift-4.x/"> Modifying node configurations in OpenShift 4.x blog</a>. <b>Note</b>: The policy requires that the managed cluster is OpenShift Container Platform.</td>
-    </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-network-policy-samples.yaml">Network-Policy-Samples:</a> Use the Network policy to specify how groups of pods are allowed to communicate with each other and other network endpoints. For examples of Network policies, see <a href="./CM-Configuration-Management/policy-network-policy-samples.yaml">Network-Policy-Samples.</a>
-    <td>See the <a href="https://access.redhat.com/articles/5059881"> OpenShift Security Guide </a>. <b>Note</b>: The policy might be modified to the actual usecases </td>
-    </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-egress-firewall-sample.yaml">Egress sample policy:</a> With the egress firewall you can define rules (per project) to allow or deny traffic (TCP or UDP) to the external network.</td>
-    <td>See the <a href="https://access.redhat.com/articles/5059881"> OpenShift Security Guide.</a> Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
-    </tr>  
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-image-policy-sample.yaml">Example to configure an image policy: </a> Use the image policy to define the repositories from where OpenShift can pull images.</td> 
-    <td>See the <a href="https://access.redhat.com/articles/5059881"> OpenShift Security Guide. </a> Use the OpenShift Security Guide to secure your OpenShift cluster. </td>
-    </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-cluster-proxy-sample.yaml">Example of configuring a cluster-wide proxy with a policy:</a> Use this policy to configure a cluster-wide proxy. </td> 
-    <td>See the <a href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd"> OpenShift Documentation. </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.</td>
-    </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-cluster-dns-sample.yaml">Example of configuring DNS with a policy:</a> Use this policy to configure DNS in your OpenShift Cluster. For example, you can remove public DNS. </td> 
-    <td>See the <a href="https://docs.openshift.com/container-platform/4.5/post_installation_configuration/network-configuration.html#private-clusters-setting-dns-private_post-install-network-configuration"> OpenShift Documentation </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.</td>
-    </tr>
-  <tr>
-    <td><a href="./CM-Configuration-Management/policy-cluster-network-sample.yaml">Example of configuring the Cluster Network Operator with a policy:</a>  Use this policy to configure the network of your OpenShift Cluster.</td> 
-    <td>See the <a href="https://docs.openshift.com/container-platform/4.5/post_installation_configuration/network-configuration.html#nw-operator-cr_post-install-network-configuration"> OpenShift Documentation. </a> This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.</td>
-    </tr>
-  <tr>  
-    <td><a href="./CM-Configuration-Management/policy-deployment-sample.yaml">Example of creating a deployment object:</a> This example generates 5 replicas of `nginx-pods`. </td>
-    <td>See the <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"> Kubernetes Documentation </a> to learn more about Deployments.</td>
-    </tr>
-  <tr>
-    <td>Contingency Planning</td>
-    <td>N/A</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>Identification and Authentication</td>
-    <td>N/A</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>Incident Response</td>
-    <td>N/A</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>Maintenance</td>
-    <td>N/A</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>Media Protection</td>
-    <td>N/A</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>Physical and Environmental Protection</td>
-    <td>N/A</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>Planning</td>
-    <td>N/A</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>Personnel Security</td>
-    <td>N/A</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>Risk Assessment</td>
-    <td>N/A</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>System and Services Acquisition</td>
-    <td>N/A</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>System and Communications Protection</td>
-    <td><a href="./SC-System-and-Communications-Protection/policy-ocp4-certs.yaml">OpenShift Certificate Expiration Policy</a>: Monitor the OpenShift 4.x namespaces to validate that certificates managed by the infrastructure are rotated as expected.</td>
-    <td>OpenShift 4</td>
-  </tr>
-  <tr>
-    <td rowspan="2">System and Information Integrity</td>
-    <td><a href="./SI-System-and-Information-Integrity/policy-falco.yaml">Falco Cloud-Native runtime security</a>: Falco parses Linux system calls from the kernel at runtime, and asserts <br>the stream against a powerful rules engine. If a rule is violated a Falco alert is triggered.</td>
-    <td><a href="https://falco.org/">The Falco Project</a></td>
-  </tr>
-  <tr>
-    <td><a href="./SI-System-and-Information-Integrity/policy-sysdig.yaml">Sysdig Agent</a>: The Sysdig Secure DevOps Platform converges security and compliance with performance and capacity monitoring <br> to create a secure DevOps workflow. It uses the same data to monitor and secure, so you can correlate system activity with Kubernetes services.</td>
-    <td>Check <a href="https://sysdig.com/">Sysdig</a> and start a <a href="https://go.sysdig.com/IBM-OpenShift-Everywhere.html">Free Trial</a></td>
-  </tr>
-  <tr>
-    <td><a href="./SI-System-and-Information-Integrity/policy-etcd-backup.yaml">Backup ETCD on default storage class</a>: The policy uses the etcd container image because it contains all required tools like etcdctl. It uses the shell command which will be executed by the pod. In this case, it is running the etcd backup and keeps the last 6 backup snapshots.</td>
-    <td>OpenShift 4 with default storage class</td>
-  </tr>
-</table>
+
+- [AC - Access Control](#access-control)
+- [AT - Awareness and Training](#awareness-and-training)
+- [AU - Audit and Accountability](#audit-and-accountability)
+- [CA - Security Assessment and Authorization](#security-assessment-and-authorization)
+- [CM - Configuration Management](#configuration-management)
+- [CP - Contingency Planning](#contingency-planning)
+- [IA - Identification and Authentication](#identification-and-authentication)
+- [IR - Incident Response](#incident-response)
+- [MA - Maintenance](#maintenance)
+- [MP - Media Protection](#media-protection)
+- [PE - Physical and Environmental Protection](#physical-and-environmental-protection)
+- [PL - Planning](#planning)
+- [PS - Personnel Security](#personnel-security)
+- [RA - Risk Assessment](#risk-assessment)
+- [SA - System and Services Acquisition](#system-and-services-acquisition)
+- [SC - System and Communications Protection](#system-and-communications-protection)
+- [SI - System and Information Integrity](#system-and-information-integrity)
+
+### Access Control
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+[Disallowed roles policy](./AC-Access-Control/policy-roles-no-wildcards.yaml) | Use the disallowed roles policy to make sure no pods are being granted full access in violation of least privilege. | Check [Using RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) to learn more about Kubernetes RBAC authorization.
+
+### Awareness and Training
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Audit and Accountability
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Security Assessment and Authorization
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+[Install Upstream Compliance Operator policy](./CA-Security-Assessment-and-Authorization/policy-compliance-operator-install-upstream.yaml) | Use the upstream compliance operator installation, `policy-comp-operator` policy, to enable continuous compliance monitoring for your cluster. After you install this operator, you must select what benchmark you want to comply to, and create the appropriate objects for the scans to be run. | [Compliance Operator](https://github.com/openshift/compliance-operator)
+
+### Configuration Management
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+[Egress sample policy](./CM-Configuration-Management/policy-egress-firewall-sample.yaml) | With the egress firewall you can define rules (per-project) to allow or deny traffic (TCP-or UDP) to the external network. | See the [OpenShift Security Guide.](https://access.redhat.com/articles/5059881) Use the OpenShift Security Guide to secure your OpenShift cluster.
+[Example of configuring a cluster-wide proxy with a policy](./CM-Configuration-Management/policy-cluster-proxy-sample.yaml) | Use this policy to configure a cluster-wide proxy. | See the [OpenShift Documentation.](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd) This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.
+[Example of configuring DNS with a policy](./CM-Configuration-Management/policy-cluster-dns-sample.yaml) | Use this policy to configure DNS in your OpenShift Cluster. For example, you can remove public DNS. | See the [OpenShift Documentation](https://docs.openshift.com/container-platform/4.5/post_installation_configuration/network-configuration.html#private-clusters-setting-dns-private_post-install-network-configuration) This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.
+[Example of configuring the Cluster Network Operator with a policy](./CM-Configuration-Management/policy-cluster-network-sample.yaml) | Use this policy to configure the network of your OpenShift Cluster. | See the [OpenShift Documentation.](https://docs.openshift.com/container-platform/4.5/post_installation_configuration/network-configuration.html#nw-operator-cr_post-install-network-configuration) This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.
+[Example of creating a deployment object](./CM-Configuration-Management/policy-deployment-sample.yaml) | This example generates 5 replicas of \`nginx-pods\`. | See the [Kubernetes Documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) to learn more about Deployments.
+[Example of a policy used to configure GitHub-Authentication](./CM-Configuration-Management/policy-deployment-sample.yaml) | Use this policy to log in to your OpenShift cluster with GitHub-Authentication. | See the OpenShift Documentation, [Configuring a GitHub or GitHub Enterprise identify provider](https://docs.openshift.com/container-platform/4.5/authentication/identity_providers/configuring-github-identity-provider.html) to learn more information.
+[Example to configure an image policy](./CM-Configuration-Management/policy-image-policy-sample.yaml) | Use the image policy to define the repositories from where OpenShift can pull images. | See the [OpenShift Security Guide.](https://access.redhat.com/articles/5059881) Use the OpenShift Security Guide to secure your OpenShift cluster.
+[Gatekeeper container image with the latest tag](./CM-Configuration-Management/policy-gatekeeper-container-image-latest.yaml) | Use the Gatekeeper policy to enforce containers in deployable resources to not use images with the _latest_ tag. | See the [Gatekeeper documentation](https://github.com/open-policy-agent/gatekeeper). **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy.
+[Gatekeeper liveness probe not set](./CM-Configuration-Management/policy-gatekeeper-container-livenessprobenotset.yaml) | Use the Gatekeeper policy to enforce pods that have a [liveness probe.](https://docs.openshift.com/container-platform/latest/applications/application-health.html) | See the [Gatekeeper documentation](https://github.com/open-policy-agent/gatekeeper). **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy.
+[Gatekeeper readiness probe not set](./CM-Configuration-Management/policy-gatekeeper-container-readinessprobenotset.yaml) | Use the Gatekeeper policy to enforce pods that have a [readiness probe.](https://docs.openshift.com/container-platform/latest/applications/application-health.html) | See the [Gatekeeper documentation](https://github.com/open-policy-agent/gatekeeper). **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy. 
+[Gatekeeper sample policy](./CM-Configuration-Management/policy-gatekeeper-sample.yaml) | Use the Gatekeeper sample policy to view an example of how a gatekeeper policy can be applied to a managed cluster | See the [Gatekeeper](https://github.com/open-policy-agent/gatekeeper). **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy.
+[MachineConfig Chrony sample policy](./CM-Configuration-Management/policy-machineconfig-chrony.yaml) | Use the MachineConfig Chrony policy to configure _/etc/chrony.conf_ on certain machines . | For more information see, [Modifying node configurations in OpenShift 4.x blog](https://jaosorior.dev/2019/modifying-node-configurations-in-openshift-4.x/). **Note**: The policy requires that the managed cluster is OpenShift Container Platform.
+[Network-Policy-Samples](./CM-Configuration-Management/policy-network-policy-samples.yaml) | Use the Network policy to specify how groups of pods are allowed to communicate with each other and other network endpoints. | See the [OpenShift Security Guide](https://access.redhat.com/articles/5059881). **Note**: The policy might be modified to the actual usecases.
+[OPA sample policy](./CM-Configuration-Management/policy-opa-sample.yaml) | Use the Open Policy Agent (OPA) Sample policy to view an example of how an OPA policy can be created. You can also view an example of adding a _REGO_ script into a ConfigMap, which is evaluated by the OPA. | See the [OPA example repository](https://github.com/ycao56/mcm-opa). **Note**: OPA must be installed to use the OPA ConfigMap policy.
+[Scan your cluster with the E8 (Essential 8) security profile](./CM-Configuration-Management/policy-compliance-operator-e8-scan.yaml) | This example creates a ScanSettingBinding that the ComplianceOperator uses to scan the cluster for compliance with the E8 benchmark. | See the [Compliance Operator repo](https://github.com/openshift/compliance-operator) to learn more about the operator.
+[Trusted Container policy](./CM-Configuration-Management/policy-trusted-container.yaml) | Use the trusted container policy to detect if running pods are using trusted images. | [Trusted Container Policy Controller](https://github.com/ycao56/trusted-container-policy-controller)
+[Trusted Node policy](./CM-Configuration-Management/policy-trusted-node.yaml) | Use the trusted node policy to detect if there are untrusted or unattested nodes in the cluster. | [Trusted Node Policy Controller](https://github.com/lumjjb/trusted-node-policy-controller)
+
+### Contingency Planning
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Identification and Authentication
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Incident Response
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Maintenance
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Media Protection
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+
+### Physical and Environmental Protection
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Planning
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Personnel Security
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### Risk Assessment
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### System and Services Acquisition
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+No policies yet       |  | 
+
+### System and Communications Protection
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+[OpenShift Certificate Expiration Policy](./SC-System-and-Communications-Protection/policy-ocp4-certs.yaml) | Monitor the OpenShift 4.x namespaces to validate that certificates managed by the infrastructure are rotated as expected. | OpenShift 4
+
+### System and Information Integrity
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+[Falco Cloud-Native runtime security](./SI-System-and-Information-Integrity/policy-falco.yaml) | Falco parses Linux system calls from the kernel at runtime, and asserts the stream against a powerful rules engine. If a rule is violated a Falco alert is triggered. | [The Falco Project](https://falco.org/)
+[Sysdig Agent](./SI-System-and-Information-Integrity/policy-sysdig.yaml) | The Sysdig Secure DevOps Platform converges security and compliance with performance and capacity monitoring to create a secure DevOps workflow. It uses the same data to monitor and secure, so you can correlate system activity with Kubernetes services. | Check [Sysdig](https://sysdig.com/) and start a [Free Trial](https://go.sysdig.com/IBM-OpenShift-Everywhere.html).
+[ETCD Backup](./SI-System-and-Information-Integrity/policy-backup-etcd.yaml) | The policy uses the etcd container image because it contains all required tools like etcdctl. It uses the shell command which will be executed by the pod. In this case, it is running the etcd backup and keeps the last 6 backup snapshots. | OpenShift 4 with default storage class
+
 
 ## Deploying community policies to your cluster
 While the policies in the [stable](../stable) folder all have out-of-the-box support installed with Red Hat Advanced Cluster Management, community policies are maintained by the open source community. You might need to deploy extra policy consumers in order for community policies to work as intended. If you are seeing the error `no matches for kind "<resource name>" in version "<group>/<version>"`, you must deploy the CustomResourceDefiniton (CRD) for the policy before you create it. If some of the policies in this folder are not behaving properly, you must deploy the corresponding policy consumers to handle them.
