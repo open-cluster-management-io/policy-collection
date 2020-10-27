@@ -126,6 +126,6 @@ Policy  | Description | Prerequisites
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-[policy-imagemanifestvuln](./SI-System-and-Information-Integrity/policy-imagemanifestvuln.yaml) | Detect vulnerabilities in container images. (Leverages the [Container Security Operator](https://github.com/quay/container-security-operator) and installs it on the managed cluster if not already present.) |
+[policy-imagemanifestvuln](./SI-System-and-Information-Integrity/policy-imagemanifestvuln.yaml) | Detect vulnerabilities in container images. Leverages the [Container Security Operator](https://github.com/quay/container-security-operator) and installs it on the managed cluster if not already present. |
 [policy-psp](./SI-System-and-Information-Integrity/policy-psp.yaml) | Ensure a Pod Security Policy exists as specified |
 [policy-scc](./SI-System-and-Information-Integrity/policy-scc.yaml) | Ensure a Security Context Constraint exists as specified |
