@@ -22,6 +22,8 @@ spec:
           remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
           minimumDuration: 300h
+          maximumDuration: 9000h
+          disallowedSANPattern: "[\\*]"
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
