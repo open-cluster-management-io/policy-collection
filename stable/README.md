@@ -25,9 +25,9 @@ Policies in this folder are supported by [Red Hat Advanced Cluster Management fo
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-[policy-limitclusteradmin](./AC-Access-Control/policy-limitclusteradmin.yaml) |  |
-[policy-role](./AC-Access-Control/policy-role.yaml) |  |
-[policy-rolebinding](./AC-Access-Control/policy-rolebinding.yaml) |  |
+[policy-limitclusteradmin](./AC-Access-Control/policy-limitclusteradmin.yaml) | Limit the number of cluster administrator Openshift users |
+[policy-role](./AC-Access-Control/policy-role.yaml) | Ensure a role exists with permissions as specified |
+[policy-rolebinding](./AC-Access-Control/policy-rolebinding.yaml) | Ensure an entity is bound to a particular role |
 
 ### Awareness and Training
 
@@ -52,9 +52,9 @@ No policies yet       |  |
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [policy-etcdencryption](./CM-Configuration-Management/policy-etcdencryption.yaml) | Use an encryption policy to encrypt sensitive resources such as Secrets, ConfigMaps, Routes and OAuth access tokens in your cluster.  | See the [OpenShift Documentation](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd) to learn how to enable ETCD encryption post install.
-[policy-limitmemory](./CM-Configuration-Management/policy-limitmemory.yaml) |  |
-[policy-namespace](./CM-Configuration-Management/policy-namespace.yaml) |  |
-[policy-pod](./CM-Configuration-Management/policy-pod.yaml) |  |
+[policy-limitmemory](./CM-Configuration-Management/policy-limitmemory.yaml) | Ensure resource limits are in place as specified |
+[policy-namespace](./CM-Configuration-Management/policy-namespace.yaml) | Ensure a namespace exists as specified |
+[policy-pod](./CM-Configuration-Management/policy-pod.yaml) | Ensure a pod exists as specified |
 
 ### Contingency Planning
 
@@ -120,12 +120,12 @@ No policies yet       |  |
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-[policy-certificate](./SC-System-and-Communications-Protection/policy-certificate.yaml) |  |
+[policy-certificate](./SC-System-and-Communications-Protection/policy-certificate.yaml) | Ensure certificates are not expiring within a given minimum timeframe |
 
 ### System and Information Integrity
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-[policy-imagemanifestvuln](./SI-System-and-Information-Integrity/policy-imagemanifestvuln.yaml) |  |
-[policy-psp](./SI-System-and-Information-Integrity/policy-psp.yaml) |  |
-[policy-scc](./SI-System-and-Information-Integrity/policy-scc.yaml) |  |
+[policy-imagemanifestvuln](./SI-System-and-Information-Integrity/policy-imagemanifestvuln.yaml) | Detect vulnerabilities in container images. (Leverages the [Container Security Operator](https://github.com/quay/container-security-operator) and installs it on the managed cluster if not already present.) |
+[policy-psp](./SI-System-and-Information-Integrity/policy-psp.yaml) | Ensure a Pod Security Policy exists as specified |
+[policy-scc](./SI-System-and-Information-Integrity/policy-scc.yaml) | Ensure a Security Context Constraint exists as specified |
