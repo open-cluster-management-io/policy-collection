@@ -153,6 +153,10 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
     <td><a href="./SI-System-and-Information-Integrity/policy-sysdig.yaml">Sysdig Agent</a>: The Sysdig Secure DevOps Platform converges security and compliance with performance and capacity monitoring <br> to create a secure DevOps workflow. It uses the same data to monitor and secure, so you can correlate system activity with Kubernetes services.</td>
     <td>Check <a href="https://sysdig.com/">Sysdig</a> and start a <a href="https://go.sysdig.com/IBM-OpenShift-Everywhere.html">Free Trial</a></td>
   </tr>
+  <tr>
+    <td><a href="./SI-System-and-Information-Integrity/policy-etcd-backup.yaml">Backup ETCD on default storage class</a>: The policy uses the etcd container image because it contains all required tools like etcdctl. It uses the shell command which will be executed by the pod. In this case, it is running the etcd backup and keeps the last 6 backup snapshots.</td>
+    <td>OpenShift 4 with default storage class</td>
+  </tr>
 </table>
 
 ## Deploying community policies to your cluster
