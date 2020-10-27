@@ -148,7 +148,7 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [Falco Cloud-Native runtime security](./SI-System-and-Information-Integrity/policy-falco.yaml) | Falco parses Linux system calls from the kernel at runtime, and asserts the stream against a powerful rules engine. If a rule is violated a Falco alert is triggered. | [The Falco Project](https://falco.org/)
 [Sysdig Agent](./SI-System-and-Information-Integrity/policy-sysdig.yaml) | The Sysdig Secure DevOps Platform converges security and compliance with performance and capacity monitoring to create a secure DevOps workflow. It uses the same data to monitor and secure, so you can correlate system activity with Kubernetes services. | Check [Sysdig](https://sysdig.com/) and start a [Free Trial](https://go.sysdig.com/IBM-OpenShift-Everywhere.html).
-[ETCD Backup](./SI-System-and-Information-Integrity/policy-backup-etcd.yaml) | The policy uses the etcd container image because it contains all required tools like etcdctl. It uses the shell command which will be executed by the pod. In this case, it is running the etcd backup and keeps the last 6 backup snapshots. | OpenShift 4 with default storage class
+[ETCD Backup](./SI-System-and-Information-Integrity/policy-backup-etcd.yaml) | Use the ETCD Backup policy to receive the last six backup snapshots for etcd. This policy uses the etcd container image in the policy because it contains all required tools like etcdctl. | For more information, see [OpenShift 4 with default storage class](https://docs.openshift.com/container-platform/4.5/storage/dynamic-provisioning.html). 
 
 
 ## Deploying community policies to your cluster
