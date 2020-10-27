@@ -246,20 +246,20 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-disallowed-roles
+  name: binding-policy-etcd-backup
 placementRef:
-  name: placement-policy-disallowed-roles
+  name: binding-policy-etcd-backup
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-disallowed-roles
+- name: policy-etcd-backup
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-disallowed-roles
+  name: placement-policy-etcd-backup
 spec:
   clusterConditions:
   - status: "True"
