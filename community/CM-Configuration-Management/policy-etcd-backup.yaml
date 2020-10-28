@@ -1,7 +1,7 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: etcd-backup
+  name: policy-etcd-backup
   annotations:
     policy.open-cluster-management.io/categories: NIST SP 800-53
     policy.open-cluster-management.io/controls: CM Configuration Management 
@@ -248,7 +248,7 @@ kind: PlacementBinding
 metadata:
   name: binding-policy-etcd-backup
 placementRef:
-  name: binding-policy-etcd-backup
+  name: placement-policy-etcd-backup
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
