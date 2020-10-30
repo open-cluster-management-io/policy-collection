@@ -394,6 +394,26 @@ spec:
                           - DaemonSet
                           - Deployment
                           - StatefulSet
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-admission-latest
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: v1
+                kind: Event
+                metadata:
+                  namespace: gatekeeper-system
+                  annotations:
+                    constraint_action: deny
+                    constraint_kind: ContainerImageLatest
+                    constraint_name: containerimagelatest
+                    event_type: violation
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
