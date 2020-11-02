@@ -398,6 +398,24 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
+          name: policy-gatekeeper-audit-latest
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: constraints.gatekeeper.sh/v1beta1
+                kind: ContainerImageLatest
+                metadata:
+                  name: containerimagelatest
+                status:
+                  totalViolations: 0
+                  violations: []
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
           name: policy-gatekeeper-admission-latest
         spec:
           remediationAction: inform # will be overridden by remediationAction in parent policy
