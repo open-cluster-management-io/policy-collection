@@ -394,6 +394,44 @@ spec:
                           - DaemonSet
                           - Deployment
                           - StatefulSet
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-audit-readiness
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: constraints.gatekeeper.sh/v1beta1
+                kind: ContainerReadinessprobeNotset
+                metadata:
+                  name: containerreadinessprobenotset
+                status:
+                  totalViolations: 0
+                  violations: []
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-admission-readiness
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: v1
+                kind: Event
+                metadata:
+                  namespace: gatekeeper-system
+                  annotations:
+                    constraint_action: deny
+                    constraint_kind: ContainerReadinessprobeNotset
+                    constraint_name: containerreadinessprobenotset
+                    event_type: violation
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
