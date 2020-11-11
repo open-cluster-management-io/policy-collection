@@ -1,0 +1,148 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: sample-network-policy-99
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: allow-http-and-https
+        spec:
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: networking.k8s.io/v1
+                kind: NetworkPolicy
+                metadata:
+                  name: allow-http-and-https
+                spec:
+                  ingress:
+                    - ports:
+                        - port: 80
+                          protocol: TCP
+                        - port: 443
+                          protocol: TCP
+                  podSelector:
+                    matchLabels:
+                      role: frontend
+          remediationAction: enforce
+          severity: low
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: deny-all
+        spec:
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: networking.k8s.io/v1
+                kind: NetworkPolicy
+                metadata:
+                  name: deny-all
+                spec:
+                  podSelector:
+                    ingress: []
+          severity: low
+          remediationAction: enforce
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: allow-same-namespace
+        spec:
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: networking.k8s.io/v1
+                kind: NetworkPolicy
+                metadata:
+                  name: allow-same-namespace
+                spec:
+                  podSelector:
+                    ingress:
+                      - from:
+                          - podSelector: {}
+          severity: low
+          remediationAction: enforce
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: allow-pod-and-namespace-both
+        spec:
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: networking.k8s.io/v1
+                kind: NetworkPolicy
+                metadata:
+                  name: allow-pod-and-namespace-both
+                spec:
+                  podSelector:
+                    matchLabels: 
+                      name: test-pods
+                  ingress:
+                    - from:
+                      - namespaceSelector: 
+                          matchLabels: 
+                            project: project_name
+                        podSelector:
+                          matchLabels: 
+                            name: test-pods
+              severity: low
+              remediationAction: enforce
+  remediationAction: enforce
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-sample-network-policy
+placementRef:
+  name: placement-sample-network-policy
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: sample-network-policy-99
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-sample-network-policy
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
+

@@ -1,0 +1,63 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-rolebinding
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-rolebinding-example
+        spec:
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: high
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["default"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: RoleBinding # role binding must exist
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: sample-rolebinding
+                subjects:
+                - kind: User
+                  name: admin # Name is case sensitive
+                  apiGroup: rbac.authorization.k8s.io
+                roleRef:
+                  kind: Role #this must be Role or ClusterRole
+                  name: operator # this must match the name of the Role or ClusterRole you wish to bind to
+                  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-rolebinding
+placementRef:
+  name: placement-policy-rolebinding
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-rolebinding
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-rolebinding
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
