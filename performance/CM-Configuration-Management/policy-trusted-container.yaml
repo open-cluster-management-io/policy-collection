@@ -46,4 +46,4 @@ spec:
     type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}
+      - {key: vendor, operator: In, values: ["OpenShift"]}
