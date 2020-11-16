@@ -7,7 +7,6 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
-  remediationAction: enforce
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -16,7 +15,7 @@ spec:
         metadata:
           name: policy-gatekeeper-k8srequiredlabels
         spec:
-          remediationAction: enforce
+          remediationAction: enforce # will be overridden by remediationAction in parent policy
           severity: low
           object-templates:
             - complianceType: musthave
@@ -61,6 +60,44 @@ spec:
                         kinds: ["Namespace"]
                   parameters:
                     labels: ["gatekeeper"]
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-audit
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: constraints.gatekeeper.sh/v1beta1
+                kind: K8sRequiredLabels
+                metadata:
+                  name: ns-must-have-gk
+                status:
+                  totalViolations: 0
+                  violations: []
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-admission
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: v1
+                kind: Event
+                metadata:
+                  namespace: gatekeeper-system
+                  annotations:
+                    constraint_action: deny
+                    constraint_kind: K8sRequiredLabels
+                    constraint_name: ns-must-have-gk
+                    event_type: violation
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
