@@ -62,7 +62,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: compliance-remeidation-e8
+          name: compliance-remediation-e8
         spec:
           remediationAction: inform
           severity: low
