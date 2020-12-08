@@ -49,7 +49,7 @@ spec:
           remediationAction: inform
           severity: low
           object-templates:
-            - complianceType: musthave # this template checks if scan is complete
+            - complianceType: musthave # this template checks if scan is complete by checking the status field
               objectDefinition:
                 apiVersion: compliance.openshift.io/v1alpha1
                 kind: ComplianceSuite
@@ -67,7 +67,7 @@ spec:
           remediationAction: inform
           severity: low
           object-templates:
-            - complianceType: mustnothave # this template checks for ComplianceRemediation for scan suite: e8
+            - complianceType: mustnothave # this template checks for ComplianceRemediation CRs for scan suite: e8
               objectDefinition:
                 apiVersion: compliance.openshift.io/v1alpha1
                 kind: ComplianceRemediation
