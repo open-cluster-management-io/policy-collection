@@ -22,7 +22,7 @@ spec:
           remediationAction: inform
           severity: high
           object-templates:
-            - complianceType: musthave # this template creates ScanSettingBinding
+            - complianceType: musthave # this template creates ScanSettingBinding e8
               objectDefinition:
                 apiVersion: compliance.openshift.io/v1alpha1
                 kind: ScanSettingBinding
