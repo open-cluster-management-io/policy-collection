@@ -20,7 +20,7 @@ spec:
           name: compliance-e8-scan
         spec:
           remediationAction: inform
-          severity: low
+          severity: high
           object-templates:
             - complianceType: musthave # this template creates ScanSettingBinding
               objectDefinition:
@@ -47,7 +47,7 @@ spec:
           name: compliance-suite-e8
         spec:
           remediationAction: inform
-          severity: low
+          severity: high
           object-templates:
             - complianceType: musthave # this template checks if scan is complete by checking the status field
               objectDefinition:
@@ -65,7 +65,7 @@ spec:
           name: compliance-remediation-e8
         spec:
           remediationAction: inform
-          severity: low
+          severity: high
           object-templates:
             - complianceType: mustnothave # this template checks for ComplianceRemediation CRs for scan suite: e8
               objectDefinition:
