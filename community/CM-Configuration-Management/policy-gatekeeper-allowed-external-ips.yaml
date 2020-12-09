@@ -106,20 +106,20 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-gatekeeper-allowed-ip
+  name: binding-policy-gatekeeper-allowed-external-ips
 placementRef:
-  name: placement-policy-gatekeeper-allowed-ip
+  name: placement-policy-gatekeeper-allowed-external-ips
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-gatekeeper-allowed-ip
+- name: policy-gatekeeper-allowed-external-ips
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-gatekeeper-allowed-ip
+  name: placement-policy-gatekeeper-allowed-external-ips
 spec:
   clusterConditions:
   - status: "True"
