@@ -32,7 +32,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: enable-etcd-encryption-status
+          name: enable-etcd-encryption-status-kubeapi
         spec:
           remediationAction: inform
           severity: low
