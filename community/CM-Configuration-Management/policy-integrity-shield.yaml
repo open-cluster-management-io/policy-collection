@@ -7,7 +7,7 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-5 Access Restrictions for Change
 spec:
-  remediationAction: enforce
+  remediationAction: inform
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -18,9 +18,6 @@ spec:
         spec:
           remediationAction: enforce
           severity: High
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["default"]
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -61,7 +58,7 @@ spec:
                 apiVersion: operators.coreos.com/v1alpha1
                 kind: CatalogSource
                 metadata:
-                  name: integrity-operator-catalog
+                  name: integrity-shield-operator-catalog
                   namespace: openshift-marketplace
                 spec:
                   displayName: Integrity Shield Operator
@@ -79,9 +76,6 @@ spec:
         spec:
           remediationAction: enforce
           severity: high
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["*"]
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -94,7 +88,7 @@ spec:
                   channel: alpha
                   installPlanApproval: Automatic
                   name: integrity-shield-operator
-                  source: integrity-operator-catalog
+                  source: integrity-shield-operator-catalog
                   sourceNamespace: openshift-marketplace
                   startingCSV: integrity-shield-operator.v0.1.0
     - objectDefinition:
@@ -105,9 +99,6 @@ spec:
         spec:
           remediationAction: enforce
           severity: high
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["integrity-shield-operator-system"]
           object-templates:
             - complianceType: mustnothave
               objectDefinition:
@@ -115,6 +106,7 @@ spec:
                 kind: IntegrityShield
                 metadata:
                   name: integrity-shield-server
+                  namespace: integrity-shield-operator-system
                 spec:
                   logger:
                     image: quay.io/open-cluster-management/integrity-shield-logging:0.1.0
