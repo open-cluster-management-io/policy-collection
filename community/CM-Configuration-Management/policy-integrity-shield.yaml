@@ -100,7 +100,7 @@ spec:
           remediationAction: enforce
           severity: high
           object-templates:
-            - complianceType: mustnothave
+            - complianceType: musthave
               objectDefinition:
                 apiVersion: apis.integrityshield.io/v1alpha1
                 kind: IntegrityShield
@@ -115,7 +115,7 @@ spec:
                   affinity: {}
                   shieldConfig:
                     verifyType: pgp # x509
-                    ivAdminUserName: "system:serviceaccount:open-cluster-management-agent-addon:klusterlet-addon-policyctrl"
+                    iShieldAdminUserName: "system:serviceaccount:open-cluster-management-agent-addon:klusterlet-addon-policyctrl"
                     inScopeNamespaceSelector:
                       include:
                         - "*"
