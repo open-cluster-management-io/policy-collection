@@ -1,5 +1,5 @@
-Deploy policies to Red Hat Advanced Cluster Management via GitOps
-
+# Deploy policies to Red Hat Advanced Cluster Management via GitOps
+```
 Prerequisites:
  - oc or kubectl CLI should be pointing to the cluster to deploy to
  - The desired cluster namespace should already exist
@@ -18,3 +18,4 @@ Usage:
                                 (Default namespace: "policies")
   -a|--name <resource-name>     Prefix for the Channel and Subscription resources
                                 (Default name: "demo-stable-policies")
+```

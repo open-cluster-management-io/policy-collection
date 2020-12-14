@@ -2,8 +2,8 @@
 
 # Display help information
 help () {
-  echo "Deploy policies to Red Hat Advanced Cluster Management via GitOps"
-  echo ""
+  echo "# Deploy policies to Red Hat Advanced Cluster Management via GitOps"
+  echo '```'
   echo "Prerequisites:"
   echo " - oc or kubectl CLI should be pointing to the cluster to deploy to"
   echo " - The desired cluster namespace should already exist"
@@ -22,6 +22,7 @@ help () {
   echo '                                (Default namespace: "policies")'
   echo "  -a|--name <resource-name>     Prefix for the Channel and Subscription resources"
   echo '                                (Default name: "demo-stable-policies")'
+  echo '```'
 }
 
 # Parse arguments
