@@ -14,21 +14,15 @@ resources:
   - subscription.yaml
 
 patchesJson6902:
-- path: dir_patch.json
-  target:
-    group: apps.open-cluster-management.io
-    version: v1
-    kind: Subscription
-    name: demo-policies
 - path: subscription_patch.json
   target:
     group: apps.open-cluster-management.io
     version: v1
     kind: Subscription
-    name: demo-policies
-- path: url_patch.json
+    name: demo-stable-policies-sub
+- path: channel_patch.json
   target:
     group: apps.open-cluster-management.io
     version: v1
     kind: Channel
-    name: deploy-stable-policies
+    name: demo-stable-policies-chan

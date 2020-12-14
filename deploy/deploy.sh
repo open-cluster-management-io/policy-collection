@@ -9,7 +9,7 @@ help () {
   echo " - The desired cluster namespace should already exist"
   echo ""
   echo "Usage:"
-  echo "  ./deploy.sh [-u <url>] [-b <branch>] [-p <path>] [-n <namespace>]"
+  echo "  ./deploy.sh [-u <url>] [-b <branch>] [-p <path>] [-n <namespace>] [-a|--name <resource-name]"
   echo ""
   echo "  -h|--help                   Display this menu"
   echo "  -u|--url <url>              URL to the Git repository"
@@ -20,6 +20,8 @@ help () {
   echo "                                (Default path: stable)"
   echo "  -n|--namespace <namespace>  Namespace on the cluster to deploy policies to (must exist already)"
   echo '                                (Default namespace: "policies")'
+  echo "  -a|--name <resource-name>     Prefix for the Channel and Subscription resources"
+  echo '                                (Default name: "demo-stable-policies")'
 }
 
 # Parse arguments
@@ -50,6 +52,11 @@ while [[ $# -gt 0 ]]; do
             NAMESPACE=${1}
             shift
             ;;
+            -a|--name)
+            shift
+            NAME=${1}
+            shift
+            ;;
             *)    # default
             echo "Invalid input: ${1}"
             exit 1
@@ -59,10 +66,12 @@ while [[ $# -gt 0 ]]; do
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
+# Display configuration and set default values if needed
 echo "Deploying policies using the following configuration:"
 echo "====================================================="
 echo "kubectl config:     $(kubectl config current-context)"
 echo "Cluster Namespace:  ${NAMESPACE:=policies}"
+echo "Resource Prefix:    ${NAME:=demo-stable-policies}"
 echo "Git URL:            ${GH_URL:=https://github.com/open-cluster-management/policy-collection.git}"
 echo "Git Branch:         ${GH_BRANCH:=master}"
 echo "Git Path:           ${GH_PATH:=stable}"
@@ -77,20 +86,30 @@ while read -r -p "Would you like to proceed (y/n)? " response; do
   esac
 done
 
-URL_CFG=$(cat "url_template.json" | sed "s%##GH_URL##%${GH_URL}%g")
-echo "$URL_CFG" > url_patch.json
-PATH_CFG=$(cat "path_template.json" | sed "s/##GH_PATH##/${GH_PATH}/g" | sed "s/##GH_BRANCH##/${GH_BRANCH}/g")
-echo "$PATH_CFG" > dir_patch.json
-SUBSCRIPTION_CFG=$(cat "subscription_template.json" | sed "s/##NAMESPACE##/${NAMESPACE}/g")
+# Populate the Channel template
+CHAN_CFG=$(cat "channel_template.json" |
+  sed "s/##NAME##/${NAME}/g" |
+  sed "s%##GH_URL##%${GH_URL}%g")
+echo "$CHAN_CFG" > channel_patch.json
+
+# Populate the Subscription template
+SUBSCRIPTION_CFG=$(cat "subscription_template.json" |
+  sed "s/##GH_PATH##/${GH_PATH}/g" |
+  sed "s/##GH_BRANCH##/${GH_BRANCH}/g" |
+  sed "s/##NAME##/${NAME}/g" |
+  sed "s/##NAMESPACE##/${NAMESPACE}/g")
 echo "$SUBSCRIPTION_CFG" > subscription_patch.json
-KUST_CFG=$(cat "kustomization_template.yaml" | sed "s/##NAMESPACE##/${NAMESPACE}/g")
+
+# Populate the Kustomize template
+KUST_CFG=$(cat "kustomization_template.yaml" | sed "s/##NAME##/${NAME}/g" | sed "s/##NAMESPACE##/${NAMESPACE}/g")
 echo "$KUST_CFG" > kustomization.yaml
 
+# Deploy the resources to the cluster
 kubectl kustomize . > resources.yaml
 kubectl apply -f resources.yaml
 
-rm dir_patch.json
-rm url_patch.json
+# Remove artifacts
+rm channel_patch.json
 rm subscription_patch.json
 rm kustomization.yaml
 rm resources.yaml
