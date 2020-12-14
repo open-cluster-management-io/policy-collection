@@ -1,16 +1,89 @@
 #!/bin/bash
 
-GH_URL=$1
-GH_PATH=$2
-NAMESPACE=$3
+# Display help information
+help () {
+  echo "Deploy policies to Red Hat Advanced Cluster Management via GitOps"
+  echo ""
+  echo "Prerequisites:"
+  echo " - oc or kubectl CLI should be pointing to the cluster to deploy to"
+  echo " - The desired cluster namespace should already exist"
+  echo ""
+  echo "Usage:"
+  echo "  ./deploy.sh [-u <url>] [-b <branch>] [-p <path>] [-n <namespace>]"
+  echo ""
+  echo "  -h|--help                   Display this menu"
+  echo "  -u|--url <url>              URL to the Git repository"
+  echo '                                (Default URL: "https://github.com/open-cluster-management/policy-collection.git")'
+  echo "  -b|--branch <branch>        Branch of the Git repository to point to"
+  echo '                                (Default branch: "master")'
+  echo "  -p|--path <path>            Path to the desired subdirectory of the Git repository"
+  echo "                                (Default path: stable)"
+  echo "  -n|--namespace <namespace>  Namespace on the cluster to deploy policies to (must exist already)"
+  echo '                                (Default namespace: "policies")'
+}
 
-URL_CFG=$(cat "url_template.json" | sed "s%##GH_URL##%${1:-https://github.com/open-cluster-management/policy-collection.git}%g")
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+        key="$1"
+        case $key in
+            -h|--help)
+            help
+            exit 0
+            ;;
+            -u|--url)
+            shift
+            GH_URL=${1}
+            shift
+            ;;
+            -b|--branch)
+            shift
+            GH_BRANCH=${1}
+            shift
+            ;;
+            -p|--path)
+            shift
+            GH_PATH=${1}
+            shift
+            ;;
+            -n|--namespace)
+            shift
+            NAMESPACE=${1}
+            shift
+            ;;
+            *)    # default
+            echo "Invalid input: ${1}"
+            exit 1
+            shift
+            ;;
+        esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+echo "Deploying policies using the following configuration:"
+echo "====================================================="
+echo "kubectl config:     $(kubectl config current-context)"
+echo "Cluster Namespace:  ${NAMESPACE:=policies}"
+echo "Git URL:            ${GH_URL:=https://github.com/open-cluster-management/policy-collection.git}"
+echo "Git Branch:         ${GH_BRANCH:=master}"
+echo "Git Path:           ${GH_PATH:=stable}"
+echo "====================================================="
+
+while read -r -p "Would you like to proceed (y/n)? " response; do
+  case "$response" in
+    Y|y|Yes|yes ) break
+                  ;;
+    N|n|No|no )   exit 1
+                  ;;
+  esac
+done
+
+URL_CFG=$(cat "url_template.json" | sed "s%##GH_URL##%${GH_URL}%g")
 echo "$URL_CFG" > url_patch.json
-PATH_CFG=$(cat "path_template.json" | sed "s/##GH_PATH##/${2:-stable}/g")
+PATH_CFG=$(cat "path_template.json" | sed "s/##GH_PATH##/${GH_PATH}/g" | sed "s/##GH_BRANCH##/${GH_BRANCH}/g")
 echo "$PATH_CFG" > dir_patch.json
-CHANNEL_CFG=$(cat "channel_template.json" | sed "s/##NAMESPACE##/${3:-policies}/g")
-echo "$CHANNEL_CFG" > channel_patch.json
-KUST_CFG=$(cat "kustomization_template.yaml" | sed "s/##NAMESPACE##/${3:-policies}/g")
+SUBSCRIPTION_CFG=$(cat "subscription_template.json" | sed "s/##NAMESPACE##/${NAMESPACE}/g")
+echo "$SUBSCRIPTION_CFG" > subscription_patch.json
+KUST_CFG=$(cat "kustomization_template.yaml" | sed "s/##NAMESPACE##/${NAMESPACE}/g")
 echo "$KUST_CFG" > kustomization.yaml
 
 kubectl kustomize . > resources.yaml
@@ -18,6 +91,6 @@ kubectl apply -f resources.yaml
 
 rm dir_patch.json
 rm url_patch.json
-rm channel_patch.json
+rm subscription_patch.json
 rm kustomization.yaml
 rm resources.yaml

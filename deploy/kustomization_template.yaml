@@ -16,10 +16,11 @@ resources:
 patchesJson6902:
 - path: dir_patch.json
   target:
+    group: apps.open-cluster-management.io
     version: v1
-    kind: ConfigMap
-    name: policies-github-path
-- path: channel_patch.json
+    kind: Subscription
+    name: demo-policies
+- path: subscription_patch.json
   target:
     group: apps.open-cluster-management.io
     version: v1
