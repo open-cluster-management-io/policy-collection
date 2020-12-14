@@ -82,7 +82,7 @@ Policy  | Description | Prerequisites
 [Trusted Container policy](./CM-Configuration-Management/policy-trusted-container.yaml) | Use the trusted container policy to detect if running pods are using trusted images. | [Trusted Container Policy Controller](https://github.com/ycao56/trusted-container-policy-controller)
 [Trusted Node policy](./CM-Configuration-Management/policy-trusted-node.yaml) | Use the trusted node policy to detect if there are untrusted or unattested nodes in the cluster. | [Trusted Node Policy Controller](https://github.com/lumjjb/trusted-node-policy-controller)
 [ETCD Backup](./CM-Configuration-Management/policy-etcd-backup.yaml) | Use the ETCD Backup policy to receive the last six backup snapshots for etcd. This policy uses the etcd container image in the policy because it contains all required tools like etcdctl. | For more information, see [OpenShift 4 with default storage class](https://docs.openshift.com/container-platform/4.5/storage/dynamic-provisioning.html).
-
+[Integrity Shield](./CM-Configuration-Management/policy-integrity-shield.yaml)| Use the Integrity Shield to protect the integrity of Kubernetes resources in a cluster (e.g. OpenShift). | See the [Integrity Shield documentation.](https://github.com/open-cluster-management/integrity-shield/blob/master/docs/ACM/README_ENABLE_ISHIELD_PROTECTION_ACM_ENV.md)
 
 ### Contingency Planning
 
