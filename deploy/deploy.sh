@@ -70,7 +70,7 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 # Display configuration and set default values if needed
 echo "Deploying policies using the following configuration:"
 echo "====================================================="
-echo "kubectl config:     $(kubectl config current-context)"
+echo "kubectl config:     $(kubectl config get-contexts | awk '/^\052/ {print $4"/"$3}')"
 echo "Cluster Namespace:  ${NAMESPACE:=policies}"
 echo "Resource Prefix:    ${NAME:=demo-stable-policies}"
 echo "Git URL:            ${GH_URL:=https://github.com/open-cluster-management/policy-collection.git}"
