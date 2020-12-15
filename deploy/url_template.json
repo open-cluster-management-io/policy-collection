@@ -1,7 +1,0 @@
-[
-    {
-        "op": "replace",
-        "path": "/spec/pathname",
-        "value": "##GH_URL##"
-    }
-]
