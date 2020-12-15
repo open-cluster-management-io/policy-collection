@@ -49,7 +49,7 @@ spec:
           remediationAction: inform
           severity: high
           object-templates:
-            - complianceType: musthave # this template checks if scan is complete by checking the status field
+            - complianceType: musthave # this template checks if scan has completed by checking the status field
               objectDefinition:
                 apiVersion: compliance.openshift.io/v1alpha1
                 kind: ComplianceSuite
