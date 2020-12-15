@@ -16,6 +16,6 @@ Usage:
                                 (Default path: stable)
   -n|--namespace <namespace>  Namespace on the cluster to deploy policies to (must exist already)
                                 (Default namespace: "policies")
-  -a|--name <resource-name>     Prefix for the Channel and Subscription resources
+  -a|--name <resource-name>   Prefix for the Channel and Subscription resources
                                 (Default name: "demo-stable-policies")
 ```

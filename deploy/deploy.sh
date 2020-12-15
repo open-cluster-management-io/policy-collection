@@ -23,7 +23,7 @@ help () {
   echo "                                (Default path: stable)"
   echo "  -n|--namespace <namespace>  Namespace on the cluster to deploy policies to (must exist already)"
   echo '                                (Default namespace: "policies")'
-  echo "  -a|--name <resource-name>     Prefix for the Channel and Subscription resources"
+  echo "  -a|--name <resource-name>   Prefix for the Channel and Subscription resources"
   echo '                                (Default name: "demo-stable-policies")'
   echo '```'
 }
