@@ -22,7 +22,7 @@ spec:
           remediationAction: inform
           severity: high
           object-templates:
-            - complianceType: musthave # this template creates ScanSettingBinding e8
+            - complianceType: musthave # this template creates ScanSettingBinding:e8
               objectDefinition:
                 apiVersion: compliance.openshift.io/v1alpha1
                 kind: ScanSettingBinding
@@ -62,18 +62,19 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: compliance-remediation-e8
+          name: compliance-suite-e8-results
         spec:
           remediationAction: inform
           severity: high
           object-templates:
-            - complianceType: mustnothave # this template checks for ComplianceRemediation CRs for scan suite: e8
+            - complianceType: mustnothave # this template reports the results for scan suite: e8 by looking at ComplianceCheckResult CRs
               objectDefinition:
                 apiVersion: compliance.openshift.io/v1alpha1
-                kind: ComplianceRemediation
+                kind: ComplianceCheckResult
                 metadata:
                   namespace: openshift-compliance
                   labels:
+                    compliance.openshift.io/check-status: FAIL
                     compliance.openshift.io/suite: e8
 ---
 apiVersion: policy.open-cluster-management.io/v1
