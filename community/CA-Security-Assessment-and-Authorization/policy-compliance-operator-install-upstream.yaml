@@ -69,9 +69,8 @@ spec:
                   name: compliance-operator
                   namespace: openshift-compliance
                 spec:
-                  selector:
-                    matchLabels:
-                      policy.open-cluster-management.io/isClusterNamespace: "true"
+                  targetNamespaces:
+                    - openshift-compliance
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
