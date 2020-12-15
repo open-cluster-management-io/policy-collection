@@ -1,0 +1,22 @@
+[
+    {
+        "op": "replace",
+        "path": "/metadata/name",
+        "value": "##NAME##-sub"
+    },
+    {
+        "op": "replace",
+        "path": "/metadata/annotations/apps.open-cluster-management.io~1git-branch",
+        "value": "##GH_BRANCH##"
+    },
+    {
+        "op": "replace",
+        "path": "/metadata/annotations/apps.open-cluster-management.io~1git-path",
+        "value": "##GH_PATH##"
+    },
+    {
+        "op": "replace",
+        "path": "/spec/channel",
+        "value": "##NAMESPACE##/##NAME##-chan"
+    }
+]

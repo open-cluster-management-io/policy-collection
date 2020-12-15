@@ -27,9 +27,9 @@ spec:
                 kind: MachineConfig
                 metadata:
                   name: 50-worker-chrony
-                spec:
                   labels:
                     machineconfiguration.openshift.io/role: worker
+                spec:
                   config:
                     ignition:
                       version: 2.2.0

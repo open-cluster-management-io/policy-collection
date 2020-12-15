@@ -1,8 +1,7 @@
 apiVersion: apps.open-cluster-management.io/v1
 kind: Channel
 metadata:
-  name: deploy-stable-policies
-  namespace: policies
+  name: demo-stable-policies-chan
 spec:
   type: GitHub
   pathname: https://github.com/open-cluster-management/policy-collection.git

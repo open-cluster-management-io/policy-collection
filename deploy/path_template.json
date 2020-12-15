@@ -1,8 +1,0 @@
-[
-    {
-        "op": "replace",
-        "path": "/data/path",
-        "value": "##GH_PATH##"
-    }
-]
-
