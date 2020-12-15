@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -o pipefail
+
 # Display help information
 help () {
   echo "# Deploy policies to Red Hat Advanced Cluster Management via GitOps"
@@ -95,14 +98,16 @@ echo "$CHAN_CFG" > channel_patch.json
 
 # Populate the Subscription template
 SUBSCRIPTION_CFG=$(cat "subscription_template.json" |
-  sed "s/##GH_PATH##/${GH_PATH}/g" |
+  sed "s%##GH_PATH##%${GH_PATH}%g" |
   sed "s/##GH_BRANCH##/${GH_BRANCH}/g" |
   sed "s/##NAME##/${NAME}/g" |
   sed "s/##NAMESPACE##/${NAMESPACE}/g")
 echo "$SUBSCRIPTION_CFG" > subscription_patch.json
 
 # Populate the Kustomize template
-KUST_CFG=$(cat "kustomization_template.yaml" | sed "s/##NAME##/${NAME}/g" | sed "s/##NAMESPACE##/${NAMESPACE}/g")
+KUST_CFG=$(cat "kustomization_template.yaml" |
+  sed "s/##NAME##/${NAME}/g" |
+  sed "s/##NAMESPACE##/${NAMESPACE}/g")
 echo "$KUST_CFG" > kustomization.yaml
 
 # Deploy the resources to the cluster
