@@ -5,27 +5,27 @@ set -o pipefail
 
 # Display help information
 help () {
-  echo "# Deploy policies to Red Hat Advanced Cluster Management via GitOps"
-  echo '```'
+  echo "Deploy policies to Red Hat Advanced Cluster Management via GitOps"
+  echo ""
   echo "Prerequisites:"
-  echo " - oc or kubectl CLI should be pointing to the cluster to deploy to"
+  echo " - oc or kubectl CLI must be pointing to the cluster to which to deploy policies"
   echo " - The desired cluster namespace should already exist"
   echo ""
   echo "Usage:"
-  echo "  ./deploy.sh [-u <url>] [-b <branch>] [-p <path>] [-n <namespace>] [-a|--name <resource-name]"
+  echo "  ./deploy.sh [-u <url>] [-b <branch>] [-p <path/to/dir>] [-n <namespace>] [-a|--name <resource-name>]"
   echo ""
   echo "  -h|--help                   Display this menu"
   echo "  -u|--url <url>              URL to the Git repository"
   echo '                                (Default URL: "https://github.com/open-cluster-management/policy-collection.git")'
   echo "  -b|--branch <branch>        Branch of the Git repository to point to"
   echo '                                (Default branch: "master")'
-  echo "  -p|--path <path>            Path to the desired subdirectory of the Git repository"
+  echo "  -p|--path <path/to/dir>     Path to the desired subdirectory of the Git repository"
   echo "                                (Default path: stable)"
   echo "  -n|--namespace <namespace>  Namespace on the cluster to deploy policies to (must exist already)"
   echo '                                (Default namespace: "policies")'
   echo "  -a|--name <resource-name>   Prefix for the Channel and Subscription resources"
   echo '                                (Default name: "demo-stable-policies")'
-  echo '```'
+  echo ""
 }
 
 # Parse arguments
