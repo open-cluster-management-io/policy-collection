@@ -2,7 +2,7 @@
 
 # Display help information
 help () {
-  echo "## Remove resources from Red Hat Advanced Cluster Management created via deploy.sh"
+  echo "## Find and remove resources from Red Hat Advanced Cluster Management created via `deploy.sh`"
   echo '```'
   echo "Prerequisites:"
   echo " - oc CLI should be pointing to the cluster to remove from"
