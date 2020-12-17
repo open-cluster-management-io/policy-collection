@@ -1,11 +1,17 @@
-# `deploy.sh`
+# Deploy policies to Red Hat Advanced Cluster Management 
 
-## Deploy policies to Red Hat Advanced Cluster Management via GitOps
+Deploy policies to Red Hat Advanced Cluster Management with the `deploy.sh` script.
+
+## Deploying policies with GitOps
+
+You must meet the following prerequisites before you deploy policies with the script:
+
+- `oc` or `kubectl` CLI must point to the cluster in which you want to deploy. 
+- The cluster that you select to deploy to must have an existing cluster namespace.
+
+View the following example on how to use the script:
+ 
 ```
-Prerequisites:
- - oc or kubectl CLI should be pointing to the cluster to deploy to
- - The desired cluster namespace should already exist
-
 Usage:
   ./deploy.sh [-u <url>] [-b <branch>] [-p <path>] [-n <namespace>] [-a|--name <resource-name]
 
@@ -22,15 +28,16 @@ Usage:
                                 (Default name: "demo-stable-policies")
 ```
 
-# `remove.sh`
+## Remove resources 
 
-## Find and remove resources from Red Hat Advanced Cluster Management created via `deploy.sh`
+Find and remove resources that are created with the `deploy.sh` script from Red Hat Advanced Cluster Management. You must meet the following prerequisites before you remove resources with the `remove.sh` script:
+
+- `oc` or `kubectl` CLI must point to the cluster in which you want to remove resources.
+- Verify that Channel and Subscription were deployed using the `deploy.sh` script. Channel and Subscription must match the pattern for `<prefix>-chan` and `<prefix>-sub)`.
+
+View the following example on how to use the script:
+
 ```
-Prerequisites:
- - oc or kubectl CLI should be pointing to the cluster to remove from
- - Channel and Subscription should have been deployed using the deploy.sh script
-   (or match the pattern <prefix>-chan and <prefix>-sub)
-
 Usage:
   ./remove.sh [-n <namespace>] [-a|--name <resource-name>]
 
@@ -38,3 +45,4 @@ Usage:
   -n|--namespace <namespace>  Namespace on the cluster that resources are located
   -a|--name <resource-name>   Prefix for the Channel and Subscription resources
 ```
+
