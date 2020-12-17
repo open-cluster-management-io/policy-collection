@@ -5,10 +5,10 @@ set -o pipefail
 
 # Display help information
 help () {
-  echo "## Find and remove resources from Red Hat Advanced Cluster Management created via `deploy.sh`"
-  echo '```'
+  echo "Find and remove resources from Red Hat Advanced Cluster Management created via deploy.sh"
+  echo ""
   echo "Prerequisites:"
-  echo " - oc or kubectl CLI should be pointing to the cluster to remove from"
+  echo " - oc or kubectl CLI should be pointing to the cluster from which to remove resources"
   echo " - Channel and Subscription should have been deployed using the deploy.sh script"
   echo "   (or match the pattern <prefix>-chan and <prefix>-sub)"
   echo ""
@@ -18,7 +18,7 @@ help () {
   echo "  -h|--help                   Display this menu"
   echo "  -n|--namespace <namespace>  Namespace on the cluster that resources are located"
   echo "  -a|--name <resource-name>   Prefix for the Channel and Subscription resources"
-  echo '```'
+  echo ""
 }
 
 # Parse through resources to find matching Subscription and Channel
@@ -83,6 +83,9 @@ fi
 
 # Print parameters to use for finding resources
 echo "====="
+echo "Searching for resources using the following configuration:"
+echo "----------------------------------------------------------"
+echo "kubectl config:  $(kubectl config get-contexts | awk '/^\052/ {print $4"/"$3}')"
 echo "Using namespace: ${NAMESPACE}"
 if [ -n "${NAME}" ]; then
   echo "Using prefix:    ${NAME}"

@@ -6,10 +6,10 @@ Deploy policies to Red Hat Advanced Cluster Management with the `deploy.sh` scri
 
 You must meet the following prerequisites before you deploy policies with the script:
 
-- Your `oc` or `kubectl` CLI must be configured and able to access the cluster that you want to deploy. 
-- You must have an existing cluster namespace  for the cluster that you select to deploy.
+- Your `oc` or `kubectl` CLI must be configured and able to access the cluster to which you want to deploy. 
+- You must have an existing cluster namespace on the cluster to which you select to deploy.
 
-View the following example on how to use the script:
+View the following guidance on how to use the script (all parameters are optional--any parameters not provided will use the defaults specified):
  
 ```
 Usage:
@@ -33,9 +33,9 @@ Usage:
 Find and remove resources that are created with the `deploy.sh` script from Red Hat Advanced Cluster Management. You must meet the following prerequisites before you remove resources with the `remove.sh` script:
 
 - Your `oc` or `kubectl` CLI must be configured and able to access to the resources that you want to remove from the cluster.
-- Verify that Channel and Subscription were deployed using the `deploy.sh` script. Channel and Subscription must match the pattern for `<prefix>-chan` and `<prefix>-sub)`.
+- Verify that Channel and Subscription were deployed using the `deploy.sh` script. Channel and Subscription must match the pattern `<prefix>-chan` and `<prefix>-sub` respectively.
 
-View the following example on how to use the script:
+View the following guidance on how to use the script (all parameters are optional--script will query the cluster for parameters not provided):
 
 ```
 Usage:

@@ -5,10 +5,10 @@ set -o pipefail
 
 # Display help information
 help () {
-  echo "## Deploy policies to Red Hat Advanced Cluster Management via GitOps"
-  echo '```'
+  echo "Deploy policies to Red Hat Advanced Cluster Management via GitOps"
+  echo ""
   echo "Prerequisites:"
-  echo " - oc or kubectl CLI should be pointing to the cluster to deploy to"
+  echo " - oc or kubectl CLI must be pointing to the cluster to which to deploy policies"
   echo " - The desired cluster namespace should already exist"
   echo ""
   echo "Usage:"
@@ -25,7 +25,7 @@ help () {
   echo '                                (Default namespace: "policies")'
   echo "  -a|--name <resource-name>   Prefix for the Channel and Subscription resources"
   echo '                                (Default name: "demo-stable-policies")'
-  echo '```'
+  echo ""
 }
 
 # Parse arguments
