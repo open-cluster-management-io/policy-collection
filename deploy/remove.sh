@@ -74,7 +74,7 @@ fi
 echo "====="
 echo "Using namespace: ${NAMESPACE}"
 if [ -n "${NAME}" ]; then
-  echo "Using prefix: ${NAME}"
+  echo "Using prefix:    ${NAME}"
 fi
 echo "====="
 
@@ -100,7 +100,7 @@ else
 fi
 
 # Check for matches and have user choose match to remove
-if [ "${#matchprefix[@]}" -ne 0 ]; then
+if [ "${#matchprefix[@]}" -ne 0 ] && [ -z "${NAME}" ]; then
   PS3='Enter the resources to remove from the list of namespace/prefix pairs: '
   echo 'NAMESPACE / RESOURCE-PREFIX:'
   select opt in "${matchprefix[@]}"; do
@@ -112,22 +112,36 @@ if [ "${#matchprefix[@]}" -ne 0 ]; then
       fi
   done
   echo "====="
-
-  # Parse matches and double check that Subscription still points to Channel
-  NAMESPACE=$(echo "${opt}" | awk -F/ '{print $1}')
-  PREFIX=$(echo "${opt}" | awk -F/ '{print $2}')
-  CHANREF=$(oc get appsub -n ${NAMESPACE} ${PREFIX}-sub -o jsonpath='{.spec.channel}')
-  if [[ "${opt}-chan" != "${CHANREF}" ]]; then
-    echo 'WARNING: The Subscription "'${PREFIX}'-sub" points to an unexpected Channel, "'${CHANREF}'".'
-    echo "Please verify this resource pair and then you can use these commands if you would like to proceed with removing them:"
-    echo "oc delete appsub -n ${NAMESPACE} ${PREFIX}-sub"
-    echo "oc delete channels -n ${NAMESPACE} ${PREFIX}-chan"
-    exit 1
-  fi
-
-  # Delete Subscription and Channel resources
-  oc delete appsub -n ${NAMESPACE} ${PREFIX}-sub
-  oc delete channels -n ${NAMESPACE} ${PREFIX}-chan
+elif [ -n "${NAME}" ]; then
+  RESOURCE=${matchprefix[@]}
 else
   echo "No deploy.sh Subscription and Channel resource pairs found."
+  exit 1
 fi
+
+# Parse matches and double check that Subscription still points to Channel
+NAMESPACE=$(echo "${RESOURCE}" | awk -F/ '{print $1}')
+PREFIX=$(echo "${RESOURCE}" | awk -F/ '{print $2}')
+CHANREF=$(oc get appsub -n ${NAMESPACE} ${PREFIX}-sub -o jsonpath='{.spec.channel}')
+if [[ "${RESOURCE}-chan" != "${CHANREF}" ]]; then
+  echo 'WARNING: The Subscription "'${PREFIX}'-sub" points to an unexpected Channel, "'${CHANREF}'".'
+  echo "Please verify this resource pair and then you can use these commands if you would like to proceed with removing them:"
+  echo "oc delete appsub -n ${NAMESPACE} ${PREFIX}-sub"
+  echo "oc delete channels -n ${NAMESPACE} ${PREFIX}-chan"
+  exit 1
+fi
+
+# Delete Subscription and Channel resources
+echo "This will delete these resources as well as resources they have deployed:"
+echo "- Channel:      ${RESOURCE}-chan"
+echo "- Subscription: ${RESOURCE}-sub"
+while read -r -p "Would you like to proceed (y/n)? " response; do
+  case "$response" in
+    Y|y|Yes|yes ) oc delete appsub -n ${NAMESPACE} ${PREFIX}-sub
+                  oc delete channels -n ${NAMESPACE} ${PREFIX}-chan
+                  break
+                  ;;
+    N|n|No|no )   exit 1
+                  ;;
+  esac
+done
