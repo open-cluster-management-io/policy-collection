@@ -13,14 +13,14 @@ View the following guidance on how to use the script (all parameters are optiona
  
 ```
 Usage:
-  ./deploy.sh [-u <url>] [-b <branch>] [-p <path>] [-n <namespace>] [-a|--name <resource-name]
+  ./deploy.sh [-u <url>] [-b <branch>] [-p <path/to/dir>] [-n <namespace>] [-a|--name <resource-name>]
 
   -h|--help                   Display this menu
   -u|--url <url>              URL to the Git repository
                                 (Default URL: "https://github.com/open-cluster-management/policy-collection.git")
   -b|--branch <branch>        Branch of the Git repository to point to
                                 (Default branch: "master")
-  -p|--path <path>            Path to the desired subdirectory of the Git repository
+  -p|--path <path/to/dir>     Path to the desired subdirectory of the Git repository
                                 (Default path: stable)
   -n|--namespace <namespace>  Namespace on the cluster to deploy policies to (must exist already)
                                 (Default namespace: "policies")
