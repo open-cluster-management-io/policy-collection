@@ -5,7 +5,7 @@ set -o pipefail
 
 # Display help information
 help () {
-  echo "# Deploy policies to Red Hat Advanced Cluster Management via GitOps"
+  echo "## Deploy policies to Red Hat Advanced Cluster Management via GitOps"
   echo '```'
   echo "Prerequisites:"
   echo " - oc CLI should be pointing to the cluster to deploy to"

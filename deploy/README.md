@@ -1,4 +1,6 @@
-# Deploy policies to Red Hat Advanced Cluster Management via GitOps
+# `deploy.sh`
+
+## Deploy policies to Red Hat Advanced Cluster Management via GitOps
 ```
 Prerequisites:
  - oc or kubectl CLI should be pointing to the cluster to deploy to
@@ -18,4 +20,21 @@ Usage:
                                 (Default namespace: "policies")
   -a|--name <resource-name>   Prefix for the Channel and Subscription resources
                                 (Default name: "demo-stable-policies")
+```
+
+# `remove.sh`
+
+## Remove resources from Red Hat Advanced Cluster Management created via deploy.sh
+```
+Prerequisites:
+ - oc CLI should be pointing to the cluster to remove from
+ - Channel and Subscription should have been deployed using the deploy.sh script
+   (or match the pattern <prefix>-chan and <prefix>-sub)
+
+Usage:
+  ./remove.sh [-n <namespace>] [-a|--name <resource-name>]
+
+  -h|--help                   Display this menu
+  -n|--namespace <namespace>  Namespace on the cluster that resources are located
+  -a|--name <resource-name>   Prefix for the Channel and Subscription resources
 ```
