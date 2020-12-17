@@ -1,11 +1,14 @@
 #! /bin/bash
 
+set -e
+set -o pipefail
+
 # Display help information
 help () {
   echo "## Find and remove resources from Red Hat Advanced Cluster Management created via `deploy.sh`"
   echo '```'
   echo "Prerequisites:"
-  echo " - oc CLI should be pointing to the cluster to remove from"
+  echo " - oc or kubectl CLI should be pointing to the cluster to remove from"
   echo " - Channel and Subscription should have been deployed using the deploy.sh script"
   echo "   (or match the pattern <prefix>-chan and <prefix>-sub)"
   echo ""
@@ -20,8 +23,8 @@ help () {
 
 # Parse through resources to find matching Subscription and Channel
 collectResources () {
-  subprefix=($(oc -n ${ns} get appsub --no-headers -o custom-columns=NAME:.metadata.name | awk '/'${NAME}'-sub$/ {print "'${ns}'/"$1}' | sed "s/-sub\$//"))
-  chanprefix=($(oc -n ${ns} get channels --no-headers -o custom-columns=NAME:.metadata.name | awk '/'${NAME}'-chan$/ {print "'${ns}'/"$1}' | sed "s/-chan\$//"))
+  subprefix=($(kubectl -n ${ns} get appsub --no-headers -o custom-columns=NAME:.metadata.name | awk '/'${NAME}'-sub$/ {print "'${ns}'/"$1}' | sed "s/-sub\$//"))
+  chanprefix=($(kubectl -n ${ns} get channels --no-headers -o custom-columns=NAME:.metadata.name | awk '/'${NAME}'-chan$/ {print "'${ns}'/"$1}' | sed "s/-chan\$//"))
   matchprefix=("${matchprefix[@]}" $(comm -1 -2 <(printf '%s\n' ${subprefix[@]}) <(printf '%s\n' ${chanprefix[@]})))
 }
 
@@ -56,21 +59,29 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 SEARCH_ALL="(Search-all-available-namespaces)"
 
 if [ -z "${NAMESPACE}" ]; then
-  PS3='Enter the namespace of the resources to remove (Option 1 searches all namespaces): '
-  options=($(echo ${SEARCH_ALL}))
-  namespaces=($(oc get projects --no-headers -o custom-columns=NAME:.metadata.name))
-  options=("${options[@]}" "${namespaces[@]}")
-  echo 'NAMESPACES:'
-  select opt in "${options[@]}"; do
-      if [[ ! -z $opt ]]; then
-          NAMESPACE=${opt}
-          break
-      else
-          echo "Invalid selection"
-      fi
-  done
+  # Check for `oc` CLI--if it exists, we can use it to iterate over available namespaces (AKA projects)
+  if [ which oc &>/dev/null ]; then
+    PS3='Enter the namespace of the resources to remove (Option 1 searches all namespaces): '
+    options=($(echo ${SEARCH_ALL}))
+    namespaces=($(oc get projects --no-headers -o custom-columns=NAME:.metadata.name))
+    options=("${options[@]}" "${namespaces[@]}")
+    echo 'NAMESPACES:'
+    select opt in "${options[@]}"; do
+        if [[ ! -z $opt ]]; then
+            NAMESPACE=${opt}
+            break
+        else
+            echo "Invalid selection"
+        fi
+    done
+  # `oc` CLI doesn't exist--use namespace from `kubectl` config
+  else
+    NAMESPACE=$(kubectl config get-contexts | awk '/^\052/ {print $5}')
+    echo "Using namespace from kubectl config."
+  fi
 fi
 
+# Print parameters to use for finding resources
 echo "====="
 echo "Using namespace: ${NAMESPACE}"
 if [ -n "${NAME}" ]; then
@@ -82,9 +93,9 @@ echo "====="
 # See if user wants to check all namespaces
 if [[ "${NAMESPACE}" == "${SEARCH_ALL}" ]]; then
   # Determine whether user has clusterwide access
-  if oc get appsub --all-namespaces &>/dev/null && oc get channels --all-namespaces &>/dev/null; then
-    subprefix=$(oc get appsub --all-namespaces --no-headers -o custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name 2>/dev/null | awk '/'${NAME}'-sub$/ {print $1"/"$2}' | sed "s/-sub\$//")
-    chanprefix=$(oc get channels --all-namespaces --no-headers -o custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name 2>/dev/null | awk '/'${NAME}'-chan$/  {print $1"/"$2}' | sed "s/-chan\$//")
+  if kubectl get appsub --all-namespaces &>/dev/null && kubectl get channels --all-namespaces &>/dev/null; then
+    subprefix=$(kubectl get appsub --all-namespaces --no-headers -o custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name 2>/dev/null | awk '/'${NAME}'-sub$/ {print $1"/"$2}' | sed "s/-sub\$//")
+    chanprefix=$(kubectl get channels --all-namespaces --no-headers -o custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name 2>/dev/null | awk '/'${NAME}'-chan$/  {print $1"/"$2}' | sed "s/-chan\$//")
     matchprefix=($(comm -1 -2 <(printf '%s\n' ${subprefix[@]}) <(printf '%s\n' ${chanprefix[@]})))
   else
     # No clusterwide access--iterate through each namespace individually
@@ -122,12 +133,12 @@ fi
 # Parse matches and double check that Subscription still points to Channel
 NAMESPACE=$(echo "${RESOURCE}" | awk -F/ '{print $1}')
 PREFIX=$(echo "${RESOURCE}" | awk -F/ '{print $2}')
-CHANREF=$(oc get appsub -n ${NAMESPACE} ${PREFIX}-sub -o jsonpath='{.spec.channel}')
+CHANREF=$(kubectl get appsub -n ${NAMESPACE} ${PREFIX}-sub -o jsonpath='{.spec.channel}')
 if [[ "${RESOURCE}-chan" != "${CHANREF}" ]]; then
   echo 'WARNING: The Subscription "'${PREFIX}'-sub" points to an unexpected Channel, "'${CHANREF}'".'
   echo "Please verify this resource pair and then you can use these commands if you would like to proceed with removing them:"
-  echo "oc delete appsub -n ${NAMESPACE} ${PREFIX}-sub"
-  echo "oc delete channels -n ${NAMESPACE} ${PREFIX}-chan"
+  echo "kubectl delete appsub -n ${NAMESPACE} ${PREFIX}-sub"
+  echo "kubectl delete channels -n ${NAMESPACE} ${PREFIX}-chan"
   exit 1
 fi
 
@@ -137,8 +148,8 @@ echo "- Channel:      ${RESOURCE}-chan"
 echo "- Subscription: ${RESOURCE}-sub"
 while read -r -p "Would you like to proceed (y/n)? " response; do
   case "$response" in
-    Y|y|Yes|yes ) oc delete appsub -n ${NAMESPACE} ${PREFIX}-sub
-                  oc delete channels -n ${NAMESPACE} ${PREFIX}-chan
+    Y|y|Yes|yes ) kubectl delete appsub -n ${NAMESPACE} ${PREFIX}-sub
+                  kubectl delete channels -n ${NAMESPACE} ${PREFIX}-chan
                   break
                   ;;
     N|n|No|no )   exit 1

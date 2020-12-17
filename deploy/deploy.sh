@@ -8,7 +8,7 @@ help () {
   echo "## Deploy policies to Red Hat Advanced Cluster Management via GitOps"
   echo '```'
   echo "Prerequisites:"
-  echo " - oc CLI should be pointing to the cluster to deploy to"
+  echo " - oc or kubectl CLI should be pointing to the cluster to deploy to"
   echo " - The desired cluster namespace should already exist"
   echo ""
   echo "Usage:"
@@ -73,7 +73,7 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 # Display configuration and set default values if needed
 echo "Deploying policies using the following configuration:"
 echo "====================================================="
-echo "oc config:          $(oc config get-contexts | awk '/^\052/ {print $4"/"$3}')"
+echo "kubectl config:     $(kubectl config get-contexts | awk '/^\052/ {print $4"/"$3}')"
 echo "Cluster Namespace:  ${NAMESPACE:=policies}"
 echo "Resource Prefix:    ${NAME:=demo-stable-policies}"
 echo "Git URL:            ${GH_URL:=https://github.com/open-cluster-management/policy-collection.git}"
@@ -111,8 +111,8 @@ KUST_CFG=$(cat "kustomization_template.yaml" |
 echo "$KUST_CFG" > kustomization.yaml
 
 # Deploy the resources to the cluster
-oc kustomize . > resources.yaml
-oc apply -f resources.yaml
+kubectl kustomize . > resources.yaml
+kubectl apply -f resources.yaml
 
 # Remove artifacts
 rm channel_patch.json

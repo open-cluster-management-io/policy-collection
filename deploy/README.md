@@ -3,7 +3,7 @@
 ## Deploy policies to Red Hat Advanced Cluster Management via GitOps
 ```
 Prerequisites:
- - oc CLI should be pointing to the cluster to deploy to
+ - oc or kubectl CLI should be pointing to the cluster to deploy to
  - The desired cluster namespace should already exist
 
 Usage:
@@ -27,7 +27,7 @@ Usage:
 ## Find and remove resources from Red Hat Advanced Cluster Management created via `deploy.sh`
 ```
 Prerequisites:
- - oc CLI should be pointing to the cluster to remove from
+ - oc or kubectl CLI should be pointing to the cluster to remove from
  - Channel and Subscription should have been deployed using the deploy.sh script
    (or match the pattern <prefix>-chan and <prefix>-sub)
 
