@@ -60,7 +60,7 @@ SEARCH_ALL="(Search-all-available-namespaces)"
 
 if [ -z "${NAMESPACE}" ]; then
   # Check for `oc` CLI--if it exists, we can use it to iterate over available namespaces (AKA projects)
-  if [ which oc &>/dev/null ]; then
+  if which oc &>/dev/null; then
     PS3='Enter the namespace of the resources to remove (Option 1 searches all namespaces): '
     options=($(echo ${SEARCH_ALL}))
     namespaces=($(oc get projects --no-headers -o custom-columns=NAME:.metadata.name))
