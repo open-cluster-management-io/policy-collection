@@ -35,7 +35,7 @@ Find and remove resources that are created with the `deploy.sh` script from Red 
 - Your `oc` or `kubectl` CLI must be configured and able to access to the resources that you want to remove from the cluster.
 - Verify that Channel and Subscription were deployed using the `deploy.sh` script. Channel and Subscription must match the pattern `<prefix>-chan` and `<prefix>-sub` respectively.
 
-View the following guidance on how to use the script (all parameters are optional--script will query the cluster for parameters not provided):
+View the following guidance on how to use the script (all parameters are optional--the script will query the cluster to get options for parameters not provided):
 
 ```
 Usage:
