@@ -24,7 +24,7 @@ Usage:
 
 # `remove.sh`
 
-## Remove resources from Red Hat Advanced Cluster Management created via `deploy.sh`
+## Find and remove resources from Red Hat Advanced Cluster Management created via `deploy.sh`
 ```
 Prerequisites:
  - oc CLI should be pointing to the cluster to remove from
