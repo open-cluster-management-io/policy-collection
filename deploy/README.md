@@ -3,7 +3,7 @@
 ## Deploy policies to Red Hat Advanced Cluster Management via GitOps
 ```
 Prerequisites:
- - oc or kubectl CLI should be pointing to the cluster to deploy to
+ - oc CLI should be pointing to the cluster to deploy to
  - The desired cluster namespace should already exist
 
 Usage:
