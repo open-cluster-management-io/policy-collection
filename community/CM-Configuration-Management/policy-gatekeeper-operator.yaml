@@ -82,7 +82,7 @@ spec:
                 name: gatekeeper-operator-sub
                 namespace: openshift-gatekeeper-operator
               spec:
-                channel: alpha
+                channel: stable
                 name: gatekeeper-operator
                 source: gatekeeper-operator
                 sourceNamespace: openshift-gatekeeper-operator
