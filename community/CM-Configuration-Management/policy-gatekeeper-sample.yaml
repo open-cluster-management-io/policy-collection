@@ -58,9 +58,9 @@ spec:
                     kinds:
                       - apiGroups: [""]
                         kinds: ["Namespace"]
-                      namespaces:
-                        - e2etestsuccess
-                        - e2etestfail
+                    namespaces:
+                      - e2etestsuccess
+                      - e2etestfail
                   parameters:
                     labels: ["gatekeeper"]
     - objectDefinition:
