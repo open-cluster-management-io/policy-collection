@@ -62,7 +62,7 @@ spec:
                   namespace: openshift-marketplace
                 spec:
                   displayName: Integrity Shield Operator
-                  image: quay.io/open-cluster-management/integrity-shield-operator-index:0.1.0
+                  image: quay.io/open-cluster-management/integrity-shield-operator-index:0.1.3
                   publisher: IBM
                   sourceType: grpc
                   updateStrategy:
@@ -90,7 +90,7 @@ spec:
                   name: integrity-shield-operator
                   source: integrity-shield-operator-catalog
                   sourceNamespace: openshift-marketplace
-                  startingCSV: integrity-shield-operator.v0.1.0
+                  startingCSV: integrity-shield-operator.v0.1.3
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -109,9 +109,9 @@ spec:
                   namespace: integrity-shield-operator-system
                 spec:
                   logger:
-                    image: quay.io/open-cluster-management/integrity-shield-logging:0.1.0
+                    image: quay.io/open-cluster-management/integrity-shield-logging:0.1.3
                   server:
-                    image: quay.io/open-cluster-management/integrity-shield-server:0.1.0
+                    image: quay.io/open-cluster-management/integrity-shield-server:0.1.3
                   affinity: {}
                   shieldConfig:
                     verifyType: pgp # x509
@@ -122,7 +122,7 @@ spec:
                       exclude:
                         - "kube-*"
                         - "openshift-*"
-                  signPolicy:
+                  signerConfig:
                     policies:
                       - namespaces:
                           - "*"
@@ -133,11 +133,12 @@ spec:
                           - "SampleSigner"
                     signers:
                       - name: "SampleSigner"
-                        secret: keyring-secret
+                        keyConfig: sample-signer-keyconfig
                         subjects:
                           - email: "signer@enterprise.com"
-                  keyRingConfigs:
-                    - name: keyring-secret
+                  keyConfig:
+                    - name: sample-signer-keyconfig
+                      secretName: keyring-secret
                   resourceSigningProfiles:
                     - name: policy-rsp
                       protectRules:
