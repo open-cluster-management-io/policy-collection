@@ -108,8 +108,6 @@ spec:
                   name: integrity-shield-server
                   namespace: integrity-shield-operator-system
                 spec:
-                  imagePullSecrets:
-                    - name: mappregkey
                   logger:
                     image: quay.io/open-cluster-management/integrity-shield-logging:0.1.3
                   server:
