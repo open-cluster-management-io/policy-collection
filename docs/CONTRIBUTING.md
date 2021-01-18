@@ -16,7 +16,7 @@ For more information, see [GitHub documentation](https://docs.github.com/en/free
 
 Learn how to create a custom policy, validate that the custom policy is added, and add your policy to the `policy-collection` repository. Complete the following steps to create a custom policy:
 
-1. Create a new branch to develop a cutom policy:
+1. Create a new branch to develop a custom policy:
    
    ```
    git checkout -b no-wildcard-roles
