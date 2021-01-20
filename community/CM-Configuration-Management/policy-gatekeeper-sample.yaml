@@ -58,6 +58,9 @@ spec:
                     kinds:
                       - apiGroups: [""]
                         kinds: ["Namespace"]
+                    namespaces:
+                      - e2etestsuccess
+                      - e2etestfail
                   parameters:
                     labels: ["gatekeeper"]
     - objectDefinition:
@@ -77,7 +80,6 @@ spec:
                   name: ns-must-have-gk
                 status:
                   totalViolations: 0
-                  violations: []
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -92,7 +94,7 @@ spec:
                 apiVersion: v1
                 kind: Event
                 metadata:
-                  namespace: gatekeeper-system
+                  namespace: openshift-gatekeeper-system # set it to the actual namespace where gatekeeper is running if different
                   annotations:
                     constraint_action: deny
                     constraint_kind: K8sRequiredLabels

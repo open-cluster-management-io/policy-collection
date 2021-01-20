@@ -1,0 +1,139 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-gatekeeper-operator
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: gatekeeper-operator-ns
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                name: openshift-gatekeeper-operator
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: gatekeeper-operator-catalog-source
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: operators.coreos.com/v1alpha1
+              kind: CatalogSource
+              metadata:
+                name: gatekeeper-operator
+                namespace: openshift-gatekeeper-operator
+              spec:
+                displayName: Gatekeeper Operator Upstream
+                publisher: github.com/font/gatekeeper-operator
+                sourceType: grpc
+                image: 'quay.io/gatekeeper/gatekeeper-operator-bundle-index:latest'
+                updateStrategy:
+                  registryPoll:
+                    interval: 45m
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: gatekeeper-operator-group
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: operators.coreos.com/v1
+              kind: OperatorGroup
+              metadata:
+                name: gatekeeper-operator
+                namespace: openshift-gatekeeper-operator
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: gatekeeper-operator-subscription
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: operators.coreos.com/v1alpha1
+              kind: Subscription
+              metadata:
+                name: gatekeeper-operator-sub
+                namespace: openshift-gatekeeper-operator
+              spec:
+                channel: stable
+                name: gatekeeper-operator
+                source: gatekeeper-operator
+                sourceNamespace: openshift-gatekeeper-operator
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: gatekeeper
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: operator.gatekeeper.sh/v1alpha1
+              kind: Gatekeeper
+              metadata:
+                name: gatekeeper
+              spec:
+                audit:
+                  logLevel: INFO
+                  replicas: 1
+                image:
+                  image: 'docker.io/openpolicyagent/gatekeeper:v3.2.2'
+                validatingWebhook: Enabled
+                webhook:
+                  emitAdmissionEvents: Enabled
+                  logLevel: INFO
+                  replicas: 2
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-gatekeeper-operator
+placementRef:
+  name: placement-policy-gatekeeper-operator
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-gatekeeper-operator
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-gatekeeper-operator
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
