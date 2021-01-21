@@ -3,11 +3,11 @@ Policies in this folder are supported by [Red Hat Advanced Cluster Management fo
 
 ## Security control catalog
 
-- [AC - Access Control](#access-control)
+- [AC - Access Control](../AC-Access-Control/README.md#access-control-policies)
 - [AT - Awareness and Training](#awareness-and-training)
 - [AU - Audit and Accountability](#audit-and-accountability)
-- [CA - Security Assessment and Authorization](#security-assessment-and-authorization)
-- [CM - Configuration Management](#configuration-management)
+- [CA - Security Assessment and Authorization](../CA-Security-Assessment-and-Authorization#security-assessment-and-authorization-policy)
+- [CM - Configuration Management](../CM-Configuration-Management#configuration-management-policies)
 - [CP - Contingency Planning](#contingency-planning)
 - [IA - Identification and Authentication](#identification-and-authentication)
 - [IR - Incident Response](#incident-response)
@@ -18,17 +18,17 @@ Policies in this folder are supported by [Red Hat Advanced Cluster Management fo
 - [PS - Personnel Security](#personnel-security)
 - [RA - Risk Assessment](#risk-assessment)
 - [SA - System and Services Acquisition](#system-and-services-acquisition)
-- [SC - System and Communications Protection](#system-and-communications-protection)
-- [SI - System and Information Integrity](#system-and-information-integrity)
+- [SC - System and Communications Protection](../SC-System-and-Communications-Protection/README.md#system-and-communications-protection)
+- [SI - System and Information Integrity](../SI-System-and-Information-Integrity/README.md#system-and-information-integrity-policies)
 
+<!--
 ### Access Control
-
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [policy-limitclusteradmin](./AC-Access-Control/policy-limitclusteradmin.yaml) | Limit the number of cluster administrator Openshift users |
 [policy-role](./AC-Access-Control/policy-role.yaml) | Ensure a role exists with permissions as specified |
 [policy-rolebinding](./AC-Access-Control/policy-rolebinding.yaml) | Ensure an entity is bound to a particular role |
-
+--->
 ### Awareness and Training
 
 Policy  | Description | Prerequisites
@@ -41,14 +41,14 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 No policies yet       |  | 
 
-### Security Assessment and Authorization
-
+<!--### Security Assessment and Authorization
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [Install Red Hat Compliance Operator policy](./CA-Security-Assessment-and-Authorization/policy-compliance-operator-install.yaml) | Use the official and supported compliance operator installation, `policy-comp-operator` policy, to enable continuous compliance monitoring for your cluster. After you install this operator, you must select what benchmark you want to comply to, and create the appropriate objects for the scans to be run. | See [Compliance Operator](https://docs.openshift.com/container-platform/4.6/security/compliance_operator/compliance-operator-understanding.html#compliance-operator-understanding) for more details.
+-->
 
-### Configuration Management
-
+<!-- looking to remove this section bc it is moved to the CM Readme. We can have the same info in both files maybe? If i continue to remove the tables then there won't be any examples on this page. Alternatively, we create a folder for each catalog with its own readme and table. The stable/README will on have only a list of the contol catalog. What are your thoughts on empty tables in the README?-->
+<!--### Configuration Management
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [Scan your cluster with the E8 (Essential 8) security profile](./CM-Configuration-Management/policy-compliance-operator-e8-scan.yaml) | This example creates a ScanSettingBinding that the ComplianceOperator uses to scan the cluster for compliance with the E8 benchmark. | See the [Compliance Operator repo](https://github.com/openshift/compliance-operator) to learn more about the operator. **Note**: Compliance operator must be installed to use this policy. See the [Compliance operator policy](./CA-Security-Assessment-and-Authorization/policy-compliance-operator-install.yaml).
@@ -56,6 +56,7 @@ Policy  | Description | Prerequisites
 [policy-limitmemory](./CM-Configuration-Management/policy-limitmemory.yaml) | Ensure resource limits are in place as specified |
 [policy-namespace](./CM-Configuration-Management/policy-namespace.yaml) | Ensure a namespace exists as specified |
 [policy-pod](./CM-Configuration-Management/policy-pod.yaml) | Ensure a pod exists as specified |
+-->
 
 ### Contingency Planning
 
@@ -117,16 +118,18 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 No policies yet       |  | 
 
+<!--
 ### System and Communications Protection
-
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [policy-certificate](./SC-System-and-Communications-Protection/policy-certificate.yaml) | Ensure certificates are not expiring within a given minimum timeframe |
+-->
 
+<!--
 ### System and Information Integrity
-
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [policy-imagemanifestvuln](./SI-System-and-Information-Integrity/policy-imagemanifestvuln.yaml) | Detect vulnerabilities in container images. Leverages the [Container Security Operator](https://github.com/quay/container-security-operator) and installs it on the managed cluster if not already present. |
 [policy-psp](./SI-System-and-Information-Integrity/policy-psp.yaml) | Ensure a Pod Security Policy exists as specified |
 [policy-scc](./SI-System-and-Information-Integrity/policy-scc.yaml) | Ensure a Security Context Constraint exists as specified |
+-->
