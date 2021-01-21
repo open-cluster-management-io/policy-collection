@@ -3,11 +3,11 @@ Policies in this folder are supported by [Red Hat Advanced Cluster Management fo
 
 ## Security control catalog
 
-- [AC - Access Control](../AC-Access-Control/README.md#access-control-policies)
+- [AC - Access Control](./AC-Access-Control/README.md#access-control-policies)
 - [AT - Awareness and Training](#awareness-and-training)
 - [AU - Audit and Accountability](#audit-and-accountability)
-- [CA - Security Assessment and Authorization](../CA-Security-Assessment-and-Authorization#security-assessment-and-authorization-policy)
-- [CM - Configuration Management](../CM-Configuration-Management#configuration-management-policies)
+- [CA - Security Assessment and Authorization](./CA-Security-Assessment-and-Authorization#security-assessment-and-authorization-policy)
+- [CM - Configuration Management](./CM-Configuration-Management#configuration-management-policies)
 - [CP - Contingency Planning](#contingency-planning)
 - [IA - Identification and Authentication](#identification-and-authentication)
 - [IR - Incident Response](#incident-response)
@@ -18,8 +18,8 @@ Policies in this folder are supported by [Red Hat Advanced Cluster Management fo
 - [PS - Personnel Security](#personnel-security)
 - [RA - Risk Assessment](#risk-assessment)
 - [SA - System and Services Acquisition](#system-and-services-acquisition)
-- [SC - System and Communications Protection](../SC-System-and-Communications-Protection/README.md#system-and-communications-protection)
-- [SI - System and Information Integrity](../SI-System-and-Information-Integrity/README.md#system-and-information-integrity-policies)
+- [SC - System and Communications Protection](./SC-System-and-Communications-Protection/README.md#system-and-communications-protection)
+- [SI - System and Information Integrity](./SI-System-and-Information-Integrity/README.md#system-and-information-integrity-policies)
 
 <!--
 ### Access Control
