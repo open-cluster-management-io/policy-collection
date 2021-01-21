@@ -5,4 +5,4 @@ View the following table list of the stable policy that is supported by [Red Hat
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-[policy-certificate](./SC-System-and-Communications-Protection/policy-certificate.yaml) | Ensure certificates are not expiring within a given minimum timeframe. |
+[policy-certificate](./policy-certificate.yaml) | Ensure certificates are not expiring within a given minimum timeframe. |
