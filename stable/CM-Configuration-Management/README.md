@@ -1,6 +1,6 @@
 # Configuration management policies
 
-Use configuration management policies maintain a consistent state for your cluster. View the following table list of the stable policies that are supported by [Red Hat Advanced Cluster Management for Kubernetes](https://www.redhat.com/en/technologies/management/advanced-cluster-management):
+Use configuration management policies maintain a consistent state for your cluster. View the following table list of the stable policies that are supported by [Red Hat Advanced Cluster Management for Kubernetes](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.1/html-single/security/index#kubernetes-configuration-policy-controller):
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
