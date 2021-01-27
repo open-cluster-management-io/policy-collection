@@ -19,7 +19,7 @@ Policies in this folder are supported by [Red Hat Advanced Cluster Management fo
 - [RA - Risk Assessment](#risk-assessment)
 - [SA - System and Services Acquisition](#system-and-services-acquisition)
 - [SC - System and Communications Protection](#system-and-communications-protection)
-- [SI - System and Information Integrity](#system-and-information-integrity-policies)
+- [SI - System and Information Integrity](#system-and-information-integrity)
 
 
 ### Access Control
