@@ -1,3 +1,8 @@
+# This policy checks if Integrity Shield has denied one or
+# more requests on the managed clusters.
+#
+# "inform" This policy will show "Not compliant" on UI when something was denied.
+
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
