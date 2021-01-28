@@ -5,7 +5,7 @@ A collection of policy examples for Open Cluster Management
 This repo hosts policies for Open Cluster Management. You can find policies from the following folders:
 
 * [stable](stable) -- Policies in the `stable` folder can be applied with [Red Hat Advanced Cluster Management for Kubernetes](https://www.redhat.com/en/technologies/management/advanced-cluster-management).
-* [community](community) -- Policies in the `community` folder are contributed from the open source community and can be applied with the product. 
+* [community](community) -- Policies in the `community` folder are contributed from the open source community and can be applied with the product governance framework. 
 
 ## Using GitOps to deploy policies to a cluster
 
