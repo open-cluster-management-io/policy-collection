@@ -1,0 +1,63 @@
+# This policy checks if Integrity Shield has denied one or
+# more requests on the managed clusters.
+#
+# "inform" This policy will show "Not compliant" on UI when something was denied.
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-integrity-shield-events
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-5 Access Restrictions for Change
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-integrity-shield-admission
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          namespaceSelector:
+            include: ["*"]
+            exclude: ["kube-*", "openshift-*"]
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: v1
+                kind: Event
+                metadata:
+                  annotations:
+                    integrityshield.io/eventType: verify-result
+                    integrityshield.io/eventResult: deny
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-integrity-shield-events
+placementRef:
+  name: placement-policy-integrity-shield-events
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-integrity-shield-events
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-integrity-shield-events
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
+
