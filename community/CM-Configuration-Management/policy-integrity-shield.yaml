@@ -1,3 +1,7 @@
+# This policy verifies the installation of Integrity Shield on the managed clusters.
+# 
+# "enforce", it will install Integirty Shield operator
+
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
