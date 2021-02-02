@@ -8,5 +8,5 @@ Policy  | Description | Prerequisites
 [Install Red Hat Compliance Operator policy](../CA-Security-Assessment-and-Authorization/policy-compliance-operator-install.yaml) | Use the official and supported compliance operator installation, `policy-comp-operator` policy, to enable continuous compliance monitoring for your cluster. After you install this operator, you must select what benchmark you want to comply to, and create the appropriate objects for the scans to be run. | See [Compliance Operator](https://docs.openshift.com/container-platform/4.6/security/compliance_operator/compliance-operator-understanding.html#compliance-operator-understanding) for more details.
 
 
-You can contribute more policies that map to the Security Assessment and Authorization control family. See [Contibuting policies](https://github.com/open-cluster-management/policy-collection/blob/master/docs/CONTRIBUTING.md) for more details.
+You can contribute more policies that map to the Security Assessment and Authorization control family. See [Contributing policies](https://github.com/open-cluster-management/policy-collection/blob/master/docs/CONTRIBUTING.md) for more details.
 <!--concerned about creating a readme for this policy, unless this policy is also supported in 2.1-->
