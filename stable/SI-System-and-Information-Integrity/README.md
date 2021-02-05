@@ -4,8 +4,8 @@ See [NIST Special Publication 800-53 (Rev. 4)](https://nvd.nist.gov/800-53/Rev4/
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-[policy-imagemanifestvuln](./SI-System-and-Information-Integrity/policy-imagemanifestvuln.yaml) | Detect vulnerabilities in container images. Leverages the [Container Security Operator](https://github.com/quay/container-security-operator) and installs it on the managed cluster if it does not exist. |
-[policy-psp](./SI-System-and-Information-Integrity/policy-psp.yaml) | Ensure a pod security policy exists as specified. |
-[policy-scc](./SI-System-and-Information-Integrity/policy-scc.yaml) | Ensure a Security Context Constraint (SCC) exists as specified. |
+[policy-imagemanifestvuln](../SI-System-and-Information-Integrity/policy-imagemanifestvuln.yaml) | Detect vulnerabilities in container images. Leverages the [Container Security Operator](https://github.com/quay/container-security-operator) and installs it on the managed cluster if it does not exist. |
+[policy-psp](../SI-System-and-Information-Integrity/policy-psp.yaml) | Ensure a pod security policy exists as specified. |
+[policy-scc](../SI-System-and-Information-Integrity/policy-scc.yaml) | Ensure a Security Context Constraint (SCC) exists as specified. |
 
 You can contribute more policies that map to the System and Information Integrity control family. See [Contibuting policies](https://github.com/open-cluster-management/policy-collection/blob/master/docs/CONTRIBUTING.md) for more details.

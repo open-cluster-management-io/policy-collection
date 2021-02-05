@@ -4,6 +4,6 @@ See the [NIST Special Publication 800-53 (Rev. 4)](https://nvd.nist.gov/800-53/R
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-[policy-certificate](./policy-certificate.yaml) | Ensure certificates are not expiring within a given minimum timeframe. |
+[policy-certificate](../SC-System-and-Communications-Protection/policy-certificate.yaml) | Ensure certificates are not expiring within a given minimum timeframe. |
 
 You can contribute more policies that map to the System and Communications Protection control family. See [Contibuting policies](https://github.com/open-cluster-management/policy-collection/blob/master/docs/CONTRIBUTING.md) for more details.
