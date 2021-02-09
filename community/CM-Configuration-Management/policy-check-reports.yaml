@@ -1,3 +1,11 @@
+# This policy looks for PolicyReport resources that contain failures.
+# These failures mean a compliance action was taken and there are resources that 
+# do not meet the compliance rules.
+#
+# "inform" This policy will show "Not compliant" when any PolicyReport resources
+# are found that have a status of "fail" in the list of results.  "enforce" does 
+# not change any behavior in this policy.
+
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
