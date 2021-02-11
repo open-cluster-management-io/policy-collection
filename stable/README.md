@@ -21,13 +21,13 @@ Policies in this folder are supported by [Red Hat Advanced Cluster Management fo
 - [SC - System and Communications Protection](#system-and-communications-protection)
 - [SI - System and Information Integrity](#system-and-information-integrity)
 
-### Access Control
 
+### Access Control
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-[policy-limitclusteradmin](./AC-Access-Control/policy-limitclusteradmin.yaml) | Limit the number of cluster administrator Openshift users |
-[policy-role](./AC-Access-Control/policy-role.yaml) | Ensure a role exists with permissions as specified |
-[policy-rolebinding](./AC-Access-Control/policy-rolebinding.yaml) | Ensure an entity is bound to a particular role |
+[policy-limitclusteradmin](./AC-Access-Control/policy-limitclusteradmin.yaml) | Limits the number of cluster administrator Openshift users. |
+[policy-role](./AC-Access-Control/policy-role.yaml) | Ensures that a role exists with permissions as specified. |
+[policy-rolebinding](./AC-Access-Control/policy-rolebinding.yaml) | Ensures that an entity is bound to a particular role. |
 
 ### Awareness and Training
 
@@ -42,20 +42,18 @@ Policy  | Description | Prerequisites
 No policies yet       |  | 
 
 ### Security Assessment and Authorization
-
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [Install Red Hat Compliance Operator policy](./CA-Security-Assessment-and-Authorization/policy-compliance-operator-install.yaml) | Use the official and supported compliance operator installation, `policy-comp-operator` policy, to enable continuous compliance monitoring for your cluster. After you install this operator, you must select what benchmark you want to comply to, and create the appropriate objects for the scans to be run. | See [Compliance Operator](https://docs.openshift.com/container-platform/4.6/security/compliance_operator/compliance-operator-understanding.html#compliance-operator-understanding) for more details.
 
 ### Configuration Management
-
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [Scan your cluster with the E8 (Essential 8) security profile](./CM-Configuration-Management/policy-compliance-operator-e8-scan.yaml) | This example creates a ScanSettingBinding that the ComplianceOperator uses to scan the cluster for compliance with the E8 benchmark. | See the [Compliance Operator repo](https://github.com/openshift/compliance-operator) to learn more about the operator. **Note**: Compliance operator must be installed to use this policy. See the [Compliance operator policy](./CA-Security-Assessment-and-Authorization/policy-compliance-operator-install.yaml).
 [policy-etcdencryption](./CM-Configuration-Management/policy-etcdencryption.yaml) | Use an encryption policy to encrypt sensitive resources such as Secrets, ConfigMaps, Routes and OAuth access tokens in your cluster.  | See the [OpenShift Documentation](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd) to learn how to enable ETCD encryption post install.
-[policy-limitmemory](./CM-Configuration-Management/policy-limitmemory.yaml) | Ensure resource limits are in place as specified |
-[policy-namespace](./CM-Configuration-Management/policy-namespace.yaml) | Ensure a namespace exists as specified |
-[policy-pod](./CM-Configuration-Management/policy-pod.yaml) | Ensure a pod exists as specified |
+[policy-limitmemory](./CM-Configuration-Management/policy-limitmemory.yaml) | Ensures that resource limits are in place as specified. |
+[policy-namespace](./CM-Configuration-Management/policy-namespace.yaml) | Ensures that a namespace exists as specified. |
+[policy-pod](./CM-Configuration-Management/policy-pod.yaml) | Ensures that a pod exists as specified. |
 
 ### Contingency Planning
 
@@ -117,16 +115,17 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 No policies yet       |  | 
 
-### System and Communications Protection
 
+### System and Communications Protection
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-[policy-certificate](./SC-System-and-Communications-Protection/policy-certificate.yaml) | Ensure certificates are not expiring within a given minimum timeframe |
+[policy-certificate](./SC-System-and-Communications-Protection/policy-certificate.yaml) | Ensure certificates are not expiring within a given minimum time frame. |
+
 
 ### System and Information Integrity
-
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [policy-imagemanifestvuln](./SI-System-and-Information-Integrity/policy-imagemanifestvuln.yaml) | Detect vulnerabilities in container images. Leverages the [Container Security Operator](https://github.com/quay/container-security-operator) and installs it on the managed cluster if not already present. |
-[policy-psp](./SI-System-and-Information-Integrity/policy-psp.yaml) | Ensure a Pod Security Policy exists as specified |
-[policy-scc](./SI-System-and-Information-Integrity/policy-scc.yaml) | Ensure a Security Context Constraint exists as specified |
+[policy-psp](./SI-System-and-Information-Integrity/policy-psp.yaml) | Ensure a pod security policy exists as specified. |
+[policy-scc](./SI-System-and-Information-Integrity/policy-scc.yaml) | Ensure a Security Context Constraint exists as specified. |
+
