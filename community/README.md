@@ -86,6 +86,7 @@ Policy  | Description | Prerequisites
 [ETCD Backup](./CM-Configuration-Management/policy-etcd-backup.yaml) | Use the ETCD Backup policy to receive the last six backup snapshots for etcd. This policy uses the etcd container image in the policy because it contains all required tools like etcdctl. | For more information, see [OpenShift 4 with default storage class](https://docs.openshift.com/container-platform/4.5/storage/dynamic-provisioning.html).
 [Integrity Shield](./CM-Configuration-Management/policy-integrity-shield.yaml)| Use the Integrity Shield to protect the integrity of Kubernetes resources in a cluster (e.g. OpenShift). | See the [Integrity Shield documentation.](https://github.com/open-cluster-management/integrity-shield/blob/master/docs/ACM/README_ENABLE_ISHIELD_PROTECTION_ACM_ENV.md)
 [Integrity Shield Events](./CM-Configuration-Management/policy-integrity-shield-events.yaml)| Use the Integrity Shield Events policy to show a status, which represents whether Integrity Shield has denied some requests in a cluster or not. | See the [Integrity Shield documentation.](https://github.com/open-cluster-management/integrity-shield/blob/master/docs/ACM/README_SHOW_INTEGRITY_STATUS_ON_ACM_UI.md)
+[PolicyReport failures](./CM-Configuration-Management/policy-check-reports.yaml)| The `policy-check-reports` policy searches for any PolicyReport resources that contain failures in the results. | An example of a tool that creates PolicyReports is [Kyverno](ihttps://kyverno.io/).
 
 ### Contingency Planning
 
