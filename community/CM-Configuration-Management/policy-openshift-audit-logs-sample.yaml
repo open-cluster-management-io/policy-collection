@@ -1,15 +1,15 @@
 # This policy will setup Elasticsearch, Kibana, ClusterLogging and ClusterLogForwarders
 # Using Kibana to view audit logs
 # 
-# remediationAction: "enforce", it will install Elasticsearch and ClusterLogging operators and setting up ClusterLogForwarders
+# When you set the remediationAction to "enforce", the policy installs Elasticsearch and ClusterLogging operators, and sets up ClusterLogForwarders.
 #
 # This policy is valid for Openshift v4.6.x
 # Tested on Openshift v4.6.16
 #
 # Change the "channel" and the "startingCSV" version if you want to setup other versions
-# 1. channel: "4.6"  ## Need update for other OCP version
-# 2. startingCSV: elasticsearch-operator.4.6.0-202101300140.p0  ## Need update for other OCP version
-# 3. startingCSV: clusterlogging.4.6.0-202101301510.p0  ## Need update for other OCP version
+# 1. channel: "4.6"  ## Need to update for other OCP version
+# 2. startingCSV: elasticsearch-operator.4.6.0-202101300140.p0  ## Need to update for other OCP version
+# 3. startingCSV: clusterlogging.4.6.0-202101301510.p0  ## Need to update for other OCP version
 #
 
 apiVersion: policy.open-cluster-management.io/v1
@@ -72,12 +72,12 @@ spec:
               name: elasticsearch-operator
               namespace: openshift-operators-redhat
             spec:
-              channel: "4.6"  ## Need update for other OCP version
+              channel: "4.6"  ## Need to update for other OCP version
               installPlanApproval: Automatic
               name: elasticsearch-operator
               source: redhat-operators
               sourceNamespace: openshift-marketplace
-              startingCSV: elasticsearch-operator.4.6.0-202101300140.p0  ## Need update for other OCP version
+              startingCSV: elasticsearch-operator.4.6.0-202101300140.p0  ## Need to update for other OCP version
   - objectDefinition:
       apiVersion: policy.open-cluster-management.io/v1
       kind: ConfigurationPolicy
@@ -129,12 +129,12 @@ spec:
               name: cluster-logging
               namespace: openshift-logging
             spec:
-              channel: "4.6"  ## Need update for other OCP version
+              channel: "4.6"  ## Need to update for other OCP version
               installPlanApproval: Automatic
               name: cluster-logging
               source: redhat-operators
               sourceNamespace: openshift-marketplace
-              startingCSV: clusterlogging.4.6.0-202101301510.p0  ## Need update for other OCP version
+              startingCSV: clusterlogging.4.6.0-202101301510.p0  ## Need to update for other OCP version
   - objectDefinition:
       apiVersion: policy.open-cluster-management.io/v1
       kind: ConfigurationPolicy
