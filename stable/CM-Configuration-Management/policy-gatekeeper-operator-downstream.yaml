@@ -1,4 +1,4 @@
-# This policy verifies the installation of the official & supported version of
+# This policy verifies the installation of the official and supported version of
 # the Gatekeeper Operator on the managed clusters.
 #
 # If set to "enforce" it'll install the operator.
