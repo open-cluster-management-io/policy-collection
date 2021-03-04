@@ -8,8 +8,8 @@
 #
 # Change the "channel" and the "startingCSV" version if you want to setup other versions
 # 1. channel: "4.6"  ## Need to update for other OCP version
-# 2. startingCSV: elasticsearch-operator.4.6.0-202101300140.p0  ## Need to update for other OCP version
-# 3. startingCSV: clusterlogging.4.6.0-202101301510.p0  ## Need to update for other OCP version
+# 2. startingCSV: elasticsearch-operator.4.6.0-202102200141.p0  ## Need to update for other OCP version
+# 3. startingCSV: clusterlogging.4.6.0-202102200141.p0  ## Need to update for other OCP version
 #
 
 apiVersion: policy.open-cluster-management.io/v1
@@ -18,8 +18,8 @@ metadata:
   name: policy-openshift-audit-logs
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
-    policy.open-cluster-management.io/categories: CM Configuration Management
-    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/categories: AU Audit and Accountability
+    policy.open-cluster-management.io/controls: AU-3 Content of Audit Records
 spec:
   remediationAction: inform
   disabled: false
@@ -77,7 +77,7 @@ spec:
               name: elasticsearch-operator
               source: redhat-operators
               sourceNamespace: openshift-marketplace
-              startingCSV: elasticsearch-operator.4.6.0-202101300140.p0  ## Need to update for other OCP version
+              startingCSV: elasticsearch-operator.4.6.0-202102200141.p0  ## Need to update for other OCP version
   - objectDefinition:
       apiVersion: policy.open-cluster-management.io/v1
       kind: ConfigurationPolicy
@@ -134,7 +134,7 @@ spec:
               name: cluster-logging
               source: redhat-operators
               sourceNamespace: openshift-marketplace
-              startingCSV: clusterlogging.4.6.0-202101301510.p0  ## Need to update for other OCP version
+              startingCSV: clusterlogging.4.6.0-202102200141.p0  ## Need to update for other OCP version
   - objectDefinition:
       apiVersion: policy.open-cluster-management.io/v1
       kind: ConfigurationPolicy
