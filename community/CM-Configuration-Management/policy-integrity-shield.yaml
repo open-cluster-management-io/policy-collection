@@ -87,6 +87,8 @@ spec:
             metadata:
               name: integrity-shield-server
               namespace: integrity-shield-operator-system
+              finalizers:
+              - cleanup.finalizers.integrityshield.io
             spec:
               logger:
                 image: quay.io/open-cluster-management/integrity-shield-logging:0.1.4
