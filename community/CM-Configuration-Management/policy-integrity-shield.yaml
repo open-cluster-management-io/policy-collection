@@ -139,7 +139,8 @@ spec:
                   - apiGroup: policy.open-cluster-management.io
                     kind: Policy
                   namePrefix: "*."
-                unprotectAttrs:
+                  allowNamespaceChange: true
+                ignoreAttrs:
                 - match:
                   - apiGroup: policy.open-cluster-management.io
                   attrs:
