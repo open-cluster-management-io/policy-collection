@@ -1,0 +1,255 @@
+# This policy will setup Elasticsearch, Kibana, ClusterLogging and ClusterLogForwarders
+# Using Kibana to view audit logs
+# 
+# When you set the remediationAction to "enforce", the policy installs Elasticsearch and ClusterLogging operators, and sets up ClusterLogForwarders.
+#
+# This policy is valid for Openshift v4.6.x
+# Tested on Openshift v4.6.16
+#
+# Change the "channel" and the "startingCSV" version if you want to setup other versions
+# 1. channel: "4.6"  ## Need to update for other OCP version
+# 2. startingCSV: elasticsearch-operator.4.6.0-202102200141.p0  ## Need to update for other OCP version
+# 3. startingCSV: clusterlogging.4.6.0-202102200141.p0  ## Need to update for other OCP version
+#
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-openshift-audit-logs
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: AU Audit and Accountability
+    policy.open-cluster-management.io/controls: AU-3 Content of Audit Records
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-openshift-operators-redhat-namespace
+      spec:
+        remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+        severity: High
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            kind: Namespace
+            apiVersion: v1
+            metadata:
+              name: openshift-operators-redhat
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-elasticsearch-og
+      spec:
+        remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+        severity: high
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1
+            kind: OperatorGroup
+            metadata:
+              name: elasticsearch-operator
+              namespace: openshift-operators-redhat
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-elasticsearch-sub
+      spec:
+        remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+        severity: high
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1alpha1
+            kind: Subscription
+            metadata:
+              name: elasticsearch-operator
+              namespace: openshift-operators-redhat
+            spec:
+              channel: "4.6"  ## Need to update for other OCP version
+              installPlanApproval: Automatic
+              name: elasticsearch-operator
+              source: redhat-operators
+              sourceNamespace: openshift-marketplace
+              startingCSV: elasticsearch-operator.4.6.0-202102200141.p0  ## Need to update for other OCP version
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-openshift-logging-namespace
+      spec:
+        remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+        severity: High
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            kind: Namespace
+            apiVersion: v1
+            metadata:
+              name: openshift-logging
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-cluster-logging-og
+      spec:
+        remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+        severity: high
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1
+            kind: OperatorGroup
+            metadata:
+              name: cluster-logging-operator
+              namespace: openshift-logging
+            spec:
+              targetNamespaces:
+              - openshift-logging
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-cluster-logging-sub
+      spec:
+        remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+        severity: high
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1alpha1
+            kind: Subscription
+            metadata:
+              name: cluster-logging
+              namespace: openshift-logging
+            spec:
+              channel: "4.6"  ## Need to update for other OCP version
+              installPlanApproval: Automatic
+              name: cluster-logging
+              source: redhat-operators
+              sourceNamespace: openshift-marketplace
+              startingCSV: clusterlogging.4.6.0-202102200141.p0  ## Need to update for other OCP version
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-cluster-logging-cr
+      spec:
+        remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+        severity: high
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: logging.openshift.io/v1
+            kind: ClusterLogging
+            metadata:
+              name: instance
+              namespace: openshift-logging
+            spec:
+              managementState: Managed
+              logStore:
+                type: elasticsearch
+                retentionPolicy:
+                  application:
+                    maxAge: 1d
+                  infra:
+                    maxAge: 7d
+                  audit:
+                    maxAge: 7d
+                elasticsearch:
+                  nodeCount: 3
+                  resources:
+                    limits:
+                       memory: 16Gi
+                    requests:
+                      cpu: 500m
+                      memory: 16Gi
+                  storage:
+                    storageClassName: gp2
+                    size: 200G
+                  redundancyPolicy: SingleRedundancy
+              visualization:
+                type: kibana
+                kibana:
+                  resources:
+                    limits:
+                      memory: 736Mi
+                    requests:
+                      cpu: 100m
+                      memory: 736Mi
+                  replicas: 1
+              curation:
+                type: curator
+                curator:
+                  resources:
+                    limits:
+                      memory: 256Mi
+                    requests:
+                      cpu: 100m
+                      memory: 256Mi
+                  schedule: "30 3 * * *"
+              collection:
+                logs:
+                  type: fluentd
+                  fluentd:
+                    resources:
+                      limits:
+                        memory: 736Mi
+                      requests:
+                        cpu: 100m
+                        memory: 736Mi
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-cluster-log-forwarders
+      spec:
+        remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+        severity: high
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: logging.openshift.io/v1
+            kind: ClusterLogForwarder
+            metadata:
+              name: instance
+              namespace: openshift-logging
+            spec:
+              pipelines:
+                - name: enable-default-log-store
+                  inputRefs:
+                    - audit
+                  outputRefs:
+                    - default
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-openshift-audit-logs
+placementRef:
+  name: placement-policy-openshift-audit-logs
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-openshift-audit-logs
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-openshift-audit-logs
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
+

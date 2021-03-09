@@ -4,8 +4,8 @@ metadata:
   name: policy-podsecuritypolicy
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
-    policy.open-cluster-management.io/categories: SI System and Information Integrity
-    policy.open-cluster-management.io/controls: SI-3 Malicious Code Protection
+    policy.open-cluster-management.io/categories: SC System and Communications Protection
+    policy.open-cluster-management.io/controls: SC-4 Information In Shared Resources
 spec:
   remediationAction: inform
   disabled: false

@@ -1,9 +1,16 @@
+# This policy looks for PolicyReport resources that contain failures.
+# These failures mean a compliance action was taken and there are resources that 
+# do not meet the compliance rules.
+#
+# Set remediationAction to "inform" to receive a list of PolicyReport 
+# resources that have a status of "fail".
+
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-etcdencryption
+  name: policy-check-reports
   annotations:
-    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/standards: NIST 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
@@ -14,57 +21,53 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: enable-etcd-encryption
+          name: policy-check-reports
         spec:
-          remediationAction: inform
+          remediationAction: inform # will be overridden by remediationAction in parent policy
           severity: low
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["*"]
           object-templates:
-            - complianceType: musthave
+            - complianceType: mustnothave
               objectDefinition:
-                apiVersion: config.openshift.io/v1
-                kind: APIServer
-                metadata:
-                  name: cluster
-                spec:
-                  encryption:
-                    type: aescbc
+                apiVersion: wgpolicyk8s.io/v1alpha1
+                kind: PolicyReport
+                results:
+                  - status: fail
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: enable-etcd-encryption-status-kubeapi
+          name: policy-check-cluster-reports
         spec:
           remediationAction: inform
           severity: low
           object-templates:
-            - complianceType: musthave
+            - complianceType: mustnothave
               objectDefinition:
-                apiVersion: operator.openshift.io/v1
-                kind: KubeAPIServer
-                metadata:
-                  name: cluster
-                status:
-                  conditions:
-                    - message: 'All resources encrypted: secrets, configmaps'
-                      reason: EncryptionCompleted
+                apiVersion: wgpolicyk8s.io/v1alpha1
+                kind: ClusterPolicyReport
+                results:
+                  - status: fail
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-etcdencryption
+  name: binding-policy-check-reports
 placementRef:
-  name: placement-policy-etcdencryption
+  name: placement-policy-check-reports
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-etcdencryption
+- name: policy-check-reports
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-etcdencryption
+  name: placement-policy-check-reports
 spec:
   clusterConditions:
   - status: "True"
@@ -72,4 +75,3 @@ spec:
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}
-
