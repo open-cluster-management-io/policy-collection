@@ -161,7 +161,6 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: binding-policy-integrity-shield
-  annotations:
 placementRef:
   name: placement-policy-integrity-shield
   kind: PlacementRule
@@ -175,7 +174,6 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-integrity-shield
-  annotations:
 spec:
   clusterConditions:
     - status: "True"
