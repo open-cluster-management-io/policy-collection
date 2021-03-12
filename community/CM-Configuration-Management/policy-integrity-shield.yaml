@@ -156,8 +156,7 @@ spec:
                           matchExpressions:
                             - key: policy.open-cluster-management.io/isClusterNamespace
                               operator: In
-                              values:
-                                - "true"
+                              values: ["true"]
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -182,7 +181,4 @@ spec:
       type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - key: environment
-        operator: In
-        values:
-          - dev
+      - {key: environment, operator: In, values: ["dev"]}
