@@ -97,17 +97,17 @@ spec:
                   affinity: {}
                   shieldConfig:
                     verifyType: pgp # x509
-                    iShieldAdminUserName: system:serviceaccount:open-cluster-management-agent-addon:klusterlet-addon-policyctrl
+                    iShieldAdminUserName: "system:serviceaccount:open-cluster-management-agent-addon:klusterlet-addon-policyctrl"
                     inScopeNamespaceSelector:
                       include:
-                        - '*'
+                        - "*"
                       exclude:
-                        - kube-*
-                        - openshift-*
+                        - "kube-*"
+                        - "openshift-*"
                   signerConfig:
                     policies:
                       - namespaces:
-                          - '*'
+                          - "*"
                         signers:
                           - SampleSigner
                       - scope: Cluster
@@ -117,7 +117,7 @@ spec:
                       - name: SampleSigner
                         keyConfig: sample-signer-keyconfig
                         subjects:
-                          - email: '*'
+                          - email: "*"
                   keyConfig:
                     - name: sample-signer-keyconfig
                       secretName: keyring-secret
@@ -128,8 +128,8 @@ spec:
                             - apiGroup: policy.open-cluster-management.io
                       ignoreRules:
                         - match:
-                            - username: system:serviceaccount:open-cluster-management-agent:*
-                            - username: system:serviceaccount:open-cluster-management-agent-addon:*
+                            - username: "system:serviceaccount:open-cluster-management-agent:*"
+                            - username: "system:serviceaccount:open-cluster-management-agent-addon:*"
                       forceCheckRules:
                         - match:
                             - apiGroup: policy.open-cluster-management.io
@@ -144,13 +144,13 @@ spec:
                         - match:
                             - apiGroup: policy.open-cluster-management.io
                           attrs:
-                            - metadata.annotations."apps.open-cluster-management.io/hosting-deployable"
-                            - metadata.annotations."apps.open-cluster-management.io/hosting-subscription"
-                            - metadata.annotations."apps.open-cluster-management.io/sync-source"
-                            - metadata.annotations."apps.open-cluster-management.io/reconcile-option"
-                            - metadata.labels."policy.open-cluster-management.io/cluster-name"
-                            - metadata.labels."policy.open-cluster-management.io/cluster-namespace"
-                            - metadata.labels."policy.open-cluster-management.io/root-policy"
+                            - "metadata.annotations.\"apps.open-cluster-management.io/hosting-deployable\""
+                            - "metadata.annotations.\"apps.open-cluster-management.io/hosting-subscription\""
+                            - "metadata.annotations.\"apps.open-cluster-management.io/sync-source\""
+                            - "metadata.annotations.\"apps.open-cluster-management.io/reconcile-option\""
+                            - "metadata.labels.\"policy.open-cluster-management.io/cluster-name\""
+                            - "metadata.labels.\"policy.open-cluster-management.io/cluster-namespace\""
+                            - "metadata.labels.\"policy.open-cluster-management.io/root-policy\""
                       targetNamespaceSelector:
                         labelSelector:
                           matchExpressions:
