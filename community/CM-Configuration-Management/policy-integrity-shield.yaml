@@ -14,149 +14,150 @@ spec:
   remediationAction: inform
   disabled: false
   policy-templates:
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: policy-integrity-shield-namespace
-      spec:
-        remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-        severity: High
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            kind: Namespace
-            apiVersion: v1
-            metadata:
-              name: integrity-shield-operator-system
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: policy-integrity-shield-og
-      spec:
-        remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-        severity: high
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: operators.coreos.com/v1
-            kind: OperatorGroup
-            metadata:
-              name: integrity-operator-group
-              namespace: integrity-shield-operator-system
-            spec:
-              targetNamespaces:
-              - integrity-shield-operator-system
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: policy-integrity-shield-sub
-      spec:
-        remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-        severity: high
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: operators.coreos.com/v1alpha1
-            kind: Subscription
-            metadata:
-              name: integrity-shield-operator
-              namespace: integrity-shield-operator-system
-            spec:
-              channel: alpha
-              installPlanApproval: Automatic
-              name: integrity-shield-operator
-              source: community-operators
-              sourceNamespace: openshift-marketplace
-              startingCSV: integrity-shield-operator.v0.1.5
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: policy-integrity-shield-cr
-      spec:
-        remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-        severity: high
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: apis.integrityshield.io/v1alpha1
-            kind: IntegrityShield
-            metadata:
-              name: integrity-shield-server
-              namespace: integrity-shield-operator-system
-              finalizers:
-              - cleanup.finalizers.integrityshield.io
-            spec:
-              logger:
-                image: quay.io/open-cluster-management/integrity-shield-logging:0.1.5
-              server:
-                image: quay.io/open-cluster-management/integrity-shield-server:0.1.5
-              affinity: {}
-              shieldConfig:
-                verifyType: pgp # x509
-                iShieldAdminUserName: "system:serviceaccount:open-cluster-management-agent-addon:klusterlet-addon-policyctrl"
-                inScopeNamespaceSelector:
-                  include:
-                  - "*"
-                  exclude:
-                  - "kube-*"
-                  - "openshift-*"
-              signerConfig:
-                policies:
-                - namespaces:
-                  - "*"
-                  signers:
-                  - "SampleSigner"
-                - scope: "Cluster"
-                  signers:
-                  - "SampleSigner"
-                signers:
-                - name: "SampleSigner"
-                  keyConfig: sample-signer-keyconfig
-                  subjects:
-                  - email: "*"
-              keyConfig:
-              - name: sample-signer-keyconfig
-                secretName: keyring-secret
-              resourceSigningProfiles:
-              - name: policy-rsp
-                protectRules:
-                - match:
-                  - apiGroup: policy.open-cluster-management.io
-                ignoreRules:
-                - match:
-                  - username: "system:serviceaccount:open-cluster-management-agent:*"
-                  - username: "system:serviceaccount:open-cluster-management-agent-addon:*"
-                forceCheckRules:
-                - match:
-                  - apiGroup: policy.open-cluster-management.io
-                    kind: Policy
-                kustomizePatterns:
-                - match:
-                  - apiGroup: policy.open-cluster-management.io
-                    kind: Policy
-                  namePrefix: "*."
-                  allowNamespaceChange: true
-                ignoreAttrs:
-                - match:
-                  - apiGroup: policy.open-cluster-management.io
-                  attrs:
-                  - "metadata.annotations.\"apps.open-cluster-management.io/hosting-deployable\""
-                  - "metadata.annotations.\"apps.open-cluster-management.io/hosting-subscription\""
-                  - "metadata.annotations.\"apps.open-cluster-management.io/sync-source\""
-                  - "metadata.annotations.\"apps.open-cluster-management.io/reconcile-option\""
-                  - "metadata.labels.\"policy.open-cluster-management.io/cluster-name\""
-                  - "metadata.labels.\"policy.open-cluster-management.io/cluster-namespace\""
-                  - "metadata.labels.\"policy.open-cluster-management.io/root-policy\""
-                targetNamespaceSelector:
-                  labelSelector:
-                    matchExpressions:
-                    - key: policy.open-cluster-management.io/isClusterNamespace
-                      operator: In
-                      values: ["true"]
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-integrity-shield-namespace
+        spec:
+          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: High
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: Namespace
+                apiVersion: v1
+                metadata:
+                  name: integrity-shield-operator-system
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-integrity-shield-og
+        spec:
+          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1
+                kind: OperatorGroup
+                metadata:
+                  name: integrity-operator-group
+                  namespace: integrity-shield-operator-system
+                spec:
+                  targetNamespaces:
+                    - integrity-shield-operator-system
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-integrity-shield-sub
+        spec:
+          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  name: integrity-shield-operator
+                  namespace: integrity-shield-operator-system
+                spec:
+                  channel: alpha
+                  installPlanApproval: Automatic
+                  name: integrity-shield-operator
+                  source: community-operators
+                  sourceNamespace: openshift-marketplace
+                  startingCSV: integrity-shield-operator.v0.1.6
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-integrity-shield-cr
+        spec:
+          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apis.integrityshield.io/v1alpha1
+                kind: IntegrityShield
+                metadata:
+                  name: integrity-shield-server
+                  namespace: integrity-shield-operator-system
+                  finalizers:
+                    - cleanup.finalizers.integrityshield.io
+                spec:
+                  logger:
+                    image: quay.io/open-cluster-management/integrity-shield-logging:0.1.6
+                  server:
+                    image: quay.io/open-cluster-management/integrity-shield-server:0.1.6
+                  affinity: {}
+                  shieldConfig:
+                    verifyType: pgp # x509
+                    iShieldAdminUserName: system:serviceaccount:open-cluster-management-agent-addon:klusterlet-addon-policyctrl
+                    inScopeNamespaceSelector:
+                      include:
+                        - '*'
+                      exclude:
+                        - kube-*
+                        - openshift-*
+                  signerConfig:
+                    policies:
+                      - namespaces:
+                          - '*'
+                        signers:
+                          - SampleSigner
+                      - scope: Cluster
+                        signers:
+                          - SampleSigner
+                    signers:
+                      - name: SampleSigner
+                        keyConfig: sample-signer-keyconfig
+                        subjects:
+                          - email: '*'
+                  keyConfig:
+                    - name: sample-signer-keyconfig
+                      secretName: keyring-secret
+                  resourceSigningProfiles:
+                    - name: policy-rsp
+                      protectRules:
+                        - match:
+                            - apiGroup: policy.open-cluster-management.io
+                      ignoreRules:
+                        - match:
+                            - username: system:serviceaccount:open-cluster-management-agent:*
+                            - username: system:serviceaccount:open-cluster-management-agent-addon:*
+                      forceCheckRules:
+                        - match:
+                            - apiGroup: policy.open-cluster-management.io
+                              kind: Policy
+                      kustomizePatterns:
+                        - match:
+                            - apiGroup: policy.open-cluster-management.io
+                              kind: Policy
+                          namePrefix: '*.'
+                          allowNamespaceChange: true
+                      ignoreAttrs:
+                        - match:
+                            - apiGroup: policy.open-cluster-management.io
+                          attrs:
+                            - metadata.annotations."apps.open-cluster-management.io/hosting-deployable"
+                            - metadata.annotations."apps.open-cluster-management.io/hosting-subscription"
+                            - metadata.annotations."apps.open-cluster-management.io/sync-source"
+                            - metadata.annotations."apps.open-cluster-management.io/reconcile-option"
+                            - metadata.labels."policy.open-cluster-management.io/cluster-name"
+                            - metadata.labels."policy.open-cluster-management.io/cluster-namespace"
+                            - metadata.labels."policy.open-cluster-management.io/root-policy"
+                      targetNamespaceSelector:
+                        labelSelector:
+                          matchExpressions:
+                            - key: policy.open-cluster-management.io/isClusterNamespace
+                              operator: In
+                              values:
+                                - "true"
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -181,4 +182,7 @@ spec:
       type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}
+      - key: environment
+        operator: In
+        values:
+          - dev
