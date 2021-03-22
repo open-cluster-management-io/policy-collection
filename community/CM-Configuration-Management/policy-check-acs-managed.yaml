@@ -1,0 +1,119 @@
+# This policy looks for Advanced Cluster Security sensor, collector
+# and webhook components that exist on ACS managed clusters.
+#
+# This policy is inform only so set remediationAction to inform.
+# This policy also validates the correct ACS central server is configured.
+# You must update the configmap to use the value for your environment.
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-check-acs-managed
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform # This policy is intended to inform only
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-check-acs-config
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          namespaceSelector:
+            include: ["stackrox"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: ConfigMap
+                metadata:
+                  name: admission-control
+                  namespace: stackrox
+                data:
+                  central-endpoint: central-stackrox.apps.hub.open-cluster-management.io:443 # Set to the hostname and port of your central server
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-check-acs-sensor
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          namespaceSelector:
+            include: ["stackrox"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps/v1
+                kind: Deployment
+                metadata:
+                  name: sensor
+                  namespace: stackrox
+                status:
+                  conditions:
+                    - status: "True"
+                      type: Available
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-check-acs-collector
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps/v1
+                kind: DaemonSet
+                metadata:
+                  name: collector
+                  namespace: stackrox
+                status:
+                  numberMisscheduled: 0
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-check-acs-hook
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: admissionregistration.k8s.io/v1
+                kind: ValidatingWebhookConfiguration
+                metadata:
+                  name: stackrox
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-check-acs-managed
+placementRef:
+  name: placement-policy-check-acs-managed
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-check-acs-managed
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-check-acs-managed
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
