@@ -1,0 +1,104 @@
+# Sample policy to configure gatekeeper to exclude namespaces from certain processes for all constraints in the cluster
+# See: https://github.com/open-policy-agent/gatekeeper/tree/release-3.3#exempting-namespaces-from-gatekeeper
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-gatekeeper-config-exclude-namespaces
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-config-exclude-namespaces
+        spec:
+          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: mustonlyhave
+              objectDefinition:
+                apiVersion: config.gatekeeper.sh/v1alpha1
+                kind: Config
+                metadata:
+                  name: config
+                  namespace: openshift-gatekeeper-system
+                spec:
+                  match:
+                    - excludedNamespaces:
+                        - hive
+                        - kube-public
+                        - kube-storage-version-migrator-operator
+                        - kube-system
+                        - open-cluster-management
+                        - open-cluster-management-agent
+                        - open-cluster-management-agent-addon
+                        - openshift-apiserver
+                        - openshift-apiserver-operator
+                        - openshift-authentication-operator
+                        - openshift-cloud-credential-operator
+                        - openshift-cluster-csi-drivers
+                        - openshift-cluster-machine-approver
+                        - openshift-cluster-node-tuning-operator
+                        - openshift-cluster-samples-operator
+                        - openshift-cluster-storage-operator
+                        - openshift-cluster-version
+                        - openshift-compliance
+                        - openshift-controller-manager
+                        - openshift-controller-manager-operator
+                        - openshift-dns
+                        - openshift-dns-operator
+                        - openshift-etcd
+                        - openshift-etcd-operator
+                        - openshift-image-registry
+                        - openshift-ingress
+                        - openshift-ingress-operator
+                        - openshift-insights
+                        - openshift-kube-apiserver
+                        - openshift-kube-apiserver-operator
+                        - openshift-kube-controller-manager
+                        - openshift-kube-controller-manager-operator
+                        - openshift-kube-scheduler-operator
+                        - openshift-kube-storage-version-migrator
+                        - openshift-kube-storage-version-migrator-operator
+                        - openshift-machine-api
+                        - openshift-machine-config-operator
+                        - openshift-monitoring
+                        - openshift-multus
+                        - openshift-network-operator
+                        - openshift-oauth-apiserver
+                        - openshift-operators
+                        - openshift-sdn
+                        - openshift-service-ca
+                        - openshift-service-ca-operator
+                      processes:
+                        - '*'
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-gatekeeper-config-exclude-namespaces
+placementRef:
+  name: placement-policy-gatekeeper-config-exclude-namespaces
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-gatekeeper-config-exclude-namespaces
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-gatekeeper-config-exclude-namespaces
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
