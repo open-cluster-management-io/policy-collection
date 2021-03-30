@@ -1,0 +1,103 @@
+# This policy assumes that the Compliance Operator is installed and running on
+# the managed clusters. It deploys a scan that checks the master and worker
+# nodes, and verifies compliance with the OpenShift CIS security benchmark.
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-cis-scan
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-6 Configuration Settings
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: compliance-cis-scan
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave # this template creates ScanSettingBinding:cis
+              objectDefinition:
+                apiVersion: compliance.openshift.io/v1alpha1
+                kind: ScanSettingBinding
+                metadata:
+                  name: cis
+                  namespace: openshift-compliance
+                profiles:
+                - apiGroup: compliance.openshift.io/v1alpha1
+                  kind: Profile
+                  name: ocp4-cis
+                - apiGroup: compliance.openshift.io/v1alpha1
+                  kind: Profile
+                  name: ocp4-cis-node
+                settingsRef:
+                  apiGroup: compliance.openshift.io/v1alpha1
+                  kind: ScanSetting
+                  name: default
+    - objectDefinition: 
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: compliance-suite-cis
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave # this template checks if scan has completed by checking the status field
+              objectDefinition:
+                apiVersion: compliance.openshift.io/v1alpha1
+                kind: ComplianceSuite
+                metadata:
+                  name: cis
+                  namespace: openshift-compliance
+                status:
+                  phase: DONE
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: compliance-suite-cis-results
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: mustnothave # this template reports the results for scan suite: cis by looking at ComplianceCheckResult CRs
+              objectDefinition:
+                apiVersion: compliance.openshift.io/v1alpha1
+                kind: ComplianceCheckResult
+                metadata:
+                  namespace: openshift-compliance
+                  labels:
+                    compliance.openshift.io/check-status: FAIL
+                    compliance.openshift.io/suite: cis
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-cis-scan
+placementRef:
+  name: placement-policy-cis-scan
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-cis-scan
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-cis-scan
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: vendor, operator: In, values: ["OpenShift"]}
