@@ -1,6 +1,6 @@
 # This policy assumes that the Compliance Operator is installed and running on
-# the managed clusters. It deploys a scan that will check the master and worker
-# nodes and verifies for compliance with the OpenShift CIS security benchmark.
+# the managed clusters. It deploys a scan that checks the master and worker
+# nodes, and verifies compliance with the OpenShift CIS security benchmark.
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
