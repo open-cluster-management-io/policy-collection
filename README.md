@@ -1,15 +1,19 @@
 # Policy Collection
-A collection of policy examples for Open Cluster Management
 
-## Repo structure
-This repo hosts policies for Open Cluster Management. You can find policies from the following folders:
+A collection of policy examples for Open Cluster Management.
+
+**NOTE:** _The `master` branch is deprecated in favor of `main` as the primary branch, and is expected to be removed after May 31, 2021. Be sure to update any configurations or subscriptions accordingly._
+
+## Repository structure
+
+This repository hosts policies for Open Cluster Management. You can find policies from the following folders:
 
 * [stable](stable) -- Policies in the `stable` folder can be applied with [Red Hat Advanced Cluster Management for Kubernetes](https://www.redhat.com/en/technologies/management/advanced-cluster-management).
 * [community](community) -- Policies in the `community` folder are contributed from the open source community and can be applied with the product governance framework. 
 
 ## Using GitOps to deploy policies to a cluster
 
-Fork this repository; you will use the forked version of this repo as the target to run the sync against. This is to avoid unintended changes to be applied to your cluster automatically. To get latest policies from the policy-collection repo, you can pull the latest changes from policy-collection to your own repo through a pull request. Any further changes to your repo will automatically be applied to your cluster.
+Fork this repository and use the forked version as the target to run the sync against. This is to avoid unintended changes to be applied to your cluster automatically. To get latest policies from the `policy-collection` repository, you can pull the latest changes from `policy-collection` to your own repository through a pull request. Any further changes to your repository are automatically be applied to your cluster.
 
 Make sure you have [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) installed and that you are logged into your hub cluster in terminal.
 
@@ -23,7 +27,7 @@ The policies are applied to all managed clusters that are available, and have th
 
 ## Community, discussion, contribution, and support
 
-Check the [CONTRIBUTING Doc](docs/CONTRIBUTING.md) on how to contribute to the repo.
+Check the [Contributing policies](docs/CONTRIBUTING.md) document for guidelines on how to contribute to the repository.
 
 You can reach the maintainers of this project at:
 
