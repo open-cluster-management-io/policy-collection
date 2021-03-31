@@ -19,7 +19,7 @@ Usage:
   -u|--url <url>              URL to the Git repository
                                 (Default URL: "https://github.com/open-cluster-management/policy-collection.git")
   -b|--branch <branch>        Branch of the Git repository to point to
-                                (Default branch: "master")
+                                (Default branch: "main")
   -p|--path <path/to/dir>     Path to the desired subdirectory of the Git repository
                                 (Default path: stable)
   -n|--namespace <namespace>  Namespace on the cluster to deploy policies to (must exist already)
