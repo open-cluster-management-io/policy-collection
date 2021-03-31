@@ -8,5 +8,5 @@ Policy  | Description | Prerequisites
 
 **Note:** This policy is not supported for Red Hat Advanced Cluster Management 2.1.0, but it can be applied.
 
-You can contribute more policies that map to the Security Assessment and Authorization control family. See [Contributing policies](https://github.com/open-cluster-management/policy-collection/blob/master/docs/CONTRIBUTING.md) for more details.
+You can contribute more policies that map to the Security Assessment and Authorization control family. See [Contributing policies](https://github.com/open-cluster-management/policy-collection/blob/main/docs/CONTRIBUTING.md) for more details.
 

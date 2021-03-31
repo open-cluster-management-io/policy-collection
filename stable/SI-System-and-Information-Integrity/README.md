@@ -6,4 +6,4 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [policy-imagemanifestvuln](../SI-System-and-Information-Integrity/policy-imagemanifestvuln.yaml) | Detect vulnerabilities in container images. Leverages the [Container Security Operator](https://github.com/quay/container-security-operator) and installs it on the managed cluster if it does not exist. |
 
-You can contribute more policies that map to the System and Information Integrity control family. See [Contibuting policies](https://github.com/open-cluster-management/policy-collection/blob/master/docs/CONTRIBUTING.md) for more details.
+You can contribute more policies that map to the System and Information Integrity control family. See [Contibuting policies](https://github.com/open-cluster-management/policy-collection/blob/main/docs/CONTRIBUTING.md) for more details.

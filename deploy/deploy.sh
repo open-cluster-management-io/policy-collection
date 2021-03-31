@@ -18,7 +18,7 @@ help () {
   echo "  -u|--url <url>              URL to the Git repository"
   echo '                                (Default URL: "https://github.com/open-cluster-management/policy-collection.git")'
   echo "  -b|--branch <branch>        Branch of the Git repository to point to"
-  echo '                                (Default branch: "master")'
+  echo '                                (Default branch: "main")'
   echo "  -p|--path <path/to/dir>     Path to the desired subdirectory of the Git repository"
   echo "                                (Default path: stable)"
   echo "  -n|--namespace <namespace>  Namespace on the cluster to deploy policies to (must exist already)"
@@ -77,7 +77,7 @@ echo "kubectl config:     $(kubectl config get-contexts | awk '/^\052/ {print $4
 echo "Cluster Namespace:  ${NAMESPACE:=policies}"
 echo "Resource Prefix:    ${NAME:=demo-stable-policies}"
 echo "Git URL:            ${GH_URL:=https://github.com/open-cluster-management/policy-collection.git}"
-echo "Git Branch:         ${GH_BRANCH:=master}"
+echo "Git Branch:         ${GH_BRANCH:=main}"
 echo "Git Path:           ${GH_PATH:=stable}"
 echo "====================================================="
 
