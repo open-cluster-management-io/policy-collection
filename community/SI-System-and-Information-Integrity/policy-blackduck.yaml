@@ -1,8 +1,15 @@
+# This policy verifies the installation of the supported version of
+# the Black Duck Connector Operator & the Black Duck Connector on the managed clusters.
+# It also verifies all the containers on the specified namespace are are not 
+# in Black Duck's policy violation.
+#
+# If set to "enforce" it'll install the operator & connector.
+#
+# Note that OpenShift 4.6 is required.
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-blackduck
-  namespace: default
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/categories: SI System and Information Integrity
@@ -170,7 +177,6 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: binding-blackduck-operator
-  namespace: default
 placementRef:
   name: placement-blackduck-operator
   kind: PlacementRule
@@ -184,7 +190,6 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-blackduck-operator
-  namespace: default
 spec:
   clusterConditions:
   - status: "True"

@@ -11,23 +11,30 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
 
 ## Security control catalog
 
-- [AC - Access Control](#access-control)
-- [AT - Awareness and Training](#awareness-and-training)
-- [AU - Audit and Accountability](#audit-and-accountability)
-- [CA - Security Assessment and Authorization](#security-assessment-and-authorization)
-- [CM - Configuration Management](#configuration-management)
-- [CP - Contingency Planning](#contingency-planning)
-- [IA - Identification and Authentication](#identification-and-authentication)
-- [IR - Incident Response](#incident-response)
-- [MA - Maintenance](#maintenance)
-- [MP - Media Protection](#media-protection)
-- [PE - Physical and Environmental Protection](#physical-and-environmental-protection)
-- [PL - Planning](#planning)
-- [PS - Personnel Security](#personnel-security)
-- [RA - Risk Assessment](#risk-assessment)
-- [SA - System and Services Acquisition](#system-and-services-acquisition)
-- [SC - System and Communications Protection](#system-and-communications-protection)
-- [SI - System and Information Integrity](#system-and-information-integrity)
+- [Policies -- Community](#policies----community)
+  - [Table of Contents](#table-of-contents)
+  - [Security control catalog](#security-control-catalog)
+    - [Access Control](#access-control)
+    - [Awareness and Training](#awareness-and-training)
+    - [Audit and Accountability](#audit-and-accountability)
+    - [Security Assessment and Authorization](#security-assessment-and-authorization)
+    - [Configuration Management](#configuration-management)
+    - [Contingency Planning](#contingency-planning)
+    - [Identification and Authentication](#identification-and-authentication)
+    - [Incident Response](#incident-response)
+    - [Maintenance](#maintenance)
+    - [Media Protection](#media-protection)
+    - [Physical and Environmental Protection](#physical-and-environmental-protection)
+    - [Planning](#planning)
+    - [Personnel Security](#personnel-security)
+    - [Risk Assessment](#risk-assessment)
+    - [System and Services Acquisition](#system-and-services-acquisition)
+    - [System and Communications Protection](#system-and-communications-protection)
+    - [System and Information Integrity](#system-and-information-integrity)
+  - [Deploying community policies to your cluster](#deploying-community-policies-to-your-cluster)
+    - [Custom policy controllers](#custom-policy-controllers)
+    - [Policy consumers on operator hub](#policy-consumers-on-operator-hub)
+    - [Other custom policy consumers](#other-custom-policy-consumers)
 
 ### Access Control
 
@@ -163,7 +170,7 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [Falco Cloud-Native runtime security](./SI-System-and-Information-Integrity/policy-falco.yaml) | Falco parses Linux system calls from the kernel at runtime, and asserts the stream against a powerful rules engine. If a rule is violated a Falco alert is triggered. | [The Falco Project](https://falco.org/)
 [Sysdig Agent](./SI-System-and-Information-Integrity/policy-sysdig.yaml) | The Sysdig Secure DevOps Platform converges security and compliance with performance and capacity monitoring to create a secure DevOps workflow. It uses the same data to monitor and secure, so you can correlate system activity with Kubernetes services. | Check [Sysdig](https://sysdig.com/) and start a [Free Trial](https://go.sysdig.com/rhacm-trial).
-
+[Black Duck Connector](./SI-System-and-Information-Integrity/policy-blackduck.yaml) | By integrating Black Duck with Kubernetes & OpenShift, you can automatically scan, identify, and monitor all your container images to gain visibility into, and control over, any security vulnerabilities or policy violations found in the open source code that exists in your containers. | Check out [Black Duck for OpenShift](https://www.synopsys.com/software-integrity/partners/red-hat.html) and [read more](https://www.synopsys.com/software-integrity/security-testing/software-composition-analysis/demo.html).
 
 ## Deploying community policies to your cluster
 While the policies in the [stable](../stable) folder all have out-of-the-box support installed with Red Hat Advanced Cluster Management, community policies are maintained by the open source community. You might need to deploy extra policy consumers in order for community policies to work as intended. If you are seeing the error `no matches for kind "<resource name>" in version "<group>/<version>"`, you must deploy the CustomResourceDefiniton (CRD) for the policy before you create it. If some of the policies in this folder are not behaving properly, you must deploy the corresponding policy consumers to handle them.
