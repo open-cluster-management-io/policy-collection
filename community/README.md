@@ -11,30 +11,23 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
 
 ## Security control catalog
 
-- [Policies -- Community](#policies----community)
-  - [Table of Contents](#table-of-contents)
-  - [Security control catalog](#security-control-catalog)
-    - [Access Control](#access-control)
-    - [Awareness and Training](#awareness-and-training)
-    - [Audit and Accountability](#audit-and-accountability)
-    - [Security Assessment and Authorization](#security-assessment-and-authorization)
-    - [Configuration Management](#configuration-management)
-    - [Contingency Planning](#contingency-planning)
-    - [Identification and Authentication](#identification-and-authentication)
-    - [Incident Response](#incident-response)
-    - [Maintenance](#maintenance)
-    - [Media Protection](#media-protection)
-    - [Physical and Environmental Protection](#physical-and-environmental-protection)
-    - [Planning](#planning)
-    - [Personnel Security](#personnel-security)
-    - [Risk Assessment](#risk-assessment)
-    - [System and Services Acquisition](#system-and-services-acquisition)
-    - [System and Communications Protection](#system-and-communications-protection)
-    - [System and Information Integrity](#system-and-information-integrity)
-  - [Deploying community policies to your cluster](#deploying-community-policies-to-your-cluster)
-    - [Custom policy controllers](#custom-policy-controllers)
-    - [Policy consumers on operator hub](#policy-consumers-on-operator-hub)
-    - [Other custom policy consumers](#other-custom-policy-consumers)
+- [AC - Access Control](#access-control)
+- [AT - Awareness and Training](#awareness-and-training)
+- [AU - Audit and Accountability](#audit-and-accountability)
+- [CA - Security Assessment and Authorization](#security-assessment-and-authorization)
+- [CM - Configuration Management](#configuration-management)
+- [CP - Contingency Planning](#contingency-planning)
+- [IA - Identification and Authentication](#identification-and-authentication)
+- [IR - Incident Response](#incident-response)
+- [MA - Maintenance](#maintenance)
+- [MP - Media Protection](#media-protection)
+- [PE - Physical and Environmental Protection](#physical-and-environmental-protection)
+- [PL - Planning](#planning)
+- [PS - Personnel Security](#personnel-security)
+- [RA - Risk Assessment](#risk-assessment)
+- [SA - System and Services Acquisition](#system-and-services-acquisition)
+- [SC - System and Communications Protection](#system-and-communications-protection)
+- [SI - System and Information Integrity](#system-and-information-integrity)
 
 ### Access Control
 
@@ -46,7 +39,7 @@ Policy  | Description | Prerequisites
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-No policies yet       |  | 
+No policies yet       |  |
 
 ### Audit and Accountability
 
@@ -84,8 +77,8 @@ Policy  | Description | Prerequisites
 [Gatekeeper readiness probe not set](./CM-Configuration-Management/policy-gatekeeper-container-readinessprobenotset.yaml) | Use the Gatekeeper policy to enforce pods that have a [readiness probe.](https://docs.openshift.com/container-platform/latest/applications/application-health.html) | See the [Gatekeeper documentation](https://github.com/open-policy-agent/gatekeeper). **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy. See the [Gatekeeper operator policy](./CM-Configuration-Management/policy-gatekeeper-operator.yaml).
 [Gatekeeper allowed external IPs](./CM-Configuration-Management/policy-gatekeeper-allowed-external-ips.yaml) | Use the Gatekeeper allowed external IPs policy to define external IPs that can be applied to a managed cluster. | See the [Gatekeeper](https://github.com/open-policy-agent/gatekeeper). **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy. See the [Gatekeeper operator policy](./CM-Configuration-Management/policy-gatekeeper-operator.yaml).
 [Gatekeeper sample policy](./CM-Configuration-Management/policy-gatekeeper-sample.yaml) | Use the Gatekeeper sample policy to view an example of how a gatekeeper policy can be applied to a managed cluster. | See the [Gatekeeper](https://github.com/open-policy-agent/gatekeeper). **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy. See the [Gatekeeper operator policy](./CM-Configuration-Management/policy-gatekeeper-operator.yaml).
-[Gatekeeper mutation policy (owner annotation)](./CM-Configuration-Management/policy-gatekeeper-annotation-owner.yaml) | Use the Gatekeeper mutation policy to set the owner annotation on pods. | See the [Gatekeeper](https://github.com/open-policy-agent/gatekeeper). **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy. See the [Gatekeeper operator policy](./CM-Configuration-Management/policy-gatekeeper-operator.yaml). You must enable [*mutatingWebhook*](https://github.com/open-cluster-management/policy-collection/blob/3d6775a7ddcc007d313421c1fcc25c1fbdf28fdd/community/CM-Configuration-Management/policy-gatekeeper-operator.yaml#L111) to use the gatekeeper mutation feature. 
-[Gatekeeper mutation policy (image pull policy)](./CM-Configuration-Management/policy-gatekeeper-image-pull-policy.yaml) | Use the Gatekeeper mutation policy to set or update image pull policy on pods. | See the [Gatekeeper](https://github.com/open-policy-agent/gatekeeper). **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy. See the [Gatekeeper operator policy](./CM-Configuration-Management/policy-gatekeeper-operator.yaml). You must enable [*mutatingWebhook*](https://github.com/open-cluster-management/policy-collection/blob/3d6775a7ddcc007d313421c1fcc25c1fbdf28fdd/community/CM-Configuration-Management/policy-gatekeeper-operator.yaml#L111) to use the gatekeeper mutation feature. 
+[Gatekeeper mutation policy (owner annotation)](./CM-Configuration-Management/policy-gatekeeper-annotation-owner.yaml) | Use the Gatekeeper mutation policy to set the owner annotation on pods. | See the [Gatekeeper](https://github.com/open-policy-agent/gatekeeper). **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy. See the [Gatekeeper operator policy](./CM-Configuration-Management/policy-gatekeeper-operator.yaml). You must enable [*mutatingWebhook*](https://github.com/open-cluster-management/policy-collection/blob/3d6775a7ddcc007d313421c1fcc25c1fbdf28fdd/community/CM-Configuration-Management/policy-gatekeeper-operator.yaml#L111) to use the gatekeeper mutation feature.
+[Gatekeeper mutation policy (image pull policy)](./CM-Configuration-Management/policy-gatekeeper-image-pull-policy.yaml) | Use the Gatekeeper mutation policy to set or update image pull policy on pods. | See the [Gatekeeper](https://github.com/open-policy-agent/gatekeeper). **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy. See the [Gatekeeper operator policy](./CM-Configuration-Management/policy-gatekeeper-operator.yaml). You must enable [*mutatingWebhook*](https://github.com/open-cluster-management/policy-collection/blob/3d6775a7ddcc007d313421c1fcc25c1fbdf28fdd/community/CM-Configuration-Management/policy-gatekeeper-operator.yaml#L111) to use the gatekeeper mutation feature.
 [MachineConfig Chrony sample policy](./CM-Configuration-Management/policy-machineconfig-chrony.yaml) | Use the MachineConfig Chrony policy to configure _/etc/chrony.conf_ on certain machines . | For more information see, [Modifying node configurations in OpenShift 4.x blog](https://jaosorior.dev/2019/modifying-node-configurations-in-openshift-4.x/). **Note**: The policy requires that the managed cluster is OpenShift Container Platform.
 [Network-Policy-Samples](./CM-Configuration-Management/policy-network-policy-samples.yaml) | Use the Network policy to specify how groups of pods are allowed to communicate with each other and other network endpoints. | See the [OpenShift Security Guide](https://access.redhat.com/articles/5059881). **Note**: The policy might be modified to the actual usecases.
 [OPA sample policy](./CM-Configuration-Management/policy-opa-sample.yaml) | Use the Open Policy Agent (OPA) Sample policy to view an example of how an OPA policy can be created. You can also view an example of adding a _REGO_ script into a ConfigMap, which is evaluated by the OPA. | See the [OPA example repository](https://github.com/ycao56/mcm-opa). **Note**: OPA must be installed to use the OPA ConfigMap policy.
@@ -101,62 +94,62 @@ Policy  | Description | Prerequisites
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-No policies yet       |  | 
+No policies yet       |  |
 
 ### Identification and Authentication
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-No policies yet       |  | 
+No policies yet       |  |
 
 ### Incident Response
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-No policies yet       |  | 
+No policies yet       |  |
 
 ### Maintenance
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-No policies yet       |  | 
+No policies yet       |  |
 
 ### Media Protection
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-No policies yet       |  | 
+No policies yet       |  |
 
 
 ### Physical and Environmental Protection
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-No policies yet       |  | 
+No policies yet       |  |
 
 ### Planning
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-No policies yet       |  | 
+No policies yet       |  |
 
 ### Personnel Security
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-No policies yet       |  | 
+No policies yet       |  |
 
 ### Risk Assessment
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-No policies yet       |  | 
+No policies yet       |  |
 
 ### System and Services Acquisition
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-No policies yet       |  | 
+No policies yet       |  |
 
 ### System and Communications Protection
 
@@ -176,7 +169,7 @@ Policy  | Description | Prerequisites
 While the policies in the [stable](../stable) folder all have out-of-the-box support installed with Red Hat Advanced Cluster Management, community policies are maintained by the open source community. You might need to deploy extra policy consumers in order for community policies to work as intended. If you are seeing the error `no matches for kind "<resource name>" in version "<group>/<version>"`, you must deploy the CustomResourceDefiniton (CRD) for the policy before you create it. If some of the policies in this folder are not behaving properly, you must deploy the corresponding policy consumers to handle them.
 
 ### Custom policy controllers
-Custom policy controllers are created from forks of the [sample policy controller repo](https://github.com/open-cluster-management/multicloud-operators-policy-controller), and as such the process for deploying them is essentially the same as the process for deploying the sample controller. 
+Custom policy controllers are created from forks of the [sample policy controller repo](https://github.com/open-cluster-management/multicloud-operators-policy-controller), and as such the process for deploying them is essentially the same as the process for deploying the sample controller.
 - Run the following command on your cluster to install the CRD for the custom policy: `kubectl apply -f <CRD path>`
 - Run the following command to set up the operator and service account that runs the controller on your cluster: `kubectl apply -f deploy/`
 
