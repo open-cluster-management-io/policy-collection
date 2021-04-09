@@ -38,8 +38,10 @@ spec:
                         - open-cluster-management
                         - open-cluster-management-agent
                         - open-cluster-management-agent-addon
+                        - openshift
                         - openshift-apiserver
                         - openshift-apiserver-operator
+                        - openshift-authentication
                         - openshift-authentication-operator
                         - openshift-cloud-credential-operator
                         - openshift-cluster-csi-drivers
@@ -49,6 +51,12 @@ spec:
                         - openshift-cluster-storage-operator
                         - openshift-cluster-version
                         - openshift-compliance
+                        - openshift-config
+                        - openshift-config-managed
+                        - openshift-config-operator
+                        - openshift-console
+                        - openshift-console-operator
+                        - openshift-console-user-settings
                         - openshift-controller-manager
                         - openshift-controller-manager-operator
                         - openshift-dns
@@ -56,26 +64,40 @@ spec:
                         - openshift-etcd
                         - openshift-etcd-operator
                         - openshift-image-registry
+                        - openshift-infra
                         - openshift-ingress
+                        - openshift-ingress-canary
                         - openshift-ingress-operator
                         - openshift-insights
+                        - openshift-kni-infra
                         - openshift-kube-apiserver
                         - openshift-kube-apiserver-operator
                         - openshift-kube-controller-manager
                         - openshift-kube-controller-manager-operator
+                        - openshift-kube-scheduler
                         - openshift-kube-scheduler-operator
                         - openshift-kube-storage-version-migrator
                         - openshift-kube-storage-version-migrator-operator
+                        - openshift-kubevirt-infra
                         - openshift-machine-api
                         - openshift-machine-config-operator
+                        - openshift-marketplace
                         - openshift-monitoring
                         - openshift-multus
+                        - openshift-network-diagnostics
                         - openshift-network-operator
+                        - openshift-node
                         - openshift-oauth-apiserver
+                        - openshift-openstack-infra
                         - openshift-operators
+                        - openshift-operator-lifecycle-manager
+                        - openshift-ovirt-infra
+                        - openshift-ovn-kubernetes
                         - openshift-sdn
                         - openshift-service-ca
                         - openshift-service-ca-operator
+                        - openshift-user-workload-monitoring
+                        - openshift-vsphere-infra
                       processes:
                         - '*'
 ---
