@@ -89,3 +89,7 @@ Create a pull request that can be reviewed by the product team. See the followin
 5. Add the [policy-collection OWNERS](https://github.com/open-cluster-management/policy-collection/blob/main/OWNERS) as reviewers to the pull request so that they receive notifications about the pull request.
 
 6. After the pull request is reviewed and approved, automation will merge the changes into the main branch of the repository.
+
+## Issue and pull request management
+
+Anyone can comment on issues and submit reviews for pull requests. In order to be assigned an issue or pull request, you can leave a `/assign <your Github ID>` comment on the issue or pull request (PR).
