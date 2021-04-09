@@ -2,7 +2,17 @@
 
 This doc provides instruction on how to contribute policies to the `policy-collection` repo.
 
-You can contribute policies by submitting a pull request (PR) in the `policy-collection` repo. Your PR must be reviewed by the [OWNERS](../OWNERS) of the repo. Contributors own full responsibility for all aspects of secure engineering for their contributions, and need to provide an email address to report security issues found in their contributions.
+You can contribute policies by submitting a pull request (PR) in the `policy-collection` repo. Your PR must be reviewed by the [OWNERS](../OWNERS) of the repo. Contributors own full responsibility for all aspects of secure engineering for their contributions, and need to provide an email address to report security issues found in their contributions. Furthermore, policies contributed to the `community` folder are provided on an as-is basis and are not officially supported by Red Hat. If you find a `community` policy that is not working as expected, we welcome contributions to update it!
+
+## Terms
+
+All contributions to the repository must be submitted under the terms of the [Apache Public License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+## Certificate of Origin
+
+Creators of policies that migrate to the `stable` folder must agree to the Developer Certificate of Origin (DCO). This document was created by the Linux Kernel community and is a simple statement that you, as a contributor, have the legal right to make the contribution. See the [DCO](DCO) file for details.
+
+**NOTE:** The DCO does not apply to content in the `community` folder.
 
 ## Guidelines
 
@@ -78,4 +88,4 @@ Create a pull request that can be reviewed by the product team. See the followin
 
 5. Add the [policy-collection OWNERS](https://github.com/open-cluster-management/policy-collection/blob/main/OWNERS) as reviewers to the pull request so that they receive notifications about the pull request.
 
-6. After the pull request is reviewed and approved, select **Squash and Merge** in your pull request to merge the changes into the main branch of the repository.
+6. After the pull request is reviewed and approved, automation will merge the changes into the main branch of the repository.
