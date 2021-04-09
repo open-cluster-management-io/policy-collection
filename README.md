@@ -11,8 +11,6 @@ This repository hosts policies for Open Cluster Management. You can find policie
 * [stable](stable) -- Policies in the `stable` folder can be applied with [Red Hat Advanced Cluster Management for Kubernetes](https://www.redhat.com/en/technologies/management/advanced-cluster-management).
 * [community](community) -- Policies in the `community` folder are contributed from the open source community and can be applied with the product governance framework.
 
-**NOTE:** Policies contributed to the `community` folder are provided on an as-is basis and are not officially supported by Red Hat. If you find a `community` policy that is not working as expected, we welcome contributions to update it! The DCO does not apply to content in the community folder.
-
 ## Using GitOps to deploy policies to a cluster
 
 Fork this repository and use the forked version as the target to run the sync against. This is to avoid unintended changes to be applied to your cluster automatically. To get latest policies from the `policy-collection` repository, you can pull the latest changes from `policy-collection` to your own repository through a pull request. Any further changes to your repository are automatically be applied to your cluster.
