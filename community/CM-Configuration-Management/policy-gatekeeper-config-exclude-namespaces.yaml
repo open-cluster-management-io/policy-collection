@@ -32,10 +32,12 @@ spec:
                   match:
                     - excludedNamespaces:
                         - hive
+                        - kube-node-lease
                         - kube-public
                         - kube-storage-version-migrator-operator
                         - kube-system
                         - open-cluster-management
+                        - open-cluster-management-hub
                         - open-cluster-management-agent
                         - open-cluster-management-agent-addon
                         - openshift
@@ -63,6 +65,7 @@ spec:
                         - openshift-dns-operator
                         - openshift-etcd
                         - openshift-etcd-operator
+                        - openshift-gatekeeper-system
                         - openshift-image-registry
                         - openshift-infra
                         - openshift-ingress
