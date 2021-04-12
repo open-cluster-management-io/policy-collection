@@ -12,7 +12,7 @@
 
 # Contributing guidelines
 
-You can contribute policies by submitting a pull request (PR) in the `policy-collection` repo. Your PR must be reviewed by the [OWNERS](OWNERS) of the repo. Contributors own full responsibility for all aspects of secure engineering for their contributions, and need to provide an email address to report security issues found in their contributions.
+You can contribute policies by submitting a pull request (PR) in the `policy-collection` repository. Your PR must be reviewed by the [OWNERS](OWNERS) of the repository. Contributors own full responsibility for all aspects of secure engineering for their contributions, and need to provide an email address to report security issues found in their contributions.
 
 ## Terms
 
@@ -40,9 +40,9 @@ The Open Cluster Management project has adopted the CNCF Code of Conduct. Please
 
 You can use a policy from the [`policy-collection/stable` folder](https://github.com/open-cluster-management/policy-collection/tree/main/stable), or create your own policy using the product policy framework. For more information, see _Policy overview_ in the [Red Hat Advanced Cluster Management for Kubernetes documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.1/html/security/security#policy-overview). Use [NIST Special Publication 800-53](https://nvd.nist.gov/800-53/Rev4) to determine the correct NIST 800-53 Control Family for the policy.
 
-Start with creating your own fork and clone the `policy-collection` repo for your local environment by running the following command: `git clone https://github.com/<your-username>/policy-collection.git`
+Start with creating your own fork and clone the `policy-collection` repository for your local environment by running the following command: `git clone https://github.com/<your-username>/policy-collection.git`
 
-For more information, see [GitHub documentation](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo) to learn how to fork repos.
+For more information, see [GitHub documentation](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo) to learn how to fork repositories.
 
 ## Contributing a custom policy
 
