@@ -1,4 +1,16 @@
-# Contributing policies
+**Table of Contents**
+
+- [Contributing guidelines](#contributing-guidelines)
+    - [Terms](#terms)
+    - [Certificate of Origin](#certificate-of-origin)
+    - [DCO Sign Off](#dco-sign-off)
+    - [Code of Conduct](#code-of-conduct)
+    - [Contributing a custom policy](#contributing-a-custom-policy)
+      - [Validate](#validate)
+      - [Contribute](#contribute)
+    - [Issue and pull request management](#issue-and-pull-request-management)
+
+# Contributing guidelines
 
 You can contribute policies by submitting a pull request (PR) in the `policy-collection` repo. Your PR must be reviewed by the [OWNERS](OWNERS) of the repo. Contributors own full responsibility for all aspects of secure engineering for their contributions, and need to provide an email address to report security issues found in their contributions.
 
@@ -8,7 +20,21 @@ All contributions to the repository must be submitted under the terms of the [Ap
 
 ## Certificate of Origin
 
-By contributing to this project, you agree to the Developer Certificate of Origin (DCO). This document was created by the Linux Kernel community and is a simple statement that you, as a contributor, have the legal right to make the contribution. See the [DCO](DCO) file for details.
+By contributing to this project, you agree to the Developer Certificate of Origin (DCO). This document was created by the Linux Kernel community and is a simple statement that you, as a contributor, have the legal right to make the contribution. See the [DCO](https://github.com/open-cluster-management/community/blob/main/DCO) file for details.
+
+## DCO Sign Off
+
+You must sign off your commit to state that you certify the [DCO](https://github.com/open-cluster-management/community/blob/main/DCO). To certify your commit for DCO, add a line like the following at the end of your commit message:
+
+```
+Signed-off-by: John Smith <john@example.com>
+```
+
+This can be done with the `--signoff` option to `git commit`. See the [Git documentation](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt--s) for details. You can also mass sign-off a whole pull request with `git rebase --signoff main`, replacing `main` with the branch you are creating a pull request from.
+
+## Code of Conduct
+
+The Open Cluster Management project has adopted the CNCF Code of Conduct. Please view (CODE_OF_CONDUCT.md)[https://github.com/open-cluster-management/community/blob/main/CODE_OF_CONDUCT.md] for details.
 
 ## Guidelines
 
@@ -36,7 +62,7 @@ Learn how to create a custom policy, validate that the custom policy is added, a
    [policy-name](./control-family/path/to/yaml) | <description> | <prerequisites>
    ```
    
-## Validate
+### Validate
 
 To validate the creation of your policy, use the Red Hat Advanced Cluster Management web console to create a new policy using our custom YAML file. 
 
@@ -52,7 +78,7 @@ It is important to remember to set your policy to only inform users of policy vi
 
 Be sure that your contributed policy is set to `enforce` if the intent of your policy requires something to be created. For example, a policy that creates an operator would be expected to enforce creation of the operator. On the other hand, it is recommended for a configuration policy to be set to `inform` by default so that the policy does not change cluster resources automatically when it is applied.
 
-## Contribute
+### Contribute
 
 Create a pull request that can be reviewed by the product team. See the following instructions to populate a pull request: 
 
