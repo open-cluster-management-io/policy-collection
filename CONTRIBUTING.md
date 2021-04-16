@@ -30,11 +30,11 @@ You must sign off your commit to state that you certify the [DCO](https://github
 Signed-off-by: John Smith <john@example.com>
 ```
 
-This can be done with the `--signoff` option to `git commit`. See the [Git documentation](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt--s) for details. You can also mass sign-off a whole pull request with `git rebase --signoff main`, replacing `main` with the branch you are creating a pull request from.
+This can be done with the `--signoff` option to `git commit`. See the [Git documentation](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt--s) for details. You can also mass sign-off a whole pull request with `git rebase --signoff main`, replacing `main` with the branch you are creating a pull request into.
 
 ## Code of Conduct
 
-The Open Cluster Management project has adopted the CNCF Code of Conduct. Please view (CODE_OF_CONDUCT.md)[https://github.com/open-cluster-management/community/blob/main/CODE_OF_CONDUCT.md] for details.
+The Open Cluster Management project has adopted the CNCF Code of Conduct. Refer to our [Community Code of Conduct](https://github.com/open-cluster-management/community/blob/main/CODE_OF_CONDUCT.md) for details.
 
 ## Guidelines
 
