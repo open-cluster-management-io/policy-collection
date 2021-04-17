@@ -1,16 +1,48 @@
-# Contributing policies
+**Table of Contents**
 
-This doc provides instruction on how to contribute policies to the `policy-collection` repo.
+- [Contributing guidelines](#contributing-guidelines)
+    - [Terms](#terms)
+    - [Certificate of Origin](#certificate-of-origin)
+    - [DCO Sign Off](#dco-sign-off)
+    - [Code of Conduct](#code-of-conduct)
+    - [Contributing a custom policy](#contributing-a-custom-policy)
+      - [Validate](#validate)
+      - [Contribute](#contribute)
+    - [Issue and pull request management](#issue-and-pull-request-management)
 
-You can contribute policies by submitting a pull request (PR) in the `policy-collection` repo. Your PR must be reviewed by the [OWNERS](../OWNERS) of the repo. Contributors own full responsibility for all aspects of secure engineering for their contributions, and need to provide an email address to report security issues found in their contributions.
+# Contributing guidelines
+
+You can contribute policies by submitting a pull request (PR) in the `policy-collection` repository. Your PR must be reviewed by the [OWNERS](OWNERS) of the repository. Contributors own full responsibility for all aspects of secure engineering for their contributions, and need to provide an email address to report security issues found in their contributions.
+
+## Terms
+
+All contributions to the repository must be submitted under the terms of the [Apache Public License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+## Certificate of Origin
+
+By contributing to this project, you agree to the Developer Certificate of Origin (DCO). This document was created by the Linux Kernel community and is a simple statement that you, as a contributor, have the legal right to make the contribution. See the [DCO](https://github.com/open-cluster-management/community/blob/main/DCO) file for details.
+
+## DCO Sign Off
+
+You must sign off your commit to state that you certify the [DCO](https://github.com/open-cluster-management/community/blob/main/DCO). To certify your commit for DCO, add a line like the following at the end of your commit message:
+
+```
+Signed-off-by: John Smith <john@example.com>
+```
+
+This can be done with the `--signoff` option to `git commit`. See the [Git documentation](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt--s) for details. You can also mass sign-off a whole pull request with `git rebase --signoff main`, replacing `main` with the branch you are creating a pull request into.
+
+## Code of Conduct
+
+The Open Cluster Management project has adopted the CNCF Code of Conduct. Refer to our [Community Code of Conduct](https://github.com/open-cluster-management/community/blob/main/CODE_OF_CONDUCT.md) for details.
 
 ## Guidelines
 
 You can use a policy from the [`policy-collection/stable` folder](https://github.com/open-cluster-management/policy-collection/tree/main/stable), or create your own policy using the product policy framework. For more information, see _Policy overview_ in the [Red Hat Advanced Cluster Management for Kubernetes documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.1/html/security/security#policy-overview). Use [NIST Special Publication 800-53](https://nvd.nist.gov/800-53/Rev4) to determine the correct NIST 800-53 Control Family for the policy.
 
-Start with creating your own fork and clone the `policy-collection` repo for your local environment by running the following command: `git clone https://github.com/<your-username>/policy-collection.git`
+Start with creating your own fork and clone the `policy-collection` repository for your local environment by running the following command: `git clone https://github.com/<your-username>/policy-collection.git`
 
-For more information, see [GitHub documentation](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo) to learn how to fork repos.
+For more information, see [GitHub documentation](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo) to learn how to fork repositories.
 
 ## Contributing a custom policy
 
@@ -30,7 +62,7 @@ Learn how to create a custom policy, validate that the custom policy is added, a
    [policy-name](./control-family/path/to/yaml) | <description> | <prerequisites>
    ```
    
-## Validate
+### Validate
 
 To validate the creation of your policy, use the Red Hat Advanced Cluster Management web console to create a new policy using our custom YAML file. 
 
@@ -46,7 +78,7 @@ It is important to remember to set your policy to only inform users of policy vi
 
 Be sure that your contributed policy is set to `enforce` if the intent of your policy requires something to be created. For example, a policy that creates an operator would be expected to enforce creation of the operator. On the other hand, it is recommended for a configuration policy to be set to `inform` by default so that the policy does not change cluster resources automatically when it is applied.
 
-## Contribute
+### Contribute
 
 Create a pull request that can be reviewed by the product team. See the following instructions to populate a pull request: 
 
@@ -78,4 +110,8 @@ Create a pull request that can be reviewed by the product team. See the followin
 
 5. Add the [policy-collection OWNERS](https://github.com/open-cluster-management/policy-collection/blob/main/OWNERS) as reviewers to the pull request so that they receive notifications about the pull request.
 
-6. After the pull request is reviewed and approved, select **Squash and Merge** in your pull request to merge the changes into the main branch of the repository.
+6. After the pull request is reviewed and approved, automation will merge the changes into the main branch of the repository.
+
+## Issue and pull request management
+
+Anyone can comment on issues and submit reviews for pull requests. In order to be assigned an issue or pull request, you can leave a `/assign <your Github ID>` comment on the issue or pull request (PR).
