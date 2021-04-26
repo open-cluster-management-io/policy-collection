@@ -1,10 +1,10 @@
-# This policy creates machine configurations that will install kernel development
-# packages onto the OpenShift nodes.  Note that this is intended for OpenShift 4.6
+# This policy creates machine configurations that install kernel development
+# packages onto the OpenShift nodes.  Note, that this is intended for OpenShift 4.6
 # and newer only.  This is needed to allow the Falco/Sysdig kernel modules to be
 # applied successfully so suspicious kernel level events can be detected.
 #
 # This policy is set to enforce by default.
-# Warning: Applying this policy will cause a rolling restart of all master and worker
+# Warning: Applying this policy causes a rolling restart of all master and worker
 # nodes to apply the new machine configurations.
 #
 # Change the placement rule so this policy only applies to clusters that need this
