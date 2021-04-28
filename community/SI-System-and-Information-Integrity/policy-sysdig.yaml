@@ -1,3 +1,12 @@
+# This policy installs the Sysdig agent operator.  For more information about
+# Sysdig, see https://sysdig.com/
+#
+# This policy is set to enforce by default.  Be sure to update the placement
+# rule.
+#
+# When installing the Sysdig agent on OpenShift, the policy policy-kernel-devel
+# must be installed for the custom kernel module to be loaded.
+
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
@@ -97,11 +106,16 @@ spec:
                   name: sysdigagent-enforcement
                   namespace: sysdig-operator
                 spec:
+                  daemonset:
+                    annotations:
+                      productID: SysdigSecureDevopsPlatform
+                      productName: Sysdig Secure DevOps Platform
+                      productVersion: 1.8.3
                   scc:
                     create: true
                   sysdig:
                     #Set access key
-                    accessKey: "<SYSDIG_AGENT_ACCESS_KEY>"
+                    accessKey: "XXX"
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
