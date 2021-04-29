@@ -54,3 +54,6 @@ You can reach the maintainers of this project at:
 * National Cyber security Center of Excellence (NCCoE) blog, [Policy Based Governance in Trusted Container Platform](https://www.nccoe.nist.gov/news/policy-based-governance-trusted-container-platform)
 
 * IBM Developer blog, [Policy based governance for open hybrid cloud](http://ibm.biz/policy-based-governance-for-open-hybrid-cloud)
+
+* Rego policies collection, [Examples which can be included into RHACM-Policies like the existing Gatekeeper-Policy samples](https://github.com/redhat-cop/rego-policies)
+
