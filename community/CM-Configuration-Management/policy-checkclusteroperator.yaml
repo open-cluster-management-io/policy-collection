@@ -15,7 +15,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-checkclusteroperator
+          name: policy-checkclusteroperator-available
         spec:
           remediationAction: inform
           severity: low
@@ -33,6 +33,20 @@ spec:
                   conditions:
                     - status: 'False'
                       type: Available
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-checkclusteroperator-degraded
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
             - complianceType: mustnothave
               objectDefinition:
                 apiVersion: config.openshift.io/v1
@@ -40,7 +54,7 @@ spec:
                 status:
                   conditions:
                     - status: 'True'
-                      type: Degraded                      
+                      type: Degraded                         
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
