@@ -27,7 +27,7 @@ The policies are applied to all managed clusters that are available, and have th
 
 ## Community, discussion, contribution, and support
 
-Check the [Contributing policies](docs/CONTRIBUTING.md) document for guidelines on how to contribute to the repository.
+Check the [Contributing policies](CONTRIBUTING.md) document for guidelines on how to contribute to the repository.
 
 You can reach the maintainers of this project at:
 
