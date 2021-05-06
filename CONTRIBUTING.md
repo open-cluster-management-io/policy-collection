@@ -36,6 +36,28 @@ This can be done with the `--signoff` option to `git commit`. See the [Git docum
 
 The Open Cluster Management project has adopted the CNCF Code of Conduct. Refer to our [Community Code of Conduct](https://github.com/open-cluster-management/community/blob/main/CODE_OF_CONDUCT.md) for details.
 
+## Terms
+
+All contributions to the repository must be submitted under the terms of the [Apache Public License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+## Certificate of Origin
+
+By contributing to this project, you agree to the Developer Certificate of Origin (DCO). This document was created by the Linux Kernel community and is a simple statement that you, as a contributor, have the legal right to make the contribution. See the [DCO](https://github.com/open-cluster-management/community/blob/main/DCO) file for details.
+
+## DCO Sign Off
+
+You must sign off your commit to state that you certify the [DCO](https://github.com/open-cluster-management/community/blob/main/DCO). To certify your commit for DCO, add a line like the following at the end of your commit message:
+
+```
+Signed-off-by: John Smith <john@example.com>
+```
+
+This can be done with the `--signoff` option to `git commit`. See the [Git documentation](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt--s) for details. You can also mass sign-off a whole pull request with `git rebase --signoff main`, replacing `main` with the branch you are creating a pull request into.
+
+## Code of Conduct
+
+The Open Cluster Management project has adopted the CNCF Code of Conduct. Refer to our [Community Code of Conduct](https://github.com/open-cluster-management/community/blob/main/CODE_OF_CONDUCT.md) for details.
+
 ## Guidelines
 
 You can use a policy from the [`policy-collection/stable` folder](https://github.com/open-cluster-management/policy-collection/tree/main/stable), or create your own policy using the product policy framework. For more information, see _Policy overview_ in the [Red Hat Advanced Cluster Management for Kubernetes documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.1/html/security/security#policy-overview). Use [NIST Special Publication 800-53](https://nvd.nist.gov/800-53/Rev4) to determine the correct NIST 800-53 Control Family for the policy.
