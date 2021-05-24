@@ -164,13 +164,13 @@ spec:
         remediationAction: inform 
         severity: high
         object-templates:
-          - complianceType: mustnothave # Makes sure pods are not in any kind of black duck policy violations
+          - complianceType: musthave # Makes sure pods are not in any kind of black duck policy violations
             objectDefinition:
               apiVersion: v1
               kind: Pod
               metadata:
                 labels:
-                  com.blackducksoftware.com.pod.overall-status: IN_VIOLATION
+                  com.blackducksoftware.com.pod.overall-status: NOT_IN_VIOLATION
                 namespace: default
 ---
 apiVersion: policy.open-cluster-management.io/v1
