@@ -37,8 +37,6 @@ You can reach the maintainers of this project at:
 
 * [Comply to standards using the policy based governance of Red Hat Advanced Cluster Management for Kubernetes](https://www.openshift.com/blog/comply-to-standards-using-policy-based-governance-of-red-hat-advanced-cluster-management-for-kubernetes)
 
-* [Develop your own policy controller to integrate with Red Hat Advanced Cluster Management for Kubernetes](https://www.openshift.com/blog/develop-your-own-policy-controller-to-integrate-with-red-hat-advanced-cluster-management-for-kubernetes)
-
 * [How to Integrate Open Policy Agent with Red Hat Advanced Cluster Management for Kubernetes policy framework](https://www.openshift.com/blog/how-to-integrate-open-policy-agent-with-red-hat-advanced-cluster-management-for-kubernetes-policy-framework)
 
 * [Securing Kubernetes Clusters with Sysdig and Red Hat Advanced Cluster Management](https://www.openshift.com/blog/securing-kubernetes-clusters-with-sysdig-and-red-hat-advanced-cluster-management)
