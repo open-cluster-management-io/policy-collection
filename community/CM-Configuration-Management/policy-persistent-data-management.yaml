@@ -1,0 +1,149 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline
+  name: scribe-policy
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-scribe-namespace
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: scribe-system
+          remediationAction: enforce
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-scribe-application
+        spec:
+          remediationAction: enforce
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: app.k8s.io/v1beta1
+                kind: Application
+                metadata:
+                  name: scribe
+                  namespace: scribe-system
+                spec:
+                  componentKinds:
+                    - group: apps.open-cluster-management.io
+                      kind: Subscription
+                  descriptor: {}
+                  selector:
+                    matchExpressions:
+                      - key: app
+                        operator: In
+                        values:
+                          - scribe
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: scribe-replication-channel
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: Channel
+                metadata:
+                  annotations:
+                    apps.open-cluster-management.io/reconcile-rate: medium
+                  name: scribe
+                  namespace: scribe-system 
+                spec:
+                  pathname: https://backube.github.io/helm-charts/
+                  type: HelmRepo
+          remediationAction: enforce
+          severity: low
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-scribe-subscription
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: Subscription
+                metadata:
+                  labels:
+                    app: scribe
+                  name: scribe-subscription
+                  namespace: scribe-system 
+                spec:
+                  channel: scribe-system/scribe
+                  name: scribe
+                  packageOverrides:
+                    - packageAlias: scribe
+                      packageName: scribe
+                  placement:
+                    placementRef:
+                      name: scribe-placement 
+                      kind: PlacementRule
+          remediationAction: enforce
+          severity: low
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: scribe-replication-placement
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: PlacementRule
+                metadata:
+                  name: scribe-placement
+                  namespace: scribe-system
+                  labels:
+                    app: scribe
+                spec:
+                  clusterSelector:
+                    matchLabels:
+                      vendor: OpenShift
+          remediationAction: enforce
+          severity: low
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-scribe-policy-app
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-scribe-policy-app
+subjects:
+  - apiGroup: policy.open-cluster-management.io
+    kind: Policy
+    name: scribe-policy
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-scribe-policy-app
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchLabels:
+      name: local-cluster
