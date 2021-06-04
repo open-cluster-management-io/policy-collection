@@ -2,11 +2,10 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   annotations:
-    policy.open-cluster-management.io/categories: null
-    policy.open-cluster-management.io/controls: null
-    policy.open-cluster-management.io/standards: null
+    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline
   name: scribe-policy
-  namespace: default
 spec:
   disabled: false
   policy-templates:
@@ -146,7 +145,6 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: binding-scribe-policy-app
-  namespace: default
 placementRef:
   apiGroup: apps.open-cluster-management.io
   kind: PlacementRule
@@ -160,7 +158,6 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-scribe-policy-app
-  namespace: default
 spec:
   clusterConditions:
     - status: 'True'
