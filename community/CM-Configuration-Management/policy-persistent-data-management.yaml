@@ -32,9 +32,6 @@ spec:
         spec:
           remediationAction: enforce
           severity: low
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["*"]
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -60,11 +57,6 @@ spec:
         metadata:
           name: scribe-replication-channel
         spec:
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - '*'
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -86,11 +78,6 @@ spec:
         metadata:
           name: policy-scribe-subscription
         spec:
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - '*'
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -119,11 +106,6 @@ spec:
         metadata:
           name: scribe-replication-placement
         spec:
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - '*'
           object-templates:
             - complianceType: musthave
               objectDefinition:
