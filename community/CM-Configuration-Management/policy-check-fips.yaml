@@ -1,63 +1,66 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-check-fips-enabled
-  namespace: default
+  name: checkfipscompliance
+  namespace: demo
   annotations:
     policy.open-cluster-management.io/standards: NIST-CSF
-    policy.open-cluster-management.io/categories: PR.DS Data Security, PR.IP Information Protection Processes and Procedures
-    policy.open-cluster-management.io/controls: PR.DS-2 Data-in-transit, PR.IP-1 Baseline Configuration
+    policy.open-cluster-management.io/categories: PR.IP Information Protection Processes and Procedures
+    policy.open-cluster-management.io/controls: PR.IP-1 Baseline Configuration
 spec:
   remediationAction: inform
   disabled: false
   policy-templates:
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: fips-check
-        spec:
-          remediationAction: inform
-          severity: low
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - default
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                kind: ConfigMap
-                metadata:
-                  name: cluster-config-v1
-                  namespace: kube-system
-                apiVersion: v1
-                data:
-                  install-config: |
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: 'checkfipscompliance'
+      spec:
+        remediationAction: inform
+        severity: low
+        namespaceSelector:
+          exclude:
+            - kube-*
+          include:
+            - default
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: machineconfiguration.openshift.io/v1
+              kind: MachineConfig
+              metadata:
+                labels:
+                  machineconfiguration.openshift.io/role: master
+                name: 99-master-fips
+              spec:
+                config:
+                  ignition:
                     fips: true
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-check-fips-enabled
-  namespace: default
+  name: binding-checkfipscompliance
+  namespace: demo
 placementRef:
-  name: placement-policy-check-fips-enabled
+  name: placement-checkfipscompliance
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-  - name: policy-check-fips-enabled
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
+- name: checkfipscompliance
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-check-fips-enabled
-  namespace: default
+  name: placement-checkfipscompliance
+  namespace: demo
 spec:
   clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
+  - status: "True"
+    type: ManagedClusterConditionAvailable
   clusterSelector:
-    matchExpressions: []
+    matchExpressions:
+      - {key: env, operator: In, values: ["dev"]}
