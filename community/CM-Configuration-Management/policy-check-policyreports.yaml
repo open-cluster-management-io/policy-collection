@@ -1,0 +1,77 @@
+# This policy looks for PolicyReport resources that contain failures.
+# These failures mean a compliance action was taken and there are resources that 
+# do not meet the compliance rules.
+#
+# Set remediationAction to "inform" to receive a list of PolicyReport 
+# resources that have a status of "fail".
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-check-policyreports
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-check-policyreports
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["*"]
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: wgpolicyk8s.io/v1alpha2
+                kind: PolicyReport
+                results:
+                  - result: fail
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-check-cluster-policyreports
+        spec:
+          remediationAction: inform
+          severity: low
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: wgpolicyk8s.io/v1alpha2
+                kind: ClusterPolicyReport
+                results:
+                  - result: fail
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-check-policyreports
+placementRef:
+  name: placement-policy-check-policyreports
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-check-policyreports
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-check-policyreports
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
