@@ -1,0 +1,271 @@
+# Install falco using helm instead of using the operator. 
+
+# You must make sure the PlacementRule for the Policy installs the policy on the
+# ACM hub.  The PlacementRule inside the Policy is what determines which clusters
+# falco will be installed on.
+
+# Edit the parameters for the helm chart inside the Subscription resource to
+# customize falco for your needs.  If installing falco on openshift, be aware of
+# the following:
+# - You must install the policy policy-kernel-devel.yaml.  See that policy under
+#   configuration management for more details.
+# - To use audit rules with falco you must enable audit forwarding.  Use the
+#   policy policy-falco-auditing.yaml under system and information integrity to see
+#   how to enable auditing for falco on OpenShift.
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-falco-app
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: SI System and Information Integrity
+    policy.open-cluster-management.io/controls: SI-5 Security Alerts, Advisories, and Directives
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-falco-namespace
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: falco
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-falco-ch-namespace
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: hfalcosecuritygithubio-charts-ns
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-falco-application
+        spec:
+          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: low
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["*"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: app.k8s.io/v1beta1
+                kind: Application
+                metadata:
+                  name: falco
+                  namespace: falco
+                  annotations:
+                    apps.open-cluster-management.io/deployables: ''
+                spec:
+                  componentKinds:
+                    - group: apps.open-cluster-management.io
+                      kind: Subscription
+                  descriptor: {}
+                  selector:
+                    matchExpressions:
+                      - key: app
+                        operator: In
+                        values:
+                          - falco
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-falco-channel
+        spec:
+          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: low
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["*"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: Channel
+                metadata:
+                  annotations:
+                    apps.open-cluster-management.io/reconcile-rate: medium
+                  name: hfalcosecuritygithubio-charts
+                  namespace: hfalcosecuritygithubio-charts-ns
+                spec:
+                  pathname: https://falcosecurity.github.io/charts
+                  type: HelmRepo
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-falco-subscription
+        spec:
+          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: low
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["*"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: Subscription
+                metadata:
+                  name: falco-subscription-1
+                  namespace: falco
+                  annotations: {}
+                  labels:
+                    app: falco
+                    app.kubernetes.io/part-of: falco
+                    apps.open-cluster-management.io/reconcile-rate: medium
+                spec:
+                  name: falco
+                  channel: hfalcosecuritygithubio-charts-ns/hfalcosecuritygithubio-charts
+                  packageOverrides:
+                    - packageAlias: falco
+                      packageName: falco
+                      packageOverrides:
+                      - path: spec
+                        value:
+                          auditLog:
+                            enabled: true
+                          customRules:
+                            rules-ocm.yaml: |-
+                              - macro: user_known_write_below_etc_activities
+                                condition: (k8s.ns.name = "openshift-dns")
+                              - macro: user_known_network_tool_activities
+                                condition: (k8s.ns.name = "openshift-dns")
+                              - macro: k8s_containers
+                                condition: >
+                                  (container.image.repository in (gcr.io/google_containers/hyperkube-amd64,
+                                  gcr.io/google_containers/kube2sky, sysdig/agent, sysdig/falco,
+                                  sysdig/sysdig, falcosecurity/falco, quay.io/open-cluster-management) or
+                                  (k8s.ns.name in (kube-system, openshift-multus, openshift-monitoring,
+                                  open-cluster-management, openshift-sdn, openshift-dns,
+                                  openshift-machine-config-operator, openshift-cluster-machine-approver,
+                                  openshift-dns-operator, openshift-cloud-credential-operator,
+                                  openshift-machine-api, openshift-ingress-operator, openshift-console,
+                                  openshift-ovn-kubernetes)))
+                              - list: allowed_k8s_users
+                                items: [
+                                  "minikube", "minikube-user", "kubelet", "kops", "admin", "kube", "kube-proxy", "kube-apiserver-healthcheck",
+                                  "kubernetes-admin",
+                                  vertical_pod_autoscaler_users,
+                                  cluster-autoscaler,
+                                  "system:addon-manager",
+                                  "cloud-controller-manager",
+                                  "eks:node-manager",
+                                  "system:kube-controller-manager",
+                                  "kube:admin"
+                                  ]
+                          falco:
+                            httpOutput:
+                              enabled: true
+                              url: http://falcosidekick:2801/
+                            jsonIncludeOutputProperty: true
+                            jsonOutput: true
+                            rulesFile:
+                            - /etc/falco/falco_rules.yaml
+                            - /etc/falco/falco_rules.local.yaml
+                            - /etc/falco/k8s_audit_rules.yaml
+                            - /etc/falco/rules.d
+                            stdoutOutput:
+                              enabled: true
+                            syscallEventDrops:
+                              actions:
+                              - log
+                              - alert
+                              maxBurst: 10
+                              rate: 0.03333
+                            webserver:
+                              enabled: true
+                              k8sAuditEndpoint: /k8s-audit
+                              listenPort: 8765
+                              nodePort: 32765
+                              sslCertificate: /etc/falco/certs/server.pem
+                              sslEnabled: false
+                          falcosidekick:
+                            enabled: false
+                            fullfdqn: false
+                          image:
+                            pullPolicy: IfNotPresent
+                            registry: docker.io
+                            repository: falcosecurity/falco
+                            tag: 0.28.1
+                          podSecurityPolicy:
+                            create: false
+                          scc:
+                            create: true
+                          tolerations:
+                          - effect: NoSchedule
+                            key: node-role.kubernetes.io/master
+                  placement:
+                    placementRef:
+                      name: placement-policy-falco-1
+                      kind: PlacementRule
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-falco-placement
+        spec:
+          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: low
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["*"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: PlacementRule
+                metadata:
+                  name: placement-policy-falco-1
+                  namespace: falco
+                  labels:
+                    app: falco
+                spec:
+                  clusterSelector:
+                    matchLabels:
+                      environment: dev
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-falco-app
+placementRef:
+  name: placement-policy-falco-app
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-falco-app
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-falco-app
+  labels:
+    app: falco
+spec:
+  clusterSelector:
+    matchLabels:
+      name: local-cluster
