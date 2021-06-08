@@ -2,8 +2,6 @@
 
 A collection of policy examples for Open Cluster Management.
 
-**NOTE:** _The `master` branch is deprecated in favor of `main` as the primary branch, and is expected to be removed after May 31, 2021. Be sure to update any configurations or subscriptions accordingly._
-
 ## Repository structure
 
 This repository hosts policies for Open Cluster Management. You can find policies from the following folders:
