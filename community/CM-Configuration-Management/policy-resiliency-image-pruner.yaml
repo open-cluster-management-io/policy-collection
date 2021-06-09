@@ -1,12 +1,12 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: egress-example
+  name: policy-resiliency-image-pruner
   annotations:
-    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/standards: NIST-CSF
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
-spec:
+  spec:
   remediationAction: inform
   disabled: false
   policy-templates:
@@ -14,7 +14,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: egress-example
+          name: policy-image-pruner
         spec:
           remediationAction: inform
           severity: low
@@ -26,42 +26,40 @@ spec:
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                apiVersion: network.openshift.io/v1
-                kind: EgressNetworkPolicy
+                apiVersion: imageregistry.operator.openshift.io/v1
+                kind: ImagePruner
                 metadata:
-                  name: demo-firewall
-                spec:
-                  egress:
-                    - type: Allow
-                      to:
-                        cidrSelector: 192.168.12.0/24
-                    - type: Allow
-                      to: 
-                        dnsName: db-srv.example.com
-                    - type: Allow
-                      to: 
-                        dnsName: analytics.example.com
-                    - type: Deny
-                      to: 
-                        cidrSelector: 0.0.0.0/0
+                  spec:
+                    schedule: 0 0 * * *
+                    suspend: false
+                    keepTagRevisions: 3
+                    keepYoungerThan: 60m
+                    resources: {}
+                    affinity: {}
+                    nodeSelector: {}
+                    tolerations: {}
+                    startingDeadlineSeconds: 60
+                    successfulJobsHistoryLimit: 3
+                    failedJobsHistoryLimit: 3
+                    logLevel: Normal
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-egress-example
+  name: binding-policy-resiliency-image-pruner
 placementRef:
-  name: placement-egress-example
+  name: placement-policy-resiliency-image-pruner
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: egress-example
+- name: policy-resiliency-image-pruner
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-egress-example
+  name: placement-policy-resiliency-image-pruner
 spec:
   clusterConditions:
   - status: "True"

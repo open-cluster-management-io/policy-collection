@@ -14,12 +14,6 @@ spec:
         kind: ConfigurationPolicy
         metadata:
           name: upgrade-cluster
-        spec:
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - '*'
           object-templates:
             - complianceType: musthave
               objectDefinition:
