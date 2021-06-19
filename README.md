@@ -43,6 +43,8 @@ You can reach the maintainers of this project at:
 
 * [Implement Policy-based Governance Using Configuration Management of Red Hat Advanced Cluster Management for Kubernetes](https://www.openshift.com/blog/implement-policy-based-governance-using-configuration-management-of-red-hat-advanced-cluster-management-for-kubernetes)
 
+* [Integrating Gatekeeper with Red Hat Advanced Cluster Management for Kubernetes](https://www.openshift.com/blog/integrating-gatekeeper-with-red-hat-advanced-cluster-management-for-kubernetes)
+
 **Resources**: View the following resources for more information on the components and mechanisms are implemented in the product governance framework.
 
 * [Product documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.1/)
