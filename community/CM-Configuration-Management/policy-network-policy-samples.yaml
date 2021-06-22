@@ -37,7 +37,7 @@ spec:
                   podSelector:
                     matchLabels:
                       role: frontend
-          remediationAction: enforce
+          remediationAction: inform
           severity: low
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
@@ -61,7 +61,7 @@ spec:
                   podSelector:
                     ingress: []
           severity: low
-          remediationAction: enforce
+          remediationAction: inform
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -86,7 +86,7 @@ spec:
                       - from:
                           - podSelector: {}
           severity: low
-          remediationAction: enforce
+          remediationAction: inform
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -118,8 +118,8 @@ spec:
                           matchLabels: 
                             name: test-pods
               severity: low
-              remediationAction: enforce
-  remediationAction: enforce
+              remediationAction: inform
+  remediationAction: inform
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
