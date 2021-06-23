@@ -28,7 +28,52 @@ spec:
                   upstream: 'https://api.openshift.com/api/upgrades_info/v1/graph'
           remediationAction: inform
           severity: high
-  remediationAction: inform
+      remediationAction: inform
+
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-upgrade-checkclusteroperator-available
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: config.openshift.io/v1
+                kind: ClusterOperator
+                status:
+                  conditions:
+                    - status: 'False'
+                      type: Available
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-upgrade-checkclusteroperator-degraded
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: config.openshift.io/v1
+                kind: ClusterOperator
+                status:
+                  conditions:
+                    - status: 'True'
+                      type: Degraded           
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
