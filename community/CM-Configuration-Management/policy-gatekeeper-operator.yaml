@@ -24,7 +24,7 @@ spec:
               apiVersion: v1
               kind: Namespace
               metadata:
-                name: gatekeeper-system
+                name: openshift-gatekeeper-operator
   - objectDefinition:
       apiVersion: policy.open-cluster-management.io/v1
       kind: ConfigurationPolicy
@@ -40,7 +40,7 @@ spec:
               kind: CatalogSource
               metadata:
                 name: gatekeeper-operator
-                namespace: gatekeeper-system
+                namespace: openshift-gatekeeper-operator
               spec:
                 displayName: Gatekeeper Operator Upstream
                 publisher: github.com/font/gatekeeper-operator
@@ -64,7 +64,7 @@ spec:
               kind: OperatorGroup
               metadata:
                 name: gatekeeper-operator
-                namespace: gatekeeper-system
+                namespace: openshift-gatekeeper-operator
   - objectDefinition:
       apiVersion: policy.open-cluster-management.io/v1
       kind: ConfigurationPolicy
@@ -80,12 +80,12 @@ spec:
               kind: Subscription
               metadata:
                 name: gatekeeper-operator-sub
-                namespace: gatekeeper-system
+                namespace: openshift-gatekeeper-operator
               spec:
                 channel: stable
                 name: gatekeeper-operator
                 source: gatekeeper-operator
-                sourceNamespace: gatekeeper-system
+                sourceNamespace: openshift-gatekeeper-operator
   - objectDefinition:
       apiVersion: policy.open-cluster-management.io/v1
       kind: ConfigurationPolicy
