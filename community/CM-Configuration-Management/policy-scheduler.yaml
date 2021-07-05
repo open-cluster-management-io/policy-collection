@@ -14,7 +14,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-namespace-prod-ns
+          name: policy-config-scheduler
         spec:
           remediationAction: inform
           severity: low
@@ -58,7 +58,7 @@ spec:
       type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - key: env
+      - key: environment
         operator: In
         values:
           - dev

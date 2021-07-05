@@ -74,6 +74,25 @@ spec:
                   conditions:
                     - status: 'True'
                       type: Degraded           
+
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: check-installed-version-status
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: config.openshift.io/v1
+                kind: ClusterVersion
+                metadata:
+                    name: version
+                status:
+                  history:
+                    - state: Completed                      
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
