@@ -1,6 +1,6 @@
 # Configuration Management 
 
-See [NIST Special Publication 800-53 (Rev. 4)](https://nvd.nist.gov/800-53/Rev4/family/Configuration%20Management) for a description of the Configuration Management control. View the configuration policies that map to the Configuration Management catalog, and helps to detect or remediate security issues that are in the category. See the following table list of the stable policies that are supported by [Red Hat Advanced Cluster Management for Kubernetes](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.1/html/security/security#governance-and-risk):
+See [NIST Special Publication 800-53 (Rev. 4)](https://nvd.nist.gov/800-53/Rev4/family/Configuration%20Management) for a description of the Configuration Management control. View the configuration policies that map to the Configuration Management catalog, and helps to detect or remediate security issues that are in the category. See the following table list of the stable policies that are supported by [Red Hat Advanced Cluster Management for Kubernetes](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.2/html/security/governance-and-risk):
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------

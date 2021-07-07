@@ -47,7 +47,7 @@ You can reach the maintainers of this project at:
 
 **Resources**: View the following resources for more information on the components and mechanisms are implemented in the product governance framework.
 
-* [Product documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.1/)
+* [Product documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.2/)
 
 * National Cyber security Center of Excellence (NCCoE) blog, [Policy Based Governance in Trusted Container Platform](https://www.nccoe.nist.gov/news/policy-based-governance-trusted-container-platform)
 
