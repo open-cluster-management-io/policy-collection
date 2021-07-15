@@ -1,0 +1,67 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-ingress-controller
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53, NIST-CSF
+    policy.open-cluster-management.io/categories: CM Configuration Management, PR.IP Information Protection Processes and Procedures
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration, PR.IP-1 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-ingress-controller
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operator.openshift.io/v1
+                kind: IngressController
+                metadata:
+                  name: default
+                  namespace: openshift-ingress-operator
+                  spec:
+                    nodePlacement:
+                      nodeSelector:
+                        matchLabels:
+                          node-role.kubernetes.io/infra: ""
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-ingress-controller
+placementRef:
+  name: placement-policy-ingress-controller
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-ingress-controller
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-ingress-controller
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: environment
+        operator: In
+        values:
+          - dev
+

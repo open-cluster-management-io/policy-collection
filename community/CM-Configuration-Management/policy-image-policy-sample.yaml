@@ -61,5 +61,5 @@ spec:
     type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - {key: env, operator: In, values: ["dev"]}
+      - {key: environment, operator: In, values: ["dev"]}
 

@@ -1,9 +1,9 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: egress-example
+  name: policy-scheduler
   annotations:
-    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/standards: NIST-CSF
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
@@ -14,7 +14,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: egress-example
+          name: policy-config-scheduler
         spec:
           remediationAction: inform
           severity: low
@@ -26,46 +26,40 @@ spec:
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                apiVersion: network.openshift.io/v1
-                kind: EgressNetworkPolicy
+                apiVersion: config.openshift.io/v1
+                kind: Scheduler
                 metadata:
-                  name: demo-firewall
+                  name: cluster
                 spec:
-                  egress:
-                    - type: Allow
-                      to:
-                        cidrSelector: 192.168.12.0/24
-                    - type: Allow
-                      to: 
-                        dnsName: db-srv.example.com
-                    - type: Allow
-                      to: 
-                        dnsName: analytics.example.com
-                    - type: Deny
-                      to: 
-                        cidrSelector: 0.0.0.0/0
+                  mastersSchedulable: false
+                  policy:
+                    name: ''
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-egress-example
+  name: binding-policy-scheduler
 placementRef:
-  name: placement-egress-example
+  name: placement-policy-scheduler
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: egress-example
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-scheduler
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-egress-example
+  name: placement-policy-scheduler
 spec:
   clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}
+      - key: environment
+        operator: In
+        values:
+          - dev
+
