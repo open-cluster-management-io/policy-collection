@@ -1,0 +1,116 @@
+# This policy installs the Advanced Cluster Security Operator on the ACM hub
+# cluster and it create the Central Server.
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-advanced-cluster-security-operator
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: advanced-cluster-security-namespace
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                name: stackrox
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: advanced-cluster-security-operator-subscription
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: operators.coreos.com/v1alpha1
+              kind: Subscription
+              metadata:
+                name: rhacs-operator
+                namespace: openshift-operators
+              spec:
+                channel: latest
+                installPlanApproval: Automatic
+                name: rhacs-operator
+                source: redhat-operators
+                sourceNamespace: openshift-marketplace
+                startingCSV: rhacs-operator.v3.62.0
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: advanced-cluster-security-central
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: platform.stackrox.io/v1alpha1
+              kind: Central
+              metadata:
+                namespace: stackrox
+                name: stackrox-central-services
+              spec:
+                central:
+                  exposure:
+                    loadBalancer:
+                      enabled: false
+                      port: 443
+                    nodePort:
+                      enabled: false
+                    route:
+                      enabled: true
+                  persistence:
+                    persistentVolumeClaim:
+                      claimName: stackrox-db
+                egress:
+                  connectivityPolicy: Online
+                scanner:
+                  analyzer:
+                    scaling:
+                      autoScaling: Enabled
+                      maxReplicas: 5
+                      minReplicas: 2
+                      replicas: 3
+                  scannerComponent: Enabled
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-advanced-cluster-security-operator
+placementRef:
+  name: placement-policy-advanced-cluster-security-operator
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-advanced-cluster-security-operator
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-advanced-cluster-security-operator
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: local-cluster, operator: In, values: ["true"]}

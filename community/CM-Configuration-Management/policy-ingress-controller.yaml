@@ -14,7 +14,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-autoscaler
+          name: policy-ingress-controller
         spec:
           remediationAction: inform
           severity: low
@@ -60,7 +60,7 @@ spec:
       type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - key: env
+      - key: environment
         operator: In
         values:
           - dev
