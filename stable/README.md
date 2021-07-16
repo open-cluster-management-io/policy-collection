@@ -53,6 +53,7 @@ Policy  | Description | Prerequisites
 [Install Red Hat Gatekeeper Operator policy](./CM-Configuration-Management/policy-gatekeeper-operator-downstream.yaml) | Use the Gatekeeper operator policy to install the official and supported version of Gatekeeper on a managed cluster. | See the [Gatekeeper Operator](https://github.com/gatekeeper/gatekeeper-operator).
 [policy-namespace](./CM-Configuration-Management/policy-namespace.yaml) | Ensures that a namespace exists as specified. |
 [policy-pod](./CM-Configuration-Management/policy-pod.yaml) | Ensures that a pod exists as specified. |
+[Scan your cluster with the OpenShift CIS security profile](./CM-Configuration-Management/policy-compliance-operator-cis-scan.yaml) | This example creates a ScanSettingBinding that the ComplianceOperator uses to scan the cluster for compliance with the OpenShift CIS benchmark. | See the [Compliance Operator repository](https://github.com/openshift/compliance-operator) to learn more about the operator. **Note**: Compliance operator must be installed to use this policy. See the [Compliance operator policy](./CA-Security-Assessment-and-Authorization/policy-compliance-operator-install.yaml).
 
 ### Contingency Planning
 
