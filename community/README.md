@@ -108,7 +108,8 @@ Policy  | Description | Prerequisites
 [Policy to install External-Secrets](./CM-Configuration-Management/policy-install-external-secrets.yaml) | use this policy to install External Secrets| Check its [documentation](https://github.com/external-secrets/kubernetes-external-secrets) and this [Document](https://access.redhat.com/solutions/6184721) for more information
 [Policy to install the Advanced Cluster Security Central Server](./CM-Configuration-Management/policy-acs-operator-central.yaml) | Use this policy to install the Advanced Cluster Security operator to the Open Cluster Management hub and install the Central Server to the `stackrox` namespace. | For more information on Advanced Cluster Security, visit [Red Hat Advanced Cluster Security for Kubernetes](https://www.openshift.com/products/kubernetes-security)
 [Policy to install `cert-manager`](./CM-Configuration-Management/policy-cert-manager-operator.yaml) | Use this policy to deploy the community operator for `cert-manager` which installs `cert-manager` on OpenShift clusters. | For more information on `cert-manager` visit [Cloud native certificate management](https://cert-manager.io/)
-
+[Policy to label a Managed-Cluster](./CM-Configuration-Management/policy-label-cluster.yaml) | Use this policy to label a Managed-Cluster | This policy needs to be applied on the Managing-Cluster, adjust the labels to your needs
+[Policy to set a Config-Map with properties for different environments](./CM-Configuration-Management/policy-engineering-configmap.yaml) | Use this policy to configure a policy for different environments | adjust this example for your needs
 
 ### Contingency Planning
 

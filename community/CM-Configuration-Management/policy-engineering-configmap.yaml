@@ -1,0 +1,78 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-configmap-example
+  annotations:
+    policy.open-cluster-management.io/standards: NIST-CSF
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-configmap-properties-example
+        spec:
+          remediationAction: enforce
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                 name: example-configmap
+                data:
+                  application.properties: |-
+                    globalkey = global key value
+                    TeamName = Team Name value
+                    Purpose = Purpose value
+                    RootFile = Root file value
+                    Company = company value
+                    Place = Place value
+                    Country = Country value
+                  application-qa.properties: |-
+                    spring.profiles = qa
+                    globalkey = global key qa value
+                    TeamName = Team Name qa value
+                    Purpose = Purpose qa value
+                    RootFile = Root file qa value
+                  application-prod.properties: |-
+                    spring.profiles = prod
+                    globalkey = global key prod value
+                    Company = company prod value
+                    Place = Place prod value
+                    Country = Country prod value
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-configmap-example
+placementRef:
+  name: placement-configmap-example
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-configmap-example
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-configmap-example
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
