@@ -1,0 +1,73 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-enableclusterlogforwarder
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-enableclusterlogforwarder
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: logging.openshift.io/v1
+                kind: ClusterLogForwarder
+                metadata:
+                  name: instance
+                  namespace: openshift-logging
+                spec:
+                  outputs:
+                    - name: audit-logs
+                      type: kafka
+                      url: http://my-cluster-kafka-bootstrap.openshift-operators.svc:9092/{{ fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "cluster-name" | base64dec }}audit-topic
+                  pipelines:
+                    - name: audit-topic
+                      inputRefs:
+                        - audit
+                      outputRefs:
+                        - audit-logs
+                        - default
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-enableclusterlogforwarder
+placementRef:
+  name: placement-policy-enableclusterlogforwarder
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-enableclusterlogforwarder
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-enableclusterlogforwarder
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: environment
+        operator: In
+        values:
+          - dev
