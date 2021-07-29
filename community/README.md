@@ -110,6 +110,7 @@ Policy  | Description | Prerequisites
 [Policy to install `cert-manager`](./CM-Configuration-Management/policy-cert-manager-operator.yaml) | Use this policy to deploy the community operator for `cert-manager` which installs `cert-manager` on OpenShift clusters. | For more information on `cert-manager` visit [Cloud native certificate management](https://cert-manager.io/)
 [Policy to label a Managed-Cluster](./CM-Configuration-Management/policy-label-cluster.yaml) | Use this policy to label a Managed-Cluster | This policy needs to be applied on the Managing-Cluster, adjust the labels to your needs
 [Policy to set a Config-Map with properties for different environments](./CM-Configuration-Management/policy-engineering-configmap.yaml) | Use this policy to configure a policy for different environments | adjust this example for your needs
+[Policy to install Local Storage Operator](./CM-Configuration-Management/policy-odf-lso.yaml) | Use this policy to install and configure the Local Storage Operator | adjust the LocalVolumeSet and StorageClass for your needs
 
 ### Contingency Planning
 
