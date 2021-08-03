@@ -29,6 +29,7 @@ spec:
           - openshift-cluster-samples-operator
           - openshift-cluster-storage-operator
           - openshift-cluster-version
+          - openshift-config
           - openshift-config-operator
           - openshift-console
           - openshift-console-operator
