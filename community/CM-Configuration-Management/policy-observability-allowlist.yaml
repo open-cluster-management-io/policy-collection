@@ -1,0 +1,168 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-observability-allowlist
+  annotations:
+    policy.open-cluster-management.io/standards: NIST-CSF
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-create-allowlist-prod-ns
+        spec:
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                data:
+                  metrics_list.yaml: |
+                    names:
+                      - :node_memory_MemAvailable_bytes:sum
+                      - apiserver_request_count
+                      - apiserver_request_latencies_summary_count
+                      - apiserver_request_latencies_summary_sum
+                      - apiserver_request_total
+                      - authenticated_user_requests
+                      - authentication_attempts
+                      - cluster:capacity_cpu_cores:sum
+                      - cluster:capacity_memory_bytes:sum
+                      - cluster:container_cpu_usage:ratio
+                      - cluster:container_spec_cpu_shares:ratio
+                      - cluster:cpu_usage_cores:sum
+                      - cluster:memory_usage:ratio
+                      - cluster:memory_usage_bytes:sum
+                      - cluster:usage:resources:sum
+                      - cluster_infrastructure_provider
+                      - cluster_version
+                      - cluster_version_payload
+                      - container_cpu_cfs_periods_total
+                      - container_cpu_cfs_throttled_periods_total
+                      - container_cpu_usage_seconds_total
+                      - container_fs_limit_bytes
+                      - container_fs_usage_bytes
+                      - container_network_receive_bytes_total
+                      - container_network_receive_packets_dropped_total
+                      - container_network_receive_packets_total
+                      - container_network_transmit_bytes_total
+                      - container_network_transmit_packets_dropped_total
+                      - container_network_transmit_packets_total
+                      - container_spec_cpu_quota
+                      - coredns_dns_request_count_total
+                      - coredns_dns_request_duration_seconds_sum
+                      - coredns_dns_request_type_count_total
+                      - coredns_dns_response_rcode_count_total
+                      - etcd_debugging_mvcc_db_total_size_in_bytes
+                      - etcd_debugging_snap_save_total_duration_seconds_sum
+                      - etcd_disk_backend_commit_duration_seconds_bucket
+                      - etcd_disk_backend_commit_duration_seconds_sum
+                      - etcd_disk_wal_fsync_duration_seconds_bucket
+                      - etcd_disk_wal_fsync_duration_seconds_sum
+                      - etcd_object_counts
+                      - etcd_network_client_grpc_received_bytes_total
+                      - etcd_network_client_grpc_sent_bytes_total
+                      - etcd_network_peer_received_bytes_total
+                      - etcd_network_peer_sent_bytes_total
+                      - etcd_server_client_requests_total
+                      - etcd_server_has_leader
+                      - etcd_server_health_failures
+                      - etcd_server_leader_changes_seen_total
+                      - etcd_server_proposals_failed_total
+                      - etcd_server_proposals_pending
+                      - etcd_server_proposals_committed_total
+                      - etcd_server_proposals_applied_total
+                      - etcd_server_quota_backend_bytes
+                      - go_goroutines
+                      - haproxy_backend_connection_errors_total
+                      - haproxy_backend_connections_total
+                      - haproxy_backend_current_queue
+                      - haproxy_backend_http_average_response_latency_milliseconds
+                      - haproxy_backend_max_sessions
+                      - haproxy_backend_response_errors_total
+                      - haproxy_backend_up
+                      - http_requests_total
+                      - instance:node_filesystem_usage:sum
+                      - instance:node_cpu_utilisation:rate1m
+                      - instance:node_load1_per_cpu:ratio
+                      - instance:node_memory_utilisation:ratio
+                      - instance:node_network_receive_bytes_excluding_lo:rate1m
+                      - instance:node_network_receive_drop_excluding_lo:rate1m
+                      - instance:node_network_transmit_bytes_excluding_lo:rate1m
+                      - instance:node_network_transmit_drop_excluding_lo:rate1m
+                      - instance:node_num_cpu:sum
+                      - instance:node_vmstat_pgmajfault:rate1m
+                      - instance_device:node_disk_io_time_seconds:rate1m
+                      - instance_device:node_disk_io_time_weighted_seconds:rate1m
+                      - kube_daemonset_status_desired_number_scheduled
+                      - kube_daemonset_status_number_unavailable
+                      - kube_deployment_status_replicas_unavailable
+                      - kube_node_spec_unschedulable
+                      - kube_node_status_allocatable_cpu_cores
+                      - kube_node_status_allocatable_memory_bytes
+                      - kube_node_status_capacity_pods
+                      - kube_node_status_capacity_cpu_cores
+                      - kube_node_status_condition
+                      - kube_pod_container_resource_limits_cpu_cores
+                      - kube_pod_container_resource_limits_memory_bytes
+                      - kube_pod_container_resource_requests_cpu_cores
+                      - kube_pod_container_resource_requests_memory_bytes
+                      - kube_pod_info
+                      - kube_resourcequota
+                      - kubelet_running_container_count
+                      - kubelet_runtime_operations
+                      - kubelet_runtime_operations_latency_microseconds
+                      - kubelet_volume_stats_available_bytes
+                      - kubelet_volume_stats_capacity_bytes
+                      - kube_persistentvolume_status_phase
+                      - machine_cpu_cores
+                      - machine_memory_bytes
+                      - mixin_pod_workload
+                      - namespace:kube_pod_container_resource_requests_cpu_cores:sum
+                      - namespace:kube_pod_container_resource_requests_memory_bytes:sum
+                      - namespace:container_memory_usage_bytes:sum
+                      - node_cpu_seconds_total
+                      - node_filesystem_avail_bytes
+                      - node_filesystem_free_bytes
+                      - node_filesystem_size_bytes
+                      - node_memory_MemAvailable_bytes
+                      - node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate
+                      - node_namespace_pod_container:container_memory_cache
+                      - node_namespace_pod_container:container_memory_rss
+                      - node_namespace_pod_container:container_memory_swap
+                      - node_namespace_pod_container:container_memory_working_set_bytes
+                      - node_netstat_Tcp_OutSegs
+                      - node_netstat_Tcp_RetransSegs
+                      - node_netstat_TcpExt_TCPSynRetrans
+                      - process_cpu_seconds_total
+                      - process_resident_memory_bytes
+                      - rest_client_requests_total
+                      - up
+                      - workqueue_adds_total
+                      - workqueue_depth
+                      - cluster_monitoring_operator_reconcile_errors_total
+                      - cluster_monitoring_operator_reconcile_attempts_total
+                      - cluster_operator_conditions
+                      - cluster_operator_up      
+                    matches:
+                      - __name__="apiserver_request_duration_seconds_bucket",job="apiserver",verb!="WATCH"
+                      - __name__="workqueue_queue_duration_seconds_bucket",job="apiserver"
+                      - __name__="container_memory_cache",container!=""
+                      - __name__="container_memory_rss",container!=""
+                      - __name__="container_memory_swap",container!=""
+                      - __name__="container_memory_working_set_bytes",container!=""
+                kind: ConfigMap
+                metadata:
+                  name: observability-metrics-allowlist
+                  namespace: open-cluster-management-addon-observability
+          remediationAction: inform
+          severity: low
+  remediationAction: inform

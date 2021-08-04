@@ -1,20 +1,20 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: egress-example
+  name: policy-label-cluster
   annotations:
-    policy.open-cluster-management.io/standards: NIST SP 800-53
+spec:
+    policy.open-cluster-management.io/standards: NIST-CSF
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
-spec:
-  remediationAction: inform
+  remediationAction: enforce
   disabled: false
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: egress-example
+          name: policy-label-cluster
         spec:
           remediationAction: inform
           severity: low
@@ -26,46 +26,36 @@ spec:
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                apiVersion: network.openshift.io/v1
-                kind: EgressNetworkPolicy
+                apiVersion: cluster.open-cluster-management.io/v1
+                kind: ManagedCluster
                 metadata:
-                  name: demo-firewall
+                  labels:
+                    profile: demo
+                  name: demo-cluster-label
                 spec:
-                  egress:
-                    - type: Allow
-                      to:
-                        cidrSelector: 192.168.12.0/24
-                    - type: Allow
-                      to: 
-                        dnsName: db-srv.example.com
-                    - type: Allow
-                      to: 
-                        dnsName: analytics.example.com
-                    - type: Deny
-                      to: 
-                        cidrSelector: 0.0.0.0/0
+                  hubAcceptsClient: true
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-egress-example
+  name: binding-policy-engineering-label-cluster
 placementRef:
-  name: placement-egress-example
+  name: placement-policy-engineering-label-cluster
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: egress-example
+- name: policy-engineering-label-cluster
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-egress-example
+  name: placement-policy-engineering-label-cluster
 spec:
   clusterConditions:
   - status: "True"
     type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}
+      - {key: name, operator: In, values: ["local-cluster"]}

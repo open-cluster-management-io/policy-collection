@@ -1,0 +1,84 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-autoscaler
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53, NIST-CSF
+    policy.open-cluster-management.io/categories: CM Configuration Management, PR.IP Information Protection Processes and Procedures
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration, PR.IP-1 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-autoscaler
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: "autoscaling.openshift.io/v1"
+                kind: "ClusterAutoscaler"
+                metadata:
+                  name: "default"
+                spec:
+                  podPriorityThreshold: -10 
+                  resourceLimits:
+                    maxNodesTotal: 24 
+                    cores:
+                      min: 8 
+                      max: 128 
+                    memory:
+                      min: 4 
+                      max: 256 
+                    gpus:
+                      - type: nvidia.com/gpu 
+                        min: 0 
+                        max: 16 
+                      - type: amd.com/gpu 
+                        min: 0 
+                        max: 4 
+                  scaleDown: 
+                    enabled: true 
+                    delayAfterAdd: 10m 
+                    delayAfterDelete: 5m 
+                    delayAfterFailure: 30s 
+                    unneededTime: 5m 
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-autoscaler
+placementRef:
+  name: placement-policy-autoscaler
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-autoscaler
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-autoscaler
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: environment
+        operator: In
+        values:
+          - 'dev'
+
