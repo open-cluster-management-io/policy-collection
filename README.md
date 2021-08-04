@@ -31,7 +31,7 @@ You can reach the maintainers of this project at:
 
 - acm-contact@redhat.com
 
-Read our blogs that are in the [blogs folder](blogs/README.md)
+**Blogs**: Read our blogs that are in the [blogs folder](blogs/README.md)
 
 **Resources**: View the following resources for more information on the components and mechanisms are implemented in the product governance framework.
 
