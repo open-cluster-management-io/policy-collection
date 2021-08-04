@@ -45,6 +45,12 @@ You can reach the maintainers of this project at:
 
 * [Integrating Gatekeeper with Red Hat Advanced Cluster Management for Kubernetes](https://www.openshift.com/blog/integrating-gatekeeper-with-red-hat-advanced-cluster-management-for-kubernetes)
 
+* [How to use the Certificate Policy Controller to Identify Risks in Red Hat Advanced Cluster Management for Kubernetes](http://cloud.redhat.com/blog/how-to-use-the-certificate-policy-controller-to-identify-risks-in-red-hat-advanced-cluster-management-for-kubernetes)
+
+* [K8s Integrity Shield (tech-preview): Protecting the Integrity of Kubernetes Resources with Signature](https://cloud.redhat.com/blog/k8s-integrity-shield-tech-preview-protecting-the-integrity-of-kubernetes-resources-with-signature)
+
+* [Address CVEs Using Red Hat Advanced Cluster Management Governance Policy Framework](https://cloud.redhat.com/blog/address-cves-using-red-hat-advanced-cluster-management-governance-policy-framework)
+
 **Resources**: View the following resources for more information on the components and mechanisms are implemented in the product governance framework.
 
 * [Product documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.2/)
