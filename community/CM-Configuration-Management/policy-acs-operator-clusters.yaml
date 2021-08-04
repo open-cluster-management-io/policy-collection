@@ -1,6 +1,6 @@
-# This policy deploys the Advanced Cluster Security Secure Cluster
+# This policy deploys the Red Hat Advanced Cluster Security Secure Cluster
 # Services to all OpenShift managed clusters.  Note that it is set to
-# enforce by default and it requires ACM 2.3 template support.
+# enforce by default and it requires RHACM 2.3 template support.
 #
 # Prior to applying this policy you must visit 
 # https://github.com/open-cluster-management/advanced-cluster-security 
