@@ -26,6 +26,10 @@ spec:
                 metadata:
                   name: policy-gatekeeper-image-pull-policy
                 spec:
+                    applyTo:
+                      - groups: [""]
+                        kinds: ["Pod"]
+                        versions: ["v1"]
                     match:
                       scope: Namespaced
                       kinds:
