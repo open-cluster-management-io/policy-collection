@@ -101,7 +101,7 @@ done
 # Populate the Channel template
 CHAN_CFG=$(cat "channel_template.json" |
   sed "s/##NAME##/${NAME}/g" |
-  sed "s%##GH_URL##%${GH_URL}%g")
+  sed "s%##GH_URL##%${GH_URL}%g" |
   sed "s%##RATE##%${RATE}%g")
 echo "$CHAN_CFG" > channel_patch.json
 

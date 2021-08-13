@@ -11,7 +11,7 @@
     },
     {
         "op": "replace",
-        "path": "/metadata/pathname/apps.open-cluster-management.ioi\/reconcile-rate",
+        "path": "/metadata/annotations/apps.open-cluster-management.io~1reconcile-rate",
         "value": "##RATE##"
     }
 ]
