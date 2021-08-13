@@ -8,5 +8,10 @@
         "op": "replace",
         "path": "/spec/pathname",
         "value": "##GH_URL##"
+    },
+    {
+        "op": "replace",
+        "path": "/metadata/pathname/apps.open-cluster-management.ioi\/reconcile-rate",
+        "value": "##RATE##"
     }
 ]
