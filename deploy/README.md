@@ -13,7 +13,7 @@ View the following guidance on how to use the script (all parameters are optiona
  
 ```
 Usage:
-  ./deploy.sh [-u <url>] [-b <branch>] [-p <path/to/dir>] [-n <namespace>] [-a|--name <resource-name>]
+  ./deploy.sh [-u <url>] [-b <branch>] [-p <path/to/dir>] [-n <namespace>] [-a|--name <resource-name>] [-s|--sync <rate>]
 
   -h|--help                   Display this menu
   -u|--url <url>              URL to the Git repository
