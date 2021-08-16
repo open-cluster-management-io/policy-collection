@@ -26,7 +26,11 @@ Usage:
                                 (Default namespace: "policies")
   -a|--name <resource-name>   Prefix for the Channel and Subscription resources
                                 (Default name: "demo-stable-policies")
+  -s|--sync <rate>            How frequently the github resources are compared to the hub resources"
+                                (Default rate: "medium") Rates: "high", "medium", "low", "off"'
 ```
+
+For more details on the `sync` parameter values, see the git subscription chapter [Resource reconciliation rate settings](https://github.com/open-cluster-management/multicloud-operators-subscription/blob/main/docs/gitrepo_subscription.md#resource-reconciliation-rate-settings).
 
 ## Remove resources 
 

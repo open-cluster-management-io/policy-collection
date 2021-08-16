@@ -26,7 +26,7 @@ help () {
   echo "  -a|--name <resource-name>   Prefix for the Channel and Subscription resources"
   echo '                                (Default name: "demo-stable-policies")'
   echo "  -s|--sync <rate>            How frequently the github resources are compared to the hub resources"
-  echo '                                (Default rate: "medium") Rates: "high", "medium", "low"'
+  echo '                                (Default rate: "medium") Rates: "high", "medium", "low", "off"'
   echo ""
 }
 
