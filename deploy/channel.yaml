@@ -2,6 +2,8 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: Channel
 metadata:
   name: demo-stable-policies-chan
+  annotations:
+    apps.open-cluster-management.io/reconcile-rate: medium
 spec:
   type: GitHub
   pathname: https://github.com/open-cluster-management/policy-collection.git

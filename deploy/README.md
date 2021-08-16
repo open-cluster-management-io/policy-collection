@@ -13,7 +13,7 @@ View the following guidance on how to use the script (all parameters are optiona
  
 ```
 Usage:
-  ./deploy.sh [-u <url>] [-b <branch>] [-p <path/to/dir>] [-n <namespace>] [-a|--name <resource-name>]
+  ./deploy.sh [-u <url>] [-b <branch>] [-p <path/to/dir>] [-n <namespace>] [-a|--name <resource-name>] [-s|--sync <rate>]
 
   -h|--help                   Display this menu
   -u|--url <url>              URL to the Git repository
@@ -26,7 +26,11 @@ Usage:
                                 (Default namespace: "policies")
   -a|--name <resource-name>   Prefix for the Channel and Subscription resources
                                 (Default name: "demo-stable-policies")
+  -s|--sync <rate>            How frequently the github resources are compared to the hub resources"
+                                (Default rate: "medium") Rates: "high", "medium", "low", "off"
 ```
+
+For more details on the `sync` parameter values, see the git subscription chapter [Resource reconciliation rate settings](https://github.com/open-cluster-management/multicloud-operators-subscription/blob/main/docs/gitrepo_subscription.md#resource-reconciliation-rate-settings).
 
 ## Remove resources 
 

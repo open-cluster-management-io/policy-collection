@@ -25,6 +25,8 @@ help () {
   echo '                                (Default namespace: "policies")'
   echo "  -a|--name <resource-name>   Prefix for the Channel and Subscription resources"
   echo '                                (Default name: "demo-stable-policies")'
+  echo "  -s|--sync <rate>            How frequently the github resources are compared to the hub resources"
+  echo '                                (Default rate: "medium") Rates: "high", "medium", "low", "off"'
   echo ""
 }
 
@@ -61,6 +63,11 @@ while [[ $# -gt 0 ]]; do
             NAME=${1}
             shift
             ;;
+            -s|--sync)
+            shift
+            RATE=${1}
+            shift
+            ;;
             *)    # default
             echo "Invalid input: ${1}"
             exit 1
@@ -79,6 +86,7 @@ echo "Resource Prefix:    ${NAME:=demo-stable-policies}"
 echo "Git URL:            ${GH_URL:=https://github.com/open-cluster-management/policy-collection.git}"
 echo "Git Branch:         ${GH_BRANCH:=main}"
 echo "Git Path:           ${GH_PATH:=stable}"
+echo "Sync Rate:          ${RATE:=medium}"
 echo "====================================================="
 
 while read -r -p "Would you like to proceed (y/n)? " response; do
@@ -93,7 +101,8 @@ done
 # Populate the Channel template
 CHAN_CFG=$(cat "channel_template.json" |
   sed "s/##NAME##/${NAME}/g" |
-  sed "s%##GH_URL##%${GH_URL}%g")
+  sed "s%##GH_URL##%${GH_URL}%g" |
+  sed "s%##RATE##%${RATE}%g")
 echo "$CHAN_CFG" > channel_patch.json
 
 # Populate the Subscription template
