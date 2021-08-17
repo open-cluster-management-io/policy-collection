@@ -14,6 +14,8 @@ Read our blogs for more information and best practices for Red Hat Advanced Clus
 
 * [Address CVEs Using Red Hat Advanced Cluster Management Governance Policy Framework](https://cloud.redhat.com/blog/address-cves-using-red-hat-advanced-cluster-management-governance-policy-framework)
 
+* [Applying an Extensible Policy Framework for Multicluster Governance](https://cloud.redhat.com/blog/applying-an-extensible-policy-framework-for-multicluster-governance)
+
 ## Red Hat Supported Integrations
 
 * [How to Integrate Open Policy Agent with Red Hat Advanced Cluster Management for Kubernetes policy framework](https://www.openshift.com/blog/how-to-integrate-open-policy-agent-with-red-hat-advanced-cluster-management-for-kubernetes-policy-framework)
