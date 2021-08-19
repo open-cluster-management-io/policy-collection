@@ -1,0 +1,122 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-argocd-kubernetes
+  annotations:
+    policy.open-cluster-management.io/standards: NIST-CSF
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-argocd-kubernetes
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: app.k8s.io/v1beta1
+                kind: Application
+                metadata:
+                  name: helmchartargo
+                  namespace: policies
+                  annotations:
+                    apps.open-cluster-management.io/deployables: ''
+                spec:
+                  componentKinds:
+                    - group: apps.open-cluster-management.io
+                      kind: Subscription
+                  descriptor: {}
+                  selector:
+                    matchExpressions:
+                      - key: app
+                        operator: In
+                        values:
+                          - helmchartargo
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: Subscription
+                metadata:
+                  name: helmchartargo-subscription-1
+                  namespace: policies
+                  annotations: {}
+                  labels:
+                    app: helmchartargo
+                    app.kubernetes.io/part-of: helmchartargo
+                    apps.open-cluster-management.io/reconcile-rate: medium
+                spec:
+                  name: argo-cd
+                  channel: argocd/argocd
+                  packageOverrides:
+                    - packageAlias: argo-cd
+                      packageName: argo-cd
+                  placement:
+                    placementRef:
+                      name: helmchartargo-placement-1
+                      kind: PlacementRule
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: PlacementRule
+                metadata:
+                  name: helmchartargo-placement-1
+                  namespace: argocd
+                  labels:
+                    app: helmchartargo
+                spec:
+                  clusterSelector:
+                    matchLabels:
+                      environment: dev
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: Channel
+                metadata:
+                  annotations:
+                    apps.open-cluster-management.io/reconcile-rate: medium
+                  name: argocd
+                  namespace: argocd
+                spec:
+                  pathname: https://charts.wener.tech
+                  type: HelmRepo
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-argocd-kubernetes
+placementRef:
+  name: placement-argocd-kubernetes
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-argocd-kubernetes
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-argocd-kubernetes
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: In
+        values:
+          - 'true'
+
