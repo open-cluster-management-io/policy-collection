@@ -1,0 +1,182 @@
+# This policy verifies the installation of the official version of
+# the OpenShift Data Foundation on the managed clusters.
+#
+# If set to "enforce" it'll install the operator.
+# Used APIs: OLM, OCS, ODF #https://github.com/operator-framework/operator-lifecycle-manager
+# https://github.com/openshift/ocs-operator
+# https://github.com/red-hat-storage/odf-operator
+ 
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+ annotations:
+   policy.open-cluster-management.io/categories: CM Configuration Management
+   policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+   policy.open-cluster-management.io/standards: NIST SP 800-53
+ name: policy-odf-operator
+spec:
+ disabled: false
+ policy-templates:
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-odf-namespace
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: v1
+               kind: Namespace
+               metadata:
+                 name: openshift-storage
+         remediationAction: inform
+         severity: high
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-odf-operator-operatorgroup
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1alpha2
+               kind: OperatorGroup
+               metadata:
+                 name: openshift-storage-operatorgroup
+                 namespace: openshift-storage
+               spec:
+                 targetNamespaces:
+                   - openshift-storage
+         remediationAction: inform
+         severity: high
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-odf-operator-catalog-source
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1alpha1
+               kind: CatalogSource
+               metadata:
+                 name: odf-catalogsource
+                 namespace: openshift-marketplace
+               spec:
+                 displayName: OpenShift Data Foundation
+                 image: quay.io/ocs-dev/odf-operator-catalog:main
+                 publisher: Red Hat
+                 sourceType: grpc
+         remediationAction: inform
+         severity: high
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-odf-operator-subscription
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1alpha1
+               kind: Subscription
+               metadata:
+                 name: odf-operator
+                 namespace: openshift-storage
+               spec:
+                 channel: alpha
+                 installPlanApproval: Automatic
+                 name: odf-operator
+                 source: odf-catalogsource
+                 sourceNamespace: openshift-marketplace
+                 startingCSV: odf-operator.v0.0.1
+         remediationAction: inform
+         severity: high
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-storagesystem
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: odf.openshift.io/v1alpha1
+               kind: StorageSystem
+               metadata:
+                 name: odf-storagecluster-storagesystem
+                 namespace: openshift-storage
+               spec:
+                 kind: storagecluster.ocs.openshift.io/v1
+                 name: ocs-storagecluster
+                 namespace: openshift-storage
+         remediationAction: inform
+         severity: low
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-storagecluster
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: ocs.openshift.io/v1
+               kind: StorageCluster
+               metadata:
+                 annotations:
+                   uninstall.ocs.openshift.io/cleanup-policy: delete
+                   uninstall.ocs.openshift.io/mode: graceful
+                 name: ocs-storagecluster
+                 namespace: openshift-storage
+               spec:
+                 storageDeviceSets:
+                   - count: 1
+                     dataPVCTemplate:
+                       spec:
+                         accessModes:
+                           - ReadWriteOnce
+                         resources:
+                           requests:
+                             storage: 512Gi
+                         storageClassName: gp2
+                         volumeMode: Block
+                     name: ocs-deviceset-gp2
+                     portable: true
+                     replica: 3
+         remediationAction: inform
+         severity: low
+ remediationAction: enforce
+ 
+ 
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+ name: binding-policy-odf-operator
+placementRef:
+ apiGroup: apps.open-cluster-management.io
+ kind: PlacementRule
+ name: placement-policy-odf-operator
+subjects:
+ - apiGroup: policy.open-cluster-management.io
+   kind: Policy
+   name: policy-odf-operator
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+ name: placement-policy-odf-operator
+spec:
+ clusterConditions:
+   - status: 'True'
+     type: ManagedClusterConditionAvailable
+ clusterSelector:
+   matchExpressions:
+     - key: environment
+       operator: In
+       values:
+         - dev
