@@ -5,7 +5,7 @@ metadata:
     policy.open-cluster-management.io/standards: NIST 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline
-  name: scribe-policy
+  name: volsync-policy
 spec:
   disabled: false
   policy-templates:
@@ -13,7 +13,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-scribe-namespace
+          name: policy-volsync-namespace
         spec:
           object-templates:
             - complianceType: musthave
@@ -21,14 +21,14 @@ spec:
                 apiVersion: v1
                 kind: Namespace
                 metadata:
-                  name: scribe-system
+                  name: volsync-system
           remediationAction: enforce
           severity: high
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-scribe-application
+          name: policy-volsync-application
         spec:
           remediationAction: enforce
           severity: low
@@ -38,8 +38,8 @@ spec:
                 apiVersion: app.k8s.io/v1beta1
                 kind: Application
                 metadata:
-                  name: scribe
-                  namespace: scribe-system
+                  name: volsync
+                  namespace: volsync-system
                 spec:
                   componentKinds:
                     - group: apps.open-cluster-management.io
@@ -50,12 +50,12 @@ spec:
                       - key: app
                         operator: In
                         values:
-                          - scribe
+                          - volsync
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: scribe-replication-channel
+          name: volsync-replication-channel
         spec:
           object-templates:
             - complianceType: musthave
@@ -65,8 +65,8 @@ spec:
                 metadata:
                   annotations:
                     apps.open-cluster-management.io/reconcile-rate: medium
-                  name: scribe
-                  namespace: scribe-system 
+                  name: volsync
+                  namespace: volsync-system 
                 spec:
                   pathname: https://backube.github.io/helm-charts/
                   type: HelmRepo
@@ -76,7 +76,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-scribe-subscription
+          name: policy-volsync-subscription
         spec:
           object-templates:
             - complianceType: musthave
@@ -85,18 +85,18 @@ spec:
                 kind: Subscription
                 metadata:
                   labels:
-                    app: scribe
-                  name: scribe-subscription
-                  namespace: scribe-system 
+                    app: volsync
+                  name: volsync-subscription
+                  namespace: volsync-system 
                 spec:
-                  channel: scribe-system/scribe
-                  name: scribe
+                  channel: volsync-system/volsync
+                  name: volsync
                   packageOverrides:
-                    - packageAlias: scribe
-                      packageName: scribe
+                    - packageAlias: volsync
+                      packageName: volsync
                   placement:
                     placementRef:
-                      name: scribe-placement 
+                      name: volsync-placement 
                       kind: PlacementRule
           remediationAction: enforce
           severity: low
@@ -104,7 +104,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: scribe-replication-placement
+          name: volsync-replication-placement
         spec:
           object-templates:
             - complianceType: musthave
@@ -112,10 +112,10 @@ spec:
                 apiVersion: apps.open-cluster-management.io/v1
                 kind: PlacementRule
                 metadata:
-                  name: scribe-placement
-                  namespace: scribe-system
+                  name: volsync-placement
+                  namespace: volsync-system
                   labels:
-                    app: scribe
+                    app: volsync
                 spec:
                   clusterSelector:
                     matchLabels:
@@ -126,20 +126,20 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-scribe-policy-app
+  name: binding-volsync-policy-app
 placementRef:
   apiGroup: apps.open-cluster-management.io
   kind: PlacementRule
-  name: placement-scribe-policy-app
+  name: placement-volsync-policy-app
 subjects:
   - apiGroup: policy.open-cluster-management.io
     kind: Policy
-    name: scribe-policy
+    name: volsync-policy
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-scribe-policy-app
+  name: placement-volsync-policy-app
 spec:
   clusterConditions:
     - status: 'True'
