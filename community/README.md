@@ -117,6 +117,7 @@ Policy  | Description | Prerequisites
 [Policy to setup ODF](./CM-Configuration-Management/policy-odf.yaml) | Use this policy to install and configure the OpenShift Data Foundation | making it work would require e.g. on AWS m5 instances would be required. Requires OpenShift 4.6 or later.
 [Policy to install Kyverno](./CM-Configuration-Management/policy-install-kyverno.yaml) | Use this policy to install Kyverno | consult the following [link](https://github.com/kyverno) to get more information about Kyverno.
 [Policy to install ArgoCD on Non-OpenShift Clusters](./CM-Configuration-Management/policy-argocd-kubernetes.yaml) | Use this policy to install ArgoCD | This policy is deploying ArgoCD as a Helm Chart and can be applied also to non OpenShift-Clusters
+[Policy to create a CronJob installing oc-client](./CM-Configuration-Management/policy-oc-client-cronjob.yaml) | Use this policy to execute custom commands using oc-client | There are several examples where you might need to setup custom commands.
 
 
 ### Contingency Planning
