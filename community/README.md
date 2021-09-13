@@ -34,6 +34,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [Disallowed roles policy](./AC-Access-Control/policy-roles-no-wildcards.yaml) | Use the disallowed roles policy to make sure no pods are being granted full access in violation of least privilege. | Check [Using RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) to learn more about Kubernetes RBAC authorization.
+[Disallowed anonymous authentication](./AC-Access-Control/policy-gatekeeper-disallow-anonymous.yaml) | Use the disallowed anonymous authentication policy to make sure that the system:anonymous user and system:unauthenticated group are not associated with any ClusterRole / Role in the environment | See the [Gatekeeper documentation](https://github.com/open-policy-agent/gatekeeper). **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy.
 
 ### Awareness and Training
 

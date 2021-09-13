@@ -1,0 +1,126 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-gatekeeper-disallow-anonymous
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: AC Access Control
+    policy.open-cluster-management.io/controls: AC-2 Account Management
+spec:
+  remediationAction: enforce 
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-disallow-anonymous
+        spec:
+          remediationAction: enforce
+          severity: low
+          object-templates: 
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: templates.gatekeeper.sh/v1beta1
+                kind: ConstraintTemplate
+                metadata:
+                  name: k8sdisallowanonymous
+                  annotations:
+                    description: Disallows connections from anonymous users.
+                spec:
+                  crd:
+                    spec:
+                      names:
+                        kind: K8sDisallowAnonymous
+                  targets:
+                    - target: admission.k8s.gatekeeper.sh
+                      rego: |
+                        package k8sdisallowanonymous
+                        violation[{"msg": msg}] {
+                          review(input.review.object.subjects[_])
+                          msg := sprintf("Unauthenticated user reference is not allowed in %v %v ", [input.review.object.kind, input.review.object.metadata.name])
+                        }
+
+                        review(subject) = true {
+                          subject.name == "system:unauthenticated"
+                        }
+
+                        review(subject) = true {
+                          subject.name == "system:anonymous"
+                        }                
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: constraints.gatekeeper.sh/v1beta1
+                kind: K8sDisallowAnonymous
+                metadata:
+                  name: no-anonymous
+                spec:
+                  enforcementAction: dryrun
+                  match:
+                    kinds:
+                      - apiGroups: ["rbac.authorization.k8s.io"]
+                        kinds: ["ClusterRoleBinding"]
+                      - apiGroups: ["rbac.authorization.k8s.io"]
+                        kinds: ["RoleBinding"]
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-audit-disallow-anonymous
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: constraints.gatekeeper.sh/v1beta1
+                kind: K8sDisallowAnonymous
+                metadata:
+                  name: no-anonymous
+                status:
+                  totalViolations: 0
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-admission-disallow-anonymous
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: v1
+                kind: Event
+                metadata:
+                  namespace: openshift-gatekeeper-system # set it to the actual namespace where gatekeeper is running if different
+                  annotations:
+                    constraint_action: deny
+                    constraint_kind: K8sDisallowAnonymous
+                    constraint_name: no-anonymous
+                    event_type: violation       
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-gatekeeper-disallow-anonymous
+placementRef:
+  name: placement-policy-gatekeeper-disallow-anonymous
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-gatekeeper-disallow-anonymous
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-gatekeeper-disallow-anonymous
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - { key: environment, operator: In, values: ["dev"] }
