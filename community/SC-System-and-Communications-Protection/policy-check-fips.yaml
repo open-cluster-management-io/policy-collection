@@ -18,11 +18,6 @@ spec:
       spec:
         remediationAction: inform
         severity: low
-        namespaceSelector:
-          exclude:
-            - kube-*
-          include:
-            - default
         object-templates:
           - complianceType: musthave
             objectDefinition:
@@ -33,34 +28,7 @@ spec:
                   machineconfiguration.openshift.io/role: master
                 name: 99-master-fips
               spec:
-                config:
-                  ignition:
-                    fips: true
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: checkfipscompliance2
-      spec:
-        remediationAction: inform
-        severity: low
-        namespaceSelector:
-          exclude:
-            - kube-*
-          include:
-            - default
-        object-templates:
-          - complianceType: musthave
-            objectDefinition:
-              kind: ConfigMap
-              metadata:
-                name: cluster-config-v1
-                namespace: kube-system
-              apiVersion: v1
-              data:
-                install-config: |
-                  fips: true                    
-                    
+                fips: true
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -86,4 +54,3 @@ spec:
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}
-
