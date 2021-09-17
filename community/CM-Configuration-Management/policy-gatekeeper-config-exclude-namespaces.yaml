@@ -65,6 +65,7 @@ spec:
                         - openshift-dns-operator
                         - openshift-etcd
                         - openshift-etcd-operator
+                        - openshift-gatekeeper-operator
                         - openshift-gatekeeper-system
                         - openshift-image-registry
                         - openshift-infra
