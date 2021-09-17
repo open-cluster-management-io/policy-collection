@@ -26,14 +26,13 @@ spec:
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                apiVersion: operators.coreos.com/v1alpha1
-                kind: Namespace
                 apiVersion: v1
+                kind: Namespace
                 metadata:
                   name: awx-resource-operator
             - complianceType: musthave
               objectDefinition:
-                apiVersion: operators.coreos.com/v1alpha1
+                apiVersion: operators.coreos.com/v1
                 kind: OperatorGroup
                 metadata:
                   name: awx-resource-operator-gp2w4
