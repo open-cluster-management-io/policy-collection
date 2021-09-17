@@ -33,28 +33,6 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-pao-operatorgroup
-        spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-          severity: low
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["*"]
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: operators.coreos.com/v1
-                kind: OperatorGroup
-                metadata:
-                  name: performance-addon-operator
-                  namespace: openshift-performance-addon
-                spec:
-                  targetNamespaces:
-                    - openshift-performance-addon
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
           name: policy-pao-subscription
         spec:
           remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
@@ -69,12 +47,12 @@ spec:
                 kind: Subscription
                 metadata:
                   name: performance-addon-operator
-                  namespace: openshift-performance-addon
+                  namespace: openshift-operators
                 spec:
-                  channel: "4.5"
                   name: performance-addon-operator
                   source: redhat-operators
                   sourceNamespace: openshift-marketplace
+                  installPlanApproval: Automatic
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
