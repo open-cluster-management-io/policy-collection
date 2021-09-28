@@ -30,19 +30,19 @@ From within this directory in terminal, run `cd deploy` to access the deployment
 `bash ./deploy.sh -u <url> -p <path> -n <namespace>`. (Details on all of the parameters for this
 command can be viewed in its [README](deploy/README.md).)
 
-The policies are applied to all managed clusters that are available, and have the `environement` set
+The policies are applied to all managed clusters that are available, and have the `environment` set
 to `dev`. Specifically, an available managed cluster has the `status` parameter set to `true` by the
 system, for the `ManagedClusterConditionAvailable` condition. If policies need to be applied to
 another set of clusters, update the `PlacementRule.spec.clusterSelector.matchExpressions` section in
 the policies.
 
-**Note**: As new clusters are added that fit the critieria previously mentioned, the policies are
+**Note**: As new clusters are added that fit the criteria previously mentioned, the policies are
 applied automatically.
 
 ### Policy Generator
 
 GitOps through Open Cluster Management is able to handle Kustomize manifests, so you can also use
-the [Policy Generator](https://github.com/open-cluster-management/policy-generator-plugin) Kusomize
+the [Policy Generator](https://github.com/open-cluster-management/policy-generator-plugin) Kustomize
 plugin to generate policies from Kustomize manifests in your repository. See the
 [Policy Generator documentation](https://github.com/open-cluster-management/policy-generator-plugin/blob/main/README.md)
 for additional information.
