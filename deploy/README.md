@@ -1,16 +1,18 @@
-# Deploy policies to Red Hat Advanced Cluster Management 
+# Deploy policies to Open Cluster Management
 
-Deploy policies to Red Hat Advanced Cluster Management with the `deploy.sh` script.
+Deploy policies to Open Cluster Management with the `deploy.sh` script.
 
 ## Deploying policies with GitOps
 
 You must meet the following prerequisites before you deploy policies with the script:
 
-- Your `oc` or `kubectl` CLI must be configured and able to access the cluster to which you want to deploy. 
+- Your `oc` or `kubectl` CLI must be configured and able to access the cluster to which you want to
+  deploy.
 - You must have an existing cluster namespace on the cluster to which you select to deploy.
 
-View the following guidance on how to use the script (all parameters are optional--any parameters not provided will use the defaults specified):
- 
+View the following guidance on how to use the script (all parameters are optional--any parameters
+not provided will use the defaults specified):
+
 ```
 Usage:
   ./deploy.sh [-u <url>] [-b <branch>] [-p <path/to/dir>] [-n <namespace>] [-a|--name <resource-name>] [-s|--sync <rate>]
@@ -30,16 +32,22 @@ Usage:
                                 (Default rate: "medium") Rates: "high", "medium", "low", "off"
 ```
 
-For more details on the `sync` parameter values, see the git subscription chapter [Resource reconciliation rate settings](https://github.com/open-cluster-management/multicloud-operators-subscription/blob/main/docs/gitrepo_subscription.md#resource-reconciliation-rate-settings).
+For more details on the `sync` parameter values, see the git subscription chapter
+[Resource reconciliation rate settings](https://github.com/open-cluster-management/multicloud-operators-subscription/blob/main/docs/gitrepo_subscription.md#resource-reconciliation-rate-settings).
 
-## Remove resources 
+## Remove resources
 
-Find and remove resources that are created with the `deploy.sh` script from Red Hat Advanced Cluster Management. You must meet the following prerequisites before you remove resources with the `remove.sh` script:
+Find and remove resources that are created with the `deploy.sh` script from Red Hat Advanced Cluster
+Management. You must meet the following prerequisites before you remove resources with the
+`remove.sh` script:
 
-- Your `oc` or `kubectl` CLI must be configured and able to access to the resources that you want to remove from the cluster.
-- Verify that Channel and Subscription were deployed using the `deploy.sh` script. Channel and Subscription must match the pattern `<prefix>-chan` and `<prefix>-sub` respectively.
+- Your `oc` or `kubectl` CLI must be configured and able to access to the resources that you want to
+  remove from the cluster.
+- Verify that Channel and Subscription were deployed using the `deploy.sh` script. Channel and
+  Subscription must match the pattern `<prefix>-chan` and `<prefix>-sub` respectively.
 
-View the following guidance on how to use the script (all parameters are optional--the script will query the cluster to get options for parameters not provided):
+View the following guidance on how to use the script (all parameters are optional--the script will
+query the cluster to get options for parameters not provided):
 
 ```
 Usage:
@@ -49,4 +57,3 @@ Usage:
   -n|--namespace <namespace>  Namespace on the cluster that resources are located
   -a|--name <resource-name>   Prefix for the Channel and Subscription resources
 ```
-
