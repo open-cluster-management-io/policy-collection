@@ -23,6 +23,14 @@ The policies are applied to all managed clusters that are available, and have th
 
 **Note**: As new clusters are added that fit the critieria previously mentioned, the policies are applied automatically. 
 
+### Policy Generator
+
+GitOps through Open Cluster Management is able to handle Kustomize manifests, so you can also use
+the [Policy Generator](https://github.com/open-cluster-management/policy-generator-plugin) Kusomize
+plugin to generate policies from Kustomize manifests in your repository. See the
+[Policy Generator documentation](https://github.com/open-cluster-management/policy-generator-plugin/blob/main/README.md)
+for additional information.
+
 ## Community, discussion, contribution, and support
 
 Check the [Contributing policies](CONTRIBUTING.md) document for guidelines on how to contribute to the repository.
