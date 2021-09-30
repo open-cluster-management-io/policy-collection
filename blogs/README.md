@@ -16,6 +16,12 @@ Read our blogs for more information and best practices for Red Hat Advanced Clus
 
 * [Applying an Extensible Policy Framework for Multicluster Governance](https://cloud.redhat.com/blog/applying-an-extensible-policy-framework-for-multicluster-governance)
 
+* [Managing NIST 800-53 Controls in a Multicluster OpenShift Environment - Part 1](https://cloud.redhat.com/blog/managing-nist-800-53-controls-in-a-multicluster-openshift-environment-part-1)
+
+* [Managing NIST 800-53 Controls in a Multicluster OpenShift Environment - Part 2](https://cloud.redhat.com/blog/managing-nist-800-53-controls-in-a-multicluster-openshift-environment-part-2)
+
+* [Managing NIST 800-53 controls in a multicluster OpenShift environment - Part 3](https://cloud.redhat.com/blog/managing-nist-800-53-controls-in-a-multicluster-openshift-environment-part-3)
+
 ## Red Hat Supported Integrations
 
 * [Initiating Ansible Automation on Policy Violations](https://cloud.redhat.com/blog/initiating-ansible-automation-on-policy-violations)
