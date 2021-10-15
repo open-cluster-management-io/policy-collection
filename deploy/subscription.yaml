@@ -6,6 +6,13 @@ metadata:
     apps.open-cluster-management.io/git-path: stable
   name: demo-stable-policies-sub
 spec:
+  allow:
+  - apiVersion: policy.open-cluster-management.io/v1
+    kinds:
+    - '*'
+  - apiVersion: cluster.open-cluster-management.io/v1alpha1
+    kinds:
+    - '*'
   channel: policies/demo-stable-policies-chan
   placement:
     local: true
