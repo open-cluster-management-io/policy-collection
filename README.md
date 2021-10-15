@@ -39,6 +39,34 @@ the policies.
 **Note**: As new clusters are added that fit the criteria previously mentioned, the policies are
 applied automatically.
 
+### Subscription Administrator
+
+In new version of Open Cluster Management you must be a subscription administrator in order to deploy
+policies using a subscription.  In these cases the subscription is still successfully created, but policy
+resources are not distributed as expected.  You can view the status of the subscription to see the subscription
+errors.  If subscription admin is required, you will see a message similar to this for any resource that
+was not created:
+
+```
+        demo-stable-policies-chan-Policy-policy-cert-ocp4:
+          lastUpdateTime: "2021-10-15T20:37:59Z"
+          phase: Failed
+          reason: 'not deployed by a subscription admin. the resource apiVersion: policy.open-cluster-management.io/v1 kind: Policy is not deployed'
+```
+
+To become a subscription admin, you must add an entry for your user to the `open-cluster-management:subscription-admin` ClusterRoleBinding.
+A new entry may look like the following:
+
+```
+subjects:
+  - kind: User
+    apiGroup: rbac.authorization.k8s.io
+    name: my-username
+```
+
+After updating the ClusterRoleBinding, you can delete the subscription and run the deploy script again or 
+simply wait for the next time the subscription controller synchronizes the resources.
+
 ### Policy Generator
 
 GitOps through Open Cluster Management is able to handle Kustomize manifests, so you can also use
