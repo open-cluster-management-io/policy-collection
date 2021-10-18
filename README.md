@@ -42,10 +42,9 @@ applied automatically.
 ### Subscription Administrator
 
 In new versions of Open Cluster Management you must be a subscription administrator in order to deploy
-policies using a subscription.  In these cases the subscription is still successfully created, but policy
-resources are not distributed as expected.  You can view the status of the subscription to see the subscription
-errors.  If subscription admin is required, you will see a message similar to the one below for any resource that
-was not created:
+policies using a subscription. In these cases the subscription is still successfully created, but policy
+resources are not distributed as expected. You can view the status of the subscription to see the subscription
+errors. If the subscription administrator role is required, a message similar to the following one appears for any resource that is not created:
 
 ```
         demo-stable-policies-chan-Policy-policy-cert-ocp4:
@@ -54,8 +53,8 @@ was not created:
           reason: 'not deployed by a subscription admin. the resource apiVersion: policy.open-cluster-management.io/v1 kind: Policy is not deployed'
 ```
 
-To become a subscription administrator, you must add an entry for your user to 
-the `open-cluster-management:subscription-admin` ClusterRoleBinding.
+To become a subscription administrator, you must add an entry for your user to the `ClusterRoleBinding` 
+named `open-cluster-management:subscription-admin`.
 A new entry may look like the following:
 
 ```
@@ -65,7 +64,7 @@ subjects:
     name: my-username
 ```
 
-After updating the ClusterRoleBinding, you can delete the subscription and run the deploy script again or 
+After updating the `ClusterRoleBinding`, you can delete the subscription and run the deploy script again or 
 simply wait for the subscription controller to synchronize the resources.
 
 ### Policy Generator
