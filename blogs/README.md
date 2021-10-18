@@ -6,6 +6,8 @@ Read our blogs for more information and best practices for Red Hat Advanced Clus
 
 * [Contributing and deploying community policies with Red Hat Advanced Cluster Management and GitOps](https://www.openshift.com/blog/contributing-and-deploying-community-policies-with-red-hat-advanced-cluster-management-and-gitops)
 
+* [Protecting Your Red Hat Advanced Cluster Management for Kubernetes Policies with Signature](https://cloud.redhat.com/blog/protecting-your-red-hat-advanced-cluster-management-for-kubernetes-policies-with-signature)
+
 ## Governance overview
 
 * [Comply to standards using the policy based governance of Red Hat Advanced Cluster Management for Kubernetes](https://www.openshift.com/blog/comply-to-standards-using-policy-based-governance-of-red-hat-advanced-cluster-management-for-kubernetes)
