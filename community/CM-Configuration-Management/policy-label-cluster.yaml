@@ -3,10 +3,10 @@ kind: Policy
 metadata:
   name: policy-label-cluster
   annotations:
-spec:
     policy.open-cluster-management.io/standards: NIST-CSF
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
   remediationAction: enforce
   disabled: false
   policy-templates:
@@ -38,20 +38,20 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-engineering-label-cluster
+  name: binding-policy-label-cluster
 placementRef:
-  name: placement-policy-engineering-label-cluster
+  name: placement-policy-label-cluster
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-engineering-label-cluster
+- name: policy-label-cluster
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-engineering-label-cluster
+  name: placement-policy-label-cluster
 spec:
   clusterConditions:
   - status: "True"
