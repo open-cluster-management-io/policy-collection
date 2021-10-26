@@ -8,7 +8,6 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
   - [Custom policy controllers](#custom-policy-controllers)
   - [Policy consumers on operator hub](#policy-consumers-on-operator-hub)
 
-
 ## Security control catalog
 
 - [AC - Access Control](#access-control)
@@ -56,7 +55,6 @@ Policy  | Description | Prerequisites
 [Check Fips-Compliance](./CA-Security-Assessment-and-Authorization/policy-check-fips.yaml) | Use this policy to check if a Cluster has FIPS-Compliance-Enabled. | This policy is only valid for OpenShift 4.6+. Read [here](https://docs.openshift.com/container-platform/4.7/installing/installing-fips.html) for more information
 [Remove Kubeadmin](./SC-System-and-Communications-Protection/policy-remove-kubeadmin.yaml) | Use this policy to remove the Kubeadmin-User from selected Clusters | This policy is only valid for OpenShift 4.x Clusters 
 
-
 ### Configuration Management
 
 Policy  | Description | Prerequisites
@@ -66,13 +64,12 @@ Policy  | Description | Prerequisites
 [Example of configuring a cluster-wide proxy with a policy](./CM-Configuration-Management/policy-cluster-proxy-sample.yaml) | Use this policy to configure a cluster-wide proxy. | See the [OpenShift Documentation.](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/security/encrypting-etcd#enabling-etcd-encryption_encrypting-etcd) This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.
 [Example of configuring DNS with a policy](./CM-Configuration-Management/policy-cluster-dns-sample.yaml) | Use this policy to configure DNS in your OpenShift cluster. For example, you can remove public DNS. | See the [OpenShift Documentation](https://docs.openshift.com/container-platform/4.5/post_installation_configuration/network-configuration.html#private-clusters-setting-dns-private_post-install-network-configuration) This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.
 [Example of configuring the Cluster Network Operator with a policy](./CM-Configuration-Management/policy-cluster-network-sample.yaml) | Use this policy to configure the network of your OpenShift cluster. | See the [OpenShift Documentation.](https://docs.openshift.com/container-platform/4.5/post_installation_configuration/network-configuration.html#nw-operator-cr_post-install-network-configuration) This policy is only valid for OpenShift 4.x and needs to be adjusted for the proper environment.
-[Example of creating a deployment object](./CM-Configuration-Management/policy-deployment-sample.yaml) | This example generates 5 replicas of \`nginx-pods\`. | See the [Kubernetes Documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) to learn more about Deployments.
+[Example of creating a deployment object](./CM-Configuration-Management/policy-nginx-deployment.yaml) | This example generates 3 replicas of \`nginx-pods\`. | See the [Kubernetes Documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) to learn more about Deployments.
 [Example of a policy used to configure GitHub-Authentication](./CM-Configuration-Management/policy-github-oauth-sample.yaml) | Use this policy to log in to your OpenShift cluster with GitHub-Authentication. | See the OpenShift Documentation, [Configuring a GitHub or GitHub Enterprise identify provider](https://docs.openshift.com/container-platform/4.5/authentication/identity_providers/configuring-github-identity-provider.html) to learn more information.
 [Example of installing Performance Addon Operator](./CM-Configuration-Management/policy-pao-operator.yaml) | Use this policy to install the Performance Addon Operator, which provides the ability to enable advanced node performance tunings on a set of nodes. | See the [ACM & Performance Addon Operator repository documentation](https://github.com/alosadagrande/acm-cnf/tree/master/acm-manifests/performance-operator) for more details.
 [Example of installing PTP Operator](./CM-Configuration-Management/policy-ptp-operator.yaml) | Use this policy to install the Precision Time Protocol (PTP) Operator, which creates and manages the linuxptp services on a set of nodes. | See the [ACM & PTP Operator repository documentation](https://github.com/alosadagrande/acm-cnf/tree/master/acm-manifests/ptp) for more details.
 [Example of installing SR-IOV Network Operator](./CM-Configuration-Management/policy-sriov-operator.yaml) | Use this policy to install the Single Root I/O Virtualization (SR-IOV) Network Operator, which manages the SR-IOV network devices and network attachments in your clusters. | See the [ACM & SR-IOV Network Operator repository documentation](https://github.com/alosadagrande/acm-cnf/tree/master/acm-manifests/sriov-operator) for more details.
 [Example of labeling nodes of a cluster](./CM-Configuration-Management/policy-label-worker-nodes.yaml) | Use this policy to label nodes in your managed clusters. Notice you must know the name of the node or nodes to label.  | See the [OpenShift Documentation](https://docs.openshift.com/container-platform/4.5/nodes/nodes/nodes-nodes-working.html#nodes-nodes-working-updating_nodes-nodes-working) to learn more about labelling objects.
-[Example of a policy used to configure GitHub-Authentication](./CM-Configuration-Management/policy-deployment-sample.yaml) | Use this policy to log in to your OpenShift cluster with GitHub-Authentication. | See the OpenShift Documentation, [Configuring a GitHub or GitHub Enterprise identify provider](https://docs.openshift.com/container-platform/4.5/authentication/identity_providers/configuring-github-identity-provider.html) to learn more information.
 [Example to configure an image policy](./CM-Configuration-Management/policy-image-policy-sample.yaml) | Use the image policy to define the repositories from where OpenShift can pull images. | See the [OpenShift Security Guide.](https://access.redhat.com/articles/5059881) Use the OpenShift Security Guide to secure your OpenShift cluster.
 [Gatekeeper operator policy](./CM-Configuration-Management/policy-gatekeeper-operator.yaml) | Use the Gatekeeper operator policy to install the community version of Gatekeeper on a managed cluster. | See the [Gatekeeper Operator](https://github.com/gatekeeper/gatekeeper-operator).
 [Gatekeeper config exclude namespaces](./CM-Configuration-Management/policy-gatekeeper-config-exclude-namespaces.yaml) | Use the Gatekeeper policy to exclude namespaces from certain processes for all constraints in the cluster | See the [exempting-namespaces-from-gatekeeper](https://github.com/open-policy-agent/gatekeeper/tree/release-3.3#exempting-namespaces-from-gatekeeper).
@@ -112,7 +109,7 @@ Policy  | Description | Prerequisites
 [Policy to install `cert-manager`](./CM-Configuration-Management/policy-cert-manager-operator.yaml) | Use this policy to deploy the community operator for `cert-manager` which installs `cert-manager` on OpenShift clusters. | For more information on `cert-manager` visit [Cloud native certificate management](https://cert-manager.io/)
 [Policy to label a Managed-Cluster](./CM-Configuration-Management/policy-label-cluster.yaml) | Use this policy to label a Managed-Cluster | This policy needs to be applied on the Managing-Cluster, adjust the labels to your needs
 [Policy to set a Config-Map with properties for different environments](./CM-Configuration-Management/policy-engineering-configmap.yaml) | Use this policy to configure a policy for different environments | adjust this example for your needs
-[Policy to install Local Storage Operator](./CM-Configuration-Management/policy-odf-lso.yaml) | Use this policy to install and configure the Local Storage Operator | adjust the LocalVolumeSet and StorageClass for your needs
+[Policy to install Local Storage Operator](./CM-Configuration-Management/policy-odf.yaml) | Use this policy to install and configure the Local Storage Operator | adjust the LocalVolumeSet and StorageClass for your needs
 [Policy to define a Custom CatalogSource](./CM-Configuration-Management/policy-custom-catalog.yaml) | Use this policy to configure are patch a Custom CatalogSource | consult the [documentation](https://docs.openshift.com/container-platform/4.7/operators/admin/olm-managing-custom-catalogs.html) for more information
 [Policy to define install ansible-awx-operator](./CM-Configuration-Management/policy-ansible-awx-operator.yaml) | Use this policy to configure the ansible-awx-operator | It's a precondition to configure Ansible-Jobs.   
 [Policy to configure ClusterLogForwarding using Template-Feature](./CM-Configuration-Management/policy-cluster-logforwarder-templatized.yaml) | Use this policy to configure ClusterLogForwarding to send audit logs to a Kafka-Topic. | This works in 2.3, every Cluster gets it's own topic because of the new Templatized-Feature. For checking it works use e.g. ```oc get ClusterLogForwarder instance -n openshift-logging -oyaml```. It needs OpenShift 4.6 and RHACM 2.3
@@ -122,7 +119,6 @@ Policy  | Description | Prerequisites
 [Policy to create a CronJob installing oc-client](./CM-Configuration-Management/policy-oc-client-cronjob.yaml) | Use this policy to execute custom commands using oc-client | There are several examples where you might need to setup custom commands.
 [Scan your cluster with the OpenShift Moderate security profile](./CM-Configuration-Management/policy-compliance-operator-moderate-scan.yaml) | This example creates a `ScanSettingBinding` that the Compliance Operator uses to scan the cluster for compliance with the OpenShift FedRAMP Moderate benchmark. | The Compliance Operator can only scan OpenShift nodes. For more details, visit: [Understanding the Compliance Operator](https://docs.openshift.com/container-platform/4.8/security/compliance_operator/compliance-operator-understanding.html).
 [Policy to customize OpenShift OAuth tokens](./CM-Configuration-Management/policy-oauth-config.yaml) | Use this policy to configure the OpenShift tokens to expire after a set period of inactivity. | For more information on configuring the OAuth clients, see the OpenShift documentation: [Configurating the internal oauth Server](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.7/html-single/authentication_and_authorization/index#configuring-internal-oauth)
-
 
 ### Contingency Planning
 
@@ -153,7 +149,6 @@ No policies yet       |  |
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 No policies yet       |  |
-
 
 ### Physical and Environmental Protection
 
@@ -203,7 +198,7 @@ Policy  | Description | Prerequisites
 [Black Duck Connector](./SI-System-and-Information-Integrity/policy-blackduck.yaml) | By integrating Black Duck with Kubernetes and OpenShift, you can automatically scan, identify, and monitor all your container images to gain visibility into, and control over, any security vulnerabilities or policy violations found in the open source code that exists in your containers. | Check out [Black Duck for OpenShift](https://www.synopsys.com/software-integrity/partners/red-hat.html) and [read more](https://www.synopsys.com/software-integrity/security-testing/software-composition-analysis/demo.html).
 
 ## Deploying community policies to your cluster
-While the policies in the [stable](../stable) folder all have out-of-the-box support installed with Red Hat Advanced Cluster Management, community policies are maintained by the open source community. You might need to deploy extra policy consumers in order for community policies to work as intended. If you are seeing the error `no matches for kind "<resource name>" in version "<group>/<version>"`, you must deploy the CustomResourceDefiniton (CRD) for the policy before you create it. If some of the policies in this folder are not behaving properly, you must deploy the corresponding policy consumers to handle them.
+While the policies in the [stable](../stable) folder all have out-of-the-box support installed with Red Hat Advanced Cluster Management, community policies are maintained by the open source community. You might need to deploy extra policy consumers in order for community policies to work as intended. If you are seeing the error `no matches for kind "<resource name>" in version "<group>/<version>"`, you must deploy the CustomResourceDefinition (CRD) for the policy before you create it. If some of the policies in this folder are not behaving properly, you must deploy the corresponding policy consumers to handle them.
 
 ### Custom policy controllers
 Custom policy controllers are created from forks of the [sample policy controller repo](https://github.com/open-cluster-management/multicloud-operators-policy-controller), and as such the process for deploying them is essentially the same as the process for deploying the sample controller.
@@ -211,7 +206,7 @@ Custom policy controllers are created from forks of the [sample policy controlle
 - Run the following command to set up the operator and service account that runs the controller on your cluster: `kubectl apply -f deploy/`
 
 ### Policy consumers on operator hub
-Some policy consumers are packaged as [operators](https://coreos.com/operators/) and are available on the [Operator hub](https://operatorhub.io/). These consumers can simply be deployed by creating a policy with child [configuration policies](https://github.com/open-cluster-management/config-policy-controller) to handle the install. The configuration policies might include the following information:
+Some policy consumers are packaged as [operators](https://coreos.com/operators/) and are available on the [Operator hub](https://operatorhub.io/). These consumers can simply be deployed by creating a policy with child [configuration policies](https://github.com/open-cluster-management/config-policy-controller) to handle the installation. The configuration policies might include the following information:
 - A namespace to deploy the operator on, if necessary
 - A ClusterServiceVersion with install capabilities to install the operator from the operator hub
 - A OperatorGroup
