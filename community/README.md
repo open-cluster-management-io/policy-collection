@@ -190,6 +190,7 @@ No policies yet       |  |
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [OpenShift Certificate Expiration Policy](./SC-System-and-Communications-Protection/policy-ocp4-certs.yaml) | Monitor the OpenShift 4.x namespaces to validate that certificates managed by the infrastructure are rotated as expected. | OpenShift 4
+[Pod Security Policy](./SC-System-and-Communications-Protection/policy-psp.yaml) | Ensure a pod security policy exists as specified. | [It does not affect OpenShift clusters](https://access.redhat.com/solutions/5622051)
 
 ### System and Information Integrity
 
