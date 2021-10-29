@@ -5,7 +5,6 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-oauth-config
-  namespace: default
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
@@ -43,7 +42,6 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: binding-policy-oauth-config
-  namespace: default
 placementRef:
   name: placement-policy-oauth-config
   kind: PlacementRule
@@ -57,7 +55,6 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-oauth-config
-  namespace: default
 spec:
   clusterConditions:
   - status: "True"
@@ -65,4 +62,3 @@ spec:
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}
-
