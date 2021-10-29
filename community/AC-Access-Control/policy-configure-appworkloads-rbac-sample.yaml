@@ -1,7 +1,7 @@
 # This is a sample policy to demonstrate configuring  RBAC for application workloads
 # running on managedclusters.
 # NOTE* This policy is not rbac for administering applications or policies through ACM hub,
-# it is rbac for directly  accessing and  working on the managedclusters.
+# it is rbac for directly  accessing and  working with applications on the managedclusters.
 #
 # This Policy considers the following example scenario
 #   Two different applications  X and Y are running on the Cluster.
@@ -20,7 +20,7 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-configure-applications-rbac
+  name: policy-configure-appworkloads-rbac
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/categories: AC Access Control
@@ -33,7 +33,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-configure-applications-rbac-example
+          name: policy-configure-appworkloads-rbac-example
         spec:
           remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: high
@@ -79,12 +79,16 @@ spec:
                 kind: Namespace
                 metadata:
                   name: project-x
+                  labels:
+                    purpose: namespace-for-sample-AppX-artifacts
             - complianceType: musthave
               objectDefinition:
                 apiVersion: v1
                 kind: Namespace
                 metadata:
                   name: project-y
+                  labels:
+                    purpose: namespace-for-sample-AppY-artifacts
             - complianceType: musthave
               objectDefinition:
                 kind: ClusterRoleBinding
@@ -163,20 +167,20 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-configure-applications-rbac
+  name: binding-policy-configure-appworkloads-rbac
 placementRef:
-  name: placement-policy-configure-applications-rbac
+  name: placement-policy-configure-appworkloads-rbac
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-configure-applications-rbac
+- name: policy-configure-appworkloads-rbac
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-configure-applications-rbac
+  name: placement-policy-configure-appworkloads-rbac
 spec:
   clusterConditions:
   - status: "True"
