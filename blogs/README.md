@@ -37,3 +37,5 @@ Read our blogs for more information and best practices for Red Hat Advanced Clus
 * [Integrating Gatekeeper with Red Hat Advanced Cluster Management for Kubernetes](https://www.openshift.com/blog/integrating-gatekeeper-with-red-hat-advanced-cluster-management-for-kubernetes)
 
 * [K8s Integrity Shield (tech-preview): Protecting the Integrity of Kubernetes Resource with Signature](https://www.openshift.com/blog/k8s-integrity-shield-tech-preview-protecting-the-integrity-of-kubernetes-resources-with-signature)
+
+* [Protecting Your Red Hat Advanced Cluster Management for Kubernetes Policies with Signature](https://cloud.redhat.com/blog/protecting-your-red-hat-advanced-cluster-management-for-kubernetes-policies-with-signature)
