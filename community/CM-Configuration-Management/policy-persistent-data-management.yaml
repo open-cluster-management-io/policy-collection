@@ -68,8 +68,8 @@ spec:
                   name: volsync
                   namespace: volsync-system 
                 spec:
-                  pathname: https://backube.github.io/helm-charts/
-                  type: HelmRepo
+                  pathname: https://github.com/open-cluster-management/volsync-chart.git
+                  type: Git
           remediationAction: enforce
           severity: low
     - objectDefinition:
@@ -84,6 +84,9 @@ spec:
                 apiVersion: apps.open-cluster-management.io/v1
                 kind: Subscription
                 metadata:
+                  annotations:
+                    apps.open-cluster-management.io/git-branch: release-2.4
+                    apps.open-cluster-management.io/git-path: volsync
                   labels:
                     app: volsync
                   name: volsync-subscription
@@ -94,6 +97,17 @@ spec:
                   packageOverrides:
                     - packageAlias: volsync
                       packageName: volsync
+                      packageOverrides:
+                      - path: spec
+                        value:
+                          image:
+                            image: quay.io/open-cluster-management/volsync:ocm-2.4
+                          rclone:
+                            image: quay.io/open-cluster-management/volsync-mover-rclone:ocm-2.4
+                          restic:
+                            image: quay.io/open-cluster-management/volsync-mover-restic:ocm-2.4
+                          rsync:
+                            image: quay.io/open-cluster-management/volsync-mover-rsync:ocm-2.4
                   placement:
                     placementRef:
                       name: volsync-placement 
