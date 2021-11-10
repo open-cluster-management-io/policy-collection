@@ -17,7 +17,7 @@ spec:
           name: openshift-gitops-installed
         spec:
           remediationAction: enforce
-          severity: med
+          severity: medium
           namespaceSelector:
             exclude:
               - kube-*

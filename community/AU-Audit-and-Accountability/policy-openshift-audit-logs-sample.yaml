@@ -31,7 +31,7 @@ spec:
         name: policy-openshift-operators-redhat-namespace
       spec:
         remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-        severity: High
+        severity: high
         object-templates:
         - complianceType: musthave
           objectDefinition:
@@ -85,7 +85,7 @@ spec:
         name: policy-openshift-logging-namespace
       spec:
         remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-        severity: High
+        severity: high
         object-templates:
         - complianceType: musthave
           objectDefinition:
