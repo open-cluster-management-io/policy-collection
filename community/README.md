@@ -34,6 +34,7 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [Disallowed roles policy](./AC-Access-Control/policy-roles-no-wildcards.yaml) | Use the disallowed roles policy to make sure no pods are being granted full access in violation of least privilege. | Check [Using RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) to learn more about Kubernetes RBAC authorization.
 [Disallowed anonymous authentication](./AC-Access-Control/policy-gatekeeper-disallow-anonymous.yaml) | Use the disallowed anonymous authentication policy to make sure that the system:anonymous user and system:unauthenticated group are not associated with any ClusterRole / Role in the environment | See the [Gatekeeper documentation](https://github.com/open-policy-agent/gatekeeper). **Note**: Gatekeeper controllers must be installed to use the gatekeeper policy.
+[Configure RBAC for Application workloads ](./AC-Access-Control/policy-configure-appworkloads-rbac-sample.yaml) | Use this policy to configure a role based access control model for application workloads running on managed-clusters.| Check [Using RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) to learn more about Kubernetes RBAC authorization.
 
 ### Awareness and Training
 
@@ -53,7 +54,7 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [Install Upstream Compliance Operator policy](./CA-Security-Assessment-and-Authorization/policy-compliance-operator-install-upstream.yaml) | Use the upstream compliance operator installation, `policy-comp-operator` policy, to enable continuous compliance monitoring for your cluster. After you install this operator, you must select what benchmark you want to comply to, and create the appropriate objects for the scans to be run. | See [Compliance Operator](https://github.com/openshift/compliance-operator) for more details.
 [Check Fips-Compliance](./CA-Security-Assessment-and-Authorization/policy-check-fips.yaml) | Use this policy to check if a Cluster has FIPS-Compliance-Enabled. | This policy is only valid for OpenShift 4.6+. Read [here](https://docs.openshift.com/container-platform/4.7/installing/installing-fips.html) for more information
-[Remove Kubeadmin](./SC-System-and-Communications-Protection/policy-remove-kubeadmin.yaml) | Use this policy to remove the Kubeadmin-User from selected Clusters | This policy is only valid for OpenShift 4.x Clusters 
+[Remove Kubeadmin](./SC-System-and-Communications-Protection/policy-remove-kubeadmin.yaml) | Use this policy to remove the Kubeadmin-User from selected Clusters | This policy is only valid for OpenShift 4.x Clusters
 
 ### Configuration Management
 
