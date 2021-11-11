@@ -1,0 +1,190 @@
+# This is a sample policy to demonstrate configuring  RBAC for application workloads
+# running on managedclusters.
+# NOTE* This policy is not rbac for administering applications or policies through ACM hub,
+# it is rbac for directly  accessing and  working with applications on the managedclusters.
+#
+# This Policy considers the following example scenario
+#   Two different applications  X and Y are running on the Cluster.
+#   Application X is deployed in namespace project-x
+#   Application Y is deployed in namespace project-y
+#
+# This Policy Configures the following rbac model for the above scenario
+#   UsersGroups:  SreAdminGrp, AppX-AdminGrp, AppX-ViewGrp, AppY-AdminGrp, AppY-ViewGrp
+#   Rolebindings:
+#       SreAdminGrp has cluster-admin access to the Cluster
+#       AppX-AdminGrp has admin access to the namespace project-x where AppX is deployed
+#       AppY-ViewGrp has view access to the namespace project-x where AppX is deployed
+#       AppX-AdminGrp has admin access to the namespace project-y where AppY is deployed
+#       AppY-ViewGrp has view access to the namespace project-y where AppY is deployed
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-configure-appworkloads-rbac
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-configure-appworkloads-rbac-example
+        spec:
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: Group
+                apiVersion: user.openshift.io/v1
+                metadata:
+                  name: SreAdminGrp
+                users: null
+            - complianceType: musthave
+              objectDefinition:
+                kind: Group
+                apiVersion: user.openshift.io/v1
+                metadata:
+                  name: AppX-AdminGrp
+                users: null
+            - complianceType: musthave
+              objectDefinition:
+                kind: Group
+                apiVersion: user.openshift.io/v1
+                metadata:
+                  name: AppX-ViewGrp
+                users: null
+            - complianceType: musthave
+              objectDefinition:
+                kind: Group
+                apiVersion: user.openshift.io/v1
+                metadata:
+                  name: AppY-AdminGrp
+                users: null
+            - complianceType: musthave
+              objectDefinition:
+                kind: Group
+                apiVersion: user.openshift.io/v1
+                metadata:
+                  name: AppY-ViewGrp
+                users: null
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: project-x
+                  labels:
+                    purpose: namespace-for-sample-AppX-artifacts
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: project-y
+                  labels:
+                    purpose: namespace-for-sample-AppY-artifacts
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: SreAdmin-Binding
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: SreAdminGrp
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: cluster-admin
+            - complianceType: musthave
+              objectDefinition:
+                kind: RoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: AppX-Admin-Binding
+                  namespace: project-x
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: AppX-AdminGrp
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: admin
+            - complianceType: musthave
+              objectDefinition:
+                kind: RoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: AppX-View-Binding
+                  namespace: project-x
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: AppX-ViewGrp
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: view
+            - complianceType: musthave
+              objectDefinition:
+                kind: RoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: AppY-Admin-Binding
+                  namespace: project-y
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: AppY-AdminGrp
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: admin
+            - complianceType: musthave
+              objectDefinition:
+                kind: RoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: AppY-View-Binding
+                  namespace: project-y
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: AppY-ViewGrp
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: view
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-configure-appworkloads-rbac
+placementRef:
+  name: placement-policy-configure-appworkloads-rbac
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-configure-appworkloads-rbac
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-configure-appworkloads-rbac
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
