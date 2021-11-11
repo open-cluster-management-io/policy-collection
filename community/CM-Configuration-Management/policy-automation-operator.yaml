@@ -51,7 +51,6 @@ spec:
                   name: ansible-automation-platform-operator
                   source: redhat-operators
                   sourceNamespace: openshift-marketplace
-                  startingCSV: aap-operator.v2.0.1-0.1635283332
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
