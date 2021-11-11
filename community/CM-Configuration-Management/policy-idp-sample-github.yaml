@@ -9,11 +9,10 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   annotations:
-    policy.open-cluster-management.io/categories: PR.DS Data Security
-    policy.open-cluster-management.io/controls: PR.DS-1 Data-at-rest
-    policy.open-cluster-management.io/standards: NIST-CSF
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
   name: policy-idp-sample-github
-  namespace: default
 spec:
   disabled: false
   policy-templates:
@@ -23,11 +22,6 @@ spec:
       metadata:
         name: policy-idp-sample-github
       spec:
-        namespaceSelector:
-          exclude:
-          - kube-*
-          include:
-          - default
         object-templates:
         - complianceType: musthave
           objectDefinition:
@@ -105,7 +99,6 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: binding-policy-idp-sample-github
-  namespace: default
 placementRef:
   apiGroup: apps.open-cluster-management.io
   kind: PlacementRule
@@ -119,7 +112,6 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-idp-sample-github
-  namespace: default
 spec:
   clusterConditions:
     - status: 'True'
