@@ -150,8 +150,6 @@ spec:
          remediationAction: inform
          severity: low
  remediationAction: enforce
- 
- 
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding

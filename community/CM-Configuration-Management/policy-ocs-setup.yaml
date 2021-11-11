@@ -14,6 +14,40 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
+          name: policy-ocs-namespace
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: openshift-storage
+          remediationAction: inform
+          severity: low
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-ocs-operatorgroup
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha2
+                kind: OperatorGroup
+                metadata:
+                  name: ocs-operatorgroup
+                  namespace: openshift-storage
+                spec:
+                  targetNamespaces:
+                    - openshift-storage
+          remediationAction: inform
+          severity: low
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
           name: policy-ocs-subscription
         spec:
           remediationAction: inform
@@ -34,12 +68,11 @@ spec:
                   name: ocs-operator
                   namespace: openshift-storage
                 spec:
-                  channel: stable-4.7
+                  channel: stable-4.8
                   installPlanApproval: Automatic
                   name: ocs-operator
                   source: redhat-operators
                   sourceNamespace: openshift-marketplace
-                  startingCSV: ocs-operator.v4.7.2
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -63,6 +96,7 @@ spec:
                     uninstall.ocs.openshift.io/cleanup-policy: delete
                     uninstall.ocs.openshift.io/mode: graceful
                   namespace: openshift-storage
+                  name: ocs-gp2-block
                 spec:
                   storageDeviceSets:
                     - count: 1

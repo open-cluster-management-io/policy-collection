@@ -34,7 +34,6 @@ spec:
                 name: cert-manager
                 source: community-operators
                 sourceNamespace: openshift-marketplace
-                startingCSV: cert-manager.v1.4.0
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
