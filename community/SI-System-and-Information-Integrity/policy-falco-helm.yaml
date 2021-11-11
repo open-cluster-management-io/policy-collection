@@ -62,7 +62,7 @@ spec:
           name: policy-falco-application
         spec:
           remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-          severity: low
+          severity: high
           namespaceSelector:
             exclude: ["kube-*"]
             include: ["*"]
@@ -94,7 +94,7 @@ spec:
           name: policy-falco-channel
         spec:
           remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-          severity: low
+          severity: high
           namespaceSelector:
             exclude: ["kube-*"]
             include: ["*"]
@@ -118,7 +118,7 @@ spec:
           name: policy-falco-subscription
         spec:
           remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-          severity: low
+          severity: high
           namespaceSelector:
             exclude: ["kube-*"]
             include: ["*"]
@@ -227,7 +227,7 @@ spec:
           name: policy-falco-placement
         spec:
           remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-          severity: low
+          severity: high
           namespaceSelector:
             exclude: ["kube-*"]
             include: ["*"]
