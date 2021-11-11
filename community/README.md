@@ -54,7 +54,7 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [Install Upstream Compliance Operator policy](./CA-Security-Assessment-and-Authorization/policy-compliance-operator-install-upstream.yaml) | Use the upstream compliance operator installation, `policy-comp-operator` policy, to enable continuous compliance monitoring for your cluster. After you install this operator, you must select what benchmark you want to comply to, and create the appropriate objects for the scans to be run. | See [Compliance Operator](https://github.com/openshift/compliance-operator) for more details.
 [Check Fips-Compliance](./CA-Security-Assessment-and-Authorization/policy-check-fips.yaml) | Use this policy to check if a Cluster has FIPS-Compliance-Enabled. | This policy is only valid for OpenShift 4.6+. Read [here](https://docs.openshift.com/container-platform/4.7/installing/installing-fips.html) for more information
-[Remove Kubeadmin](./SC-System-and-Communications-Protection/policy-remove-kubeadmin.yaml) | Use this policy to remove the Kubeadmin-User from selected Clusters | This policy is only valid for OpenShift 4.x Clusters 
+[Remove Kubeadmin](./SC-System-and-Communications-Protection/policy-remove-kubeadmin.yaml) | Use this policy to remove the Kubeadmin-User from selected Clusters | This policy is only valid for OpenShift 4.x Clusters
 
 
 ### Configuration Management
@@ -122,7 +122,8 @@ Policy  | Description | Prerequisites
 [Policy to create a CronJob installing oc-client](./CM-Configuration-Management/policy-oc-client-cronjob.yaml) | Use this policy to execute custom commands using oc-client | There are several examples where you might need to setup custom commands.
 [Scan your cluster with the OpenShift Moderate security profile](./CM-Configuration-Management/policy-compliance-operator-moderate-scan.yaml) | This example creates a `ScanSettingBinding` that the Compliance Operator uses to scan the cluster for compliance with the OpenShift FedRAMP Moderate benchmark. | The Compliance Operator can only scan OpenShift nodes. For more details, visit: [Understanding the Compliance Operator](https://docs.openshift.com/container-platform/4.8/security/compliance_operator/compliance-operator-understanding.html).
 [Policy to customize OpenShift OAuth tokens](./CM-Configuration-Management/policy-oauth-config.yaml) | Use this policy to configure the OpenShift tokens to expire after a set period of inactivity. | For more information on configuring the OAuth clients, see the OpenShift documentation: [Configurating the internal oauth Server](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.7/html-single/authentication_and_authorization/index#configuring-internal-oauth)
-
+[Policy to install IDP operator](./CM-Configuration-Management/policy-idp-operator.yaml) | Use this policy to install Identity configuration management operator. | For more information on this operator, see the IDP documentation: [Identity configuration management for Kubernetes](https://identitatem.github.io/idp-mgmt-docs/)
+[Policy to configure Github identity provider in IDP ](./CM-Configuration-Management/policy-idp-sample-github.yaml) | Use this policy to apply Github OAuth to managed clusters through IDP . | For more information on this operator, see the IDP documentation: [Identity configuration management for Kubernetes](https://identitatem.github.io/idp-mgmt-docs/)
 
 ### Contingency Planning
 
