@@ -51,6 +51,7 @@ spec:
           - openshift-multus
         remediationAction: inform
         minimumDuration: 400h
+        severity: low
   - objectDefinition:
       apiVersion: policy.open-cluster-management.io/v1
       kind: CertificatePolicy
@@ -63,6 +64,7 @@ spec:
         remediationAction: inform
         minimumDuration: 24h
         minimumCADuration: 400h
+        severity: low
   - objectDefinition:
       apiVersion: policy.open-cluster-management.io/v1
       kind: CertificatePolicy
@@ -76,6 +78,7 @@ spec:
         remediationAction: inform
         minimumDuration: 400h
         minimumCADuration: 24h
+        severity: low
   - objectDefinition:
       apiVersion: policy.open-cluster-management.io/v1
       kind: CertificatePolicy
@@ -90,6 +93,7 @@ spec:
           - openshift-kube-controller-manager
         remediationAction: inform
         minimumDuration: 24h
+        severity: low
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding

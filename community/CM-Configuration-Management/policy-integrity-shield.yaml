@@ -21,7 +21,7 @@ spec:
           name: policy-integrity-shield-namespace
         spec:
           remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-          severity: High
+          severity: high
           object-templates:
             - complianceType: musthave
               objectDefinition:
