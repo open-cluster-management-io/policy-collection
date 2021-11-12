@@ -39,7 +39,6 @@ spec:
                 name: cincinnati-operator
                 source: redhat-operators
                 sourceNamespace: openshift-marketplace
-                startingCSV: update-service-operator.v4.6.0
   - objectDefinition:
       apiVersion: policy.open-cluster-management.io/v1
       kind: ConfigurationPolicy

@@ -24,7 +24,7 @@ spec:
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                apiVersion: policy/v1beta1 
+                apiVersion: policy/v1
                 kind: PodDisruptionBudget
                 metadata:
                   name: my-pdb
@@ -47,7 +47,7 @@ spec:
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                apiVersion: policy/v1beta1 
+                apiVersion: policy/v1
                 kind: PodDisruptionBudget
                 metadata:
                   name: my-pdb2

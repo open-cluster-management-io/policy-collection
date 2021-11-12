@@ -208,7 +208,7 @@ spec:
                             pullPolicy: IfNotPresent
                             registry: docker.io
                             repository: falcosecurity/falco
-                            tag: 0.28.1
+                            tag: latest
                           podSecurityPolicy:
                             create: false
                           scc:

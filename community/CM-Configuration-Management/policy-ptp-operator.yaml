@@ -74,7 +74,7 @@ spec:
                   name: ptp-operator-subscription
                   namespace: openshift-ptp
                 spec:
-                  channel: "4.5"
+                  channel: stable
                   installPlanApproval: Automatic
                   name: ptp-operator
                   source: "redhat-operators"
