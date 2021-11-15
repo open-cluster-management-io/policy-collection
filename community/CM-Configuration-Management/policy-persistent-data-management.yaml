@@ -101,13 +101,13 @@ spec:
                       - path: spec
                         value:
                           image:
-                            image: quay.io/open-cluster-management/volsync:ocm-2.4
+                            image: registry.redhat.io/rhacm2/volsync-rhel8:v2.4
                           rclone:
-                            image: quay.io/open-cluster-management/volsync-mover-rclone:ocm-2.4
+                            image: registry.redhat.io/rhacm2/volsync-mover-rclone-rhel8:v2.4
                           restic:
-                            image: quay.io/open-cluster-management/volsync-mover-restic:ocm-2.4
+                            image: registry.redhat.io/rhacm2/volsync-mover-restic-rhel8:v2.4
                           rsync:
-                            image: quay.io/open-cluster-management/volsync-mover-rsync:ocm-2.4
+                            image: registry.redhat.io/rhacm2/volsync-mover-rsync-rhel8:v2.4
                   placement:
                     placementRef:
                       name: volsync-placement 
