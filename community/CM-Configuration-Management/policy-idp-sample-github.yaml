@@ -84,11 +84,11 @@ spec:
                   clientSecret:
                     name: authrealm-sample-github-client-secret
                 mappingMethod: add
-                name: sample-idp
+                name: sample-github-idp
                 type: GitHub
               placementRef:
                 name: authrealm-sample-github-placement
-              routeSubDomain: testdomain
+              routeSubDomain: sample-github-idp
               type: dex
         remediationAction: inform
         severity: medium
