@@ -1,0 +1,159 @@
+# This is a sample policy to demonstrate configuring  RBAC in a multi-tenant environment
+# specifically for administering policies on the hub
+#
+# This Policy considers the following example scenario
+#   An ACM Hub shared by two tenants named teamA and teamB
+#   ( for e.g these teams could dev or test teams or two differnt departments in an organization )
+#   Organization wide governance policies are in namespace global-policies
+#   TeamA specific policies are in namespace team-a-policies
+#   TeamB specific policies are in namespace team-b-policies
+#
+#
+# This Policy Configures the following rbac model on the hub for the above scenario
+#   UsersGroups:  SreAdminGrp, TeamA-SreAdminGrp, TeamB-SreAdminGrp
+#   Rolebindings:
+#       SreAdminGrp has cluster-admin access to the Cluster,
+#                   administers global policies
+#       TeamA-SreAdminGrp has admin access to the namespace team-a-policies,
+#                   administers TeamA's policies in namespace team-a-policies
+#       TeamB-SreAdminGrp has admin access to the namespace team-b-policies,
+#                   administers TeamB's policies in namespace team-b-policies
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-rbac-adminiterpolicies
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-rbac-adminiterpolicies
+        spec:
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: Group
+                apiVersion: user.openshift.io/v1
+                metadata:
+                  name: SreAdminGrp
+                users: null
+            - complianceType: musthave
+              objectDefinition:
+                kind: Group
+                apiVersion: user.openshift.io/v1
+                metadata:
+                  name: TeamA-SreAdminGrp
+                users: null
+            - complianceType: musthave
+              objectDefinition:
+                kind: Group
+                apiVersion: user.openshift.io/v1
+                metadata:
+                  name: TeamB-SreAdminGrp
+                users: null
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: global-policies
+                  labels:
+                    purpose: namespace-for-TeamA-policies
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: team-a-policies
+                  labels:
+                    purpose: namespace-for-TeamA-policies
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: team-b-policies
+                  labels:
+                    purpose: namespace-for-TeamB-policies
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: SreAdmin-Binding
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: SreAdminGrp
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: cluster-admin
+            - complianceType: musthave
+              objectDefinition:
+                kind: RoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: TeamA-SreAdmin-Binding
+                  namespace: team-a-policies
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: TeamA-SreAdminGrp
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: admin
+            - complianceType: musthave
+              objectDefinition:
+                kind: RoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: TeamB-SreAdmin-Binding
+                  namespace: team-b-policies
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: TeamB-SreAdminGrp
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: admin
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-rbac-adminiterpolicies
+placementRef:
+  name: placement-policy-rbac-adminiterpolicies
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-rbac-adminiterpolicies
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-rbac-adminiterpolicies
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: In
+        values:
+          - 'true'
