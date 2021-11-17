@@ -24,6 +24,8 @@ Read our blogs for more information and best practices for Red Hat Advanced Clus
 
 * [Managing NIST 800-53 controls in a multicluster OpenShift environment - Part 3](https://cloud.redhat.com/blog/managing-nist-800-53-controls-in-a-multicluster-openshift-environment-part-3)
 
+* [Generating Governance Policies Using Kustomize and GitOps](https://cloud.redhat.com/blog/generating-governance-policies-using-kustomize-and-gitops)
+
 ## Red Hat Supported Integrations
 
 * [Initiating Ansible Automation on Policy Violations](https://cloud.redhat.com/blog/initiating-ansible-automation-on-policy-violations)
