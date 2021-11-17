@@ -1,5 +1,5 @@
 # This is a sample policy to demonstrate configuring  RBAC in a multi-tenant environment
-# specifically for administering policies
+# specifically for administering policies on the hub
 #
 # This Policy considers the following example scenario
 #   An ACM Hub shared by two tenants named teamA and teamB
@@ -9,7 +9,7 @@
 #   TeamB specific policies are in namespace team-b-policies
 #
 #
-# This Policy Configures the following rbac model for the above scenario
+# This Policy Configures the following rbac model on the hub for the above scenario
 #   UsersGroups:  SreAdminGrp, TeamA-SreAdminGrp, TeamB-SreAdminGrp
 #   Rolebindings:
 #       SreAdminGrp has cluster-admin access to the Cluster,
