@@ -40,7 +40,7 @@ kind: PlacementBinding
 metadata:
   name: binding-config-audit
 placementRef:
-  name: placement-policy-config-audit
+  name: placement-config-audit
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
