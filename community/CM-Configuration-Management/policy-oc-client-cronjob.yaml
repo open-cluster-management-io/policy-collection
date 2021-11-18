@@ -100,7 +100,7 @@ kind: PlacementBinding
 metadata:
   name: binding-oc-client-example
   placementRef:
-    name: placement-policy-occlient
+    name: placement-oc-client-example
     kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
