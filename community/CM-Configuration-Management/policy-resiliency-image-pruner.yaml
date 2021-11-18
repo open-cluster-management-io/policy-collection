@@ -14,7 +14,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-resiliency-image-pruner-prod-ns
+          name: policy-resiliency-image-pruner
         spec:
           remediationAction: inform
           severity: low

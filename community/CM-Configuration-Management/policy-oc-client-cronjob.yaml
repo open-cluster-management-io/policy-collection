@@ -1,7 +1,7 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-oc-client-example
+  name: policy-oc-client
   annotations:
     policy.open-cluster-management.io/standards: CM-2 Baseline Configuration
     policy.open-cluster-management.io/categories: NIST SP 800-53
