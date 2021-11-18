@@ -14,7 +14,7 @@ spec:
       apiVersion: policy.open-cluster-management.io/v1
       kind: ConfigurationPolicy
       metadata:
-        name: policy-oc-client-example
+        name: policy-oc-client
       spec:
         namespaceSelector:
           exclude:
@@ -98,20 +98,20 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-oc-client-example
+  name: binding-oc-client
   placementRef:
-    name: placement-oc-client-example
+    name: placement-oc-client
     kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-oc-client-example
+- name: policy-oc-client
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-oc-client-example
+  name: placement-oc-client
 spec:
   clusterConditions:
   - status: "True"
