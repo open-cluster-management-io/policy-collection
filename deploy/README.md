@@ -11,6 +11,7 @@ You must meet the following prerequisites before you deploy policies with the sc
 - You must have an existing cluster namespace on the cluster to which you select to deploy.
 - starting in 2.4 you need to be Subscription-Admin. One option is to execute: `community/CM-Configuration-Management/policy-configure-subscription-admin-hub` 
   from the command-line and set it to enforce.
+
 View the following guidance on how to use the script (all parameters are optional--any parameters
 not provided will use the defaults specified):
 
