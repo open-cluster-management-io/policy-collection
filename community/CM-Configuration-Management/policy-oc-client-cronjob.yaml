@@ -98,20 +98,20 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-polic
+  name: binding-oc-client-example
   placementRef:
     name: placement-policy-occlient
     kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-occlient
+- name: policy-oc-client-example
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-occlient
+  name: placement-oc-client-example
 spec:
   clusterConditions:
   - status: "True"
