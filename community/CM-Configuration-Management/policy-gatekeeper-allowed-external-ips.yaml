@@ -58,6 +58,7 @@ spec:
                 metadata:
                   name: external-ips
                 spec:
+                  enforcementAction: dryrun
                   match:
                     kinds:
                       - apiGroups: [""]
