@@ -35,9 +35,7 @@ spec:
                 metadata:
                   name: ansible-automation-operator-gp
                   namespace: ansible-automation-platform
-                spec:
-                  targetNamespaces:
-                  - ansible-automation-platform
+                spec: {}
             - complianceType: musthave
               objectDefinition:
                 apiVersion: operators.coreos.com/v1alpha1
