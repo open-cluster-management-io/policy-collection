@@ -384,6 +384,7 @@ spec:
                 metadata:
                   name: containerreadinessprobenotset
                 spec:
+                  enforcementAction: dryrun
                   match:
                     kinds:
                       - apiGroups:

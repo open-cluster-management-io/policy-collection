@@ -384,6 +384,7 @@ spec:
                 metadata:
                   name: containerimagelatest
                 spec:
+                  enforcementAction: dryrun
                   match:
                     kinds:
                       - apiGroups:

@@ -384,6 +384,7 @@ spec:
                 metadata:
                   name: containerlivenessprobenotset
                 spec:
+                  enforcementAction: dryrun
                   match:
                     kinds:
                       - apiGroups:
