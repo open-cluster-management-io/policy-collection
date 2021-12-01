@@ -1,7 +1,7 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-occlient
+  name: policy-oc-client
   annotations:
     policy.open-cluster-management.io/standards: CM-2 Baseline Configuration
     policy.open-cluster-management.io/categories: NIST SP 800-53
@@ -14,7 +14,7 @@ spec:
       apiVersion: policy.open-cluster-management.io/v1
       kind: ConfigurationPolicy
       metadata:
-        name: policy-oc-client-example
+        name: policy-oc-client
       spec:
         namespaceSelector:
           exclude:
@@ -98,20 +98,20 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-polic
+  name: binding-oc-client
   placementRef:
-    name: placement-policy-occlient
+    name: placement-oc-client
     kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-occlient
+- name: policy-oc-client
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-occlient
+  name: placement-oc-client
 spec:
   clusterConditions:
   - status: "True"
