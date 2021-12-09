@@ -14,7 +14,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-kyverno
+          name: policy-kyverno-sample
         spec:
           remediationAction: inform
           severity: low
@@ -43,9 +43,9 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-kyverno
+  name: binding-policy-kyverno-sample
 placementRef:
-  name: placement-policy-kyverno
+  name: placement-policy-kyverno-sample
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
@@ -56,7 +56,7 @@ subjects:
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-kyverno
+  name: placement-policy-kyverno-sample
 spec:
   clusterConditions:
   - status: "True"

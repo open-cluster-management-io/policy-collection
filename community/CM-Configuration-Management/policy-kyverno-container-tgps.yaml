@@ -55,9 +55,9 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-kyverno
+  name: binding-policy-kyverno-container-tgps
 placementRef:
-  name: placement-policy-kyverno
+  name: placement-policy-kyverno-container-tgps
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
@@ -68,7 +68,7 @@ subjects:
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-kyverno
+  name: placement-policy-kyverno-container-tgps
 spec:
   clusterConditions:
     - status: "True"
