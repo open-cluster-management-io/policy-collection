@@ -45,9 +45,9 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-kyverno
+  name: binding-policy-kyverno-config-exclude-resources
 placementRef:
-  name: placement-policy-kyverno
+  name: placement-policy-kyverno-config-exclude-resources
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
@@ -58,7 +58,7 @@ subjects:
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-kyverno
+  name: placement-policy-kyverno-config-exclude-resources
 spec:
   clusterConditions:
     - status: "True"
