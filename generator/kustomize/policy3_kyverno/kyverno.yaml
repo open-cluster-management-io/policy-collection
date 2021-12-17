@@ -1,0 +1,18 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-labels
+spec:
+  validationFailureAction: audit
+  rules:
+    - name: check-for-labels
+      match:
+        resources:
+          kinds:
+            - Namespace
+      validate:
+        message: "The label `purpose` is required."
+        pattern:
+          metadata:
+            labels:
+              purpose: "?*"

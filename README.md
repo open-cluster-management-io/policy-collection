@@ -72,9 +72,14 @@ again or simply wait for the subscription controller to synchronize the resource
 
 GitOps through Open Cluster Management is able to handle Kustomize manifests, so you can also use
 the [Policy Generator](https://github.com/open-cluster-management/policy-generator-plugin) Kustomize
-plugin to generate policies from Kustomize manifests in your repository. See the
-[Policy Generator documentation](https://github.com/open-cluster-management/policy-generator-plugin/blob/main/README.md)
-for additional information.
+plugin to generate policies from Kustomize manifests in your repository.
+
+For additional information about the Policy Generator:
+
+- [Policy Generator product documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.4/html/governance/governance#policy-generator)
+- [Policy Generator source repository documentation](https://github.com/open-cluster-management/policy-generator-plugin/blob/main/README.md)
+- [Policy Generator reference YAML](https://github.com/open-cluster-management/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml)
+- [Policy Generator examples](generator)
 
 ## Community, discussion, contribution, and support
 

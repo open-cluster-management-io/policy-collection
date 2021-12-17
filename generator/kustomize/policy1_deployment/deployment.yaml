@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitops-demo
+  namespace: gitops-demo
+  labels:
+    app: gitops-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitops-demo
+  template:
+    metadata:
+      labels:
+        app: gitops-demo
+    spec:
+      containers:
+        - name: gitops-demo
+          image: quay.io/centos7/httpd-24-centos7:2021-08-06T13_04_45_02_00-905d024
+          ports:
+            - containerPort: 8080
+  triggers:
+    - type: ConfigChange
