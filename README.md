@@ -79,7 +79,7 @@ For additional information about the Policy Generator:
 - [Policy Generator product documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.4/html/governance/governance#policy-generator)
 - [Policy Generator source repository documentation](https://github.com/stolostron/policy-generator-plugin/blob/main/README.md)
 - [Policy Generator reference YAML](https://github.com/stolostron/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml)
-- [Policy Generator examples](generator)
+- [Policy Generator examples](policygenerator)
 
 ## Community, discussion, contribution, and support
 

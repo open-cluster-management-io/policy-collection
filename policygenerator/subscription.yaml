@@ -36,7 +36,7 @@ kind: Subscription
 metadata:
   annotations:
     apps.open-cluster-management.io/git-branch: main
-    apps.open-cluster-management.io/git-path: generator/kustomize
+    apps.open-cluster-management.io/git-path: policygenerator/kustomize
     apps.open-cluster-management.io/reconcile-option: merge
   labels:
     app: policy-generator-demo

@@ -12,7 +12,7 @@ Kustomize plugin through GitOps in Open Cluster Management.
 
 ## Deploying the example manifests
 
-In this `generator/` folder you will find:
+In this `policygenerator/` folder you will find:
 
 - [`subscription.yaml`](subscription.yaml) - Manifest to deploy the Subscription/Channel resource
   objects for GitOps for this folder
