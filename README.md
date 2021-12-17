@@ -41,10 +41,11 @@ applied automatically.
 
 ### Subscription Administrator
 
-In new versions of Open Cluster Management you must be a subscription administrator in order to deploy
-policies using a subscription. In these cases the subscription is still successfully created, but policy
-resources are not distributed as expected. You can view the status of the subscription to see the subscription
-errors. If the subscription administrator role is required, a message similar to the following one appears for any resource that is not created:
+In new versions of Open Cluster Management you must be a subscription administrator in order to
+deploy policies using a subscription. In these cases the subscription is still successfully created,
+but policy resources are not distributed as expected. You can view the status of the subscription to
+see the subscription errors. If the subscription administrator role is required, a message similar
+to the following one appears for any resource that is not created:
 
 ```
         demo-stable-policies-chan-Policy-policy-cert-ocp4:
@@ -53,9 +54,9 @@ errors. If the subscription administrator role is required, a message similar to
           reason: 'not deployed by a subscription admin. the resource apiVersion: policy.open-cluster-management.io/v1 kind: Policy is not deployed'
 ```
 
-To become a subscription administrator, you must add an entry for your user to the `ClusterRoleBinding` 
-named `open-cluster-management:subscription-admin`.
-A new entry may look like the following:
+To become a subscription administrator, you must add an entry for your user to the
+`ClusterRoleBinding` named `open-cluster-management:subscription-admin`. A new entry may look like
+the following:
 
 ```
 subjects:
@@ -64,8 +65,8 @@ subjects:
     name: my-username
 ```
 
-After updating the `ClusterRoleBinding`, you can delete the subscription and run the deploy script again or 
-simply wait for the subscription controller to synchronize the resources.
+After updating the `ClusterRoleBinding`, you can delete the subscription and run the deploy script
+again or simply wait for the subscription controller to synchronize the resources.
 
 ### Policy Generator
 
@@ -89,7 +90,7 @@ You can reach the maintainers of this project at:
 **Resources**: View the following resources for more information on the components and mechanisms
 are implemented in the product governance framework.
 
-- [Product documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.2/)
+- [Product documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/)
 
 - National Cyber security Center of Excellence (NCCoE) blog,
   [Policy Based Governance in Trusted Container Platform](https://www.nccoe.nist.gov/news/policy-based-governance-trusted-container-platform)
