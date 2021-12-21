@@ -17,10 +17,10 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: ansible-automation-platform
+          name: ansible-automation-platform-ns
         spec:
           remediationAction: inform
-          severity: high
+          severity: low
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -35,6 +35,7 @@ spec:
                 metadata:
                   name: ansible-automation-operator-gp
                   namespace: ansible-automation-platform
+                spec: {}
             - complianceType: musthave
               objectDefinition:
                 apiVersion: operators.coreos.com/v1alpha1
@@ -48,25 +49,6 @@ spec:
                   name: ansible-automation-platform-operator
                   source: redhat-operators
                   sourceNamespace: openshift-marketplace
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: ansible-automation-platform-status
-        spec:
-          remediationAction: inform 
-          severity: high
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: operators.coreos.com/v1alpha1
-                kind: ClusterServiceVersion
-                metadata:
-                  namespace: ansible-automation-platform
-                spec:
-                  displayName: Ansible Automation Platform (early access)
-                status:
-                  phase: Succeeded   # check the csv status to determine if operator is running or not
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding

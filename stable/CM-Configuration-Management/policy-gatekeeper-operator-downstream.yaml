@@ -40,25 +40,6 @@ spec:
       apiVersion: policy.open-cluster-management.io/v1
       kind: ConfigurationPolicy
       metadata:
-        name: gatekeeper-operator-status
-      spec:
-        remediationAction: inform
-        severity: high
-        object-templates:
-          - complianceType: musthave
-            objectDefinition:
-              apiVersion: operators.coreos.com/v1alpha1
-              kind: ClusterServiceVersion
-              metadata:
-                namespace: openshift-gatekeeper-system
-              spec:
-                displayName: Gatekeeper Operator
-              status:
-                phase: Succeeded   # check the csv status to determine if operator is running or not
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
         name: gatekeeper
       spec:
         remediationAction: inform
@@ -80,35 +61,6 @@ spec:
                   emitAdmissionEvents: Enabled
                   logLevel: INFO
                   replicas: 2
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: gatekeeper-status
-      spec:
-        remediationAction: inform
-        severity: high
-        object-templates:
-          - complianceType: musthave
-            objectDefinition:
-              apiVersion: v1
-              kind: Pod
-              metadata:
-                namespace: openshift-gatekeeper-system
-                labels:
-                  control-plane: audit-controller
-              status:
-                phase: Running   # check the pod status to determine if operator is running or not
-          - complianceType: musthave
-            objectDefinition:
-              apiVersion: v1
-              kind: Pod
-              metadata:
-                namespace: openshift-gatekeeper-system
-                labels:
-                  control-plane: controller-manager
-              status:
-                phase: Running   # check the pod status to determine if operator is running or not
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
