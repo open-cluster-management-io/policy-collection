@@ -1,14 +1,14 @@
 # Policy Generator
 
 Generate Open Cluster Management policies from existing Kubernetes manifests in your repository
-using the [Policy Generator](https://github.com/open-cluster-management/policy-generator-plugin)
+using the [Policy Generator](https://github.com/stolostron/policy-generator-plugin)
 Kustomize plugin through GitOps in Open Cluster Management.
 
 ## Additional information
 
 - [Policy Generator product documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.4/html/governance/governance#policy-generator)
-- [Policy Generator source repository documentation](https://github.com/open-cluster-management/policy-generator-plugin/blob/main/README.md)
-- [Policy Generator reference YAML](https://github.com/open-cluster-management/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml)
+- [Policy Generator source repository documentation](https://github.com/stolostron/policy-generator-plugin/blob/main/README.md)
+- [Policy Generator reference YAML](https://github.com/stolostron/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml)
 
 ## Deploying the example manifests
 
@@ -68,7 +68,7 @@ To deploy the examples in this folder via GitOps:
 To generate the policy manifests locally:
 
 - Install the policy generator locally (See the
-  [Installation](https://github.com/open-cluster-management/policy-generator-plugin#installation)
+  [Installation](https://github.com/stolostron/policy-generator-plugin#installation)
   section of the generator documentation)
 - Change to the `kustomize/` directory
 - Generate the policies:

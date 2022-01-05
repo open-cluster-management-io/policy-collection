@@ -10,4 +10,4 @@ Policy  | Description | Prerequisites
 [policy-psp](../SC-System-and-Communications-Protection/policy-psp.yaml) | Ensure a pod security policy exists as specified. |
 [policy-scc](../SC-System-and-Communications-Protection/policy-scc.yaml) | Ensure a Security Context Constraint (SCC) exists as specified. |
 
-You can contribute more policies that map to the System and Communications Protection control family. See [Contibuting policies](https://github.com/open-cluster-management/policy-collection/blob/main/docs/CONTRIBUTING.md) for more details.
+You can contribute more policies that map to the System and Communications Protection control family. See [Contibuting policies](https://github.com/stolostron/policy-collection/blob/main/docs/CONTRIBUTING.md) for more details.

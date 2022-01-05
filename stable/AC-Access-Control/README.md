@@ -9,4 +9,4 @@ Policy  | Description | Prerequisites
 [policy-rolebinding](../AC-Access-Control/policy-rolebinding.yaml) | Ensures that an entity is bound to a particular role. |
 
 
-You can contribute more policies that map to the Access Control catalog. See [Contibuting policies](https://github.com/open-cluster-management/policy-collection/blob/main/docs/CONTRIBUTING.md) for more details.
+You can contribute more policies that map to the Access Control catalog. See [Contibuting policies](https://github.com/stolostron/policy-collection/blob/main/docs/CONTRIBUTING.md) for more details.
