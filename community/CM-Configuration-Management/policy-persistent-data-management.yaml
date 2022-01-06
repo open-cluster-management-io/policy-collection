@@ -68,7 +68,7 @@ spec:
                   name: volsync
                   namespace: volsync-system 
                 spec:
-                  pathname: https://github.com/open-cluster-management/volsync-chart.git
+                  pathname: https://github.com/stolostron/volsync-chart.git
                   type: Git
           remediationAction: enforce
           severity: low

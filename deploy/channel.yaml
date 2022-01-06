@@ -6,4 +6,4 @@ metadata:
     apps.open-cluster-management.io/reconcile-rate: medium
 spec:
   type: GitHub
-  pathname: https://github.com/open-cluster-management/policy-collection.git
+  pathname: https://github.com/stolostron/policy-collection.git
