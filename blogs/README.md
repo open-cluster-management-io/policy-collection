@@ -26,6 +26,8 @@ Read our blogs for more information and best practices for Red Hat Advanced Clus
 
 * [Generating Governance Policies Using Kustomize and GitOps](https://cloud.redhat.com/blog/generating-governance-policies-using-kustomize-and-gitops)
 
+* [Using Policy Metrics to View Compliance Trends](https://cloud.redhat.com/blog/using-policy-metrics-to-view-compliance-trends)
+
 ## Red Hat Supported Integrations
 
 * [Initiating Ansible Automation on Policy Violations](https://cloud.redhat.com/blog/initiating-ansible-automation-on-policy-violations)
