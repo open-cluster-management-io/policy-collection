@@ -1,10 +1,16 @@
 # Policy Generator
 
 Generate Open Cluster Management policies from existing Kubernetes manifests in your repository
-using the [Policy Generator](https://github.com/stolostron/policy-generator-plugin)
-Kustomize plugin through GitOps in Open Cluster Management.
+using the [Policy Generator](https://github.com/stolostron/policy-generator-plugin) Kustomize plugin
+through GitOps in Open Cluster Management.
 
-## Additional information
+## Topics
+
+- [About the Policy Generator](#about-the-policy-generator)
+- [Deploying the example manifests](#deploying-the-example-manifests)
+- [Adding additional manifests](#adding-additional-manifests)
+
+### Additional information
 
 - [Policy Generator product documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.4/html/governance/governance#policy-generator)
 - [Policy Generator source repository documentation](https://github.com/stolostron/policy-generator-plugin/blob/main/README.md)
@@ -76,15 +82,33 @@ To deploy the examples in this folder via GitOps:
   ```shell
   oc apply -f subscription.yaml
   ```
-  Now, you can commit changes to your forked repository and view the updates on the hub!
+  Now, you can commit changes to your forked repository and view the updates on the hub! See
+  [Adding additional manifests](#adding-additional-manifests) for how to add your own files.
 
 To generate the policy manifests locally:
 
 - Install the policy generator locally (See the
-  [Installation](https://github.com/stolostron/policy-generator-plugin#installation)
-  section of the generator documentation)
+  [Installation](https://github.com/stolostron/policy-generator-plugin#installation) section of the
+  generator documentation)
 - Change to the `kustomize/` directory
 - Generate the policies:
   ```shell
   kustomize build --enable-alpha-plugins
   ```
+
+## Adding additional manifests
+
+To add your own manifests, add your YAML files to the [`policygenerator/kustomize`](kustomize)
+directory (or to a new or existing subdirectory there). Then, update the `policies` array in
+[`policyGenerator.yaml`](kustomize/policyGenerator.yaml) with:
+
+1. The name of the policy you want to generate.
+2. Paths to the manifests from which to generate policies (specifying a directory will place all
+   manifests there in a policy).
+
+If the manifests point to a Kyverno or Gatekeeper API version, they will automatically be expanded
+upon generation with additional Open Cluster Management policies to show whether the respective
+policy engine has detected a violation.
+
+See [Additional information](#additional-information) for more about additional configuration
+options and the policy expanders.
