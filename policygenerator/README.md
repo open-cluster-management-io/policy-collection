@@ -10,9 +10,22 @@ Kustomize plugin through GitOps in Open Cluster Management.
 - [Policy Generator source repository documentation](https://github.com/stolostron/policy-generator-plugin/blob/main/README.md)
 - [Policy Generator reference YAML](https://github.com/stolostron/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml)
 
+## About the Policy Generator
+
+The generator automatically wraps Kubernetes manifests in Open Cluster Management policies, allowing
+you to deploy policies to Open Cluster Management without needing to have an additional manifest to
+maintain. Furthermore, it also expands on wrapping
+[Gatekeeper](https://open-policy-agent.github.io/gatekeeper/) and [Kyverno](https://kyverno.io/)
+policies by automatically generating additional policies alongside policies from these engines to
+detect violation objects created by those engines, providing a full view of compliance for each Open
+Cluster Management policy.
+
+For more information about contributing to the policy engine expanders, see the
+[repository documentation](https://github.com/open-cluster-management/policy-generator-plugin/blob/main/docs/policygenerator.md#policy-expanders).
+
 ## Deploying the example manifests
 
-In this `generator/` folder you will find:
+In this `policygenerator/` folder you will find:
 
 - [`subscription.yaml`](subscription.yaml) - Manifest to deploy the Subscription/Channel resource
   objects for GitOps for this folder
