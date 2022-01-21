@@ -27,7 +27,7 @@ detect violation objects created by those engines, providing a full view of comp
 Cluster Management policy.
 
 For more information about contributing to the policy engine expanders, see the
-[repository documentation](https://github.com/open-cluster-management/policy-generator-plugin/blob/main/docs/policygenerator.md#policy-expanders).
+[repository documentation](https://github.com/stolostron/policy-generator-plugin/blob/main/docs/policygenerator.md#policy-expanders).
 
 ## Deploying the example manifests
 

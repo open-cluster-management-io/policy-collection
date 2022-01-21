@@ -102,7 +102,7 @@ Create a pull request that can be reviewed by the product team. See the followin
    git push origin no-wildcard-roles
    ```
 
-4. Copy and paste the URL to the pull request into your browser, which is provided in the output of the push command. Push changes from your fork back to the `open-cluster-management/policy-collection` repository.
+4. Copy and paste the URL to the pull request into your browser, which is provided in the output of the push command. Push changes from your fork back to the `stolostron/policy-collection` repository.
   
    Alternatively, view the [policy-collection compare page](https://github.com/stolostron/policy-collection/compare), select **compare across forks**, and select your fork and branch from the drop-down list.
 
