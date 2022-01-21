@@ -107,7 +107,7 @@ spec:
                   shieldApi:
                     name: integrity-shield-api
                     imagePullPolicy: Always
-                    image: quay.io/open-cluster-management/integrity-shield-api
+                    image: quay.io/stolostron/integrity-shield-api
                     port: 8080
                     selector:
                       app: integrity-shield-api
@@ -489,7 +489,7 @@ spec:
                     enabled: true
                     name: integrity-shield-observer
                     imagePullPolicy: Always
-                    image: quay.io/open-cluster-management/integrity-shield-observer
+                    image: quay.io/stolostron/integrity-shield-observer
                     selector:
                       app: integrity-shield-observer
                     logLevel: info
