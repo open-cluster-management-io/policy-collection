@@ -156,13 +156,13 @@ spec:
                                 condition: >
                                   (container.image.repository in (gcr.io/google_containers/hyperkube-amd64,
                                   gcr.io/google_containers/kube2sky, sysdig/agent, sysdig/falco,
-                                  sysdig/sysdig, falcosecurity/falco, quay.io/open-cluster-management) or
-                                  (k8s.ns.name in (kube-system, openshift-multus, openshift-monitoring,
-                                  open-cluster-management, openshift-sdn, openshift-dns,
-                                  openshift-machine-config-operator, openshift-cluster-machine-approver,
-                                  openshift-dns-operator, openshift-cloud-credential-operator,
-                                  openshift-machine-api, openshift-ingress-operator, openshift-console,
-                                  openshift-ovn-kubernetes)))
+                                  sysdig/sysdig, falcosecurity/falco, quay.io/stolostron,
+                                  quay.io/open-cluster-management) or (k8s.ns.name in (kube-system, 
+                                  openshift-multus, openshift-monitoring, open-cluster-management, 
+                                  openshift-sdn, openshift-dns, openshift-machine-config-operator, 
+                                  openshift-cluster-machine-approver, openshift-dns-operator, 
+                                  openshift-cloud-credential-operator, openshift-machine-api, 
+                                  openshift-ingress-operator, openshift-console, openshift-ovn-kubernetes)))
                               - list: allowed_k8s_users
                                 items: [
                                   "minikube", "minikube-user", "kubelet", "kops", "admin", "kube", "kube-proxy", "kube-apiserver-healthcheck",

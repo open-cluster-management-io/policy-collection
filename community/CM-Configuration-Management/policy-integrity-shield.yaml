@@ -65,11 +65,11 @@ spec:
                   name: integrity-shield-operator
                   namespace: integrity-shield-operator-system
                 spec:
-                  channel: alpha-0.3.1
+                  channel: alpha-0.3.2
                   name: integrity-shield-operator
                   source: community-operators
                   sourceNamespace: openshift-marketplace
-                  startingCSV: integrity-shield-operator.v0.3.1
+                  startingCSV: integrity-shield-operator.v0.3.2
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -107,7 +107,7 @@ spec:
                   shieldApi:
                     name: integrity-shield-api
                     imagePullPolicy: Always
-                    image: quay.io/open-cluster-management/integrity-shield-api
+                    image: quay.io/stolostron/integrity-shield-api
                     port: 8080
                     selector:
                       app: integrity-shield-api
@@ -489,7 +489,7 @@ spec:
                     enabled: true
                     name: integrity-shield-observer
                     imagePullPolicy: Always
-                    image: quay.io/open-cluster-management/integrity-shield-observer
+                    image: quay.io/stolostron/integrity-shield-observer
                     selector:
                       app: integrity-shield-observer
                     logLevel: info
