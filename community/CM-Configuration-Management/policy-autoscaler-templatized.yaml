@@ -12,13 +12,14 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-autoscaler-templatized
+  namespace: default
   annotations:
     policy.open-cluster-management.io/standards: NIST 800-53, NIST-CSF
     policy.open-cluster-management.io/categories: CM Configuration Management, PR.IP Information Protection Processes and Procedures
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration, PR.IP-1 Baseline Configuration
 spec:
   remediationAction: enforce
-  disabled: true
+  disabled: true #policy is disabled by default, will be enabled by enabler policy (see below) after the referenced configmap is created
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
@@ -36,20 +37,20 @@ spec:
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                apiVersion: "autoscaling.openshift.io/v1"
-                kind: "ClusterAutoscaler"
+                apiVersion: autoscaling.openshift.io/v1
+                kind: ClusterAutoscaler
                 metadata:
-                  name: "default"
+                  name: default #clusterscoped , no namespace needed
                 spec:
                   podPriorityThreshold: -10 
                   resourceLimits:
-                    maxNodesTotal: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-maxnodes" "default") | toInt hub}}'
+                    maxNodesTotal: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-maxnodes" .ManagedClusterName) | toInt hub}}'
                     cores:
                       min: 8 
-                      max: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-cores-max" "default") | toInt hub}}' 
+                      max: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-cores-max" .ManagedClusterName) | toInt hub}}' 
                     memory:
                       min: 4 
-                      max: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-memory-max" "default") | toInt hub}}' 
+                      max: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-memory-max" .ManagedClusterName) | toInt hub}}' 
                     gpus:
                       - type: nvidia.com/gpu 
                         min: 0 
@@ -61,42 +62,14 @@ spec:
                     enabled: true 
                     delayAfterAdd: 10m 
                     delayAfterDelete: 5m 
-                    delayAfterFailure: '{{hub- fromConfigMap "" "autoscaler-config"  (printf "%s-failuredelay" "default") -hub}}'
+                    delayAfterFailure: '{{hub- fromConfigMap "" "autoscaler-config"  (printf "%s-failuredelay" .ManagedClusterName) -hub}}'
                     unneededTime: 5m 
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-autoscaler-templatized
-placementRef:
-  name: placement-policy-autoscaler-templatized
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-autoscaler-templatized
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-autoscaler-templatized
-spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
-  clusterSelector:
-    matchExpressions:
-      - key: vendor
-        operator: In
-        values:
-          - 'OpenShift'
-
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-autoscaler-templatized-config
+  namespace: default
   annotations:
     policy.open-cluster-management.io/standards: NIST 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
@@ -125,6 +98,7 @@ spec:
                 apiVersion: v1
                 metadata:
                   name: autoscaler-config
+                  namespace: default
                 data:
                   # Configuration values can be set as key-value properties
                   cluster1-maxnodes: '24'
@@ -135,41 +109,16 @@ spec:
                   cluster2-cores-max: "256"
                   cluster2-memory-max: "512"
                   cluster2-failuredelay: 45s
-                  default-maxnodes: "24"
-                  default-cores-max: "128"
-                  default-memory-max: "256"
-                  default-failuredelay: 30s
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-autoscaler-templatized-config
-placementRef:
-  name: placement-policy-autoscaler-templatized-config
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-autoscaler-templatized-config
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-autoscaler-templatized-config
-spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
-  clusterSelector:
-    matchExpressions:
-      - {key: local-cluster, operator: In, values: ["true"]}
-
+                  local-cluster-maxnodes: "24"
+                  local-cluster-cores-max: "128"
+                  local-cluster-memory-max: "256"
+                  local-cluster-failuredelay: 30s
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-autoscaler-templatized-enabler
+  namespace: default
   annotations:
     policy.open-cluster-management.io/standards: NIST 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
@@ -198,18 +147,26 @@ spec:
                 apiVersion: policy.open-cluster-management.io/v1
                 metadata:
                   name: policy-autoscaler-templatized
-                spec:
+                  namespace: default
+                spec: # disable is set to true if policy status != complaint else it is set to false , 
+                  # TODO , specify the correct namespace of the policy resource, replace the "default" with the namespace of the policy
                   disabled: '{{ ne (lookup "policy.open-cluster-management.io/v1" "Policy" "default" "policy-autoscaler-templatized-config").status.compliant "Compliant" |  print | toBool }}'
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-autoscaler-templatized-enabler
+  name: binding-policy-autoscaler-templatized-common
 placementRef:
-  name: placement-policy-autoscaler-templatized-enabler
+  name: placement-policy-autoscaler-templatized-common
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
+  - name: policy-autoscaler-templatized
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+  - name: policy-autoscaler-templatized-config
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
   - name: policy-autoscaler-templatized-enabler
     kind: Policy
     apiGroup: policy.open-cluster-management.io
@@ -217,7 +174,7 @@ subjects:
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-autoscaler-templatized-enabler
+  name: placement-policy-autoscaler-templatized-common
 spec:
   clusterConditions:
     - status: 'True'

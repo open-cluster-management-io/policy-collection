@@ -19,7 +19,7 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
-  remediationAction: inform
+  remediationAction: enforce
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -41,7 +41,7 @@ spec:
                 metadata:
                   name: nginx-pdb
                 spec:
-                  #if the environmentlabel exists and is equal is prod then set maxUnavailable value to 25% then set to 50%
+                  #if the environment label on the managedcluster == prod then set maxUnavailable value to 25% then set to 50%
                   maxUnavailable: '{{- if eq  (lookup "cluster.open-cluster-management.io/v1alpha1" "ClusterClaim" "" "environment").spec.value "prod" -}}
                     25% {{- else -}} 50% {{- end -}}' 
                   selector: 

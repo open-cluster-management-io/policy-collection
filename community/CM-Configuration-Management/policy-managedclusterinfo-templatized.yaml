@@ -1,0 +1,70 @@
+#This sample policy demonstrates building a configmap with managedcluster specific info using managed-cluster templates
+# such  configmap can later be referenced in other policies to configure target cluster specific values.
+
+#NOTES
+#All cluster labels are available on the managed cluster env  as clusterclaim resources. 
+#fromClusterClaim() can be used to retrive the values of  DEFAULT LABELS like id.openshift.io, version.openshift.io etc are available on all managed clusters.
+
+#In the below policy, 
+# a configmap is created with the cluster specific info like id, version retrieved through fromClusterClaim func
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-managedclusterinfo-templatized
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  disabled: false
+  remediationAction: enforce
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-build-clusterinfo
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            data:
+              clusterid: '{{ fromClusterClaim "id.openshift.io" }} '
+              clustername: '{{ fromClusterClaim "name" }}'
+              ocpversion: '{{ fromClusterClaim "version.openshift.io" }}'
+              platform: '{{ fromClusterClaim "platform.open-cluster-management.io"
+                }}'
+              product: '{{ fromClusterClaim "product.open-cluster-management.io" }}'
+            kind: ConfigMap
+            metadata:
+              name: clusterinfo
+              namespace: default
+        remediationAction: inform
+        severity: low
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-managedclusterinfo-templatized
+placementRef:
+  name: placement-policy-managedclusterinfo-templatized
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-managedclusterinfo-templatized
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-managedclusterinfo-templatized
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: vendor, operator: In, values: ["OpenShift"]}

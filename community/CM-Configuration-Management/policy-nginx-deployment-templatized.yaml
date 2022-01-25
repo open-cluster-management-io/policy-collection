@@ -1,13 +1,8 @@
-#This sample policy demonstrates configuring the nginx pod with the image version customized to the target cluster using  managedcluster-templates
-# Image version to configure is  dynamically determined based on the openshift version of the target cluster. 
+# This sample policy demonstrates configuring a nginx pod on managedclusters with the configuration customized to the target cluster using managedcluster templates
 
-#NOTES
-#All cluster labels are available on the managed cluster env  as clusterclaim resources. 
-#fromClusterClaim() can be used to retrive the values of  DEFAULT LABELS like id.openshift.io, version.openshift.io etc are available on all managed clusters.
-
-#In the below policy, 
-# a configmap is created with the cluster specific info like id, version retrieved through fromClusterClaim func
-# later in the policy the same configmap is referenced using fromConfigMap func to get ocp-version.
+# In the below policy, 
+# container image tag is dynamically set based on the ocp version of  the target cluster using  the fromclusterclaim template
+# a couple of example env-variables on the container are also dyanmically set from values of a Secret resource on the target managedcluster using fromSecret template
 
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
@@ -18,67 +13,52 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
+  remediationAction: enforce
   disabled: false
-  remediationAction: inform
   policy-templates:
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: policy-build-clusterinfo
-      spec:
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: v1
-            data:
-              clusterid: '{{ fromClusterClaim "id.openshift.io" }} '
-              clustername: '{{ fromClusterClaim "name" }}'
-              ocpversion: '{{ fromClusterClaim "version.openshift.io" }}'
-              platform: '{{ fromClusterClaim "platform.open-cluster-management.io"
-                }}'
-              product: '{{ fromClusterClaim "product.open-cluster-management.io" }}'
-            kind: ConfigMap
-            metadata:
-              name: clusterinfo
-              namespace: default
-        remediationAction: inform
-        severity: low
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: policy-nginx-deployment-templatized
-      spec:
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: apps/v1
-            kind: Deployment
-            metadata:
-              labels:
-                app: nginx
-              name: nginx-deployment-templatized
-              namespace: default
-            spec:
-              replicas: 3
-              selector:
-                matchLabels:
-                  app: nginx
-              template:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-nginx-deployment
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps/v1
+                kind: Deployment
                 metadata:
+                  name: nginx-deployment-templatized
                   labels:
                     app: nginx
                 spec:
-                  containers:
-                  #if ocpversion is 4.9 set nginx version to  1.21.4 else 1.20.2
-                  - image: '{{- if eq (fromConfigMap "default" "clusterinfo" "ocpversion")
-                      "4.9.13" -}} nginx:1.21.4 {{- else -}} nginx:1.20.2 {{- end -}}'
-                    name: nginx
-                    ports:
-                    - containerPort: 80
-        remediationAction: inform
-        severity: low
+                  replicas: 3
+                  selector:
+                    matchLabels:
+                      app: nginx
+                  template:
+                    metadata:
+                      labels:
+                        app: nginx
+                    spec:
+                      containers:
+                        - name: nginx
+                          #if ocpversion is 4.9 set nginx version to  1.21.4 else 1.20.2
+                          image: '{{- if eq (fromClusterClaim "version.openshift.io") "4.9.13" -}} nginx:1.21.4 {{- else -}} nginx:1.20.2 {{- end -}}'
+                          ports:
+                            - containerPort: 80
+                          env: # tls key and crt to communicate to hub are dynamically set
+                          - name: hub.tls.crt
+                            value: '{{- fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "tls.crt" | base64dec -}}'
+                          - name: hub.tls.key
+                            value: '{{- fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "tls.key" | base64dec -}}'
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -103,4 +83,5 @@ spec:
     type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}
+      - {key: vendor, operator: In, values: ["OpenShift"]}
+
