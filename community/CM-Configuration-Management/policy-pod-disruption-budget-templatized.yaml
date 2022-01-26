@@ -1,0 +1,76 @@
+#This sample policy demonstrate configuring pod disruption budget "customized" to managedcluster using managedcluster-templates
+#It customizes the values in  PodDisruptionBudget resource based on whether the managedcluster has the custom label environment=prod
+
+#NOTES
+#All cluster labels are available on the managed cluster env  as clusterclaim resources. 
+
+#fromClusterClaim() should be used for default labels\clusterclaims like id.openshift.io, version.openshift.io etc are available on all managed clusters
+#using it on custom labels that may not be avaliable on all clusters may cause a policy violation on the clusters where it doesnt exist.
+
+#for CUSTOM LABELS, instead consider using the lookup function to first check  the existence of clusterclaim resource and then get retrieve the value as needed.
+#As shown in the policy below.
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-pod-disruption-budget-templatized
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-pod-disruption-budget-templatized
+        spec:
+          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          severity: low
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["default"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: policy/v1
+                kind: PodDisruptionBudget
+                metadata:
+                  name: nginx-pdb
+                spec:
+                  #if the environment label on the managedcluster == prod then set maxUnavailable value to 25% then set to 50%
+                  maxUnavailable: '{{- if eq  (lookup "cluster.open-cluster-management.io/v1alpha1" "ClusterClaim" "" "environment").spec.value "prod" -}}
+                    25% {{- else -}} 50% {{- end -}}' 
+                  selector: 
+                    matchLabels:
+                      app: nginx
+
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-pod-disruption-budget-templatized
+placementRef:
+  name: placement-policy-pod-disruption-budget-templatized
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-pod-disruption-budget-templatized
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+
+---  
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-pod-disruption-budget-templatized
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: vendor, operator: In, values: ["OpenShift"]}

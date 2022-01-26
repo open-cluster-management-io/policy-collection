@@ -1,0 +1,191 @@
+#This demonstrates configuring ClusterAutoscaler  with values  customized to the target cluster using  HUB-templates
+# the below shows three policies 
+# 1.policy-autoscaler-templatized-config:  configures a ConfigMap on the HUB which contains the managedcluster specific values for  ClusterAutoscaler resource
+# 2.policy-autoscaler-templatized: configures  ClusterAutoScaler resources on target managedclusters with  cluster specific values retrieved from the above ConfigMap
+#                            , this policy is disabled  on creation initially. 
+# 3.policy-autoscaler-templatized-enabler: checks the status of the policy "policy-autoscaler-templatized-config"  and when it is complaint , 
+#                            enables policy-autoscaler-templatized by setting disabled=false on the policy resource. 
+#                            This ensures that configmap  with cluster specific values data is created before the policy that retrieves the values from that configmap.
+
+
+#NOTE
+#The file has 3 related policies clubbed together, 
+#when deploying through GRC UI Editor pls copy paste each policy resource individually as the ui can handle only one policy at a time.
+#pls make sure to deploy all 3 policies in the same namespace and replace any placeholder <POLICIESNS> in this file with the policy namespace.
+
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-autoscaler-templatized
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53, NIST-CSF
+    policy.open-cluster-management.io/categories: CM Configuration Management, PR.IP Information Protection Processes and Procedures
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration, PR.IP-1 Baseline Configuration
+spec:
+  remediationAction: enforce
+  disabled: true #policy is disabled by default, will be enabled by enabler policy (see below) after the referenced configmap is created
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-autoscaler-templatized
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: autoscaling.openshift.io/v1
+                kind: ClusterAutoscaler
+                metadata:
+                  name: default #clusterscoped , no namespace needed
+                spec:
+                  podPriorityThreshold: -10 
+                  resourceLimits:
+                    maxNodesTotal: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-maxnodes" .ManagedClusterName) | toInt hub}}'
+                    cores:
+                      min: 8 
+                      max: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-cores-max" .ManagedClusterName) | toInt hub}}' 
+                    memory:
+                      min: 4 
+                      max: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-memory-max" .ManagedClusterName) | toInt hub}}' 
+                    gpus:
+                      - type: nvidia.com/gpu 
+                        min: 0 
+                        max: 16 
+                      - type: amd.com/gpu 
+                        min: 0 
+                        max: 4 
+                  scaleDown: 
+                    enabled: true 
+                    delayAfterAdd: 10m 
+                    delayAfterDelete: 5m 
+                    delayAfterFailure: '{{hub- fromConfigMap "" "autoscaler-config"  (printf "%s-failuredelay" .ManagedClusterName) -hub}}'
+                    unneededTime: 5m 
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-autoscaler-templatized-config
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-autoscaler-templatized-config
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                  name: autoscaler-config
+                  namespace: <POLICIESNS>
+                data:
+                  # Configuration values can be set as key-value properties
+                  cluster1-maxnodes: '24'
+                  cluster1-cores-max: '128' 
+                  cluster1-memory-max: "256"
+                  cluster1-failuredelay: 30s
+                  cluster2-maxnodes: "36"
+                  cluster2-cores-max: "256"
+                  cluster2-memory-max: "512"
+                  cluster2-failuredelay: 45s
+                  local-cluster-maxnodes: "24"
+                  local-cluster-cores-max: "128"
+                  local-cluster-memory-max: "256"
+                  local-cluster-failuredelay: 30s
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-autoscaler-templatized-enabler
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-autoscaler-templatized-enabler
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: Policy
+                apiVersion: policy.open-cluster-management.io/v1
+                metadata:
+                  name: policy-autoscaler-templatized
+                  namespace: <POLICIESNS>
+                spec: # disable is set to true if policy status != complaint else it is set to false , 
+                  # TODO , specify the correct namespace of the policy resource, replace the "default" with the namespace of the policy
+                  disabled: '{{ ne (lookup "policy.open-cluster-management.io/v1" "Policy" "<POLICIESNS>" "policy-autoscaler-templatized-config").status.compliant "Compliant" |  print | toBool }}'
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-autoscaler-templatized-common
+placementRef:
+  name: placement-policy-autoscaler-templatized-common
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-autoscaler-templatized
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+  - name: policy-autoscaler-templatized-config
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+  - name: policy-autoscaler-templatized-enabler
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-autoscaler-templatized-common
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: In
+        values:
+          - 'true'
+
