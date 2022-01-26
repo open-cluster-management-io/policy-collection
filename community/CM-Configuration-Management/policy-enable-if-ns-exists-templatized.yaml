@@ -1,27 +1,32 @@
 #This demonstrates enabling root policy based on status of a resource on the hub-cluster , using templates
 # Below shows two policies
-# 1 - policy-securesecret-templatized : Enforces a Secret resource on the cluster, it is disabled by default.
-# 2 - policy-securesecret-templatized-enabler : Checks if etcd encryption is set  and enables the above policy that enforces a secure secret.
+# 1 - policy-conditionalconfigmap : Enforces a configmap resource in namespace "test", it is disabled by default.
+# 2 - policy-conditionalconfigmap-enabler : Checks if namespace "test" exists  and if it exists , 
+#                                           enables the above policy #1 (policy-conditionalconfigmap) that enforces a configmap .
+
+#NOTE
+#The file has 2 related policies clubbed together, 
+#when deploying through GRC UI Editor pls copy paste each policy resource individually as the ui can handle only one policy at a time.
+#pls make sure to deploy both policies in the same namespace and replace any placeholder <POLICIESNS> in this file with the policy namespace.
 
 
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-securesecret-templatized
-  namespace: default
+  name: policy-conditionalconfigmap
   annotations:
     policy.open-cluster-management.io/standards: NIST 800-53, NIST-CSF
     policy.open-cluster-management.io/categories: CM Configuration Management, PR.IP Information Protection Processes and Procedures
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration, PR.IP-1 Baseline Configuration
 spec:
   remediationAction: enforce
-  disabled: true #policy is disabled by default, will be enabled by enabler policy (see below) if/when etcd encryption is enabled
+  disabled: true #policy is disabled by default, will be enabled by enabler policy (see below) if/when namespace "test" of the configmap resource exists 
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-securesecret-templatized
+          name: policy-conditionalconfigmap
         spec:
           remediationAction: inform
           severity: low
@@ -34,20 +39,17 @@ spec:
             - complianceType: musthave
               objectDefinition:
                 apiVersion: v1
-                kind: Secret
+                kind: ConfigMap
                 metadata:
-                  name: cloudconnectioncreds
-                  namespace: default
-                type: Opaque
+                  name: sampleconfig
+                  namespace: test
                 data:
-                  AWS_USER: Zm9v
-                  AWS_PASS: YmFy
+                  foo: "bar"
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-securesecret-templatized-enabler
-  namespace: default
+  name: policy-conditionalconfigmap-enabler
   annotations:
     policy.open-cluster-management.io/standards: NIST 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
@@ -60,7 +62,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-securesecret-templatized-enabler
+          name: policy-conditionalconfigmap-enabler
         spec:
           remediationAction: inform
           severity: low
@@ -75,37 +77,39 @@ spec:
                 kind: Policy
                 apiVersion: policy.open-cluster-management.io/v1
                 metadata:
-                  name: policy-securesecret-templatized
-                  namespace: default
-                spec: # disable is set to true if encryption.type != aescbc else it is set to false , 
-                  # TODO , specify the correct namespace of the policy resource, replace the "default" with the correct namespace of the policy
-                  disabled: '{{ ne (lookup "config.openshift.io/v1" "APIServer" "" "cluster").spec.encryption.type "aescbc" |  print | toBool }}'
+                  name: policy-conditionalconfigmap #name should match the name of the root policy that is being enabled
+                  namespace: <POLICIESNS> #namespace should match the ns of the root policy that is being enabled
+                spec: 
+                  # disable is set to true if namespace does not exist else it is set to false , 
+                  disabled: '{{ ne (lookup "v1" "Namespace" "" "test").metadata.name "test" |  print | toBool }}'
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-securesecret-templatized-common
+  name: binding-policy-conditionalconfigmap-common
 placementRef:
-  name: placement-policy-securesecret-templatized-common
+  name: placement-policy-conditionalconfigmap-common
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-  - name: policy-securesecret-templatized
+  - name: policy-conditionalconfigmap
     kind: Policy
     apiGroup: policy.open-cluster-management.io
-  - name: policy-securesecret-templatized-enabler
+  - name: policy-conditionalconfigmap-enabler
     kind: Policy
     apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-securesecret-templatized-common
+  name: placement-policy-conditionalconfigmap-common
 spec:
   clusterConditions:
     - status: 'True'
       type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - {key: local-cluster, operator: In, values: ["true"]}
----
+      - key: local-cluster
+        operator: In
+        values:
+          - 'true'

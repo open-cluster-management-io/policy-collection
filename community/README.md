@@ -27,6 +27,7 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
 - [SA - System and Services Acquisition](#system-and-services-acquisition)
 - [SC - System and Communications Protection](#system-and-communications-protection)
 - [SI - System and Information Integrity](#system-and-information-integrity)
+- [Templatized Policies](#templatized-policies)
 
 ### Access Control
 
@@ -206,6 +207,20 @@ Policy  | Description | Prerequisites
 [OpenShift Auditing for Falco](./SI-System-and-Information-Integrity/policy-falco-auditing.yaml) | Falco can also parse Kubernetes audit events and trigger alerts when auditing rules are violated. Use this policy to enable sending audit events to falco on OpenShift clusters. | [The Falco Project](https://falco.org/).
 [Sysdig Agent](./SI-System-and-Information-Integrity/policy-sysdig.yaml) | The Sysdig Secure DevOps Platform converges security and compliance with performance and capacity monitoring to create a secure DevOps workflow. It uses the same data to monitor and secure, so you can correlate system activity with Kubernetes services. | Check [Sysdig](https://sysdig.com/) and start a [Free Trial](https://go.sysdig.com/rhacm-trial). If the agent fails to integrate with an OpenShift 4.x host kernel, install the [OpenShift Kernel Configuration](./CM-Configuration-Management/policy-kernel-devel.yaml) policy.
 [Black Duck Connector](./SI-System-and-Information-Integrity/policy-blackduck.yaml) | By integrating Black Duck with Kubernetes and OpenShift, you can automatically scan, identify, and monitor all your container images to gain visibility into, and control over, any security vulnerabilities or policy violations found in the open source code that exists in your containers. | Check out [Black Duck for OpenShift](https://www.synopsys.com/software-integrity/partners/red-hat.html) and [read more](https://www.synopsys.com/software-integrity/security-testing/software-composition-analysis/demo.html).
+
+### Templatized Policies 
+
+The following sample policies demonstrate the use of templatization feature to build flexible policies
+
+Policy  | Description | Prerequisites
+------- | ----------- | -------------
+[Configure Deployment](./CM-Configuration-Management/policy-nginx-deployment-templatized.yaml) | Configures nginx deployment resource customized to the target cluster based on contents of resources on the target managedcluster , template-type: managedcluster, template-functions : fromClusterClaim, fromSecret, eq, if-else | [Go Templates functions](https://pkg.go.dev/text/template)
+[Configure PodDisrution Budget](./CM-Configuration-Management/policy-managedclusterinfo-templatized.yaml) | Configures a pod disruption budget resource with the   values customized based on whether the target managedcluster is labeled a prod environment, template-type: managedcluster, template-functions : lookup, eq, if-else | [Go Templates functions](https://pkg.go.dev/text/template)
+[Configure Cluster Info](./CM-Configuration-Management/policy-managedclusterinfo-templatized.yaml) | Configures a clusterinfo configmap  which contains information about the target managedcluster e.g. its ocp-version etc , template-type: managedcluster, template-functions : fromClusterClaim | [Go Templates functions](https://pkg.go.dev/text/template)
+[Configure ClusterAutoScaler](./CM-Configuration-Management/policy-autoscaler-templatized.yaml) | Using hub templates configures the ClusterAutoScaler resource with values customized to the target cluster , template-type: hub, template-functions : fromConfigMap, .ManagedClusterName | [Go Templates functions](https://pkg.go.dev/text/template)
+[Enable Policy If Namespace exists](./CM-Configuration-Management/policy-enable-if-ns-exists-templatized.yaml) | Demos enabling  one policy from another based on existence of a namespace, template type: managedcluster, template functions : lookup, ne, toBool | [Go Templates functions](https://pkg.go.dev/text/template)
+[Enable Policy If EtcdEncryption is set](./CM-Configuration-Management/policy-enable-if-etcd-encrypted-templatized.yaml) | Enables one policy from another based on whether etcd encryption is setup, template type: managedcluster, template functions : lookup, ne, toBool | [Go Templates functions](https://pkg.go.dev/text/template)
+
 
 ## Deploying community policies to your cluster
 While the policies in the [stable](../stable) folder all have out-of-the-box support installed with Red Hat Advanced Cluster Management, community policies are maintained by the open source community. You might need to deploy extra policy consumers in order for community policies to work as intended. If you are seeing the error `no matches for kind "<resource name>" in version "<group>/<version>"`, you must deploy the CustomResourceDefinition (CRD) for the policy before you create it. If some of the policies in this folder are not behaving properly, you must deploy the corresponding policy consumers to handle them.
