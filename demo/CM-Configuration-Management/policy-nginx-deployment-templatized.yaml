@@ -1,0 +1,87 @@
+# This sample policy demonstrates configuring a nginx pod on managedclusters with the configuration customized to the target cluster using managedcluster templates
+
+# In the below policy, 
+# container image tag is dynamically set based on the ocp version of  the target cluster using  the fromclusterclaim template
+# a couple of example env-variables on the container are also dyanmically set from values of a Secret resource on the target managedcluster using fromSecret template
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-nginx-deployment-templatized
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-nginx-deployment
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps/v1
+                kind: Deployment
+                metadata:
+                  name: nginx-deployment-templatized
+                  labels:
+                    app: nginx
+                spec:
+                  replicas: 3
+                  selector:
+                    matchLabels:
+                      app: nginx
+                  template:
+                    metadata:
+                      labels:
+                        app: nginx
+                    spec:
+                      containers:
+                        - name: nginx
+                          #if ocpversion is 4.9 set nginx version to  1.21.4 else 1.20.2
+                          image: '{{- if eq (fromClusterClaim "version.openshift.io") "4.9.13" -}} nginx:1.21.4 {{- else -}} nginx:1.20.2 {{- end -}}'
+                          ports:
+                            - containerPort: 80
+                          env: # tls key and crt to communicate to hub are dynamically set
+                          - name: hub.tls.crt
+                            value: '{{- fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "tls.crt" | base64dec -}}'
+                          - name: hub.tls.key
+                            value: '{{- fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "tls.key" | base64dec -}}'
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-nginx-deployment-templatized
+placementRef:
+  name: placement-policy-nginx-deployment-templatized
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-nginx-deployment-templatized
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-nginx-deployment-templatized
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: vendor, operator: In, values: ["OpenShift"]}
+

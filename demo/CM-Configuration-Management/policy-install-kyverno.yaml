@@ -1,0 +1,169 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-install-kyverno
+  annotations:
+    policy.open-cluster-management.io/standards: NIST-CSF
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-kyverno-namespace
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: Namespace
+                apiVersion: v1
+                metadata:
+                  name: kyverno
+            - complianceType: musthave
+              objectDefinition:
+                kind: Namespace
+                apiVersion: v1
+                metadata:
+                  name: kyverno-channel
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-install-kyverno-prod-ns
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apiextensions.k8s.io/v1
+                kind: CustomResourceDefinition
+                metadata:
+                  annotations:
+                    meta.helm.sh/release-name: kyverno
+                    meta.helm.sh/release-namespace: kyverno
+                  labels:
+                    app.kubernetes.io/managed-by: Helm
+                  name: policyreports.wgpolicyk8s.io
+                spec:
+                  scope: Namespaced
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: app.k8s.io/v1beta1
+                kind: Application
+                metadata:
+                  name: kyverno
+                  namespace: kyverno
+                  annotations:
+                    apps.open-cluster-management.io/deployables: ''
+                spec:
+                  componentKinds:
+                    - group: apps.open-cluster-management.io
+                      kind: Subscription
+                  descriptor: {}
+                  selector:
+                    matchExpressions:
+                      - key: app
+                        operator: In
+                        values:
+                          - kyverno
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: Subscription
+                metadata:
+                  name: kyverno-subscription-1
+                  namespace: kyverno
+                  annotations: {}
+                  labels:
+                    app: kyverno
+                    app.kubernetes.io/part-of: kyverno
+                    apps.open-cluster-management.io/reconcile-rate: medium
+                spec:
+                  name: kyverno
+                  channel: kyverno-channel/kyverno
+                  packageOverrides:
+                    - packageAlias: kyverno
+                      packageName: kyverno
+                      packageOverrides:
+                      - path: spec
+                        value:
+                            resources:
+                              limits:
+                                memory: 768Mi
+                            initResources:
+                              limits:
+                                memory: 512Mi
+                  placement:
+                    placementRef:
+                      name: kyverno-placement-1
+                      kind: PlacementRule
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: PlacementRule
+                metadata:
+                  name: kyverno-placement-1
+                  namespace: kyverno
+                  labels:
+                    app: kyverno
+                spec:
+                  clusterSelector:
+                    matchLabels:
+                      environment: dev                      
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: Channel
+                metadata:
+                  annotations:
+                    apps.open-cluster-management.io/reconcile-rate: medium
+                  name: kyverno
+                  namespace: kyverno-channel
+                spec:
+                  pathname: https://kyverno.github.io/kyverno
+                  type: HelmRepo
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-install-kyverno
+placementRef:
+  name: placement-policy-install-kyverno
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-install-kyverno
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-install-kyverno
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: In
+        values:
+          - 'true'

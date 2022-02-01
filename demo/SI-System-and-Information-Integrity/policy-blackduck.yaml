@@ -1,0 +1,199 @@
+# This policy verifies the installation of the supported version of
+# the Black Duck Connector Operator & the Black Duck Connector on the managed clusters.
+# It also verifies all the containers on the specified namespace are are not 
+# in Black Duck's policy violation.
+#
+# If set to "enforce" it'll install the operator & connector.
+#
+# Note that OpenShift 4.6 is required.
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-blackduck
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: SI System and Information Integrity
+    policy.open-cluster-management.io/controls: SI-4 Information System Monitoring
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-blackduck-operator
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave # Makes sure operators are installed on all clusters
+            objectDefinition:
+              apiVersion: operators.coreos.com/v1alpha1
+              kind: Subscription
+              metadata:
+                name: blackduck-connector-operator
+                namespace: openshift-operators
+              spec:
+                channel: alpha
+                installPlanApproval: Automatic
+                name: blackduck-connector-operator
+                source: certified-operators
+                sourceNamespace: openshift-marketplace
+                startingCSV: blackduck-connector-operator.v1.0.0
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-blackduck-connector
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave # Makes sure connectors are installed on all clusters
+            objectDefinition:
+              apiVersion: charts.synopsys.com/v1alpha1
+              kind: BlackduckConnector
+              metadata:
+                name: blackduckconnector
+                namespace: openshift-operators
+              spec:
+                externalBlackDuck:
+                  - scheme: https
+                    domain: example.blackduck.synopsys.com # users need to fill this out
+                    port: 443
+                    user: example_admin # users need to fill this out
+                    password: example_password # users need to fill this out
+                    concurrentScanLimit: 3
+                logLevel: debug
+                podProcessor:
+                  nameSpaceFilter: 'default' # users need to fill this out
+                  enabled: true
+                  resources:
+                    requests:
+                      cpu: 300m
+                      memory: 1300Mi
+                securedRegistries: []
+                artifactoryProcessor:
+                  dumper: false
+                  enabled: false
+                  expose: None
+                  resources:
+                    requests:
+                      cpu: 300m
+                      memory: 1300Mi
+                blackduck:
+                  connectionsEnvironmentVariableName: blackduck.json
+                  tlsVerification: false
+                core:
+                  expose: None
+                  port: 3001
+                  resources:
+                    requests:
+                      cpu: 300m
+                      memory: 1300Mi
+                  timings:
+                    checkForStalledScansPauseHours: 999999
+                    clientTimeoutMilliseconds: 100000
+                    modelMetricsPauseSeconds: 15
+                    stalledScanClientTimeoutHours: 999999
+                    unknownImagePauseMilliseconds: 15000
+                  useMockMode: false
+                fullnameOverride: ''
+                imageGetter:
+                  createImagesOnly: false
+                  host: localhost
+                  imagePullerType: skopeo
+                  port: 3004
+                  resources:
+                    requests:
+                      cpu: 300m
+                      memory: 1300Mi
+                imageProcessor:
+                  enabled: false
+                  resources:
+                    requests:
+                      cpu: 300m
+                      memory: 1300Mi
+                imagePullSecrets: []
+                imageTag: 2.2.5
+                nameOverride: ''
+                processor:
+                  annotationIntervalSeconds: 30
+                  certificate: ''
+                  certificateKey: ''
+                  dumpIntervalMinutes: 30
+                  port: 3002
+                prometheus:
+                  affinity: {}
+                  enabled: false
+                  expose: None
+                  imageTag: v2.1.0
+                  nodeSelector: {}
+                  podSecurityContext: {}
+                  registry: docker.io/prom
+                  resources:
+                    requests:
+                      cpu: 300m
+                      memory: 1300Mi
+                  securityContext: {}
+                  tolerations: []
+                quayProcessor:
+                  enabled: false
+                  expose: None
+                  resources:
+                    requests:
+                      cpu: 300m
+                      memory: 1300Mi
+                registry: docker.io/blackducksoftware
+                scanner:
+                  blackDuckClientTimeoutSeconds: 600
+                  imageDirectory: /var/images
+                  port: 3003
+                  replicas: 1
+                  resources:
+                    requests:
+                      cpu: 300m
+                      memory: 1300Mi
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-blackduck-labels
+      spec:
+        remediationAction: inform 
+        severity: high
+        object-templates:
+          - complianceType: mustnothave # Makes sure pods are not in any kind of black duck policy violations
+            objectDefinition:
+              apiVersion: v1
+              kind: Pod
+              metadata:
+                labels:
+                  com.blackducksoftware.com.pod.overall-status: IN_VIOLATION
+                namespace: default
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-blackduck-operator
+placementRef:
+  name: placement-blackduck-operator
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: blackduck-operator
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-blackduck-operator
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      []  # selects all clusters if not specified

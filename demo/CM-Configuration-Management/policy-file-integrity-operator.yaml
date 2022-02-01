@@ -1,0 +1,136 @@
+# This policy installs the OpenShift File Integrity Operator.
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-file-integrity-operator
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: file-integrity-namespace
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                name: openshift-file-integrity
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: openshift-file-integrity-og
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: operators.coreos.com/v1
+              kind: OperatorGroup
+              metadata:
+                name: openshift-file-integrity-og
+                namespace: openshift-file-integrity
+              spec:
+                targetNamespaces:
+                - openshift-file-integrity
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: file-integrity-subscription
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: operators.coreos.com/v1alpha1
+              kind: Subscription
+              metadata:
+                name: file-integrity-operator
+                namespace: openshift-file-integrity
+              spec:
+                channel: release-0.1
+                installPlanApproval: Automatic
+                name: file-integrity-operator
+                source: redhat-operators
+                sourceNamespace: openshift-marketplace
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: file-integrity-example
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: fileintegrity.openshift.io/v1alpha1
+              kind: FileIntegrity
+              metadata:
+                name: example-fileintegrity
+                namespace: openshift-file-integrity
+              spec:
+                config:
+                  gracePeriod: 900
+                nodeSelector:
+                  node-role.kubernetes.io/worker: ""
+                tolerations:
+                - effect: NoSchedule
+                  key: node-role.kubernetes.io/master
+                  operator: Exists
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: file-integrity-node-status
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: mustnothave
+            objectDefinition:
+              apiVersion: fileintegrity.openshift.io/v1alpha1
+              kind: FileIntegrityNodeStatus
+              metadata:
+                namespace: openshift-file-integrity
+              results:
+              - condition: Failed
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-file-integrity-operator
+placementRef:
+  name: placement-policy-file-integrity-operator
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-file-integrity-operator
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-file-integrity-operator
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}

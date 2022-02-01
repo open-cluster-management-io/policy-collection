@@ -1,0 +1,152 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-rhsso-operator
+  annotations:
+    policy.open-cluster-management.io/standards: NIST-CSF
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline 
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-rhsso-operator-project
+        spec:
+          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          severity: high
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["*"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: project.openshift.io/v1
+                kind: Project
+                metadata:
+                  name: keycloak
+                spec: {}
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-rhsso-operator
+        spec:
+          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          severity: high
+          namespaceSelector:
+            exclude: ["kube-*", "openshift-*"]
+            include: ["keycloak"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1
+                kind: OperatorGroup
+                metadata:
+                  name: keycloak-group
+                  namespace: keycloak
+                spec:
+                  targetNamespaces:
+                  - keycloak
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  name: rhsso-operator
+                  namespace: keycloak
+                spec:
+                  channel: alpha
+                  installPlanApproval: Automatic
+                  name: rhsso-operator
+                  source: redhat-operators
+                  sourceNamespace: openshift-marketplace
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-rhsso-keycloak
+        spec:
+          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          severity: high
+          namespaceSelector:
+            exclude: ["kube-*", "openshift-*"]
+            include: ["keycloak"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: RoleBinding
+                metadata:
+                  name: rhsso-operator-route-editor
+                  namespace: keycloak
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: route-editor
+                subjects:
+                - kind: ServiceAccount
+                  name: rhsso-operator
+                  namespace: keycloak
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: ClusterRole
+                metadata:
+                  name: route-editor
+                rules:
+                - apiGroups:
+                  - route.openshift.io
+                  resources:
+                  - routes/custom-host
+                  verbs:
+                  - create
+                  - update
+                  - list
+                  - get
+                  - patch
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: keycloak.org/v1alpha1
+                kind: Keycloak
+                metadata:
+                  namespace: keycloak
+                  name: keycloak
+                  labels:
+                    app: sso
+                spec:
+                  externalAccess:
+                    enabled: true
+                  external:
+                    enabled: true
+                  instances: 1
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-rhsso-operator
+placementRef:
+  name: placement-policy-rhsso-operator
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-rhsso-operator
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-rhsso-operator
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      []  # selects all clusters if not specified
+    matchLabels:
+      name: local-cluster

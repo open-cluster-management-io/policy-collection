@@ -1,0 +1,269 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-etcd-backup
+  annotations:
+    policy.open-cluster-management.io/categories: NIST SP 800-53
+    policy.open-cluster-management.io/controls: CM Configuration Management 
+    policy.open-cluster-management.io/standards: CM-2 Baseline Configuration
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-etcd-backup
+        spec:
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: ServiceAccount
+                metadata:
+                  name: approver
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: ClusterRoleBinding
+                metadata:
+                  name: cluster-admin-approver-sa-crb
+                roleRef:
+                  name: cluster-admin
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                subjects:
+                  - name: approver
+                    kind: ServiceAccount
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: PersistentVolumeClaim
+                metadata:
+                  name: etcd-backup
+                spec:
+                  accessModes:
+                    - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 20Gi
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                data:
+                  etcd-backup.sh: |+
+                    
+                    DATE=$(date +%Y%m%dT%H%M%S)
+
+                    /usr/local/bin/etcd-snapshot-backup-disconnected.sh /assets/backup
+ 
+                    if [ $? -eq 0 ]; then
+                        mkdir /etcd-backup/${DATE}
+                        cp -r /assets/backup/*  /etcd-backup/${DATE}/
+                        echo 'Copied backup files to PVC mount point.'
+                        exit 0
+                    fi
+ 
+                    echo "Backup attempts failed. Please FIX !!!"
+                    exit 1
+
+                  etcd-snapshot-backup-disconnected.sh: |+
+                    
+                    set -o errexit
+                    set -o pipefail
+                    set -o errtrace
+
+                    if [[ $EUID -ne 0 ]]; then
+                      echo "This script must be run as root"
+                      exit 1
+                    fi
+
+                    function usage {
+                      echo 'Path to backup dir required: ./cluster-backup.sh <path-to-backup-dir>'
+                      exit 1
+                    }
+
+
+                    if [ -z "$1" ] || [ -f "$1" ]; then
+                      usage
+                    fi
+                    
+                    if [ ! -d "$1" ]; then
+                      mkdir -p $1
+                    fi
+
+                    function backup_latest_kube_static_resources {
+                      
+                      RESOURCES=("$@")
+
+                      LATEST_RESOURCE_DIRS=()
+                      for RESOURCE in "${RESOURCES[@]}"; do
+                        LATEST_RESOURCE=$(ls -trd "${CONFIG_FILE_DIR}"/static-pod-resources/${RESOURCE}-[0-9]* | tail -1) || true
+                        if [ -z "$LATEST_RESOURCE" ]; then
+                          echo "error finding static-pod-resource ${RESOURCE}"
+                          exit 1
+                        fi
+
+                        echo "found latest ${RESOURCE}: ${LATEST_RESOURCE}"
+                        LATEST_RESOURCE_DIRS+=("${LATEST_RESOURCE#${CONFIG_FILE_DIR}/}")
+                      done
+
+                      tar -cpzf $BACKUP_TAR_FILE -C ${CONFIG_FILE_DIR} "${LATEST_RESOURCE_DIRS[@]}"
+                     }
+
+                      BACKUP_DIR="$1"
+                      
+                      DATESTRING=$(date "+%F_%H%M%S")
+                      
+                      BACKUP_TAR_FILE=${BACKUP_DIR}/static_kuberesources_${DATESTRING}.tar.gz
+                      
+                      SNAPSHOT_FILE="${BACKUP_DIR}/snapshot_${DATESTRING}.db"
+                      
+                      BACKUP_RESOURCE_LIST=("kube-apiserver-pod" "kube-controller-manager-pod" "kube-scheduler-pod" "etcd-pod")
+
+                      trap "rm -f ${BACKUP_TAR_FILE} ${SNAPSHOT_FILE}" ERR
+
+                      source /etc/kubernetes/static-pod-resources/etcd-certs/configmaps/etcd-scripts/etcd.env
+                      
+                      source /etc/kubernetes/static-pod-resources/etcd-certs/configmaps/etcd-scripts/etcd-common-tools
+
+                      if [ ! -f "$ETCDCTL_CACERT" ] && [ ! -d "${CONFIG_FILE_DIR}/static-pod-certs" ]; then
+                        ln -s ${CONFIG_FILE_DIR}/static-pod-resources/etcd-certs ${CONFIG_FILE_DIR}/static-pod-certs
+                      fi
+
+                      backup_latest_kube_static_resources "${BACKUP_RESOURCE_LIST[@]}"
+                      
+                      etcdctl snapshot save ${SNAPSHOT_FILE}
+                      
+                      echo "snapshot db and kube resources are successfully saved to ${BACKUP_DIR}"
+
+                kind: ConfigMap
+                metadata:
+                  name: etcd-backup-script
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: batch/v1beta1
+                kind: CronJob
+                metadata:
+                  name: cronjob-etcd-backup
+                  labels:
+                    purpose: etcd-backup
+                spec:
+                  concurrencyPolicy: Forbid
+                  jobTemplate:
+                    spec:
+                      backoffLimit: 0
+                      template:
+                        spec:
+                          activeDeadlineSeconds: 200
+                          containers:
+                            - name: etcd-backup
+                              command:
+                                - /bin/sh
+                                - '-c'
+                                - >-
+                                  /usr/local/bin/etcd-backup.sh && ls -1
+                                  /etcd-backup/* | sort -r | tail -n +6 | xargs
+                                  rm -rf > /dev/null 2>&1
+                              env: null
+                              image: >-
+                                quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:6a2378154881e6f9a4638f41242518d850e19b0d7d9ef74a2be55b87f4625e87
+                              imagePullPolicy: IfNotPresent
+                              resources:
+                                requests:
+                                  cpu: 300m
+                                  memory: 250Mi
+                              securityContext:
+                                privileged: true
+                              terminationMessagePath: /dev/termination-log
+                              terminationMessagePolicy: FallbackToLogsOnError
+                              volumeMounts:
+                                - name: certs
+                                  mountPath: /etc/ssl/etcd/
+                                - name: conf
+                                  mountPath: /etc/etcd/
+                                - name: kubeconfig
+                                  mountPath: /etc/kubernetes/
+                                - name: etcd-backup-script
+                                  mountPath: /usr/local/bin/etcd-backup.sh
+                                  subPath: etcd-backup.sh
+                                - name: etcd-backup-script
+                                  mountPath: >-
+                                    /usr/local/bin/etcd-snapshot-backup-disconnected.sh
+                                  subPath: etcd-snapshot-backup-disconnected.sh
+                                - name: etcd-backup
+                                  mountPath: /etcd-backup
+                                - name: scripts
+                                  mountPath: /usr/local/bin
+                          hostNetwork: true
+                          nodeSelector:
+                            node-role.kubernetes.io/master: ''
+                          restartPolicy: Never
+                          serviceAccount: approver
+                          serviceAccountName: approver
+                          tolerations:
+                            - effect: NoSchedule
+                              operator: Exists
+                            - effect: NoExecute
+                              operator: Exists
+                          volumes:
+                            - name: certs
+                              hostPath:
+                                path: >-
+                                  /etc/kubernetes/static-pod-resources/etcd-member
+                                type: ''
+                            - name: conf
+                              hostPath:
+                                path: /etc/etcd
+                                type: ''
+                            - name: kubeconfig
+                              hostPath:
+                                path: /etc/kubernetes
+                                type: ''
+                            - name: scripts
+                              hostPath:
+                                path: /usr/local/bin
+                                type: ''
+                            - name: etcd-backup
+                              persistentVolumeClaim:
+                                claimName: etcd-backup
+                            - name: etcd-backup-script
+                              configMap:
+                                name: etcd-backup-script
+                                defaultMode: 493
+                  schedule: '0 */6 * * *'
+                  startingDeadlineSeconds: 200
+                  suspend: false
+          remediationAction: inform
+          severity: low
+  remediationAction: inform
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-etcd-backup
+placementRef:
+  name: placement-policy-etcd-backup
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-etcd-backup
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-etcd-backup
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}

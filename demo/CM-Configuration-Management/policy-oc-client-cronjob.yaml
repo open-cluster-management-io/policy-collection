@@ -1,0 +1,121 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-oc-client
+  annotations:
+    policy.open-cluster-management.io/standards: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/categories: NIST SP 800-53
+    policy.open-cluster-management.io/controls: CM Configuration Management
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-oc-client
+      spec:
+        namespaceSelector:
+          exclude:
+            - kube-*
+          include:
+            - default
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              kind: Namespace # must have namespace 'jobnamespace'
+              apiVersion: v1
+              metadata:
+                name: jobnamespace     
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: v1
+              kind: ServiceAccount
+              metadata:
+                name: occlient
+                namespace: jobnamespace 
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: rbac.authorization.k8s.io/v1
+              kind: ClusterRoleBinding
+              metadata:
+                name: cluster-admin-occlient-sa-crb
+              roleRef:
+                name: cluster-admin
+                apiGroup: rbac.authorization.k8s.io
+                kind: ClusterRole
+              subjects:
+                - name: occlient
+                  kind: ServiceAccount
+                  namespace: jobnamespace 
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: batch/v1beta1
+              kind: CronJob
+              metadata:
+                name: basic-oc-client
+                namespace: jobnamespace 
+                labels:
+                  purpose: basic-oc-client
+              spec:
+                concurrencyPolicy: Forbid
+                jobTemplate:
+                  spec:
+                    backoffLimit: 0
+                    template:
+                      spec:
+                        activeDeadlineSeconds: 200
+                        containers:
+                          - name: occlient
+                            image: 'registry.redhat.io/openshift4/ose-cli:v4.8'
+                            command:
+                              - /bin/bash
+                              - '-c'
+                              - |
+                                echo "Put your oc commands here"
+                                oc version  
+                        securityContext:
+                          privileged: true
+                        terminationMessagePath: /dev/termination-log
+                        terminationMessagePolicy: FallbackToLogsOnError
+                        nodeSelector:
+                          node-role.kubernetes.io/master: ''
+                        restartPolicy: Never
+                        serviceAccount: occlient
+                        serviceAccountName: occlient
+                        tolerations:
+                          - effect: NoSchedule
+                            operator: Exists
+                          - effect: NoExecute
+                            operator: Exists
+                schedule: '* * * * *'
+                startingDeadlineSeconds: 200
+                suspend: false
+        remediationAction: inform
+        severity: low
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-oc-client
+  placementRef:
+    name: placement-oc-client
+    kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-oc-client
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-oc-client
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}

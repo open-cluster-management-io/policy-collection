@@ -1,0 +1,459 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-gatekeeper-containerreadinessprobenotset
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-containerreadinessprobenotset
+        spec:
+          remediationAction: enforce
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: templates.gatekeeper.sh/v1beta1
+                kind: ConstraintTemplate
+                metadata:
+                  creationTimestamp: null
+                  name: containerreadinessprobenotset
+                spec:
+                  crd:
+                    spec:
+                      names:
+                        kind: ContainerReadinessprobeNotset
+                  targets:
+                    - libs:
+                        - |
+                          package lib.konstraint
+
+                          default is_gatekeeper = false
+
+                          is_gatekeeper {
+                            has_field(input, "review")
+                            has_field(input.review, "object")
+                          }
+
+                          object = input {
+                            not is_gatekeeper
+                          }
+
+                          object = input.review.object {
+                            is_gatekeeper
+                          }
+
+                          format(msg) = gatekeeper_format {
+                            is_gatekeeper
+                            gatekeeper_format = {"msg": msg}
+                          }
+
+                          format(msg) = msg {
+                            not is_gatekeeper
+                          }
+
+                          name = object.metadata.name
+
+                          kind = object.kind
+
+                          has_field(obj, field) {
+                            obj[field]
+                          }
+
+                          missing_field(obj, field) = true {
+                            obj[field] == ""
+                          }
+
+                          missing_field(obj, field) = true {
+                            not has_field(obj, field)
+                          }
+
+                          is_service {
+                            lower(kind) == "service"
+                          }
+
+                          is_statefulset {
+                            lower(kind) == "statefulset"
+                          }
+
+                          is_daemonset {
+                            lower(kind) == "daemonset"
+                          }
+
+                          is_deployment {
+                            lower(kind) == "deployment"
+                          }
+
+                          is_pod {
+                            lower(kind) == "pod"
+                          }
+
+                          is_namespace {
+                            lower(kind) == "namespace"
+                          }
+
+                          is_workload {
+                            containers[_]
+                          }
+
+                          pod_containers(pod) = all_containers {
+                            keys = {"containers", "initContainers"}
+                            all_containers = [c | keys[k]; c = pod.spec[k][_]]
+                          }
+
+                          containers[container] {
+                            pods[pod]
+                            all_containers = pod_containers(pod)
+                            container = all_containers[_]
+                          }
+
+                          containers[container] {
+                            all_containers = pod_containers(object)
+                            container = all_containers[_]
+                          }
+
+                          container_images[image] {
+                            containers[container]
+                            image = container.image
+                          }
+
+                          container_images[image] {
+                            image = object.spec.image
+                          }
+
+                          split_image(image) = [image, "latest"] {
+                            not contains(image, ":")
+                          }
+
+                          split_image(image) = [image_name, tag] {
+                            [image_name, tag] = split(image, ":")
+                          }
+
+                          pods[pod] {
+                            is_statefulset
+                            pod = object.spec.template
+                          }
+
+                          pods[pod] {
+                            is_daemonset
+                            pod = object.spec.template
+                          }
+
+                          pods[pod] {
+                            is_deployment
+                            pod = object.spec.template
+                          }
+
+                          pods[pod] {
+                            is_pod
+                            pod = object
+                          }
+
+                          volumes[volume] {
+                            pods[pod]
+                            volume = pod.spec.volumes[_]
+                          }
+
+                          mem_multiple("E") = 1000000000000000000000 { true }
+
+                          mem_multiple("P") = 1000000000000000000 { true }
+
+                          mem_multiple("T") = 1000000000000000 { true }
+
+                          mem_multiple("G") = 1000000000000 { true }
+
+                          mem_multiple("M") = 1000000000 { true }
+
+                          mem_multiple("k") = 1000000 { true }
+
+                          mem_multiple("") = 1000 { true }
+
+                          mem_multiple("m") = 1 { true }
+
+                          mem_multiple("Ki") = 1024000 { true }
+
+                          mem_multiple("Mi") = 1048576000 { true }
+
+                          mem_multiple("Gi") = 1073741824000 { true }
+
+                          mem_multiple("Ti") = 1099511627776000 { true }
+
+                          mem_multiple("Pi") = 1125899906842624000 { true }
+
+                          mem_multiple("Ei") = 1152921504606846976000 { true }
+
+                          get_suffix(mem) = suffix {
+                            not is_string(mem)
+                            suffix := ""
+                          }
+
+                          get_suffix(mem) = suffix {
+                            is_string(mem)
+                            count(mem) > 0
+                            suffix := substring(mem, count(mem) - 1, -1)
+                            mem_multiple(suffix)
+                          }
+
+                          get_suffix(mem) = suffix {
+                            is_string(mem)
+                            count(mem) > 1
+                            suffix := substring(mem, count(mem) - 2, -1)
+                            mem_multiple(suffix)
+                          }
+
+                          get_suffix(mem) = suffix {
+                            is_string(mem)
+                            count(mem) > 1
+                            not mem_multiple(substring(mem, count(mem) - 1, -1))
+                            not mem_multiple(substring(mem, count(mem) - 2, -1))
+                            suffix := ""
+                          }
+
+                          get_suffix(mem) = suffix {
+                            is_string(mem)
+                            count(mem) == 1
+                            not mem_multiple(substring(mem, count(mem) - 1, -1))
+                            suffix := ""
+                          }
+
+                          get_suffix(mem) = suffix {
+                            is_string(mem)
+                            count(mem) == 0
+                            suffix := ""
+                          }
+
+                          canonify_mem(orig) = new {
+                            is_number(orig)
+                            new := orig * 1000
+                          }
+
+                          canonify_mem(orig) = new {
+                            not is_number(orig)
+                            suffix := get_suffix(orig)
+                            raw := replace(orig, suffix, "")
+                            re_match("^[0-9]+$", raw)
+                            new := to_number(raw) * mem_multiple(suffix)
+                          }
+
+                          canonify_storage(orig) = new {
+                            is_number(orig)
+                            new := orig
+                          }
+
+                          canonify_storage(orig) = new {
+                            not is_number(orig)
+                            suffix := get_suffix(orig)
+                            raw := replace(orig, suffix, "")
+                            re_match("^[0-9]+$", raw)
+                            new := to_number(raw) * mem_multiple(suffix)
+                          }
+
+                          canonify_cpu(orig) = new {
+                            is_number(orig)
+                            new := orig * 1000
+                          }
+
+                          canonify_cpu(orig) = new {
+                            not is_number(orig)
+                            endswith(orig, "m")
+                            new := to_number(replace(orig, "m", ""))
+                          }
+
+                          canonify_cpu(orig) = new {
+                            not is_number(orig)
+                            not endswith(orig, "m")
+                            re_match("^[0-9]+$", orig)
+                            new := to_number(orig) * 1000
+                          }
+
+                          dropped_capability(container, cap) {
+                            container.securityContext.capabilities.drop[_] == cap
+                          }
+
+                          added_capability(container, cap) {
+                            container.securityContext.capabilities.add[_] == cap
+                          }
+
+                          no_read_only_filesystem(c) {
+                            not has_field(c, "securityContext")
+                          }
+
+                          no_read_only_filesystem(c) {
+                            has_field(c, "securityContext")
+                            not has_field(c.securityContext, "readOnlyRootFilesystem")
+                          }
+
+                          priviledge_escalation_allowed(c) {
+                            not has_field(c, "securityContext")
+                          }
+
+                          priviledge_escalation_allowed(c) {
+                            has_field(c, "securityContext")
+                            has_field(c.securityContext, "allowPrivilegeEscalation")
+                          }
+                        - |-
+                          package lib.openshift
+
+                          import data.lib.konstraint
+
+                          is_deploymentconfig {
+                            lower(konstraint.object.apiVersion) == "apps.openshift.io/v1"
+                            lower(konstraint.object.kind) == "deploymentconfig"
+                          }
+
+                          is_route {
+                            lower(konstraint.object.apiVersion) == "route.openshift.io/v1"
+                            lower(konstraint.object.kind) == "route"
+                          }
+
+                          is_workload_kind {
+                            is_deploymentconfig
+                          }
+
+                          is_workload_kind {
+                            konstraint.is_statefulset
+                          }
+
+                          is_workload_kind {
+                            konstraint.is_daemonset
+                          }
+
+                          is_workload_kind {
+                            konstraint.is_deployment
+                          }
+
+                          is_all_kind {
+                            is_workload_kind
+                          }
+
+                          is_all_kind {
+                            konstraint.is_service
+                          }
+
+                          is_all_kind {
+                            is_route
+                          }
+
+                          pods[pod] {
+                            is_deploymentconfig
+                            pod = konstraint.object.spec.template
+                          }
+
+                          pods[pod] {
+                            pod = konstraint.pods[_]
+                          }
+
+                          containers[container] {
+                            pods[pod]
+                            all_containers = konstraint.pod_containers(pod)
+                            container = all_containers[_]
+                          }
+
+                          containers[container] {
+                            container = konstraint.containers[_]
+                          }
+                      rego: |-
+                        package ocp.bestpractices.container_readinessprobe_notset
+
+                        import data.lib.konstraint
+                        import data.lib.openshift
+
+                        violation[msg] {
+                          openshift.is_workload_kind
+
+                          container := openshift.containers[_]
+
+                          konstraint.missing_field(container, "readinessProbe")
+                          obj := konstraint.object
+
+                          msg := konstraint.format(sprintf("%s/%s: container '%s' has no readinessProbe. See: https://docs.openshift.com/container-platform/4.4/applications/application-health.html", [obj.kind, obj.metadata.name, container.name]))
+                        }
+                      target: admission.k8s.gatekeeper.sh
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: constraints.gatekeeper.sh/v1beta1
+                kind: ContainerReadinessprobeNotset
+                metadata:
+                  name: containerreadinessprobenotset
+                spec:
+                  enforcementAction: dryrun
+                  match:
+                    kinds:
+                      - apiGroups:
+                          - apps.openshift.io
+                          - apps
+                        kinds:
+                          - DeploymentConfig
+                          - DaemonSet
+                          - Deployment
+                          - StatefulSet
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-audit-readiness
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: constraints.gatekeeper.sh/v1beta1
+                kind: ContainerReadinessprobeNotset
+                metadata:
+                  name: containerreadinessprobenotset
+                status:
+                  totalViolations: 0
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-admission-readiness
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: v1
+                kind: Event
+                metadata:
+                  namespace: openshift-gatekeeper-system # set it to the actual namespace where gatekeeper is running if different
+                  annotations:
+                    constraint_action: deny
+                    constraint_kind: ContainerReadinessprobeNotset
+                    constraint_name: containerreadinessprobenotset
+                    event_type: violation
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-gatekeeper-containerreadinessprobenotset
+placementRef:
+  name: placement-policy-gatekeeper-containerreadinessprobenotset
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-gatekeeper-containerreadinessprobenotset
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-gatekeeper-containerreadinessprobenotset
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - { key: environment, operator: In, values: ["dev"] }

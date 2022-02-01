@@ -1,0 +1,77 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-kyverno-image-pull-policy
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-kyverno-image-pull-policy
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: kyverno.io/v1
+                kind: ClusterPolicy
+                metadata:
+                  name: always-pull-images
+                  annotations:
+                    policies.kyverno.io/title: Always Pull Images
+                    policies.kyverno.io/category: Sample
+                    policies.kyverno.io/severity: medium
+                    policies.kyverno.io/subject: Pod
+                    policies.kyverno.io/description: >-
+                      By default, images that have already been pulled can be accessed by other
+                      Pods without re-pulling them if the name and tag are known. In multi-tenant scenarios,
+                      this may be undesirable. This policy mutates all incoming Pods to set their
+                      imagePullPolicy to Always. An alternative to the Kubernetes admission controller
+                      AlwaysPullImages.
+                spec:
+                  background: false
+                  rules:
+                    - name: always-pull-images
+                      match:
+                        resources:
+                          kinds:
+                            - Pod
+                      mutate:
+                        patchStrategicMerge:
+                          spec:
+                            containers:
+                              - (name): "?*"
+                                imagePullPolicy: Always
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-kyverno-image-pull-policy
+placementRef:
+  name: placement-policy-kyverno-image-pull-policy
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-kyverno-image-pull-policy
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-kyverno-image-pull-policy
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}

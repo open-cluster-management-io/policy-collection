@@ -1,0 +1,130 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-gatekeeper-allowed-external-ips
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-k8sexternalips
+        spec:
+          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: templates.gatekeeper.sh/v1beta1
+                kind: ConstraintTemplate
+                metadata:
+                  name: k8sexternalips
+                spec:
+                  crd:
+                    spec:
+                      names:
+                        kind: K8sExternalIPs
+                      validation:
+                        # Schema for the `parameters` field
+                        openAPIV3Schema:
+                          properties:
+                            allowedIPs:
+                              type: array
+                              items:
+                                type: string
+                  targets:
+                    - target: admission.k8s.gatekeeper.sh
+                      rego: |
+                        package k8sexternalips
+
+                        violation[{"msg": msg}] {
+                          input.review.kind.kind == "Service"
+                          input.review.kind.group == ""
+                          allowedIPs := {ip | ip := input.parameters.allowedIPs[_]}
+                          externalIPs := {ip | ip := input.review.object.spec.externalIPs[_]}
+                          forbiddenIPs := externalIPs - allowedIPs
+                          count(forbiddenIPs) > 0
+                          msg := sprintf("service has forbidden external IPs: %v", [forbiddenIPs])
+                        }
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: constraints.gatekeeper.sh/v1beta1
+                kind: K8sExternalIPs
+                metadata:
+                  name: external-ips
+                spec:
+                  enforcementAction: dryrun
+                  match:
+                    kinds:
+                      - apiGroups: [""]
+                        kinds: ["Service"]
+                  parameters:
+                    allowedIPs:
+                      - "203.0.113.0"
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-external-ips-audit
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: constraints.gatekeeper.sh/v1beta1
+                kind: K8sExternalIPs
+                metadata:
+                  name: external-ips
+                status:
+                  totalViolations: 0
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-gatekeeper-external-ips-admission
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: v1
+                kind: Event
+                metadata:
+                  namespace: openshift-gatekeeper-system # set it to the actual namespace where gatekeeper is running if different
+                  annotations:
+                    constraint_action: deny
+                    constraint_kind: K8sExternalIPs
+                    constraint_name: external-ips
+                    event_type: violation
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-gatekeeper-allowed-external-ips
+placementRef:
+  name: placement-policy-gatekeeper-allowed-external-ips
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-gatekeeper-allowed-external-ips
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-gatekeeper-allowed-external-ips
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}

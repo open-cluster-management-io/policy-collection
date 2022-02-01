@@ -1,0 +1,85 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-example-pod-disruption-budget
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-example-pod-disruption-budget-prod-1
+        spec:
+          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          severity: low
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["default"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: policy/v1
+                kind: PodDisruptionBudget
+                metadata:
+                  name: my-pdb
+                spec:
+                  minAvailable: 2  
+                  selector:  
+                    matchLabels:
+                      foo: bar
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-example-pod-disruption-budget-prod-2
+        spec:
+          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          severity: low
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["default"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: policy/v1
+                kind: PodDisruptionBudget
+                metadata:
+                  name: my-pdb2
+                spec:
+                  maxUnavailable: 25% 
+                  selector: 
+                    matchLabels:
+                      foo: bar
+
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-example-pod-disruption-budget
+placementRef:
+  name: placement-policy-example-pod-disruption-budget
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-example-pod-disruption-budget
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+
+---  
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-example-pod-disruption-budget
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}  

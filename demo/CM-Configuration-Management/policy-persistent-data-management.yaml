@@ -1,0 +1,163 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline
+  name: volsync-policy
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-volsync-namespace
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: volsync-system
+          remediationAction: enforce
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-volsync-application
+        spec:
+          remediationAction: enforce
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: app.k8s.io/v1beta1
+                kind: Application
+                metadata:
+                  name: volsync
+                  namespace: volsync-system
+                spec:
+                  componentKinds:
+                    - group: apps.open-cluster-management.io
+                      kind: Subscription
+                  descriptor: {}
+                  selector:
+                    matchExpressions:
+                      - key: app
+                        operator: In
+                        values:
+                          - volsync
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: volsync-replication-channel
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: Channel
+                metadata:
+                  annotations:
+                    apps.open-cluster-management.io/reconcile-rate: medium
+                  name: volsync
+                  namespace: volsync-system 
+                spec:
+                  pathname: https://github.com/stolostron/volsync-chart.git
+                  type: Git
+          remediationAction: enforce
+          severity: low
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-volsync-subscription
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: Subscription
+                metadata:
+                  annotations:
+                    apps.open-cluster-management.io/git-branch: release-2.4
+                    apps.open-cluster-management.io/git-path: volsync
+                  labels:
+                    app: volsync
+                  name: volsync-subscription
+                  namespace: volsync-system 
+                spec:
+                  channel: volsync-system/volsync
+                  name: volsync
+                  packageOverrides:
+                    - packageAlias: volsync
+                      packageName: volsync
+                      packageOverrides:
+                      - path: spec
+                        value:
+                          image:
+                            image: registry.redhat.io/rhacm2/volsync-rhel8:v2.4
+                          rclone:
+                            image: registry.redhat.io/rhacm2/volsync-mover-rclone-rhel8:v2.4
+                          restic:
+                            image: registry.redhat.io/rhacm2/volsync-mover-restic-rhel8:v2.4
+                          rsync:
+                            image: registry.redhat.io/rhacm2/volsync-mover-rsync-rhel8:v2.4
+                  placement:
+                    placementRef:
+                      name: volsync-placement 
+                      kind: PlacementRule
+          remediationAction: enforce
+          severity: low
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: volsync-replication-placement
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: PlacementRule
+                metadata:
+                  name: volsync-placement
+                  namespace: volsync-system
+                  labels:
+                    app: volsync
+                spec:
+                  clusterSelector:
+                    matchLabels:
+                      vendor: OpenShift
+          remediationAction: enforce
+          severity: low
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-volsync-policy-app
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-volsync-policy-app
+subjects:
+  - apiGroup: policy.open-cluster-management.io
+    kind: Policy
+    name: volsync-policy
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-volsync-policy-app
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchLabels:
+      name: local-cluster

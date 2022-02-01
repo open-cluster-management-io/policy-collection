@@ -1,0 +1,78 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-podsecuritypolicy
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: SC System and Communications Protection
+    policy.open-cluster-management.io/controls: SC-4 Information In Shared Resources
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-podsecuritypolicy-example
+        spec:
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: high
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["default"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: policy/v1beta1
+                kind: PodSecurityPolicy # no privileged pods
+                metadata:
+                  name: sample-restricted-psp
+                  annotations:
+                    seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+                spec:
+                  privileged: false # no priviliedged pods
+                  allowPrivilegeEscalation: false
+                  allowedCapabilities:
+                  - '*'
+                  volumes:
+                  - '*'
+                  hostNetwork: true
+                  hostPorts:
+                  - min: 1000 # ports < 1000 are reserved
+                    max: 65535
+                  hostIPC: false
+                  hostPID: false
+                  runAsUser:
+                    rule: 'RunAsAny'
+                  seLinux:
+                    rule: 'RunAsAny'
+                  supplementalGroups:
+                    rule: 'RunAsAny'
+                  fsGroup:
+                    rule: 'RunAsAny'
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-podsecuritypolicy
+placementRef:
+  name: placement-policy-podsecuritypolicy
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-podsecuritypolicy
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-podsecuritypolicy
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}

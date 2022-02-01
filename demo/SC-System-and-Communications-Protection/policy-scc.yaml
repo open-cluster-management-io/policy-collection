@@ -1,0 +1,88 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-securitycontextconstraints
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: SC System and Communications Protection
+    policy.open-cluster-management.io/controls: SC-4 Information In Shared Resources
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-securitycontextconstraints-example
+        spec:
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: high
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["default"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: security.openshift.io/v1
+                kind: SecurityContextConstraints # restricted scc
+                metadata:
+                  annotations:
+                    kubernetes.io/description: restricted denies access to all host features and requires pods to be run with a UID, and SELinux context that are allocated to the namespace.  This is the most restrictive SCC and it is used by default for authenticated users.
+                  name: restricted
+                allowHostDirVolumePlugin: false
+                allowHostIPC: false
+                allowHostNetwork: false
+                allowHostPID: false
+                allowHostPorts: false
+                allowPrivilegeEscalation: true
+                allowPrivilegedContainer: false
+                fsGroup:
+                  type: MustRunAs
+                groups:
+                - system:authenticated
+                readOnlyRootFilesystem: false
+                requiredDropCapabilities:
+                - KILL
+                - MKNOD
+                - SETUID
+                - SETGID
+                runAsUser:
+                  type: MustRunAsRange
+                seLinuxContext:
+                  type: MustRunAs
+                supplementalGroups:
+                  type: RunAsAny
+                users: []
+                volumes:
+                - configMap
+                - downwardAPI
+                - emptyDir
+                - persistentVolumeClaim
+                - projected
+                - secret
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-securitycontextconstraints
+placementRef:
+  name: placement-policy-securitycontextconstraints
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-securitycontextconstraints
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-securitycontextconstraints
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}

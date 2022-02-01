@@ -1,0 +1,108 @@
+# This policy enables forwarding audit events from the OpenShift kubernetes API
+# server to a webserver (this is intended to send to a falco agent).
+# Note that this makes changes to the kubernetes api server
+# that are unsupported so review the implications of this policy before using it.
+#
+# SETUP: Perform each of these steps to setup this policy for your environment.
+# 1. Set remediationAction to "enforce" to configure audit log forwarding.
+# 2. Change the placement rule and the namespace selector to match where falco is deployed
+#    This is only usable on OpenShift 4.x clusters with falco.
+# 3. Update the base64 encoded file contents in the MachineConfig object.  The procedure
+#    to complete this is:
+#    - Run: echo '<encoded-value>' | base64 --decode > webhook-config.yaml
+#    - Edit the file webhook-config.yaml and change the URL so the hostname api.cluster.dev.mydomain.com
+#      matches the hostname returned by: oc cluster-info
+#    - Re-encode the file: cat webhook-config.yaml | base64
+#    - Update the policy with this new encoded value.
+#    - Recognize this must be done separately for each cluster you want to configure falco audit
+#      processing on. This is not required for processing falco rules, it is only needed on 
+#      OpenShift clusters where you want to process the falco auditing rules.
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-falco-auditing
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-falco-auditing
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          namespaceSelector:
+            include:
+              - "falco"
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: machineconfiguration.openshift.io/v1
+                kind: MachineConfig
+                metadata:
+                  labels:
+                    machineconfiguration.openshift.io/role: master
+                  name: masters-audit-configuration
+                spec:
+                  config:
+                    ignition:
+                      version: 3.2.0
+                    storage:
+                      files:
+                      - contents:
+                          source: data:text/plain;charset=utf-8;base64,YXBpVmVyc2lvbjogdjEKa2luZDogQ29uZmlnCmNsdXN0ZXJzOgotIG5hbWU6IGZhbGNvCiAgY2x1c3RlcjoKICAgICMgY2VydGlmaWNhdGUtYXV0aG9yaXR5OiAvcGF0aC90by9jYS5jcnQgIyBmb3IgaHR0cHMKICAgIHNlcnZlcjogaHR0cDovL2FwaS5jbHVzdGVyLmRldi5teWRvbWFpbi5jb206MzI3NjUvazhzLWF1ZGl0CmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBmYWxjbwogICAgdXNlcjogIiIKICBuYW1lOiBkZWZhdWx0LWNvbnRleHQKY3VycmVudC1jb250ZXh0OiBkZWZhdWx0LWNvbnRleHQKcHJlZmVyZW5jZXM6IHt9CnVzZXJzOiBbXQo=
+                        filesystem: root
+                        mode: 384
+                        path: /var/log/kube-apiserver/webhook-config.yaml
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-falco-auditing-k8sapiserver
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operator.openshift.io/v1
+                kind: KubeAPIServer
+                metadata:
+                  name: cluster
+                spec:
+                  unsupportedConfigOverrides:
+                    apiServerArguments:
+                      audit-webhook-config-file:
+                      - /var/log/kube-apiserver/webhook-config.yaml
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-falco-auditing
+placementRef:
+  name: placement-policy-falco-auditing
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-falco-auditing
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-falco-auditing
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}

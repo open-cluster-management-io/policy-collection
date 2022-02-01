@@ -1,0 +1,60 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-5 Access Restrictions for Change
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+  name: policy-integrity-shield-observer
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-integrity-shield-observer
+        spec:
+          namespaceSelector:
+            include:
+              - integrity-shield-operator-system
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: apis.integrityshield.io/v1
+                kind: ManifestIntegrityState
+                metadata:
+                  labels:
+                    integrityshield.io/verifyResourceIgnored: "false"
+                    integrityshield.io/verifyResourceViolation: "true"
+          remediationAction: inform
+          severity: low
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-integrity-shield-observer
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-policy-integrity-shield-observer
+subjects:
+  - apiGroup: policy.open-cluster-management.io
+    kind: Policy
+    name: policy-integrity-shield-observer
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-integrity-shield-observer
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: environment
+        operator: In
+        values:
+          - dev

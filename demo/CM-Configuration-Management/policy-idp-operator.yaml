@@ -1,0 +1,85 @@
+# This policy installs the IDP operator in the namespace idp-mgmt-config
+# PRE-REQS:  This assumes pre-reqs listed in IDP management docs are already applied on the hub cluster
+# mainly  replacing default ingress with signed certs,
+# see https://identitatem.github.io/idp-mgmt-docs/requirements.html#requirements-and-recommendations
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+  name: policy-idp-operator
+spec:
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-idp-operator
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              name: idp-mgmt-config
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1
+            kind: OperatorGroup
+            metadata:
+              name: idp-mgmt-operator-grp
+              namespace: idp-mgmt-config
+            spec:
+              targetNamespaces:
+              - idp-mgmt-config
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1alpha1
+            kind: Subscription
+            metadata:
+              name: idp-mgmt-operator-product
+              namespace: idp-mgmt-config
+            spec:
+              channel: alpha
+              installPlanApproval: Automatic
+              name: idp-mgmt-operator-product
+              source: redhat-operators
+              sourceNamespace: openshift-marketplace
+              startingCSV: idp-mgmt-operator-product.v0.1.0
+        remediationAction: inform
+        severity: medium
+  remediationAction: enforce
+
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-idp-operator
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-policy-idp-operator
+subjects:
+  - apiGroup: policy.open-cluster-management.io
+    kind: Policy
+    name: policy-idp-operator
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-idp-operator
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: In
+        values:
+          - 'true'
