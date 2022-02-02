@@ -1,0 +1,13 @@
+apiVersion: config.openshift.io/v1
+kind: ClusterOperator
+status:
+  conditions:
+    - status: 'False'
+      type: Available
+---
+apiVersion: config.openshift.io/v1
+kind: ClusterOperator
+status:
+  conditions:
+    - status: 'True'
+      type: Degraded                         

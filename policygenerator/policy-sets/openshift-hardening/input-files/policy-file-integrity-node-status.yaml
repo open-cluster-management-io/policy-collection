@@ -1,0 +1,6 @@
+apiVersion: fileintegrity.openshift.io/v1alpha1
+kind: FileIntegrityNodeStatus
+metadata:
+  namespace: openshift-file-integrity
+results:
+- condition: Failed
