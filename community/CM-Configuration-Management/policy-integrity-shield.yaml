@@ -106,23 +106,37 @@ spec:
                   shieldApiServicePort: 8123
                   shieldApi:
                     name: integrity-shield-api
-                    imagePullPolicy: Always
+                    imagePullPolicy: IfNotPresent
                     image: quay.io/stolostron/integrity-shield-api
                     port: 8080
                     selector:
                       app: integrity-shield-api
+                    resources:
+                      limits:
+                        cpu: 250m
+                        memory: 256Mi
+                  reporter:
+                    name: integrity-shield-reporter
+                    imagePullPolicy: IfNotPresent
+                    image: quay.io/stolostron/integrity-shield-reporter
+                    intervalSeconds: "10"
+                    resources:
+                      limits:
+                        cpu: 100m
+                        memory: 128Mi
                   requestHandlerConfigKey: config.yaml
                   requestHandlerConfigName: request-handler-config
                   requestHandlerConfig: |
                     defaultConstraintAction:
-                      mode: detect
-                      admissionOnly: false
+                      mode: inform
                     sideEffect: 
                       createDenyEvent: true
                     log:
                       level: info
                       manifestSigstoreLogLevel: info
                       format: json
+                    decisionReporterConfig:
+                      enabled: true
                     requestFilterProfile: 
                       skipObjects:
                       - kind: ConfigMap
@@ -340,7 +354,7 @@ spec:
                         users: 
                         - system:serviceaccount:openshift-operator-lifecycle-manager:olm-operator-serviceaccount
                   useGatekeeper: true
-                  rego: |
+                  rego: | 
                     package integrityshieldcheck
                     violation[{"msg": msg}] {
                       not is_allowed_kind
@@ -350,10 +364,9 @@ spec:
                       reqdata := json.marshal(ishield_input)
                       url := "https://integrity-shield-api.REPLACE_WITH_SERVER_NAMESPSCE.svc:8123/api/request"
                       resp := http_post(url, reqdata)
-                      resp.status_code == 200
-                      result := json.unmarshal(resp.raw_body)
-                      result.allow == false
+                      should_be_denied(resp)
                       not is_detect_mode
+                      result := get_result(resp)
                       msg := sprintf("denied; %v", [result])
                     }
 
@@ -366,8 +379,43 @@ spec:
                           "Content-type": "application/json",
                         },
                         "raw_body": postdata,
-                        "tls_insecure_skip_verify": true
+                        "timeout": "2500ms",
+                        "raise_error": false,
+                        "tls_ca_cert": REPLACE_WITH_CA_CERT
                       })
+                    }
+
+                    # get decision result from API response
+                    get_result(resp) = result {
+                      raw_body := object.get(resp, "raw_body", null)
+                      not is_null(raw_body)
+                      result := json.unmarshal(raw_body)
+                    }
+                    # if error, return it as result
+                    get_result(resp) = result {
+                      raw_body := object.get(resp, "raw_body", null)
+                      is_null(raw_body)
+                      error_msg := object.get(resp, "error", "")
+                      result := {"http_error":error_msg}
+                    }
+
+                    # if API response is null, deny
+                    should_be_denied(resp) {
+                      is_null(resp)
+                    }
+
+                    # if API response has status_code other than 200, deny
+                    should_be_denied(resp) {
+                      not is_null(resp)
+                      resp.status_code != 200
+                    }
+
+                    # if decision result is "allow == false" or not set, then deny
+                    should_be_denied(resp) {
+                      not is_null(resp)
+                      result := get_result(resp)
+                      allow := object.get(result, "allow", false)
+                      allow == false
                     }
                     
                     # request check
@@ -488,15 +536,18 @@ spec:
                   observer:
                     enabled: true
                     name: integrity-shield-observer
-                    imagePullPolicy: Always
+                    imagePullPolicy: IfNotPresent
                     image: quay.io/stolostron/integrity-shield-observer
                     selector:
                       app: integrity-shield-observer
+                    resources:
+                      limits:
+                        cpu: 250m
+                        memory: 256Mi
                     logLevel: info
                     interval: "5"
-                    # exportDetailResult: false
-                    # resultDetailConfigName: verify-resource-result
-                    # resultDetailConfigKey: "config.yaml"
+                    exportDetailResult: false
+
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -533,11 +584,12 @@ spec:
                       - fields:
                           - metadata.labels.policy.open-cluster-management.io/root-policy
                           - metadata.labels.policy.open-cluster-management.io/cluster-name
+                          - metadata.labels.policy.open-cluster-management.io/cluster-namespace
                           - metadata.annotations.apps.open-cluster-management.io/sync-source
                           - metadata.annotations.apps.open-cluster-management.io/reconcile-option
                           - metadata.annotations.apps.open-cluster-management.io/hosting-subscription
                           - metadata.annotations.apps.open-cluster-management.io/hosting-deployable
-                          - metadata.labels.policy.open-cluster-management.io/cluster-namespace
+                          - metadata.annotations.apps.open-cluster-management.io/cluster-admin
                         objects:
                           - apiGroup: policy.open-cluster-management.io
                       - fields:
@@ -592,11 +644,12 @@ spec:
                       - fields:
                           - metadata.labels.policy.open-cluster-management.io/root-policy
                           - metadata.labels.policy.open-cluster-management.io/cluster-name
+                          - metadata.labels.policy.open-cluster-management.io/cluster-namespace
                           - metadata.annotations.apps.open-cluster-management.io/sync-source
                           - metadata.annotations.apps.open-cluster-management.io/reconcile-option
                           - metadata.annotations.apps.open-cluster-management.io/hosting-subscription
                           - metadata.annotations.apps.open-cluster-management.io/hosting-deployable
-                          - metadata.labels.policy.open-cluster-management.io/cluster-namespace
+                          - metadata.annotations.apps.open-cluster-management.io/cluster-admin
                         objects:
                           - apiGroup: policy.open-cluster-management.io
                     signers:
