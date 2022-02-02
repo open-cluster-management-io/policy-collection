@@ -1,0 +1,4 @@
+generators:
+- ./policyGenerator.yaml
+commonLabels:
+  open-cluster-management.io/policy-set: openshift-hardening

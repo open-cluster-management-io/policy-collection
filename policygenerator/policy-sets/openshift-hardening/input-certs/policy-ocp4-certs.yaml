@@ -1,0 +1,96 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-cert-ocp4
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: SC System and Communications Protection
+    policy.open-cluster-management.io/controls: SC-12 Cryptographic Key Establishment and Management
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: CertificatePolicy
+      metadata:
+        name: openshift-cert-policy
+      spec:
+        namespaceSelector:
+          include:
+          - openshift-service-ca-operator
+          - openshift-service-ca
+          - openshift-operator-lifecycle-manager
+          - openshift-apiserver
+          - openshift-apiserver-operator
+          - openshift-authentication
+          - openshift-authentication-operator
+          - openshift-cluster-machine-approver
+          - openshift-cluster-samples-operator
+          - openshift-cluster-storage-operator
+          - openshift-cluster-version
+          - openshift-config
+          - openshift-config-operator
+          - openshift-console
+          - openshift-console-operator
+          - openshift-controller-manager
+          - openshift-controller-manager-operator
+          - openshift-dns
+          - openshift-dns-operator
+          - openshift-etcd
+          - openshift-etcd-operator
+          - openshift-image-registry
+          - openshift-ingress-operator
+          - openshift-insights
+          - openshift-kube-scheduler-operator
+          - openshift-kube-storage-version-migrator-operator
+          - openshift-machine-api
+          - openshift-machine-config-operator
+          - openshift-marketplace
+          - openshift-monitoring
+          - openshift-multus
+        remediationAction: inform
+        minimumDuration: 400h
+        severity: low
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: CertificatePolicy
+      metadata:
+        name: openshift-cert-policy-ingress
+      spec:
+        namespaceSelector:
+          include:
+          - openshift-ingress
+        remediationAction: inform
+        minimumDuration: 24h
+        minimumCADuration: 400h
+        severity: low
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: CertificatePolicy
+      metadata:
+        name: openshift-cert-policy-csr
+      spec:
+        namespaceSelector:
+          include:
+          - openshift-kube-apiserver-operator
+          - openshift-kube-controller-manager-operator
+        remediationAction: inform
+        minimumDuration: 400h
+        minimumCADuration: 24h
+        severity: low
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: CertificatePolicy
+      metadata:
+        name: openshift-cert-policy-mgr
+      spec:
+        namespaceSelector:
+          include:
+          - openshift-config-managed
+          - openshift-kube-apiserver
+          - openshift-kube-scheduler
+          - openshift-kube-controller-manager
+        remediationAction: inform
+        minimumDuration: 24h
+        severity: low

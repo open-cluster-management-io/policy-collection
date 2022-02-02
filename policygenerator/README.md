@@ -45,7 +45,9 @@ In this `policygenerator/` folder you will find:
   - [`policy2_gatekeeper/`](kustomize/policy2_gatekeeper) - Gatekeeper policy manifests to wrap in a
     policy (assumes Gatekeeper is installed)
   - [`policy3_kyverno/`](kustomize/policy3_kyverno) - Kyverno policy manifests to wrap in a policy
-    (assumes Kyverno is installed)
+  - [`policy-sets/`](policy-sets) - A directory of generator manifests that are each
+    using the `PolicySet` mechanism for organizing related policies.  Requires Advanced Cluster
+    Management 2.5 and newer for the `PolicySet` support.
 
 To deploy the examples in this folder via GitOps:
 
