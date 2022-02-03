@@ -1,0 +1,16 @@
+apiVersion: config.openshift.io/v1
+kind: APIServer
+metadata:
+  name: cluster
+spec:
+  encryption:
+    type: aescbc
+---
+apiVersion: operator.openshift.io/v1
+kind: KubeAPIServer
+metadata:
+  name: cluster
+status:
+  conditions:
+    - message: 'All resources encrypted: secrets, configmaps'
+      reason: EncryptionCompleted

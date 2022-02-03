@@ -1,0 +1,7 @@
+apiVersion: cluster.open-cluster-management.io
+kind: BackupSchedule
+status:
+  phase: Enabled
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource

@@ -1,0 +1,24 @@
+apiVersion: compliance.openshift.io/v1alpha1
+kind: ScanSettingBinding
+metadata:
+  name: moderate
+  namespace: openshift-compliance
+profiles:
+- apiGroup: compliance.openshift.io/v1alpha1
+  kind: Profile
+  name: ocp4-moderate
+- apiGroup: compliance.openshift.io/v1alpha1
+  kind: Profile
+  name: ocp4-moderate-node
+settingsRef:
+  apiGroup: compliance.openshift.io/v1alpha1
+  kind: ScanSetting
+  name: default
+---
+apiVersion: compliance.openshift.io/v1alpha1
+kind: ComplianceSuite
+metadata:
+  name: moderate
+  namespace: openshift-compliance
+status:
+  phase: DONE

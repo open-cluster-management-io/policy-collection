@@ -1,0 +1,12 @@
+apiVersion: config.openshift.io/v1
+kind: APIServer
+metadata:
+  name: cluster
+spec:
+  audit:
+    customRules:                        
+    - group: system:authenticated:oauth
+      profile: WriteRequestBodies
+    - group: system:authenticated
+      profile: AllRequestBodies
+  profile: Default  

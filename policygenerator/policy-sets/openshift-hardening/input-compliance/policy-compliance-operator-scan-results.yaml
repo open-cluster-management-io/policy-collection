@@ -1,0 +1,7 @@
+apiVersion: compliance.openshift.io/v1alpha1
+kind: ComplianceCheckResult
+metadata:
+  namespace: openshift-compliance
+  labels:
+    compliance.openshift.io/check-status: FAIL
+    compliance.openshift.io/suite: moderate

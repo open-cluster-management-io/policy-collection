@@ -1,0 +1,114 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-openshift-hardening
+placementBindingDefaults:
+  name: binding-policy-openshift-hardening
+policyDefaults:
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: policies
+  policySets:
+    - openshift-hardening
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - NIST SP 800-53
+policies:
+#- name: policy-limitclusteradmin # iam policy not supported by the generator
+#  manifests:
+#    - path: input-admin/policy-limitclusteradmin.yaml
+- name: policy-remove-kubeadmin
+  categories:
+    - SC System and Communications Protection
+  complianceType: "mustnothave"
+  controls: 
+    - SC-1 SYSTEM AND COMMUNICATIONS PROTECTION POLICY AND PROCEDURES
+  manifests:
+    - path: input-admin/policy-remove-kubeadmin.yaml
+  remediationAction: "inform"
+- name: policy-config-audit
+  categories:
+    - AU Audit and Accountability
+  controls:
+    - AU-3 Content of Audit Records
+  manifests:
+    - path: input-audit/policy-config-audit.yaml
+  remediationAction: "enforce"
+#- name: policy-cert-ocp4
+#  categories:
+#    - SC System and Communications Protection
+#  controls:
+#    - SC-12 Cryptographic Key Establishment and Management
+#  manifests:
+#    - path: input-certs/
+- name: policy-compliance-operator-install
+  manifests:
+    - path: input-compliance/policy-compliance-operator-install.yaml
+  remediationAction: "enforce"
+- name: policy-compliance-operator-moderate-scan
+  manifests:
+    - path: input-compliance/policy-compliance-operator-moderate-scan.yaml
+  remediationAction: "enforce"
+- name: policy-compliance-operator-moderate-scan-results
+  complianceType: "mustnothave"
+  manifests:
+    - path: input-compliance/policy-compliance-operator-scan-results.yaml
+  remediationAction: "inform"
+#- name: policy-etcd-backup
+#  manifests:
+#    - path: input-etcd/policy-etcd-backup.yaml
+#  remediationAction: "enforce"
+- name: policy-etcdencryption
+  categories:
+    - SC System and Communications Protection
+  controls:
+    - SC-28 Protection Of Information At Rest
+  manifests:
+    - path: input-etcd/policy-etcdencryption.yaml
+  remediationAction: "enforce"
+- name: policy-file-integrity-operator
+  categories:
+    - SC System and Communications Protection
+  controls:
+    - SC-28 Protection Of Information At Rest
+  manifests:
+    - path: input-files/policy-file-integrity-operator.yaml
+  remediationAction: "enforce"
+- name: policy-file-integrity-node-status
+  complianceType: "mustnothave"
+  categories:
+    - SC System and Communications Protection
+  controls:
+    - SC-28 Protection Of Information At Rest
+  manifests:
+    - path: input-files/policy-file-integrity-node-status.yaml
+  remediationAction: "inform"
+- name: policy-checkfipscompliance
+  categories:
+    - CA Security Assessment and Authorization
+  controls:
+    - CA-3 Information Exchange
+  manifests:
+    - path: input-fips/policy-check-fips.yaml
+  remediationAction: "inform"
+- name: policy-checkclusteroperator
+  complianceType: "mustnothave"
+  manifests:
+    - path: input-operators/
+  remediationAction: "inform"
+- name: policy-scc-restricted
+  categories:
+    - SC System and Communications Protection
+  controls: 
+    - SC-4 Information In Shared Resources
+  manifests:
+    - path: input-scc/
+  remediationAction: "inform"
+policySets:
+  - description: Applies the OpenShift best practices for how to harden your OpenShift clusters.
+    name: openshift-hardening
+    placement:
+      placementPath: input/placement.yaml
