@@ -55,7 +55,7 @@ kind: PlacementBinding
 metadata:
   name: binding-mta-development
 placementRef:
-  name: all-openshift
+  name: mta-openshift
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
