@@ -59,7 +59,10 @@ spec:
                 subjects:
                 - apiGroup: rbac.authorization.k8s.io
                   kind: User
-                  name: kube:admin  
+                  name: kube:admin
+                - apiGroup: rbac.authorization.k8s.io
+                  kind: User
+                  name: system:admin
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding

@@ -65,8 +65,7 @@ subjects:
     name: my-username
 ```
 
-After updating the `ClusterRoleBinding`, you can delete the subscription and run the deploy script
-again or simply wait for the subscription controller to synchronize the resources.
+After updating the `ClusterRoleBinding`, you need to delete the subscription and deploy the subscription again.
 
 ### Policy Generator
 
