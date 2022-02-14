@@ -12,7 +12,6 @@ spec:
   componentKinds:
     - group: apps.open-cluster-management.io
       kind: Subscription
-  descriptor: {}
   selector:
     matchExpressions:
       - key: app
@@ -43,13 +42,6 @@ metadata:
   name: policy-generator-demo-subscription
   namespace: policy-generator-demo
 spec:
-  allow:
-    - apiVersion: policy.open-cluster-management.io/v1
-      kinds:
-        - "*"
-    - apiVersion: apps.open-cluster-management.io/v1
-      kinds:
-        - PlacementRule
   channel: policy-generator-demo/policy-generator-demo
   placement:
     placementRef:
