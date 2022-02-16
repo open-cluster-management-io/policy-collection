@@ -61,6 +61,7 @@ policies:
     - path: input-compliance/
   policySets:
     - openshift-plus-clusters
+    - openshift-plus-hub
 - name: policy-advanced-managed-cluster-security
   categories:
     - SI System and Information Integrity

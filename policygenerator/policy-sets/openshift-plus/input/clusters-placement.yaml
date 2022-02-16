@@ -1,4 +1,4 @@
-apiVersion: cluster.open-cluster-management.io/v1alpha1
+apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
   name: placement-openshift-plus-clusters
@@ -9,3 +9,4 @@ spec:
       labelSelector:
         matchExpressions:
           - {key: vendor, operator: In, values: ["OpenShift"]}
+          - {key: name, operator: NotIn, values: ["local-cluster"]}
