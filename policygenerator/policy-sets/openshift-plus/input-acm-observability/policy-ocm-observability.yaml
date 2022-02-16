@@ -8,7 +8,7 @@ stringData:
   thanos.yaml: |
     type: s3
     config:
-      bucket: first.bucket
+      bucket: {{ (lookup "objectbucket.io/v1alpha1" "ObjectBucket" "openshift-storage" "obc-openshift-storage-obc-observability").spec.endpoint.bucketName }}
       endpoint: {{ (index (lookup "noobaa.io/v1alpha1" "NooBaa" "openshift-storage" "noobaa").status.endpoints.virtualHosts 1) }}
       insecure: true
       access_key: {{ fromSecret "openshift-storage" "noobaa-admin" "AWS_ACCESS_KEY_ID" | base64dec }}

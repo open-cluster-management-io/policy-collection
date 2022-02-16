@@ -4,15 +4,53 @@ metadata:
   name: noobaa
   namespace: openshift-storage
 spec:
-dbResources:
-  requests:
-    cpu: '0.1'
-    memory: 1Gi
-dbType: postgres
-coreResources:
-  requests:
-    cpu: '0.1'
-    memory: 1Gi
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: cluster.ocs.openshift.io/openshift-storage
+            operator: Exists
+  cleanupPolicy: {}
+  coreResources:
+    limits:
+      cpu: "1"
+      memory: 4Gi
+    requests:
+      cpu: "1"
+      memory: 4Gi
+  dbResources:
+    limits:
+      cpu: 500m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
+  dbStorageClass: ocs-storagecluster-ceph-rbd
+  dbType: postgres
+  dbVolumeResources:
+    requests:
+      storage: 50Gi
+  endpoints:
+    maxCount: 2
+    minCount: 1
+    resources:
+      limits:
+        cpu: "1"
+        memory: 2Gi
+      requests:
+        cpu: "1"
+        memory: 2Gi
+  labels:
+    monitoring: {}
+  pvPoolDefaultStorageClass: ocs-storagecluster-ceph-rbd
+  security:
+    kms: {}
+  tolerations:
+  - effect: NoSchedule
+    key: node.ocs.openshift.io/storage
+    operator: Equal
+    value: "true"
 ---
 apiVersion: noobaa.io/v1alpha1
 kind: BackingStore
@@ -34,7 +72,7 @@ spec:
 apiVersion: noobaa.io/v1alpha1
 kind: BucketClass
 metadata:
-  name: noobaa-default-bucket-class
+  name: noobaa-pv-bucket-class
   namespace: openshift-storage
   labels:
     app: noobaa
@@ -45,3 +83,12 @@ spec:
     tiers:
       - backingStores:
           - noobaa-pv-backing-store
+---
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: obc-observability
+  namespace: openshift-storage
+spec:
+  generateBucketName: obc-observability-bucket
+  storageClassName: openshift-storage.noobaa.io

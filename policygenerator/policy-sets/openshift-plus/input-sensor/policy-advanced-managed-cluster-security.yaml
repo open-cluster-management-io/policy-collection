@@ -36,3 +36,37 @@ spec:
       collection: KernelModule
       imageFlavor: Regular
     taintToleration: TolerateTaints
+---
+apiVersion: v1
+data:
+  admission-control-cert.pem: '{{hub fromSecret "stackrox" "admission-control-tls" "admission-control-cert.pem" hub}}'
+  admission-control-key.pem: '{{hub fromSecret "stackrox" "admission-control-tls" "admission-control-key.pem" hub}}'
+  ca.pem: '{{hub fromSecret "stackrox" "admission-control-tls" "ca.pem" hub}}'
+kind: Secret
+metadata:
+  name: admission-control-tls
+  namespace: stackrox
+type: Opaque
+---
+apiVersion: v1
+data:
+  collector-cert.pem: '{{hub fromSecret "stackrox" "collector-tls" "collector-cert.pem" hub}}'
+  collector-key.pem: '{{hub fromSecret "stackrox" "collector-tls" "collector-key.pem" hub}}'
+  ca.pem: '{{hub fromSecret "stackrox" "collector-tls" "ca.pem" hub}}'
+kind: Secret
+metadata:
+  name: collector-tls
+  namespace: stackrox
+type: Opaque
+---
+apiVersion: v1
+data:
+  sensor-cert.pem: '{{hub fromSecret "stackrox" "sensor-tls" "sensor-cert.pem" hub}}'
+  sensor-key.pem: '{{hub fromSecret "stackrox" "sensor-tls" "sensor-key.pem" hub}}'
+  ca.pem: '{{hub fromSecret "stackrox" "sensor-tls" "ca.pem" hub}}'
+  acs-host: '{{hub fromSecret "stackrox" "sensor-tls" "acs-host" hub}}'
+kind: Secret
+metadata:
+  name: sensor-tls
+  namespace: stackrox
+type: Opaque

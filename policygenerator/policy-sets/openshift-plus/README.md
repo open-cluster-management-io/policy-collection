@@ -4,17 +4,13 @@
 
 The OpenShift Plus PolicySet contains two `PolicySets` that will be deployed.  The OpenShift Plus PolicySet installs everything onto the Advanced Cluster Management hub cluster.  The Advanced Cluster Security Secured Cluster Services and the Compliance Operator are deployed onto all OpenShift managed clusters.
 
-You must perform the steps below to complete the installation of OpenShift Plus after the PolicySets have been
-applied and the policies have all become compliant except the policies:
+Prior to applying the `PolicySet`, perform these steps:
 
-- policy-advanced-managed-cluster-security
-- policy-acs-central-ca-bundle
+1. Create the namespace `policies`: `oc create ns policies`
+2. Prepare for Red Hat OpenShift Data Foundation by adding worker nodes for storage described [here](https://red-hat-storage.github.io/ocs-training/training/ocs4/ocs.html#_scale_ocp_cluster_and_add_new_worker_nodes)
+3. Create the namespace `openshift-storage`: `oc create ns openshift-storage`
+4. Label the storage namespace: `oc label namespace openshift-storage "openshift.io/cluster-monitoring=true"`
+5. Policies are installed to the `policies` namespace.  Make sure the placement bindings match this namespace for the hub and other managed clusters.
 
-**Perform these steps**
-Run the scripts located in the [scripts](scripts) directory.
-
-1. Create the certificate bundle for securely communicating with the Advanced Cluster Security Central server.  Run the command: `./scripts/acs-bundle-secret.sh -i acs-bundle.yaml | oc apply -n policies -f -`  **NOTE** The bundle is saved locally since it cannot be obtained again.  Since this file contains private keys for secure communications to Advanced Cluster Security, you must keep this file securely.
-
-2. Setup the default administrative user for Quay. The administrative username is set to `quayadmin`.  See the
-script for the default password which should be changed.  The script does not require any parameters so simply
-run: `./scripts/init-quay.sh`
+Apply the policies using the kustomize command or subscribing to a fork of the repository and pointing to this directory.  See 
+the details for using the Policy Generator for more information.  The command to run is `kustomize build --enable-alpha-plugins  | oc apply -f -`
