@@ -41,5 +41,5 @@ spec:
         autoScaling: Enabled
         maxReplicas: 5
         minReplicas: 2
-        replicas: 3
+        replicas: 2
     scannerComponent: Enabled
