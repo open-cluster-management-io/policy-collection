@@ -1,0 +1,105 @@
+# Use this policy to control quota limits in new namespaces.
+# This policy requires the Kyverno policy enforcement point to be installed
+# separately.  The policy is based off of a kyverno community policy
+# located here: https://kyverno.io/policies/best-practices/add_ns_quota/
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-kyverno-add-quota
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-kyverno-add-quota
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: kyverno.io/v1
+                kind: ClusterPolicy
+                metadata:
+                  name: add-ns-quota
+                  annotations:
+                    policies.kyverno.io/title: Add Quota
+                    policies.kyverno.io/category: Multi-Tenancy
+                    policies.kyverno.io/subject: ResourceQuota, LimitRange
+                    policies.kyverno.io/description: >-
+                      To better control the number of resources that can be created in a given
+                      Namespace and provide default resource consumption limits for Pods,
+                      ResourceQuota and LimitRange resources are recommended.
+                      This policy will generate ResourceQuota and LimitRange resources when
+                      a new Namespace is created.      
+                spec:
+                  rules:
+                  - name: generate-resourcequota
+                    match:
+                      resources:
+                        kinds:
+                        - Namespace
+                    generate:
+                      kind: ResourceQuota
+                      name: default-resourcequota
+                      synchronize: true
+                      namespace: "{{ `{{request.object.metadata.name}}` }}"
+                      data:
+                        spec:
+                          hard:
+                            requests.cpu: '4'
+                            requests.memory: '16Gi'
+                            limits.cpu: '4'
+                            limits.memory: '16Gi'
+                  - name: generate-limitrange
+                    match:
+                      resources:
+                        kinds:
+                        - Namespace
+                    generate:
+                      kind: LimitRange
+                      name: default-limitrange
+                      synchronize: true
+                      namespace: "{{ `{{request.object.metadata.name}}` }}"
+                      data:
+                        spec:
+                          limits:
+                          - default:
+                              cpu: 500m
+                              memory: 1Gi
+                            defaultRequest:
+                              cpu: 200m
+                              memory: 256Mi
+                            type: Container
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-kyverno-add-quota
+placementRef:
+  name: placement-policy-kyverno-add-quota
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-kyverno-add-quota
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-kyverno-add-quota
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
