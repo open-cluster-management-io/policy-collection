@@ -10,7 +10,6 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline
 spec:
-  remediationAction: enforce
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -19,7 +18,7 @@ spec:
         metadata:
           name: ansible-automation-platform
         spec:
-          remediationAction: inform
+          remediationAction: enforce
           severity: high
           object-templates:
             - complianceType: musthave
