@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: noobaa-operator
+  namespace: openshift-storage
+status:
+  conditions:
+    - status: "True"
+      type: Available
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ocs-operator
+  namespace: openshift-storage
+status:
+  conditions:
+    - status: "True"
+      type: Available
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odf-operator-controller-manager
+  namespace: openshift-storage
+status:
+  conditions:
+    - status: "True"
+      type: Available

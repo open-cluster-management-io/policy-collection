@@ -30,21 +30,45 @@ policies:
   controls: 
     - SC-1 Policy and Procedures
   manifests:
-    - path: input-acs-central/
+    - path: input-acs-central/policy-acs-operator-central.yaml
+- name: policy-acs-central-status
+  categories:
+    - SI System and Information Integrity
+  controls:
+    - SI-5 Security Alerts, Advisories, and Directives
+  manifests:
+    - path: input-acs-central/policy-acs-central-status.yaml
+  remediationAction: inform
 - name: policy-odf
   categories:
     - SI System and Information Integrity
   controls: 
     - SI-7 Software, Firmware, and Information Integrity
   manifests:
-    - path: input-odf/
+    - path: input-odf/policy-odf.yaml
+- name: policy-odf-status
+  categories:
+    - SI System and Information Integrity
+  controls: 
+    - SI-7 Software, Firmware, and Information Integrity
+  manifests:
+    - path: input-odf/policy-odf-status.yaml
+  remediationAction: inform
 - name: policy-config-quay
   categories:
     - SI System and Information Integrity
   controls: 
     - SI-7 Software, Firmware, and Information Integrity
   manifests:
-    - path: input-quay/
+    - path: input-quay/policy-config-quay.yaml
+- name: policy-quay-status
+  categories:
+    - SI System and Information Integrity
+  controls:
+    - SI-7 Software, Firmware, and Information Integrity
+  manifests:
+    - path: input-quay/policy-quay-status.yaml
+  remediationAction: inform
 - name: policy-acs-central-ca-bundle
   categories:
     - SI System and Information Integrity
@@ -71,6 +95,17 @@ policies:
     - path: input-sensor/policy-advanced-managed-cluster-security.yaml
   policySets:
     - openshift-plus-clusters
+- name: policy-advanced-managed-cluster-status
+  categories:
+    - SI System and Information Integrity
+  controls:
+    - SI-5 Security Alerts, Advisories, and Directives
+  manifests:
+    - path: input-sensor/policy-advanced-managed-cluster-status.yaml
+  policySets:
+    - openshift-plus-hub
+    - openshift-plus-clusters
+  remediationAction: inform
 policySets:
   - description: The OpenShift Platform Plus policy set applies several policies
       that installs the OpenShift Platform Plus products using best practices
