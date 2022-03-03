@@ -1,12 +1,10 @@
-# This is a sample policy to demonstrate configuring  RBAC for application workloads
-# running on managedclusters.
-# NOTE* This policy is not rbac for administering applications or policies through ACM hub,
-# it is rbac for directly  accessing and  working with applications on the managedclusters.
+# This is a sample policy to demonstrate configuring  RBAC for managed clusters using admin and view-only roles
 #
 # This Policy considers the following example scenario
-#   Two different applications  X and Y are running on the Cluster.
-#   Application X is deployed in namespace project-x
-#   Application Y is deployed in namespace project-y
+#   UsersGroups:  acm-admins, ac-viewonly-users
+#   Group acm-admins to have admin access to all managed clusters
+#   Group ac-viewonly-users to have view-only access to all managed clusters
+
 #
 # This Policy Configures the following rbac model for the above scenario
 #   UsersGroups:  acm-admins, ac-viewonly-users
@@ -41,28 +39,1187 @@ spec:
                 apiVersion: user.openshift.io/v1
                 metadata:
                   name: acm-admins
-                users: null
+                users: rbanda
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: 'open-cluster-management:managedclusterset:admin:rhacm-demolab-uki'
+
             - complianceType: musthave
               objectDefinition:
                 kind: Group
                 apiVersion: user.openshift.io/v1
                 metadata:
                   name: ac-viewonly-users
-                users: null
+                users:
+                  - raghu
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: ac-viewonly-users
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: 'open-cluster-management:managedclusterset:view:rhacm-demolab-uki'
+            # acm-admins
             - complianceType: musthave
               objectDefinition:
                 kind: ClusterRoleBinding
                 apiVersion: rbac.authorization.k8s.io/v1
                 metadata:
-                  name: SreAdmin-Binding
+                  name: 'open-cluster-management:managedclusterset:view:managedcluster:pentium'
+                labels:
+                  cluster.open-cluster-management.io/clusterset: rhacm-demolab-uki
+                  cluster.open-cluster-management.io/role: view
                 subjects:
+                  - kind: ServiceAccount
+                    name: cluster-storage-operator
+                    namespace: openshift-cluster-storage-operator
+                  - kind: ServiceAccount
+                    name: cluster-manager-placement-controller-sa
+                    namespace: open-cluster-management-hub
+                  - kind: ServiceAccount
+                    name: service-ca-operator
+                    namespace: openshift-service-ca-operator
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-operator
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: kube-controller-manager-operator
+                    namespace: openshift-kube-controller-manager-operator
+                  - kind: ServiceAccount
+                    name: openshift-apiserver-operator
+                    namespace: openshift-apiserver-operator
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-appmgr
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-etcd
+                  - kind: ServiceAccount
+                    name: authentication-operator
+                    namespace: openshift-authentication-operator
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-apiserver
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:admin'
+                  - kind: ServiceAccount
+                    name: console-chart-92917
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-cluster-version
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-controller-v2
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: csi-snapshot-controller-operator
+                    namespace: openshift-cluster-storage-operator
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: bholmes
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: rbanda
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: pprosser
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-scheduler
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: pharriso
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-workmgr
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: oauth-openshift
+                    namespace: openshift-authentication
+                  - kind: ServiceAccount
+                    name: ocm-foundation-sa
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: etcd-operator
+                    namespace: openshift-etcd-operator
+                  - kind: ServiceAccount
+                    name: multiclusterhub-operator
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: openshift-config-operator
+                    namespace: openshift-config-operator
+                  - kind: ServiceAccount
+                    name: olm-operator-serviceaccount
+                    namespace: openshift-operator-lifecycle-manager
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: post-install-operator-system
+                  - kind: ServiceAccount
+                    name: generic-garbage-collector
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: gather
+                    namespace: openshift-insights
+                  - kind: ServiceAccount
+                    name: oauth-apiserver-sa
+                    namespace: openshift-oauth-apiserver
+                  - kind: ServiceAccount
+                    name: cluster-manager-registration-controller-sa
+                    namespace: open-cluster-management-hub
+                  - kind: ServiceAccount
+                    name: klusterlet-work-sa
+                    namespace: open-cluster-management-agent
+                  - kind: ServiceAccount
+                    name: kube-storage-version-migrator-sa
+                    namespace: openshift-kube-storage-version-migrator
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-scheduler
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-machine-config-operator
+                  - kind: ServiceAccount
+                    name: template-instance-controller
+                    namespace: openshift-infra
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: apd
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-controller-manager
+                  - kind: ServiceAccount
+                    name: grc-sa
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-network-operator
+                  - kind: ServiceAccount
+                    name: kube-apiserver-operator
+                    namespace: openshift-kube-apiserver-operator
+                  - kind: ServiceAccount
+                    name: openshift-kube-scheduler-operator
+                    namespace: openshift-kube-scheduler-operator
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-apiserver
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:kube-controller-manager'
+                  - kind: ServiceAccount
+                    name: openshift-controller-manager-sa
+                    namespace: openshift-controller-manager
+                  - kind: ServiceAccount
+                    name: openshift-apiserver-sa
+                    namespace: openshift-apiserver
+                  - kind: ServiceAccount
+                    name: openshift-controller-manager-operator
+                    namespace: openshift-controller-manager-operator
+                  - kind: ServiceAccount
+                    name: namespace-controller
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: multicluster-operators
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: template-instance-finalizer-controller
+                    namespace: openshift-infra
+                  - kind: ServiceAccount
+                    name: kube-storage-version-migrator-operator
+                    namespace: openshift-kube-storage-version-migrator-operator
+                  - kind: ServiceAccount
+                    name: submariner-addon
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: resourcequota-controller
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: search-collector
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-controller-manager
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-policyctrl
+                    namespace: open-cluster-management-agent-addon
                   - kind: Group
                     apiGroup: rbac.authorization.k8s.io
-                    name: SreAdminGrp
+                    name: 'system:cluster-readers'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:masters'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: ac-viewonly-users
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:cluster-admins'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: demolab-uki
                 roleRef:
                   apiGroup: rbac.authorization.k8s.io
                   kind: ClusterRole
-                  name: cluster-admin
+                  name: 'open-cluster-management:view:pentium'
+
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: 'open-cluster-management:managedclusterset:view'
+                  namespace: pentium
+                labels:
+                  cluster.open-cluster-management.io/clusterset: ''
+                  cluster.open-cluster-management.io/role: view
+                subjects:
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-workmgr
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: oauth-openshift
+                    namespace: openshift-authentication
+                  - kind: ServiceAccount
+                    name: ocm-foundation-sa
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: etcd-operator
+                    namespace: openshift-etcd-operator
+                  - kind: ServiceAccount
+                    name: multiclusterhub-operator
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: openshift-config-operator
+                    namespace: openshift-config-operator
+                  - kind: ServiceAccount
+                    name: olm-operator-serviceaccount
+                    namespace: openshift-operator-lifecycle-manager
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: post-install-operator-system
+                  - kind: ServiceAccount
+                    name: generic-garbage-collector
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: gather
+                    namespace: openshift-insights
+                  - kind: ServiceAccount
+                    name: oauth-apiserver-sa
+                    namespace: openshift-oauth-apiserver
+                  - kind: ServiceAccount
+                    name: cluster-manager-registration-controller-sa
+                    namespace: open-cluster-management-hub
+                  - kind: ServiceAccount
+                    name: klusterlet-work-sa
+                    namespace: open-cluster-management-agent
+                  - kind: ServiceAccount
+                    name: kube-storage-version-migrator-sa
+                    namespace: openshift-kube-storage-version-migrator
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-scheduler
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-machine-config-operator
+                  - kind: ServiceAccount
+                    name: template-instance-controller
+                    namespace: openshift-infra
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: apd
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-controller-manager
+                  - kind: ServiceAccount
+                    name: grc-sa
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-network-operator
+                  - kind: ServiceAccount
+                    name: openshift-kube-scheduler-operator
+                    namespace: openshift-kube-scheduler-operator
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-apiserver
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:kube-controller-manager'
+                  - kind: ServiceAccount
+                    name: openshift-controller-manager-sa
+                    namespace: openshift-controller-manager
+                  - kind: ServiceAccount
+                    name: openshift-apiserver-sa
+                    namespace: openshift-apiserver
+                  - kind: ServiceAccount
+                    name: openshift-controller-manager-operator
+                    namespace: openshift-controller-manager-operator
+                  - kind: ServiceAccount
+                    name: namespace-controller
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: kube-apiserver-operator
+                    namespace: openshift-kube-apiserver-operator
+                  - kind: ServiceAccount
+                    name: multicluster-operators
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: template-instance-finalizer-controller
+                    namespace: openshift-infra
+                  - kind: ServiceAccount
+                    name: kube-storage-version-migrator-operator
+                    namespace: openshift-kube-storage-version-migrator-operator
+                  - kind: ServiceAccount
+                    name: submariner-addon
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: resourcequota-controller
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: search-collector
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-controller-manager
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-policyctrl
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: cluster-storage-operator
+                    namespace: openshift-cluster-storage-operator
+                  - kind: ServiceAccount
+                    name: cluster-manager-placement-controller-sa
+                    namespace: open-cluster-management-hub
+                  - kind: ServiceAccount
+                    name: service-ca-operator
+                    namespace: openshift-service-ca-operator
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-operator
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: kube-controller-manager-operator
+                    namespace: openshift-kube-controller-manager-operator
+                  - kind: ServiceAccount
+                    name: openshift-apiserver-operator
+                    namespace: openshift-apiserver-operator
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-appmgr
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-etcd
+                  - kind: ServiceAccount
+                    name: authentication-operator
+                    namespace: openshift-authentication-operator
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-apiserver
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:admin'
+                  - kind: ServiceAccount
+                    name: console-chart-92917
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-cluster-version
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-controller-v2
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: csi-snapshot-controller-operator
+                    namespace: openshift-cluster-storage-operator
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: bholmes
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: rbanda
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: pprosser
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-scheduler
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: pharriso
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:cluster-admins'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: demolab-uki
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:cluster-readers'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:masters'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: ac-viewonly-users
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: view
+
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: open-cluster-management:managedclusterset:admin:managedcluster:pentium
+                labels:
+                  cluster.open-cluster-management.io/clusterset: rhacm-demolab-uki
+                  cluster.open-cluster-management.io/role: admin
+                subjects:
+                  - kind: ServiceAccount
+                    name: oauth-apiserver-sa
+                    namespace: openshift-oauth-apiserver
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-appmgr
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: generic-garbage-collector
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-controller-manager
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: apd
+                  - kind: ServiceAccount
+                    name: multicluster-operators
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-etcd
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-apiserver
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-policyctrl
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-controller-manager
+                  - kind: ServiceAccount
+                    name: klusterlet-work-sa
+                    namespace: open-cluster-management-agent
+                  - kind: ServiceAccount
+                    name: service-ca-operator
+                    namespace: openshift-service-ca-operator
+                  - kind: ServiceAccount
+                    name: olm-operator-serviceaccount
+                    namespace: openshift-operator-lifecycle-manager
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: post-install-operator-system
+                  - kind: ServiceAccount
+                    name: kube-storage-version-migrator-sa
+                    namespace: openshift-kube-storage-version-migrator
+                  - kind: ServiceAccount
+                    name: openshift-controller-manager-operator
+                    namespace: openshift-controller-manager-operator
+                  - kind: ServiceAccount
+                    name: etcd-operator
+                    namespace: openshift-etcd-operator
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-machine-config-operator
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:admin'
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-controller-v2
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-cluster-version
+                  - kind: ServiceAccount
+                    name: openshift-apiserver-sa
+                    namespace: openshift-apiserver
+                  - kind: ServiceAccount
+                    name: submariner-addon
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: csi-snapshot-controller-operator
+                    namespace: openshift-cluster-storage-operator
+                  - kind: ServiceAccount
+                    name: kube-apiserver-operator
+                    namespace: openshift-kube-apiserver-operator
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-operator
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: ocm-foundation-sa
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-network-operator
+                  - kind: ServiceAccount
+                    name: cluster-manager-registration-controller-sa
+                    namespace: open-cluster-management-hub
+                  - kind: ServiceAccount
+                    name: cluster-storage-operator
+                    namespace: openshift-cluster-storage-operator
+                  - kind: ServiceAccount
+                    name: openshift-config-operator
+                    namespace: openshift-config-operator
+                  - kind: ServiceAccount
+                    name: openshift-apiserver-operator
+                    namespace: openshift-apiserver-operator
+                  - kind: ServiceAccount
+                    name: template-instance-controller
+                    namespace: openshift-infra
+                  - kind: ServiceAccount
+                    name: authentication-operator
+                    namespace: openshift-authentication-operator
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: pprosser
+                  - kind: ServiceAccount
+                    name: openshift-kube-scheduler-operator
+                    namespace: openshift-kube-scheduler-operator
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-apiserver
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: pharriso
+                  - kind: ServiceAccount
+                    name: template-instance-finalizer-controller
+                    namespace: openshift-infra
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: bholmes
+                  - kind: ServiceAccount
+                    name: multiclusterhub-operator
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: oauth-openshift
+                    namespace: openshift-authentication
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: rbanda
+                  - kind: ServiceAccount
+                    name: kube-controller-manager-operator
+                    namespace: openshift-kube-controller-manager-operator
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-workmgr
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-scheduler
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-scheduler
+                  - kind: ServiceAccount
+                    name: kube-storage-version-migrator-operator
+                    namespace: openshift-kube-storage-version-migrator-operator
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:cluster-admins'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:masters'
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: 'open-cluster-management:admin:pentium'
+
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: open-cluster-management:managedclusterset:admin
+                  namespace: pentium
+                  labels:
+                    cluster.open-cluster-management.io/clusterset: ''
+                    cluster.open-cluster-management.io/role: admin
+                subjects:
+                  - kind: ServiceAccount
+                    name: kube-controller-manager-operator
+                    namespace: openshift-kube-controller-manager-operator
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-workmgr
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-scheduler
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-scheduler
+                  - kind: ServiceAccount
+                    name: kube-storage-version-migrator-operator
+                    namespace: openshift-kube-storage-version-migrator-operator
+                  - kind: ServiceAccount
+                    name: oauth-openshift
+                    namespace: openshift-authentication
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: rbanda
+                  - kind: ServiceAccount
+                    name: generic-garbage-collector
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-controller-manager
+                  - kind: ServiceAccount
+                    name: oauth-apiserver-sa
+                    namespace: openshift-oauth-apiserver
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-appmgr
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: multicluster-operators
+                    namespace: open-cluster-management
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: apd
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-apiserver
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-etcd
+                  - kind: ServiceAccount
+                    name: klusterlet-work-sa
+                    namespace: open-cluster-management-agent
+                  - kind: ServiceAccount
+                    name: service-ca-operator
+                    namespace: openshift-service-ca-operator
+                  - kind: ServiceAccount
+                    name: olm-operator-serviceaccount
+                    namespace: openshift-operator-lifecycle-manager
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: post-install-operator-system
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-policyctrl
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-controller-manager
+                  - kind: ServiceAccount
+                    name: etcd-operator
+                    namespace: openshift-etcd-operator
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-machine-config-operator
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:admin'
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-controller-v2
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-cluster-version
+                  - kind: ServiceAccount
+                    name: openshift-apiserver-sa
+                    namespace: openshift-apiserver
+                  - kind: ServiceAccount
+                    name: kube-storage-version-migrator-sa
+                    namespace: openshift-kube-storage-version-migrator
+                  - kind: ServiceAccount
+                    name: openshift-controller-manager-operator
+                    namespace: openshift-controller-manager-operator
+                  - kind: ServiceAccount
+                    name: kube-apiserver-operator
+                    namespace: openshift-kube-apiserver-operator
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-operator
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: ocm-foundation-sa
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: submariner-addon
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: csi-snapshot-controller-operator
+                    namespace: openshift-cluster-storage-operator
+                  - kind: ServiceAccount
+                    name: cluster-storage-operator
+                    namespace: openshift-cluster-storage-operator
+                  - kind: ServiceAccount
+                    name: openshift-config-operator
+                    namespace: openshift-config-operator
+                  - kind: ServiceAccount
+                    name: openshift-apiserver-operator
+                    namespace: openshift-apiserver-operator
+                  - kind: ServiceAccount
+                    name: template-instance-controller
+                    namespace: openshift-infra
+                  - kind: ServiceAccount
+                    name: authentication-operator
+                    namespace: openshift-authentication-operator
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-network-operator
+                  - kind: ServiceAccount
+                    name: cluster-manager-registration-controller-sa
+                    namespace: open-cluster-management-hub
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-apiserver
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: pharriso
+                  - kind: ServiceAccount
+                    name: template-instance-finalizer-controller
+                    namespace: openshift-infra
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: bholmes
+                  - kind: ServiceAccount
+                    name: multiclusterhub-operator
+                    namespace: open-cluster-management
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: pprosser
+                  - kind: ServiceAccount
+                    name: openshift-kube-scheduler-operator
+                    namespace: openshift-kube-scheduler-operator
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:cluster-admins'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:masters'
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: admin
+
+           # ac-viewonly-users
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: open-cluster-management:managedclusterset:view
+                  namespace: pentium
+                  labels:
+                    cluster.open-cluster-management.io/clusterset: ''
+                    cluster.open-cluster-management.io/role: view
+                subjects:
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-workmgr
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: oauth-openshift
+                    namespace: openshift-authentication
+                  - kind: ServiceAccount
+                    name: ocm-foundation-sa
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: etcd-operator
+                    namespace: openshift-etcd-operator
+                  - kind: ServiceAccount
+                    name: multiclusterhub-operator
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: openshift-config-operator
+                    namespace: openshift-config-operator
+                  - kind: ServiceAccount
+                    name: olm-operator-serviceaccount
+                    namespace: openshift-operator-lifecycle-manager
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: post-install-operator-system
+                  - kind: ServiceAccount
+                    name: generic-garbage-collector
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: gather
+                    namespace: openshift-insights
+                  - kind: ServiceAccount
+                    name: oauth-apiserver-sa
+                    namespace: openshift-oauth-apiserver
+                  - kind: ServiceAccount
+                    name: cluster-manager-registration-controller-sa
+                    namespace: open-cluster-management-hub
+                  - kind: ServiceAccount
+                    name: klusterlet-work-sa
+                    namespace: open-cluster-management-agent
+                  - kind: ServiceAccount
+                    name: kube-storage-version-migrator-sa
+                    namespace: openshift-kube-storage-version-migrator
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-scheduler
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-machine-config-operator
+                  - kind: ServiceAccount
+                    name: template-instance-controller
+                    namespace: openshift-infra
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: apd
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-controller-manager
+                  - kind: ServiceAccount
+                    name: grc-sa
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-network-operator
+                  - kind: ServiceAccount
+                    name: openshift-kube-scheduler-operator
+                    namespace: openshift-kube-scheduler-operator
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-apiserver
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:kube-controller-manager'
+                  - kind: ServiceAccount
+                    name: openshift-controller-manager-sa
+                    namespace: openshift-controller-manager
+                  - kind: ServiceAccount
+                    name: openshift-apiserver-sa
+                    namespace: openshift-apiserver
+                  - kind: ServiceAccount
+                    name: openshift-controller-manager-operator
+                    namespace: openshift-controller-manager-operator
+                  - kind: ServiceAccount
+                    name: namespace-controller
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: kube-apiserver-operator
+                    namespace: openshift-kube-apiserver-operator
+                  - kind: ServiceAccount
+                    name: multicluster-operators
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: template-instance-finalizer-controller
+                    namespace: openshift-infra
+                  - kind: ServiceAccount
+                    name: kube-storage-version-migrator-operator
+                    namespace: openshift-kube-storage-version-migrator-operator
+                  - kind: ServiceAccount
+                    name: submariner-addon
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: resourcequota-controller
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: search-collector
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-controller-manager
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-policyctrl
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: cluster-storage-operator
+                    namespace: openshift-cluster-storage-operator
+                  - kind: ServiceAccount
+                    name: cluster-manager-placement-controller-sa
+                    namespace: open-cluster-management-hub
+                  - kind: ServiceAccount
+                    name: service-ca-operator
+                    namespace: openshift-service-ca-operator
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-operator
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: kube-controller-manager-operator
+                    namespace: openshift-kube-controller-manager-operator
+                  - kind: ServiceAccount
+                    name: openshift-apiserver-operator
+                    namespace: openshift-apiserver-operator
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-appmgr
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-etcd
+                  - kind: ServiceAccount
+                    name: authentication-operator
+                    namespace: openshift-authentication-operator
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-apiserver
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:admin'
+                  - kind: ServiceAccount
+                    name: console-chart-92917
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-cluster-version
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-controller-v2
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: csi-snapshot-controller-operator
+                    namespace: openshift-cluster-storage-operator
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: bholmes
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: rbanda
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: pprosser
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-scheduler
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: pharriso
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:cluster-admins'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: demolab-uki
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:cluster-readers'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:masters'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: ac-viewonly-users
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: view
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: open-cluster-management:managedclusterset:view:managedcluster:pentium
+                  labels:
+                    cluster.open-cluster-management.io/clusterset: rhacm-demolab-uki
+                    cluster.open-cluster-management.io/role: view
+                subjects:
+                  - kind: ServiceAccount
+                    name: cluster-storage-operator
+                    namespace: openshift-cluster-storage-operator
+                  - kind: ServiceAccount
+                    name: cluster-manager-placement-controller-sa
+                    namespace: open-cluster-management-hub
+                  - kind: ServiceAccount
+                    name: service-ca-operator
+                    namespace: openshift-service-ca-operator
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-operator
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: kube-controller-manager-operator
+                    namespace: openshift-kube-controller-manager-operator
+                  - kind: ServiceAccount
+                    name: openshift-apiserver-operator
+                    namespace: openshift-apiserver-operator
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-appmgr
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-etcd
+                  - kind: ServiceAccount
+                    name: authentication-operator
+                    namespace: openshift-authentication-operator
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-apiserver
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:admin'
+                  - kind: ServiceAccount
+                    name: console-chart-92917
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-cluster-version
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-controller-v2
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: csi-snapshot-controller-operator
+                    namespace: openshift-cluster-storage-operator
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: bholmes
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: rbanda
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: pprosser
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-scheduler
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: pharriso
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-workmgr
+                    namespace: open-cluster-management-agent-addon
+                  - kind: ServiceAccount
+                    name: oauth-openshift
+                    namespace: openshift-authentication
+                  - kind: ServiceAccount
+                    name: ocm-foundation-sa
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: etcd-operator
+                    namespace: openshift-etcd-operator
+                  - kind: ServiceAccount
+                    name: multiclusterhub-operator
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: openshift-config-operator
+                    namespace: openshift-config-operator
+                  - kind: ServiceAccount
+                    name: olm-operator-serviceaccount
+                    namespace: openshift-operator-lifecycle-manager
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: post-install-operator-system
+                  - kind: ServiceAccount
+                    name: generic-garbage-collector
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: gather
+                    namespace: openshift-insights
+                  - kind: ServiceAccount
+                    name: oauth-apiserver-sa
+                    namespace: openshift-oauth-apiserver
+                  - kind: ServiceAccount
+                    name: cluster-manager-registration-controller-sa
+                    namespace: open-cluster-management-hub
+                  - kind: ServiceAccount
+                    name: klusterlet-work-sa
+                    namespace: open-cluster-management-agent
+                  - kind: ServiceAccount
+                    name: kube-storage-version-migrator-sa
+                    namespace: openshift-kube-storage-version-migrator
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-scheduler
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-machine-config-operator
+                  - kind: ServiceAccount
+                    name: template-instance-controller
+                    namespace: openshift-infra
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: apd
+                  - kind: ServiceAccount
+                    name: localhost-recovery-client
+                    namespace: openshift-kube-controller-manager
+                  - kind: ServiceAccount
+                    name: grc-sa
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: openshift-network-operator
+                  - kind: ServiceAccount
+                    name: kube-apiserver-operator
+                    namespace: openshift-kube-apiserver-operator
+                  - kind: ServiceAccount
+                    name: openshift-kube-scheduler-operator
+                    namespace: openshift-kube-scheduler-operator
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-apiserver
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:kube-controller-manager'
+                  - kind: ServiceAccount
+                    name: openshift-controller-manager-sa
+                    namespace: openshift-controller-manager
+                  - kind: ServiceAccount
+                    name: openshift-apiserver-sa
+                    namespace: openshift-apiserver
+                  - kind: ServiceAccount
+                    name: openshift-controller-manager-operator
+                    namespace: openshift-controller-manager-operator
+                  - kind: ServiceAccount
+                    name: namespace-controller
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: multicluster-operators
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: template-instance-finalizer-controller
+                    namespace: openshift-infra
+                  - kind: ServiceAccount
+                    name: kube-storage-version-migrator-operator
+                    namespace: openshift-kube-storage-version-migrator-operator
+                  - kind: ServiceAccount
+                    name: submariner-addon
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: resourcequota-controller
+                    namespace: kube-system
+                  - kind: ServiceAccount
+                    name: search-collector
+                    namespace: open-cluster-management
+                  - kind: ServiceAccount
+                    name: installer-sa
+                    namespace: openshift-kube-controller-manager
+                  - kind: ServiceAccount
+                    name: klusterlet-addon-policyctrl
+                    namespace: open-cluster-management-agent-addon
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:cluster-readers'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:masters'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: ac-viewonly-users
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: 'system:cluster-admins'
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: demolab-uki
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: 'open-cluster-management:view:pentium'
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
