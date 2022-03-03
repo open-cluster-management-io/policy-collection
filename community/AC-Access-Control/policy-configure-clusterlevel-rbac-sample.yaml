@@ -1,0 +1,90 @@
+# This is a sample policy to demonstrate configuring  RBAC for application workloads
+# running on managedclusters.
+# NOTE* This policy is not rbac for administering applications or policies through ACM hub,
+# it is rbac for directly  accessing and  working with applications on the managedclusters.
+#
+# This Policy considers the following example scenario
+#   Two different applications  X and Y are running on the Cluster.
+#   Application X is deployed in namespace project-x
+#   Application Y is deployed in namespace project-y
+#
+# This Policy Configures the following rbac model for the above scenario
+#   UsersGroups:  acm-admins, ac-viewonly-users
+#   Rolebindings:
+#     acm-admins group has cluster-admin access to all managed clusters including the hub cluster
+#     ac-viewonly-users group has view-only access to all managed clusters including the hub cluster
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-configure-clusterlevel-rbac
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-configure-clusterlevel-rbac-example
+        spec:
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: Group
+                apiVersion: user.openshift.io/v1
+                metadata:
+                  name: acm-admins
+                users: null
+            - complianceType: musthave
+              objectDefinition:
+                kind: Group
+                apiVersion: user.openshift.io/v1
+                metadata:
+                  name: ac-viewonly-users
+                users: null
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: SreAdmin-Binding
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: SreAdminGrp
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: cluster-admin
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-configure-clusterlevel-rbac
+placementRef:
+  name: placement-policy-configure-clusterlevel-rbac
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-configure-clusterlevel-rbac
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-configure-clusterlevel-rbac
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
