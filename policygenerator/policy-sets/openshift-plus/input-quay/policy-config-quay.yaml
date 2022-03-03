@@ -111,7 +111,7 @@ spec:
 
           # Wait for quay to be ready
           attempt_counter=0
-          max_attempts=20
+          max_attempts=80
           echo "Waiting for quay to be available..."
           until $(curl --output /dev/null --silent --head --fail http://registry-quay-app); do
               if [ ${attempt_counter} -eq ${max_attempts} ];then
@@ -122,7 +122,7 @@ spec:
               printf '.'
               attempt_counter=$(($attempt_counter+1))
               echo "Made attempt $attempt_counter, waiting..."
-              sleep 5
+              sleep 30
           done
 
           QUAYHOST=$(oc get route -n local-quay registry-quay -o jsonpath='{.spec.host}')
