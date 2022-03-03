@@ -74,22 +74,10 @@ spec:
                 subjects:
                   - kind: Group
                     apiGroup: rbac.authorization.k8s.io
-                    name: 'system:cluster-readers'
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: 'system:masters'
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
                     name: ac-viewonly-users
                   - kind: Group
                     apiGroup: rbac.authorization.k8s.io
                     name: acm-admins
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: 'system:cluster-admins'
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: demolab-uki
                 roleRef:
                   apiGroup: rbac.authorization.k8s.io
                   kind: ClusterRole
@@ -108,18 +96,6 @@ spec:
                 subjects:
                   - kind: Group
                     apiGroup: rbac.authorization.k8s.io
-                    name: 'system:cluster-admins'
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: demolab-uki
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: 'system:cluster-readers'
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: 'system:masters'
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
                     name: ac-viewonly-users
                   - kind: Group
                     apiGroup: rbac.authorization.k8s.io
@@ -134,7 +110,7 @@ spec:
                 kind: ClusterRoleBinding
                 apiVersion: rbac.authorization.k8s.io/v1
                 metadata:
-                  name: open-cluster-management:managedclusterset:admin:managedcluster:pentium
+                  name: 'open-cluster-management:managedclusterset:admin:managedcluster:pentium'
                 labels:
                   cluster.open-cluster-management.io/clusterset: rhacm-demolab-uki
                   cluster.open-cluster-management.io/role: admin
@@ -142,12 +118,6 @@ spec:
                   - kind: Group
                     apiGroup: rbac.authorization.k8s.io
                     name: acm-admins
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: 'system:cluster-admins'
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: 'system:masters'
                 roleRef:
                   apiGroup: rbac.authorization.k8s.io
                   kind: ClusterRole
@@ -158,7 +128,7 @@ spec:
                 kind: ClusterRoleBinding
                 apiVersion: rbac.authorization.k8s.io/v1
                 metadata:
-                  name: open-cluster-management:managedclusterset:admin
+                  name: 'open-cluster-management:managedclusterset:admin'
                   namespace: pentium
                   labels:
                     cluster.open-cluster-management.io/clusterset: ''
@@ -167,12 +137,6 @@ spec:
                   - kind: Group
                     apiGroup: rbac.authorization.k8s.io
                     name: acm-admins
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: 'system:cluster-admins'
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: 'system:masters'
                 roleRef:
                   apiGroup: rbac.authorization.k8s.io
                   kind: ClusterRole
@@ -184,24 +148,12 @@ spec:
                 kind: ClusterRoleBinding
                 apiVersion: rbac.authorization.k8s.io/v1
                 metadata:
-                  name: open-cluster-management:managedclusterset:view
+                  name: 'open-cluster-management:managedclusterset:view'
                   namespace: pentium
                   labels:
                     cluster.open-cluster-management.io/clusterset: ''
                     cluster.open-cluster-management.io/role: view
                 subjects:
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: 'system:cluster-admins'
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: demolab-uki
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: 'system:cluster-readers'
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: 'system:masters'
                   - kind: Group
                     apiGroup: rbac.authorization.k8s.io
                     name: ac-viewonly-users
@@ -217,29 +169,17 @@ spec:
                 kind: ClusterRoleBinding
                 apiVersion: rbac.authorization.k8s.io/v1
                 metadata:
-                  name: open-cluster-management:managedclusterset:view:managedcluster:pentium
+                  name: 'open-cluster-management:managedclusterset:view:managedcluster:pentium'
                   labels:
                     cluster.open-cluster-management.io/clusterset: rhacm-demolab-uki
                     cluster.open-cluster-management.io/role: view
                 subjects:
                   - kind: Group
                     apiGroup: rbac.authorization.k8s.io
-                    name: 'system:cluster-readers'
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: 'system:masters'
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
                     name: ac-viewonly-users
                   - kind: Group
                     apiGroup: rbac.authorization.k8s.io
                     name: acm-admins
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: 'system:cluster-admins'
-                  - kind: Group
-                    apiGroup: rbac.authorization.k8s.io
-                    name: demolab-uki
                 roleRef:
                   apiGroup: rbac.authorization.k8s.io
                   kind: ClusterRole
