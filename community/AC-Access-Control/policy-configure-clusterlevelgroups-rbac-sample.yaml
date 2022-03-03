@@ -3,6 +3,7 @@
 #   UsersGroups:  acm-admins, ac-viewonly-users
 #   Group acm-admins to have admin access to all managed clusters
 #   Group ac-viewonly-users to have view-only access to all managed clusters
+
 # This Policy Configures the following rbac model for the above scenario
 #   UsersGroups:  acm-admins, ac-viewonly-users
 #   Rolebindings:
