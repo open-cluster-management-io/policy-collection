@@ -1,0 +1,209 @@
+# This is a sample policy to demonstrate configuring  RBAC for managed clusters using admin and view-only roles
+# This Policy considers the below  scenario
+#   UsersGroups:  acm-admins, ac-viewonly-users
+#   Group acm-admins to have admin access to all managed clusters
+#   Group ac-viewonly-users to have view-only access to all managed clusters
+# This Policy Configures the following rbac model for the above scenario
+#   UsersGroups:  acm-admins, ac-viewonly-users
+#   Rolebindings:
+#     acm-admins group has cluster-admin access to all managed clusters including the hub cluster
+#     ac-viewonly-users group has view-only access to all managed clusters including the hub cluster
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-configure-clusterlevel-rbac
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-configure-clusterlevel-rbac-example
+        spec:
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: Group
+                apiVersion: user.openshift.io/v1
+                metadata:
+                  name: acm-admins
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: 'open-cluster-management:managedclusterset:admin:rhacm-demolab-uki'
+
+            - complianceType: musthave
+              objectDefinition:
+                kind: Group
+                apiVersion: user.openshift.io/v1
+                metadata:
+                  name: ac-viewonly-users
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: ac-viewonly-users
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: 'open-cluster-management:managedclusterset:view:rhacm-demolab-uki'
+            # acm-admins
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: 'open-cluster-management:managedclusterset:view:managedcluster:pentium'
+                labels:
+                  cluster.open-cluster-management.io/clusterset: rhacm-demolab-uki
+                  cluster.open-cluster-management.io/role: view
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: ac-viewonly-users
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: 'open-cluster-management:view:pentium'
+
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: 'open-cluster-management:managedclusterset:view'
+                  namespace: pentium
+                labels:
+                  cluster.open-cluster-management.io/clusterset: ''
+                  cluster.open-cluster-management.io/role: view
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: ac-viewonly-users
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: view
+
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: 'open-cluster-management:managedclusterset:admin:managedcluster:pentium'
+                labels:
+                  cluster.open-cluster-management.io/clusterset: rhacm-demolab-uki
+                  cluster.open-cluster-management.io/role: admin
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: 'open-cluster-management:admin:pentium'
+
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: 'open-cluster-management:managedclusterset:admin'
+                  namespace: pentium
+                  labels:
+                    cluster.open-cluster-management.io/clusterset: ''
+                    cluster.open-cluster-management.io/role: admin
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: admin
+
+            # ac-viewonly-users
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: 'open-cluster-management:managedclusterset:view'
+                  namespace: pentium
+                  labels:
+                    cluster.open-cluster-management.io/clusterset: ''
+                    cluster.open-cluster-management.io/role: view
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: ac-viewonly-users
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: view
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: 'open-cluster-management:managedclusterset:view:managedcluster:pentium'
+                  labels:
+                    cluster.open-cluster-management.io/clusterset: rhacm-demolab-uki
+                    cluster.open-cluster-management.io/role: view
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: ac-viewonly-users
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: 'open-cluster-management:view:pentium'
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-configure-clusterlevel-rbac
+placementRef:
+  name: placement-policy-configure-clusterlevel-rbac
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-configure-clusterlevel-rbac
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-configure-clusterlevel-rbac
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["local-cluster"]}
