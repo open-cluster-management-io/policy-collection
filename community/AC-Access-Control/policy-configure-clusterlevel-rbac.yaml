@@ -28,7 +28,7 @@ spec:
         metadata:
           name: policy-configure-clusterlevel-rbac-example
         spec:
-          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          remediationAction: inform
           severity: high
           object-templates:
             - complianceType: musthave
@@ -37,15 +37,12 @@ spec:
                 apiVersion: user.openshift.io/v1
                 metadata:
                   name: acm-admins
-       
             - complianceType: musthave
               objectDefinition:
                 kind: Group
                 apiVersion: user.openshift.io/v1
                 metadata:
                   name: ac-viewonly-users
-     
-            # acm-view-only users
             - complianceType: musthave
               objectDefinition:
                 kind: ClusterRoleBinding
@@ -60,7 +57,6 @@ spec:
                   apiGroup: rbac.authorization.k8s.io
                   kind: ClusterRole
                   name: 'open-cluster-management:view:clusterX'
-
             - complianceType: musthave
               objectDefinition:
                 kind: ClusterRoleBinding
@@ -76,7 +72,6 @@ spec:
                   apiGroup: rbac.authorization.k8s.io
                   kind: ClusterRole
                   name: view
-
             - complianceType: musthave
               objectDefinition:
                 kind: ClusterRoleBinding
@@ -91,7 +86,6 @@ spec:
                   apiGroup: rbac.authorization.k8s.io
                   kind: ClusterRole
                   name: 'open-cluster-management:admin:clusterX'
-
             - complianceType: musthave
               objectDefinition:
                 kind: ClusterRoleBinding
@@ -106,8 +100,7 @@ spec:
                 roleRef:
                   apiGroup: rbac.authorization.k8s.io
                   kind: ClusterRole
-                  name: admin
-       
+                  name: admin   
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
