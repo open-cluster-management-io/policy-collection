@@ -33,18 +33,6 @@ spec:
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                kind: Group
-                apiVersion: user.openshift.io/v1
-                metadata:
-                  name: acm-admins
-            - complianceType: musthave
-              objectDefinition:
-                kind: Group
-                apiVersion: user.openshift.io/v1
-                metadata:
-                  name: ac-viewonly-users
-            - complianceType: musthave
-              objectDefinition:
                 kind: ClusterRoleBinding
                 apiVersion: rbac.authorization.k8s.io/v1
                 metadata:
