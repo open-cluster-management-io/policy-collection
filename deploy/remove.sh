@@ -145,17 +145,27 @@ if [[ "${RESOURCE}-chan" != "${CHANREF}" ]]; then
   exit 1
 fi
 
+# Check for Application resource
+APP_FOUND=$(kubectl get app -n ${NAMESPACE} ${PREFIX}-app &>/dev/null && echo "true")
+
 # Delete Subscription and Channel resources
 echo "This will delete these resources as well as resources they have deployed:"
+if [ "${APP_FOUND}" = "true" ]; then
+  echo "- Application:  ${RESOURCE}-app"
+fi
 echo "- Channel:      ${RESOURCE}-chan"
 echo "- Subscription: ${RESOURCE}-sub"
 while read -r -p "Would you like to proceed (y/n)? " response; do
   case "$response" in
-    Y|y|Yes|yes ) kubectl delete appsub -n ${NAMESPACE} ${PREFIX}-sub
-                  kubectl delete channels -n ${NAMESPACE} ${PREFIX}-chan
-                  break
+    Y|y|Yes|yes ) break
                   ;;
     N|n|No|no )   exit 1
                   ;;
   esac
 done
+
+if [ "${APP_FOUND}" = "true" ]; then
+  kubectl delete app -n ${NAMESPACE} ${PREFIX}-app
+fi
+kubectl delete appsub -n ${NAMESPACE} ${PREFIX}-sub
+kubectl delete channels -n ${NAMESPACE} ${PREFIX}-chan

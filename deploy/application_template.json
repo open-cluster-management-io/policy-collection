@@ -1,0 +1,12 @@
+[
+    {
+        "op": "replace",
+        "path": "/metadata/name",
+        "value": "##NAME##-app"
+    },
+    {
+        "op": "replace",
+        "path": "/spec/selector/matchExpressions/0/values/0",
+        "value": "##NAME##"
+    }
+]
