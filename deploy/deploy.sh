@@ -28,6 +28,7 @@ help () {
   echo "  -s|--sync <rate>            How frequently the github resources are compared to the hub resources"
   echo '                                (Default rate: "medium") Rates: "high", "medium", "low", "off"'
   echo "  --deploy-app                Create an Application manifest for additional visibility in the UI"
+  echo "                                (Search should also be enabled in the Hub cluster)"
   echo "  --dry-run                   Print the YAML to stdout without applying them to the cluster"
   echo ""
 }
@@ -141,15 +142,27 @@ SUBSCRIPTION_CFG=$(cat "subscription_template.json" |
   sed "s/##NAMESPACE##/${NAMESPACE}/g")
 echo "$SUBSCRIPTION_CFG" > subscription_patch.json
 
-# Populate the Application template
-APPLICATION_CFG=$(cat "application_template.json" |
-  sed "s/##NAME##/${NAME}/g")
-echo "$APPLICATION_CFG" > application_patch.json
+# The Application and Placement are only needed for `--deploy-app`
+if [ "${DEPLOY_APP}" = "true" ]; then
+  # Populate the Application template
+  APPLICATION_CFG=$(cat "application_template.json" |
+    sed "s/##NAME##/${NAME}/g")
+  echo "$APPLICATION_CFG" > application_patch.json
+
+  # Populate the Placement templates
+  PLACEMENT_CFG=$(cat "placement_template.json" |
+    sed "s/##NAME##/${NAME}/g")
+  echo "$PLACEMENT_CFG" > placement_patch.json
+  SUB_PLACEMENT_CFG=$(cat "subscription_placement_template.json" |
+    sed "s/##NAME##/${NAME}/g")
+  echo "$SUB_PLACEMENT_CFG" > subscription_placement_patch.json
+fi
 
 # Populate the Kustomize template
 KUST_CFG=$(cat "kustomization_template.yaml" |
   sed "s/##NAME##/${NAME}/g" |
   sed "s/##NAMESPACE##/${NAMESPACE}/g")
+# Uncomment Application manifests to generate them
 if [ "${DEPLOY_APP}" = "true" ]; then
   KUST_CFG=$(echo "$KUST_CFG" | sed "s/##//g")
 fi

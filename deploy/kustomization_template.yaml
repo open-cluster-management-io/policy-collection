@@ -15,6 +15,7 @@ resources:
   - channel.yaml
   - subscription.yaml
 ##  - application.yaml
+##  - placement.yaml
 
 patchesJson6902:
 ##- path: application_patch.json
@@ -23,6 +24,18 @@ patchesJson6902:
 ##    version: v1
 ##    kind: Application
 ##    name: demo-stable-policies-app
+##- path: placement_patch.json
+##  target:
+##    group: apps.open-cluster-management.io
+##    version: v1
+##    kind: PlacementRule
+##    name: demo-stable-policies-placement
+##- path: subscription_placement_patch.json
+##  target:
+##    group: apps.open-cluster-management.io
+##    version: v1
+##    kind: Subscription
+##    name: demo-stable-policies-sub
 - path: subscription_patch.json
   target:
     group: apps.open-cluster-management.io

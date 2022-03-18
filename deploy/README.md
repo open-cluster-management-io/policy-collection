@@ -33,7 +33,8 @@ Usage:
                                 (Default name: "demo-stable-policies")
   -s|--sync <rate>            How frequently the github resources are compared to the hub resources
                                 (Default rate: "medium") Rates: "high", "medium", "low", "off"
-  --deploy-app                Create an Application manifest for additional visibility in the UI
+  --deploy-app                Create an Application and Placement manifest for additional visibility 
+                                in the UI (Search should also be enabled in the Hub cluster)
   --dry-run                   Print the YAML to stdout without applying them to the cluster
 ```
 
