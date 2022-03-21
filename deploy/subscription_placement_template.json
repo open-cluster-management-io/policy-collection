@@ -1,0 +1,12 @@
+[
+  {
+    "op": "replace",
+    "path": "/spec/placement",
+    "value": {
+      "placementRef": {
+        "kind": "PlacementRule",
+        "name": "##NAME##-placement"
+      }
+    }
+  }
+]
