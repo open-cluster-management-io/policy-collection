@@ -19,7 +19,7 @@ policyDefaults:
 policies:
 - name: policy-ocm-observability
   categories:
-    - CA Assessment, Authorization and Monitoring
+    - CA Assessment Authorization and Monitoring
   controls: 
     - CA-7 Continuous Monitoring
   manifests:
@@ -35,7 +35,7 @@ policies:
   categories:
     - SI System and Information Integrity
   controls:
-    - SI-5 Security Alerts, Advisories, and Directives
+    - SI-5 Security Alerts Advisories and Directives
   manifests:
     - path: input-acs-central/policy-acs-central-status.yaml
   remediationAction: inform
@@ -43,14 +43,14 @@ policies:
   categories:
     - SI System and Information Integrity
   controls: 
-    - SI-7 Software, Firmware, and Information Integrity
+    - SI-7 Software Firmware and Information Integrity
   manifests:
     - path: input-odf/policy-odf.yaml
 - name: policy-odf-status
   categories:
     - SI System and Information Integrity
   controls: 
-    - SI-7 Software, Firmware, and Information Integrity
+    - SI-7 Software Firmware and Information Integrity
   manifests:
     - path: input-odf/policy-odf-status.yaml
   remediationAction: inform
@@ -58,14 +58,14 @@ policies:
   categories:
     - SI System and Information Integrity
   controls: 
-    - SI-7 Software, Firmware, and Information Integrity
+    - SI-7 Software Firmware and Information Integrity
   manifests:
     - path: input-quay/policy-config-quay.yaml
 - name: policy-quay-status
   categories:
     - SI System and Information Integrity
   controls:
-    - SI-7 Software, Firmware, and Information Integrity
+    - SI-7 Software Firmware and Information Integrity
   manifests:
     - path: input-quay/policy-quay-status.yaml
   remediationAction: inform
@@ -73,14 +73,15 @@ policies:
   categories:
     - SI System and Information Integrity
   controls:
-    - SI-5 Security Alerts, Advisories, and Directives
+    - SI-5 Security Alerts Advisories and Directives
   manifests:
     - path: input-sensor/policy-acs-central-ca-bundle.yaml
 - name: policy-compliance-operator-install
   categories:
     - CA Security Assessment and Authorization
   controls:
-    - CA-2 Security Assessments, CA-7 Continuous Monitoring
+    - CA-2 Security Assessments
+    - CA-7 Continuous Monitoring
   manifests:
     - path: input-compliance/
   policySets:
@@ -90,7 +91,7 @@ policies:
   categories:
     - SI System and Information Integrity
   controls:
-    - SI-5 Security Alerts, Advisories, and Directives
+    - SI-5 Security Alerts Advisories and Directives
   manifests:
     - path: input-sensor/policy-advanced-managed-cluster-security.yaml
   policySets:
@@ -99,7 +100,7 @@ policies:
   categories:
     - SI System and Information Integrity
   controls:
-    - SI-5 Security Alerts, Advisories, and Directives
+    - SI-5 Security Alerts Advisories and Directives
   manifests:
     - path: input-sensor/policy-advanced-managed-cluster-status.yaml
   policySets:
