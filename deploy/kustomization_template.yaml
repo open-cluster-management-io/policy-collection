@@ -21,7 +21,7 @@ patchesJson6902:
 ##- path: application_patch.json
 ##  target:
 ##    group: app.k8s.io
-##    version: v1
+##    version: v1beta1
 ##    kind: Application
 ##    name: demo-stable-policies-app
 ##- path: placement_patch.json
