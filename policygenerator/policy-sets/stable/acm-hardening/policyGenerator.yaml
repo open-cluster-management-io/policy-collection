@@ -42,7 +42,7 @@ policies:
     - SI System and Information Integrity
   complianceType: "mustnothave"
   controls: 
-    - SI-5 Security Alerts, Advisories, and Directives
+    - SI-5 Security Alerts Advisories and Directives
   disabled: false
   manifests:
     - path: input-subscriptions/
