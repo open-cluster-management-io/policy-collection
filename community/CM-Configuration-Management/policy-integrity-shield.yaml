@@ -65,11 +65,11 @@ spec:
                   name: integrity-shield-operator
                   namespace: integrity-shield-operator-system
                 spec:
-                  channel: alpha-0.3.2
+                  channel: alpha-0.3.3
                   name: integrity-shield-operator
                   source: community-operators
                   sourceNamespace: openshift-marketplace
-                  startingCSV: integrity-shield-operator.v0.3.2
+                  startingCSV: integrity-shield-operator.v0.3.3
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -579,7 +579,7 @@ spec:
                   parameters:
                     constraintName: policy-constraint
                     action:
-                      mode: detect
+                      mode: inform
                     ignoreFields:
                       - fields:
                           - metadata.labels.policy.open-cluster-management.io/root-policy
@@ -638,7 +638,7 @@ spec:
                   parameters:
                     constraintName: sub-policy-constraint
                     action:
-                      mode: detect
+                      mode: inform
                       admissionOnly: true
                     ignoreFields:
                       - fields:
