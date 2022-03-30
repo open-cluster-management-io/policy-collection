@@ -7,7 +7,7 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
-  remediationAction: enforce
+  remediationAction: inform
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -16,7 +16,7 @@ spec:
         metadata:
           name: policy-sriov-ns
         spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
           namespaceSelector:
             exclude: ["kube-*"]
@@ -34,7 +34,7 @@ spec:
         metadata:
           name: policy-sriov-operatorgroup
         spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
           namespaceSelector:
             exclude: ["kube-*"]
@@ -56,7 +56,7 @@ spec:
         metadata:
           name: policy-sriov-subscription
         spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
           namespaceSelector:
             exclude: ["kube-*"]
@@ -81,7 +81,7 @@ spec:
         metadata:
           name: policy-sriov-operatorconfig
         spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
           namespaceSelector:
             exclude: ["kube-*"]
@@ -133,7 +133,7 @@ spec:
         metadata:
           name: policy-workercnf-mcp
         spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
           namespaceSelector:
             exclude: ["kube-*"]

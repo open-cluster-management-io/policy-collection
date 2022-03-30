@@ -149,7 +149,7 @@ spec:
                      replica: 3
          remediationAction: inform
          severity: low
- remediationAction: enforce
+ remediationAction: inform
  
  
 ---

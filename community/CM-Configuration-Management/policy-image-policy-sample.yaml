@@ -16,7 +16,7 @@ spec:
         metadata:
           name: image-policy-example
         spec:
-          remediationAction: enforce
+          remediationAction: inform
           severity: low
           namespaceSelector:
             exclude:

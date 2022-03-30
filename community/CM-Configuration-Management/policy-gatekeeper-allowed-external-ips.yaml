@@ -15,7 +15,7 @@ spec:
         metadata:
           name: policy-gatekeeper-k8sexternalips
         spec:
-          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by remediationAction in parent policy
           severity: low
           object-templates:
             - complianceType: musthave

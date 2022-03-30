@@ -18,7 +18,7 @@ metadata:
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
   disabled: false
-  remediationAction: enforce
+  remediationAction: inform
   policy-templates:
   - objectDefinition:
       apiVersion: policy.open-cluster-management.io/v1

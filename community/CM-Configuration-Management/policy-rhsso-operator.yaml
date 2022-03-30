@@ -7,7 +7,7 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline 
 spec:
-  remediationAction: enforce
+  remediationAction: inform
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -16,7 +16,7 @@ spec:
         metadata:
           name: policy-rhsso-operator-project
         spec:
-          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by remediationAction in parent policy
           severity: high
           namespaceSelector:
             exclude: ["kube-*"]
@@ -35,7 +35,7 @@ spec:
         metadata:
           name: policy-rhsso-operator
         spec:
-          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by remediationAction in parent policy
           severity: high
           namespaceSelector:
             exclude: ["kube-*", "openshift-*"]
@@ -70,7 +70,7 @@ spec:
         metadata:
           name: policy-rhsso-keycloak
         spec:
-          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by remediationAction in parent policy
           severity: high
           namespaceSelector:
             exclude: ["kube-*", "openshift-*"]

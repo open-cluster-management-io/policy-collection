@@ -20,7 +20,7 @@ spec:
         metadata:
           name: policy-integrity-shield-namespace
         spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: high
           object-templates:
             - complianceType: musthave
@@ -35,7 +35,7 @@ spec:
         metadata:
           name: policy-integrity-shield-og
         spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: high
           object-templates:
             - complianceType: musthave
@@ -54,7 +54,7 @@ spec:
         metadata:
           name: policy-integrity-shield-sub
         spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: high
           object-templates:
             - complianceType: musthave
@@ -76,7 +76,7 @@ spec:
         metadata:
           name: policy-integrity-shield-cr
         spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: high
           object-templates:
             - complianceType: musthave
@@ -554,7 +554,7 @@ spec:
         metadata:
           name: policy-integrity-shield-policy-constraint
         spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: high
           object-templates:
             - complianceType: musthave
@@ -611,7 +611,7 @@ spec:
         metadata:
           name: policy-integrity-shield-sub-policy-constraint
         spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: high
           object-templates:
             - complianceType: musthave

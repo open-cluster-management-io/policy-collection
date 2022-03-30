@@ -41,7 +41,7 @@ spec:
                           path: /etc/chrony.conf
                           source: >-
                             data:,server%200.fedora.pool.ntp.org%0A%0Aserver%201.fedora.pool.ntp.org%0A%0Aserver%202.fedora.pool.ntp.org%0A%0Adriftfile%20/var/lib/chrony/drift%0A%0Amakestep%201.0%203%0A%0Artcsync%0A%0Akeyfile%20/etc/chrony.keys%0A%0Aleapsectz%20right/UTC%0A%0Alogdir%20/var/log/chrony%0A
-          remediationAction: enforce
+          remediationAction: inform
           severity: low
   remediationAction: inform
 ---

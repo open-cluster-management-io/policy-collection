@@ -92,7 +92,7 @@ spec:
               type: dex
         remediationAction: inform
         severity: medium
-  remediationAction: enforce
+  remediationAction: inform
 
 ---
 apiVersion: policy.open-cluster-management.io/v1

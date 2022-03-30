@@ -16,7 +16,7 @@ spec:
       metadata:
         name: policy-update-service-subscription
       spec:
-        remediationAction: enforce
+        remediationAction: inform
         severity: medium
         namespaceSelector:
           exclude:
@@ -45,7 +45,7 @@ spec:
       metadata:
         name: policy-update-service
       spec:
-        remediationAction: enforce
+        remediationAction: inform
         severity: medium
         namespaceSelector:
           exclude:

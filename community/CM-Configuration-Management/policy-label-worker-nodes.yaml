@@ -15,7 +15,7 @@ spec:
         metadata:
           name: policy-clustercnf10-tag-worker-cnf10
         spec:
-          remediationAction: enforce
+          remediationAction: inform
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -33,7 +33,7 @@ spec:
         metadata:
           name: policy-clustercnf10-tag-worker-cnf11
         spec:
-          remediationAction: enforce
+          remediationAction: inform
           object-templates:
             - complianceType: musthave
               objectDefinition:

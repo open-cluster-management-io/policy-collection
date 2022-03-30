@@ -18,7 +18,7 @@ spec:
         metadata:
           name: ansible-automation-platform
         spec:
-          remediationAction: enforce
+          remediationAction: inform
           severity: high
           object-templates:
             - complianceType: musthave

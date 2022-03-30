@@ -19,7 +19,7 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
-  remediationAction: enforce
+  remediationAction: inform
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -28,7 +28,7 @@ spec:
         metadata:
           name: policy-pod-disruption-budget-templatized
         spec:
-          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by remediationAction in parent policy
           severity: low
           namespaceSelector:
             exclude: ["kube-*"]

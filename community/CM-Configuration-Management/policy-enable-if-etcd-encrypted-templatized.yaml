@@ -18,7 +18,7 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management, PR.IP Information Protection Processes and Procedures
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration, PR.IP-1 Baseline Configuration
 spec:
-  remediationAction: enforce
+  remediationAction: inform
   disabled: true #policy is disabled by default, will be enabled by enabler policy (see below) if/when etcd encryption is enabled
   policy-templates:
     - objectDefinition:
@@ -56,7 +56,7 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
-  remediationAction: enforce
+  remediationAction: inform
   disabled: false
   policy-templates:
     - objectDefinition:

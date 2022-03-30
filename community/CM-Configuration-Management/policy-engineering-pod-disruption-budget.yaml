@@ -16,7 +16,7 @@ spec:
         metadata:
           name: policy-example-pod-disruption-budget-prod-1
         spec:
-          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by remediationAction in parent policy
           severity: low
           namespaceSelector:
             exclude: ["kube-*"]
@@ -39,7 +39,7 @@ spec:
         metadata:
           name: policy-example-pod-disruption-budget-prod-2
         spec:
-          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by remediationAction in parent policy
           severity: low
           namespaceSelector:
             exclude: ["kube-*"]

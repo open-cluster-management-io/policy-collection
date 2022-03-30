@@ -7,7 +7,7 @@ metadata:
     policy.open-cluster-management.io/categories: AC Access Control
     policy.open-cluster-management.io/controls: AC-2 Account Management
 spec:
-  remediationAction: enforce 
+  remediationAction: inform 
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -16,7 +16,7 @@ spec:
         metadata:
           name: policy-gatekeeper-disallow-anonymous
         spec:
-          remediationAction: enforce
+          remediationAction: inform
           severity: low
           object-templates: 
             - complianceType: musthave
