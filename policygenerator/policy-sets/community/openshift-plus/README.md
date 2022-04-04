@@ -14,3 +14,5 @@ Prior to applying the `PolicySet`, perform these steps:
 
 Apply the policies using the kustomize command or subscribing to a fork of the repository and pointing to this directory.  See 
 the details for using the Policy Generator for more information.  The command to run is `kustomize build --enable-alpha-plugins  | oc apply -f -`
+
+**Note**: For any components of OpenShift Plus that you do not wish to install, edit the `policyGenerator.yaml` file and remove or comment out the policies for those components.
