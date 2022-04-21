@@ -48,7 +48,7 @@ spec:
                 metadata:
                   namespace: openshift-operators
                 spec:
-                  displayName: Quay Container Security
+                  displayName: Red Hat Quay Container Security Operator
                 status:
                   phase: Succeeded   # check the csv status to determine if operator is running or not
     - objectDefinition:
