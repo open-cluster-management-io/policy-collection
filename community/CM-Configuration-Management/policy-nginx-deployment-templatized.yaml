@@ -39,7 +39,7 @@ spec:
                   labels:
                     app: nginx
                 spec:
-                  replicas: 3
+                  replicas: '{{ if eq (fromClusterClaim "env") "prod" }} {{ 3 | toInt }} {{ else }} {{ 1  | toInt }} {{ end }}'
                   selector:
                     matchLabels:
                       app: nginx
