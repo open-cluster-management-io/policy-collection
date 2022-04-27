@@ -3,5 +3,61 @@ kind: BackupSchedule
 status:
   phase: Enabled
 ---
-apiVersion: volsync.backube/v1alpha1
-kind: ReplicationSource
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: cluster-backup-chart
+  namespace: open-cluster-management-backup
+status:
+  phase: Running
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    repository: https://github.com/openshift/oadp-operator
+  namespace: open-cluster-management-backup
+status:
+  phase: Running
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app.kubernetes.io/name: velero
+  namespace: open-cluster-management-backup
+status:
+  phase: Running
+---
+apiVersion: velero.io/v1
+kind: BackupStorageLocation
+metadata:
+  namespace: open-cluster-management-backup
+status:
+  phase: Available
+---
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  labels:
+    velero.io/schedule-name: acm-validation-policy-schedule
+  namespace: open-cluster-management-backup
+---
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  labels:
+    velero.io/schedule-name: acm-managed-clusters-schedule
+  namespace: open-cluster-management-backup
+status:
+  phase: Completed
+---
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  labels:
+    velero.io/schedule-name: acm-resources-schedule
+  namespace: open-cluster-management-backup
+status:
+  phase: Completed
