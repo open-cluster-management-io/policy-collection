@@ -1,0 +1,144 @@
+ #This demonstrates configuring SriovNetwork resource  with values  customized to the target cluster using  HUB-templates
+# the below shows three policies 
+# 1.policy-site-nw-templatized-config:  configures a ConfigMap on the HUB which contains the managedcluster specific values for  Cluster network resource
+# 2.policy-site-nw-templatized: configures  SriovNetwork resources on target managedclusters with  cluster specific values retrieved from the above ConfigMap
+
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+    name: policy-site-nw-templatized
+    annotations:
+        policy.open-cluster-management.io/categories: CM Configuration Management
+        policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+        policy.open-cluster-management.io/standards: NIST SP 800-53
+spec:
+    remediationAction: inform
+    disabled: false
+    policy-templates:
+        - objectDefinition:
+            apiVersion: policy.open-cluster-management.io/v1
+            kind: ConfigurationPolicy
+            metadata:
+                name: policy-site-nw-templatized
+            spec:
+                remediationAction: inform
+                severity: low
+                namespaceselector:
+                    exclude:
+                        - kube-*
+                    include:
+                        - '*'
+                object-templates:
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: sriovnetwork.openshift.io/v1
+                        kind: SriovNetwork
+                        metadata:
+                            name: sriov-nw
+                            namespace: openshift-sriov-network-operator
+                        spec:
+                            networkNamespace: openshift-sriov-network-operator
+                            resourceName: '{{hub fromConfigMap "" "site-config"  (printf "%s-resourceName" .ManagedClusterName) hub}}'
+                            vlan: '{{hub fromConfigMap "" "site-config"  (printf "%s-vlan" .ManagedClusterName) | toInt hub}}'
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-site-nw-templatized-common
+placementRef:
+  name: placement-policy-site-nw-templatized-common
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-site-nw-templatized
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-site-nw-templatized-common
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: In
+        values:
+          - 'true'
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-site-nw-templatized-config
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-site-nw-templatized-config
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                  name: site-config
+                  namespace: default #replace namespace to where the policy is being deployed
+                data:
+                  cluster0001-interface: "ens5f0"
+                  cluster0001-phc2sysOpts: "-a -r -n 24"
+                  cluster0001-resourceName: "du_fh"
+                  cluster0001-vlan: "3620"
+
+                  cluster0002-interface: "ens5f0"
+                  cluster0002-phc2sysOpts: "-a -r -n 24"
+                  cluster0002-resourceName: "du_mh"
+                  cluster0002-vlan: "3621"
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-site-nw-templatized-config
+placementRef:
+  name: placement-policy-site-nw-templatized-config
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-site-nw-templatized-config
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-site-nw-templatized-config
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: In
+        values:
+          - 'true'
+---
