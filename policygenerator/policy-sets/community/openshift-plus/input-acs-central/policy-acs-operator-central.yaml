@@ -3,11 +3,23 @@ kind: Namespace
 metadata:
   name: stackrox
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rhacs-operator
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: rhacs-operator-group
+  namespace: rhacs-operator
+spec: {}
+---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
   name: rhacs-operator
-  namespace: openshift-operators
+  namespace: rhacs-operator
 spec:
   channel: latest
   installPlanApproval: Automatic
