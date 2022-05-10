@@ -142,18 +142,6 @@ spec:
       serviceAccountName: create-cluster-init
       terminationGracePeriodSeconds: 30
 ---
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: rhacs-operator
-  namespace: openshift-operators
-spec:
-  channel: latest
-  installPlanApproval: Automatic
-  name: rhacs-operator
-  source: redhat-operators
-  sourceNamespace: openshift-marketplace
----
 apiVersion: platform.stackrox.io/v1alpha1
 kind: SecuredCluster
 metadata:
