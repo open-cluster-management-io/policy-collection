@@ -42,7 +42,7 @@ spec:
                   name: ansible-automation-operator
                   namespace: ansible-automation-platform
                 spec:
-                  channel: early-access-cluster-scoped
+                  channel: stable-2.1-cluster-scoped
                   installPlanApproval: Automatic
                   name: ansible-automation-platform-operator
                   source: redhat-operators
@@ -63,7 +63,7 @@ spec:
                 metadata:
                   namespace: ansible-automation-platform
                 spec:
-                  displayName: Ansible Automation Platform (early access)
+                  displayName: Ansible Automation Platform
                 status:
                   phase: Succeeded   # check the csv status to determine if operator is running or not
 ---
