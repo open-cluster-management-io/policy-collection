@@ -133,6 +133,7 @@ Policy  | Description | Prerequisites
 [Policy to configure Github identity provider in IDP ](./CM-Configuration-Management/policy-idp-sample-github.yaml) | Use this policy to apply Github OAuth to managed clusters through IDP . | For more information on this operator, see the IDP documentation: [Identity configuration management for Kubernetes](https://identitatem.github.io/idp-mgmt-docs/). NOTE: IDP Operator must be installed before using this policy.
 [Policy to install the OpenShift File Integrity operator](./CM-Configuration-Management/policy-file-integrity-operator.yaml) | Use the *File Integrity Operator* to continually run file integrity checks on the cluster nodes. This policy becomes `NonCompliant` when a `FileIntegrityNodeStatus` returns a status of `Failed`, which indicates files on the nodes have changed. | OpenShift 4.x is required. See [Understanding the File Integrity Operator](https://docs.openshift.com/container-platform/latest/security/file_integrity_operator/file-integrity-operator-understanding.html) for more details.
 [Policy to install AWS MachineSets on OpenShift](./CM-Configuration-Management/policy-aws-machine-sets.yaml) | This policy creates 3 OpenShift MachineSets that are intended for installing OpenShift Cluster Storage on AWS. | OpenShift 4.x is required. These MachineSets also require AWS and contain image IDs that are specific to OpenShift 4.9. Update the AMI ids in the policy prior to use.  See the comments in the policy for additional details.
+[Policy to install RHODA Operator on OpenShift](./CM-Configuration-Management/policy-rhoda-operator.yaml) | This policy creates Red Hat OpenShift Database Access Operator on managed clusters and hub clusters allow users to onnect to managed databases from their apps deployed in OpenShift. | OpenShift 4.10 is required. Consult the [documentation](https://access.redhat.com/documentation/en-us/red_hat_openshift_database_access/1/html-single/quick_start_guide/index) for more information
 
 ### Contingency Planning
 
@@ -211,7 +212,7 @@ Policy  | Description | Prerequisites
 [Sysdig Agent](./SI-System-and-Information-Integrity/policy-sysdig.yaml) | The Sysdig Secure DevOps Platform converges security and compliance with performance and capacity monitoring to create a secure DevOps workflow. It uses the same data to monitor and secure, so you can correlate system activity with Kubernetes services. | Check [Sysdig](https://sysdig.com/) and start a [Free Trial](https://go.sysdig.com/rhacm-trial). If the agent fails to integrate with an OpenShift 4.x host kernel, install the [OpenShift Kernel Configuration](./CM-Configuration-Management/policy-kernel-devel.yaml) policy.
 [Black Duck Connector](./SI-System-and-Information-Integrity/policy-blackduck.yaml) | By integrating Black Duck with Kubernetes and OpenShift, you can automatically scan, identify, and monitor all your container images to gain visibility into, and control over, any security vulnerabilities or policy violations found in the open source code that exists in your containers. | Check out [Black Duck for OpenShift](https://www.synopsys.com/software-integrity/partners/red-hat.html) and [read more](https://www.synopsys.com/software-integrity/security-testing/software-composition-analysis/demo.html).
 
-### Templatized Policies 
+### Templatized Policies
 
 The following sample policies demonstrate the use of templatization feature to build flexible policies
 
@@ -240,7 +241,7 @@ Some policy consumers are packaged as [operators](https://coreos.com/operators/)
 - A OperatorGroup
 - A Subscription
 - The custom resource defined by the consumer to enforce custom policies
-For more specific examples of this method of deploying a policy consumer from the operator hub, see the [Policy to install `cert-manager`](./CM-Configuration-Management/policy-cert-manager-operator.yaml) and the [Ansible Automation Platform operator](./CM-Configuration-Management/policy-automation-operator.yaml).
+  For more specific examples of this method of deploying a policy consumer from the operator hub, see the [Policy to install `cert-manager`](./CM-Configuration-Management/policy-cert-manager-operator.yaml) and the [Ansible Automation Platform operator](./CM-Configuration-Management/policy-automation-operator.yaml).
 
 ### Other custom policy consumers
 Occasionally, policies in this folder might be consumed by controllers that do not fall into either of the two categories previously mentioned. To get the most out of these policies, see the [Security control catalog](#security-control-catalog)
