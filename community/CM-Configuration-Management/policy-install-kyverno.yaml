@@ -119,6 +119,7 @@ spec:
                             readinessProbe:
                               initialDelaySeconds: 35
                               periodSeconds: 20
+                            securityContext: null
                   placement:
                     placementRef:
                       name: kyverno-placement-1
