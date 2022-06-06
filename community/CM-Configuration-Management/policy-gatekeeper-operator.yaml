@@ -103,6 +103,7 @@ spec:
                 name: gatekeeper
               spec:
                 audit:
+                  auditChunkSize: 500
                   logLevel: INFO
                   replicas: 1
                 validatingWebhook: Enabled
