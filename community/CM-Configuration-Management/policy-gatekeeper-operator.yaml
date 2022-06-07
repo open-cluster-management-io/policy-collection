@@ -45,7 +45,7 @@ spec:
                 displayName: Gatekeeper Operator Upstream
                 publisher: github.com/font/gatekeeper-operator
                 sourceType: grpc
-                image: 'quay.io/gatekeeper/gatekeeper-operator-bundle-index:latest'
+                image: 'quay.io/gatekeeper/gatekeeper-operator-bundle-index:v0.2.1'
                 updateStrategy:
                   registryPoll:
                     interval: 45m
