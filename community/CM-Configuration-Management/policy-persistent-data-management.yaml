@@ -66,7 +66,7 @@ spec:
                   annotations:
                     apps.open-cluster-management.io/reconcile-rate: medium
                   name: volsync
-                  namespace: volsync-system 
+                  namespace: volsync-system
                 spec:
                   pathname: https://github.com/stolostron/volsync-chart.git
                   type: Git
@@ -85,12 +85,12 @@ spec:
                 kind: Subscription
                 metadata:
                   annotations:
-                    apps.open-cluster-management.io/git-branch: release-2.4
+                    apps.open-cluster-management.io/git-branch: release-2.5
                     apps.open-cluster-management.io/git-path: volsync
                   labels:
                     app: volsync
                   name: volsync-subscription
-                  namespace: volsync-system 
+                  namespace: volsync-system
                 spec:
                   channel: volsync-system/volsync
                   name: volsync
@@ -101,16 +101,16 @@ spec:
                       - path: spec
                         value:
                           image:
-                            image: registry.redhat.io/rhacm2/volsync-rhel8:v2.4
+                            image: registry.redhat.io/rhacm2/volsync-rhel8:v0.4
                           rclone:
-                            image: registry.redhat.io/rhacm2/volsync-mover-rclone-rhel8:v2.4
+                            image: registry.redhat.io/rhacm2/volsync-mover-rclone-rhel8:v0.4
                           restic:
-                            image: registry.redhat.io/rhacm2/volsync-mover-restic-rhel8:v2.4
+                            image: registry.redhat.io/rhacm2/volsync-mover-restic-rhel8:v0.4
                           rsync:
-                            image: registry.redhat.io/rhacm2/volsync-mover-rsync-rhel8:v2.4
+                            image: registry.redhat.io/rhacm2/volsync-mover-rsync-rhel8:v0.4
                   placement:
                     placementRef:
-                      name: volsync-placement 
+                      name: volsync-placement
                       kind: PlacementRule
           remediationAction: enforce
           severity: low
