@@ -26,6 +26,8 @@ Read our blogs for more information and best practices for Red Hat Advanced Clus
 
 * [Using Policy Metrics to View Compliance Trends](https://cloud.redhat.com/blog/using-policy-metrics-to-view-compliance-trends)
 
+* [Using PolicyReports to Generate Alerts](https://cloud.redhat.com/blog/using-policyreports-to-view-and-alert-for-governance-violations)
+
 ## Red Hat Supported Integrations
 
 * [Initiating Ansible Automation on Policy Violations](https://cloud.redhat.com/blog/initiating-ansible-automation-on-policy-violations)
