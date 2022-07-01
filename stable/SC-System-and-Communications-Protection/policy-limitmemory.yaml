@@ -22,7 +22,7 @@ spec:
             exclude: ["kube-*"]
             include: ["default"]
           object-templates:
-            - complianceType: musthave
+            - complianceType: mustonlyhave
               objectDefinition:
                 apiVersion: v1
                 kind: LimitRange # limit memory usage
