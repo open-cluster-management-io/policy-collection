@@ -124,7 +124,7 @@ spec:
                     placementRef:
                       name: kyverno-placement-1
                       kind: PlacementRule
-            - complianceType: musthave
+            - complianceType: mustonlyhave
               objectDefinition:
                 apiVersion: apps.open-cluster-management.io/v1
                 kind: PlacementRule
