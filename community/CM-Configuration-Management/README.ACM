@@ -39,6 +39,8 @@ then the configmap policy will be in Compliance.
 Once the policy is changed to enforce, the entire policy policy-zts-cmc will become
 compliant.
 
-5) When changing the IP Address of the CMC Server, use the github resources to change the configmap.yaml.  Then Sync the changes on the Application in RHACM using the Sync button.  Changing the Ip Address of the CMC Server on RHACM directly will be overwritten by the automatic sync that happens every few minutes.
+5) When changing the IP Address of the CMC Server, use the github resources to change the configmap.yaml.  
+Then Sync the changes on the Application in RHACM using the Sync button.  Changing the Ip Address of 
+the CMC Server on RHACM directly will be overwritten by the automatic sync that happens every few minutes.
 
 
