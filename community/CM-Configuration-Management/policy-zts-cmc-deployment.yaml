@@ -14,6 +14,42 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
+          name: policy-zts-cmc-reloader-deployment
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps/v1
+                kind: Deployment
+                metadata:
+                  name: reloader-reloader
+                  labels:
+                    app: reloader-reloader
+                spec:
+                  replicas: 1
+                  selector:
+                    matchLabels:
+                      app: reloader-reloader
+                  template:
+                    metadata:
+                      labels:
+                        app: reloader-reloader
+                    spec:
+                      containers:
+                        - name: reloader-reloader
+                          imagePullPolicy: IfNotPresent
+                          image: "stakater/reloader:v0.0.117"
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
           name: policy-configmap-properties-zts-cmc
         spec:
           remediationAction: inform
@@ -37,6 +73,7 @@ spec:
                     CMC_SERVER_PORT = 8443
                     User = system
                     Password = manager
+
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
