@@ -7,16 +7,43 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
-  remediationAction: enforce
+  remediationAction: inform
   disabled: false
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
+          name: policy-configmap-properties-zts-cmc
+        spec:
+          remediationAction: inform
+          severity: low
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                 name: zts-cmc-configmap
+                data:
+                  application.properties: |-
+                    Application = zts_cmc
+                    CMC_SERVER_IP = 44.192.59.213
+                    CMC_SERVER_PORT = 8443
+                    User = system
+                    Password = manager
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
           name: policy-zts-cmc-deployment
         spec:
-          remediationAction: enforce
+          remediationAction: inform
           severity: low
           namespaceSelector:
             exclude:
