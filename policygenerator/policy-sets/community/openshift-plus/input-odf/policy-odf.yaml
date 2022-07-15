@@ -18,7 +18,6 @@ metadata:
   name: odf-operator
   namespace: openshift-storage
 spec:
-  channel: stable-4.9
   installPlanApproval: Automatic
   name: odf-operator
   source: redhat-operators
@@ -30,7 +29,6 @@ metadata:
   name: ocs-operator
   namespace: openshift-storage
 spec:
-  channel: stable-4.9
   installPlanApproval: Automatic
   name: ocs-operator
   source: redhat-operators
@@ -42,7 +40,6 @@ metadata:
   name: mcg-operator
   namespace: openshift-storage
 spec:
-  channel: stable-4.9
   installPlanApproval: Automatic
   name: mcg-operator
   source: redhat-operators
@@ -100,4 +97,20 @@ spec:
     preparePlacement: {}
     replica: 3
     resources: {}
-  version: 4.9.0
+---
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: obc-observability
+  namespace: openshift-storage
+spec:
+  generateBucketName: obc-observability-bucket
+  storageClassName: openshift-storage.noobaa.io
+---
+apiVersion: operator.openshift.io/v1
+kind: Console
+metadata:
+  name: cluster
+spec:
+  plugins:
+  - odf-console
