@@ -46,4 +46,4 @@ Read our blogs for more information and best practices for Red Hat Advanced Clus
 
 * [Latest Integrity Shield protects Red Hat Advanced Cluster Management for Kubernetes policies](https://cloud.redhat.com/blog/latest-integrity-shield-protects-red-hat-advanced-cluster-management-for-kubernetes-policies)
 
-* [Deploying Red Hat Advanced Cluster Security with Red Hat Advanced Cluster Management](https://cloud.redhat.com/blog/deploying-red-hat-advanced-cluster-security-with-red-hat-advanced-cluster-management)
+* [Deploying Red Hat Advanced Cluster Security with Red Hat Advanced Cluster Management](https://cloud.redhat.com/blog/deploying-red-hat-advanced-cluster-security-with-red-hat-advanced-cluster-management-2)
