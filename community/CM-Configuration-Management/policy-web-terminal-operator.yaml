@@ -37,7 +37,7 @@ spec:
                   sourceNamespace: openshift-marketplace
           remediationAction: inform
           severity: medium
-  remediationAction: enforce
+  remediationAction: inform
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
