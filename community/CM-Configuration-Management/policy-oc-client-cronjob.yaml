@@ -68,13 +68,9 @@ spec:
                         activeDeadlineSeconds: 200
                         containers:
                           - name: occlient
-                            image: 'registry.redhat.io/openshift4/ose-cli:v4.8'
-                            command:
-                              - /bin/bash
-                              - '-c'
-                              - |
-                                echo "Put your oc commands here"
-                                oc version  
+                            image: 'registry.redhat.io/openshift4/ose-cli:v4.10'
+                            command: ["/bin/bash"]
+                            args: ["-c", "oc version"]
                         securityContext:
                           privileged: true
                         terminationMessagePath: /dev/termination-log
@@ -99,9 +95,9 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: binding-oc-client
-  placementRef:
-    name: placement-oc-client
-    kind: PlacementRule
+placementRef:
+  name: placement-oc-client
+  kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
 - name: policy-oc-client
@@ -118,4 +114,4 @@ spec:
     type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}
+      - {key: vendor, operator: In, values: ["OpenShift"]}
