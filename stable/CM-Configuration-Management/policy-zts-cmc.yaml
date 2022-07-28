@@ -64,7 +64,7 @@ kind: PlacementBinding
 metadata:
   name: binding-policy-deployment-zts-cmc
 placementRef:
-  name: placement-policy-deployment-zts-cmc
+  name: placement-policy-zts-cmc
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
