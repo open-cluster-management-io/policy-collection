@@ -205,6 +205,8 @@ Policy  | Description | Prerequisites
 ------- | ----------- | -------------
 [OpenShift Certificate Expiration Policy](./SC-System-and-Communications-Protection/policy-ocp4-certs.yaml) | Monitor the OpenShift 4.x namespaces to validate that certificates managed by the infrastructure are rotated as expected. | OpenShift 4.x is required.
 [OpenShift Cluster Operator state policy](./SC-System-and-Communications-Protection/policy-checkclusteroperator.yaml) | This policy alerts when an OpenShift `ClusterOperator` becomes unhealthy. See [ClusterOperator config](https://docs.openshift.com/container-platform/latest/rest_api/config_apis/clusteroperator-config-openshift-io-v1.html) for additional details. | OpenShift 4.x only.
+[Check namespaces in Terminating status](./SC-System-and-Communications-Protection/policy-checknamespaces-terminating.yaml)| check for namespaces in terminating status | check e.g. this [link](https://www.redhat.com/sysadmin/troubleshooting-terminating-namespaces) how to fix this.
+
 
 ### System and Information Integrity
 
