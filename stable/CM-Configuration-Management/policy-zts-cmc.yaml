@@ -7,16 +7,16 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
-  remediationAction: enforce
+  remediationAction: inform
   disabled: false
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-zts-cmc-deployment
+          name: policy-zts-cmc
         spec:
-          remediationAction: enforce
+          remediationAction: inform 
           severity: low
           namespaceSelector:
             exclude:
@@ -62,7 +62,7 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-deployment-zts-cmc
+  name: binding-policy-zts-cmc
 placementRef:
   name: placement-policy-zts-cmc
   kind: PlacementRule
@@ -75,7 +75,7 @@ subjects:
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-deployment-zts-cmc
+  name: placement-policy-zts-cmc
 spec:
   clusterConditions:
   - status: "True"
