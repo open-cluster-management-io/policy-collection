@@ -1,0 +1,62 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-proxy-protocol
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+spec:
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-proxy-protocol
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operator.openshift.io/v1
+            kind: IngressController
+            metadata:
+              finalizers:
+              - ingresscontroller.operator.openshift.io/finalizer-ingresscontroller
+              name: default
+              namespace: openshift-ingress-operator
+            spec:
+              endpointPublishingStrategy:
+                hostNetwork:
+                  protocol: PROXY
+                type: HostNetwork
+        remediationAction: inform
+        severity: low
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: policy-proxy-protocol-placement
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: In
+        values:
+          - "true"
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: policy-proxy-protocol-placement
+placementRef:
+  name: policy-proxy-protocol-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: policy-proxy-protocol
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
