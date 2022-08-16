@@ -5,6 +5,50 @@ metadata:
     openshift.io/cluster-monitoring: "true"
   name: local-quay
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: create-admin-user
+  namespace: local-quay
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: create-admin-user
+  namespace: local-quay
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - create
+  - patch
+  - update
+- apiGroups:
+  - route.openshift.io
+  resources:
+  - routes
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: create-admin-user
+  namespace: local-quay
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: create-admin-user
+subjects:
+- kind: ServiceAccount
+  name: create-admin-user
+  namespace: local-quay
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -49,50 +93,6 @@ spec:
       managed: true
     - managed: true
       kind: tls
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: create-admin-user
-  namespace: local-quay
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: create-admin-user
-  namespace: local-quay
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
-  - list
-  - create
-  - patch
-  - update
-- apiGroups:
-  - route.openshift.io
-  resources:
-  - routes
-  verbs:
-  - get
-  - list
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: create-admin-user
-  namespace: local-quay
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: create-admin-user
-subjects:
-- kind: ServiceAccount
-  name: create-admin-user
-  namespace: local-quay
 ---
 apiVersion: batch/v1
 kind: Job
