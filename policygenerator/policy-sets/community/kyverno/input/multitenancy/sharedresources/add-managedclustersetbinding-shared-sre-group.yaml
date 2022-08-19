@@ -1,0 +1,108 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-managedclustersetbinding-shared-sre-group
+  annotations:
+    policies.kyverno.io/title: Bind all teams to a certain namespace if he started with shared
+    policies.kyverno.io/category: Multi-Tenancy
+    policies.kyverno.io/subject: ClusterRoleBinding
+    policies.kyverno.io/description: >-
+      Note that binding a cluster set to a namespace means that granting access from that namespace to its member clusters. And the bind process requires “managedclustersets/bind” access in the hub cluster which is clarified below. This means you can deploy an ApplicationSet to that namespace and it will be deployed on all Clusters which match the label in the Placement
+      read more at https://open-cluster-management.io/concepts/managedclusterset/#bind-the-clusterset-to-a-workspace-namespace 
+spec:
+  background: false
+  rules:
+  - name: managedclustersetbinding-blue-sre-group
+    match:
+      any:
+      - resources:
+          kinds:
+            - Namespace
+        subjects:
+        - kind: Group
+          name: "blue-sre-group"
+        - kind: Group
+          name: "red-sre-group"          
+    preconditions:
+      any:
+      - key: "{{request.operation}}"
+        operator: In
+        value:
+        - CREATE
+        - UPDATE
+      - key: "{{request.object.metadata.name}}"
+        operator: AnyNotIn
+        value: shared*              
+    generate:
+      apiVersion: cluster.open-cluster-management.io/v1beta1
+      kind: ManagedClusterSetBinding
+      name: blueteam
+      namespace: "{{request.object.metadata.name}}"
+      synchronize: true
+      data:
+        spec:
+          clusterSet: blueteam
+  - name: managedclustersetbinding-red-sre-group
+    match:
+      any:
+      - resources:
+          kinds:
+            - Namespace
+        subjects:
+        - kind: Group
+          name: "red-sre-group"
+        - kind: Group
+          name: "blue-sre-group"          
+    preconditions:
+      any:
+      - key: "{{request.operation}}"
+        operator: In
+        value:
+        - CREATE
+        - UPDATE  
+      - key: "{{request.object.metadata.name}}"
+        operator: AnyNotIn
+        value: shared*           
+    generate:
+      apiVersion: cluster.open-cluster-management.io/v1beta1
+      kind: ManagedClusterSetBinding
+      name: redteam
+      namespace: "{{request.object.metadata.name}}"
+      synchronize: true
+      data:
+        spec:
+          clusterSet: redteam
+  - name: generate-placement-shared-just-label
+    match:
+      any:
+      - resources:
+          kinds:
+            - Namespace
+        subjects:
+        - kind: Group
+          name: "red-sre-group"
+        - kind: Group
+          name: "blue-sre-group"          
+    preconditions:
+      any:
+      - key: "{{request.operation}}"
+        operator: In
+        value:
+        - CREATE
+    generate:
+      apiVersion: cluster.open-cluster-management.io/v1beta1
+      kind: Placement
+      name: shared
+      namespace: "{{request.object.metadata.name}}"
+      synchronize: true
+      data:
+        predicates:
+        - requiredClusterSelector:
+            labelSelector:
+              matchLabels:
+                env: dev   
+          
+          
+          
+

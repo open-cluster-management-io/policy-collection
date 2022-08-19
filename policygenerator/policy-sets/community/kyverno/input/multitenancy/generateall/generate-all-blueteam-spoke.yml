@@ -1,0 +1,134 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-argocd-clusterrolebinding-blue-all
+  annotations:
+    policies.kyverno.io/title: Add ArgoCD Rolebinding
+    policies.kyverno.io/category: Multi-Tenancy
+    policies.kyverno.io/subject: ClusterRoleBinding
+    policies.kyverno.io/description: >-
+      Use of this rule may require an additional binding for the
+      Kyverno ServiceAccount so it has permissions to properly create the RoleBinding.    
+spec:
+  background: false
+  rules:
+  - name: generate-gitops-cluster
+    match:
+      any:
+      - resources:
+          kinds:
+            - Namespace
+        subjects:
+        - kind: Group
+          name: "blue-sre-group"
+    preconditions:
+      any:
+      - key: "{{request.operation}}"
+        operator: In
+        value:
+        - CREATE
+        - UPDATE   
+    generate:
+      apiVersion: apps.open-cluster-management.io/v1beta1
+      kind: GitOpsCluster
+      name: blueteam
+      namespace: "{{request.object.metadata.name}}"
+      spec:
+        argoServer:
+          cluster: local-cluster
+          argoNamespace: blueteam
+        placementRef:
+          kind: Placement
+          apiVersion: cluster.open-cluster-management.io/v1alpha1
+          name: blueteam        
+  - name: generate-managedclustersetbinding-blue-sre-group
+    match:
+      any:
+      - resources:
+          kinds:
+            - Namespace
+        subjects:
+        - kind: Group
+          name: "blue-sre-group"
+    preconditions:
+      any:
+      - key: "{{request.operation}}"
+        operator: In
+        value:
+        - CREATE
+        - UPDATE             
+    generate:
+      apiVersion: cluster.open-cluster-management.io/v1beta1
+      kind: ManagedClusterSetBinding
+      name: blueteam
+      namespace: "{{request.object.metadata.name}}"
+      synchronize: true
+      data:
+        spec:
+          clusterSet: blueteam          
+  - name: generate-placement-blue
+    match:
+      any:
+      - resources:
+          kinds:
+            - Namespace
+        subjects:
+        - kind: Group
+          name: "blue-sre-group"
+    preconditions:
+      any:
+      - key: "{{request.operation}}"
+        operator: In
+        value:
+        - CREATE
+    generate:
+      apiVersion: cluster.open-cluster-management.io/v1beta1
+      kind: Placement
+      name: blueteam
+      namespace: "{{request.object.metadata.name}}"
+      synchronize: true
+      data:
+        spec:
+          clusterSets:
+          - blueteam
+  - name: generate-resourcequota
+    match:
+      resources:
+        kinds:
+        - Namespace
+    generate:
+      apiVersion: v1
+      kind: ResourceQuota
+      name: default-resourcequota
+      synchronize: true
+      namespace: "{{request.object.metadata.name}}"
+      data:
+        spec:
+          hard:
+            requests.cpu: '4'
+            requests.memory: '16Gi'
+            limits.cpu: '4'
+            limits.memory: '16Gi'
+  - name: generate-limitrange
+    match:
+      resources:
+        kinds:
+        - Namespace
+    generate:
+      apiVersion: v1
+      kind: LimitRange
+      name: default-limitrange
+      synchronize: true
+      namespace: "{{request.object.metadata.name}}"
+      data:
+        spec:
+          limits:
+          - default:
+              cpu: 500m
+              memory: 1Gi
+            defaultRequest:
+              cpu: 200m
+              memory: 256Mi
+            type: Container
+                    

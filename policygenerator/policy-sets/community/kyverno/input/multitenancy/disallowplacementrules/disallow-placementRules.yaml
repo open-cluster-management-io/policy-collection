@@ -1,0 +1,17 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-placementrules
+spec:
+  validationFailureAction: audit
+  background: false
+  rules:
+  - name: disallow-placementrules
+    match:
+      resources:
+        kinds:
+        - apps.open-cluster-management.io/v1/PlacementRule
+    validate:
+      message: "Using Placement Rules not allowed"
+      deny: {}          
+ 

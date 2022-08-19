@@ -1,0 +1,45 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-argocd-clusterrolebinding-blue
+  annotations:
+    policies.kyverno.io/title: Add ArgoCD Rolebinding
+    policies.kyverno.io/category: Multi-Tenancy
+    policies.kyverno.io/subject: ClusterRoleBinding
+    policies.kyverno.io/description: >-
+      When a user from Team1 creates a NS a ClusterRoleBinding gets created so
+      it can access ArgoCD.
+spec:
+  background: false
+  rules:
+  - name: generate-clusterrolebinding-blue
+    match:
+      any:
+      - resources:
+          kinds:
+            - Namespace
+        subjects:
+        - kind: Group
+          name: "blue-sre-group"
+    preconditions:
+      any:
+      - key: "{{request.operation}}"
+        operator: In
+        value:
+        - CREATE
+    generate:
+      kind: RoleBinding
+      name: argocdaccess-blueteam
+      namespace: "{{request.object.metadata.name}}"
+      synchronize: true
+      data:
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: admin
+        subjects:
+        - apiGroup: rbac.authorization.k8s.io
+          kind: Group
+          name: blue-sre-group
+          

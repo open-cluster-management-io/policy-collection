@@ -1,0 +1,42 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-placement-red-sre-group
+  annotations:
+    policies.kyverno.io/title: Add ArgoCD Rolebinding
+    policies.kyverno.io/category: Multi-Tenancy
+    policies.kyverno.io/subject: ClusterRoleBinding
+    policies.kyverno.io/description: >-
+      When a user from Team1 creates a NS a ClusterRoleBinding gets created so
+      it can access ArgoCD.
+spec:
+  background: false
+  rules:
+  - name: generate-placement-red
+    match:
+      any:
+      - resources:
+          kinds:
+            - Namespace
+        subjects:
+        - kind: Group
+          name: "red-sre-group"
+    preconditions:
+      any:
+      - key: "{{request.operation}}"
+        operator: In
+        value:
+        - CREATE
+    generate:
+      apiVersion: cluster.open-cluster-management.io/v1beta1
+      kind: Placement
+      name: redteam
+      namespace: "{{request.object.metadata.name}}"
+      synchronize: true
+      data:
+        spec:
+          clusterSets:
+          - redteam
+          
+

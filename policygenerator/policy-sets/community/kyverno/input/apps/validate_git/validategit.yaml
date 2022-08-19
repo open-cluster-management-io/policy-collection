@@ -1,0 +1,32 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-git-sources
+  annotations:
+    policies.kyverno.io/title: Verify Git Sources
+    policies.kyverno.io/category: Git
+    policies.kyverno.io/severity: medium
+    kyverno.io/kyverno-version: 1.6.2
+    policies.kyverno.io/minversion: 1.6.0
+    kyverno.io/kubernetes-version: "1.23"
+    policies.kyverno.io/subject: GitRepository, Bucket, HelmRepository, ImageRepository
+    policies.kyverno.io/description: >-
+      In a production environment,
+      it may be desired to restrict these to only known sources to prevent
+      accessing outside sources. This policy verifies that each of the Git
+      sources comes from a trusted location.      
+spec:  
+  validationFailureAction: audit
+  rules:
+    - name: validate-github-repositories
+      match:
+        any:
+        - resources:
+            kinds:
+              - argoproj.io/v1alpha1/Application
+              - argoproj.io/v1alpha1/ApplicationSet
+      validate:
+        message: ".spec.url must be from a repository within the myorg organization."
+        pattern:
+          spec:
+            url: "https://github.com/ch-stark/?* | ssh://git@github.com:ch-stark/?*"

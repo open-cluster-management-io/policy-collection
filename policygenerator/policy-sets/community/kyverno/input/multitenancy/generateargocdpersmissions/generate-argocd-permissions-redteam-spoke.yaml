@@ -1,0 +1,45 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-argocd-clusterrolebinding-red
+  annotations:
+    policies.kyverno.io/title: Add ArgoCD Rolebinding
+    policies.kyverno.io/category: Multi-Tenancy
+    policies.kyverno.io/subject: ClusterRoleBinding
+    policies.kyverno.io/description: test
+spec:
+  background: false
+  rules:
+  - name: generate-clusterrolebinding-red
+    match:
+      any:
+      - resources:
+          kinds:
+            - Namespace
+        subjects:
+        - kind: Group
+          name: "red-sre-group"
+    preconditions:
+      any:
+      - key: "{{request.operation}}"
+        operator: In
+        value:
+        - CREATE
+    generate:
+      kind: RoleBinding
+      name: redteamargocdaccess
+      namespace: "{{request.object.metadata.name}}"
+      synchronize: true
+      data:
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: admin
+        subjects:
+        - apiGroup: rbac.authorization.k8s.io
+          kind: Group
+          name: red-sre-group
+
+
+             
+
