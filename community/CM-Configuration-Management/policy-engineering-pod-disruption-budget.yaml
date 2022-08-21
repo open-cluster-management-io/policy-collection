@@ -19,7 +19,6 @@ spec:
           remediationAction: enforce # will be overridden by remediationAction in parent policy
           severity: low
           namespaceSelector:
-            exclude: ["kube-*"]
             include: ["default"]
           object-templates:
             - complianceType: musthave
@@ -42,7 +41,6 @@ spec:
           remediationAction: enforce # will be overridden by remediationAction in parent policy
           severity: low
           namespaceSelector:
-            exclude: ["kube-*"]
             include: ["default"]
           object-templates:
             - complianceType: musthave

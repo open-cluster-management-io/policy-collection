@@ -16,8 +16,6 @@ spec:
           name: allow-http-and-https
         spec:
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default
           object-templates:
@@ -46,8 +44,6 @@ spec:
           name: deny-all
         spec:
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default
           object-templates:
@@ -69,8 +65,6 @@ spec:
           name: allow-same-namespace
         spec:
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default
           object-templates:
@@ -94,8 +88,6 @@ spec:
           name: allow-pod-and-namespace-both
         spec:
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default
           object-templates:
