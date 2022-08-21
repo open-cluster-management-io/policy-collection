@@ -24,11 +24,6 @@ spec:
             spec:
                 remediationAction: inform
                 severity: low
-                namespaceselector:
-                    exclude:
-                        - kube-*
-                    include:
-                        - '*'
                 object-templates:
                     - complianceType: musthave
                       objectDefinition:
@@ -90,11 +85,6 @@ spec:
         spec:
           remediationAction: inform
           severity: low
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - default
           object-templates:
             - complianceType: musthave
               objectDefinition:

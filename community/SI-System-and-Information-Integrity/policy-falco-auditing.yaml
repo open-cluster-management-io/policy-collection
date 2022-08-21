@@ -38,9 +38,6 @@ spec:
         spec:
           remediationAction: inform # will be overridden by remediationAction in parent policy
           severity: low
-          namespaceSelector:
-            include:
-              - "falco"
           object-templates:
             - complianceType: musthave
               objectDefinition:

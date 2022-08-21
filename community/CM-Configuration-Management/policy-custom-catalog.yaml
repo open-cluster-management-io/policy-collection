@@ -18,11 +18,6 @@ spec:
         spec:
           remediationAction: inform
           severity: medium
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - default
           object-templates:
             - complianceType: musthave
               objectDefinition:

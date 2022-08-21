@@ -1,11 +1,11 @@
-#This sample policy demonstrates building a configmap with managedcluster specific info using managed-cluster templates
+# This sample policy demonstrates building a configmap with managedcluster specific info using managed-cluster templates
 # such  configmap can later be referenced in other policies to configure target cluster specific values.
 
-#NOTES
-#All cluster labels are available on the managed cluster env  as clusterclaim resources. 
-#fromClusterClaim() can be used to retrive the values of  DEFAULT LABELS like id.openshift.io, version.openshift.io etc are available on all managed clusters.
+# NOTES
+# All cluster labels are available on the managed cluster env  as clusterclaim resources. 
+# fromClusterClaim() can be used to retrive the values of  DEFAULT LABELS like id.openshift.io, version.openshift.io etc are available on all managed clusters.
 
-#In the below policy, 
+# In the below policy, 
 # a configmap is created with the cluster specific info like id, version retrieved through fromClusterClaim func
 
 apiVersion: policy.open-cluster-management.io/v1
