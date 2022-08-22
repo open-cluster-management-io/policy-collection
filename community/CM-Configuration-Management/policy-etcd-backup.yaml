@@ -16,8 +16,6 @@ spec:
           name: policy-etcd-backup
         spec:
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default
           object-templates:

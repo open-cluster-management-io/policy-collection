@@ -18,14 +18,11 @@ spec:
         spec:
           remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["*"]
           object-templates:
             - complianceType: musthave
               objectDefinition:
                 apiVersion: v1
-                kind: Namespace # must have openshift-pao
+                kind: Namespace # must have namespace openshift-performance-addon
                 metadata:
                   name: openshift-performance-addon
                 spec: {}
@@ -37,9 +34,6 @@ spec:
         spec:
           remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["*"]
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -60,9 +54,6 @@ spec:
         spec:
           remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["*"]
           object-templates:
             - complianceType: musthave
               objectDefinition:

@@ -1,6 +1,6 @@
-#This policy uses the Config Map reloader to restart the deployment
-#when the Configmap changes.  
-#https://github.com/stakater/Reloader/blob/master/LICENSE
+# This policy uses the Config Map reloader to restart the deployment
+# when the Configmap changes.  
+# https://github.com/stakater/Reloader/blob/master/LICENSE
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
@@ -22,8 +22,6 @@ spec:
           remediationAction: inform
           severity: low
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default
           object-templates:
@@ -58,8 +56,6 @@ spec:
           remediationAction: inform 
           severity: low
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default 
           object-templates:

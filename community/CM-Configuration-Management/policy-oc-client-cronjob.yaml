@@ -16,11 +16,6 @@ spec:
       metadata:
         name: policy-oc-client
       spec:
-        namespaceSelector:
-          exclude:
-            - kube-*
-          include:
-            - default
         object-templates:
           - complianceType: musthave
             objectDefinition:

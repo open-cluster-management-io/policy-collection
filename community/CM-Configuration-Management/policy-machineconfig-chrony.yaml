@@ -15,11 +15,6 @@ spec:
         metadata:
           name: add-chrony-worker
         spec:
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - default
           object-templates:
             - complianceType: musthave
               objectDefinition:

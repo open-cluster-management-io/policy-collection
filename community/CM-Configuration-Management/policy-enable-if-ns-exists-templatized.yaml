@@ -1,13 +1,13 @@
-#This demonstrates enabling root policy based on status of a resource on the hub-cluster , using templates
+# This demonstrates enabling root policy based on status of a resource on the hub-cluster , using templates
 # Below shows two policies
 # 1 - policy-conditionalconfigmap : Enforces a configmap resource in namespace "test", it is disabled by default.
 # 2 - policy-conditionalconfigmap-enabler : Checks if namespace "test" exists  and if it exists , 
 #                                           enables the above policy #1 (policy-conditionalconfigmap) that enforces a configmap .
 
-#NOTE
-#The file has 2 related policies clubbed together, 
-#when deploying through GRC UI Editor pls copy paste each policy resource individually as the ui can handle only one policy at a time.
-#pls make sure to deploy both policies in the same namespace and replace any placeholder <POLICIESNS> in this file with the policy namespace.
+# NOTE
+# The file has 2 related policies clubbed together, 
+# when deploying through GRC UI Editor pls copy paste each policy resource individually as the ui can handle only one policy at a time.
+# pls make sure to deploy both policies in the same namespace and replace any placeholder <POLICIESNS> in this file with the policy namespace.
 
 
 apiVersion: policy.open-cluster-management.io/v1
@@ -30,11 +30,6 @@ spec:
         spec:
           remediationAction: inform
           severity: low
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - default
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -66,11 +61,6 @@ spec:
         spec:
           remediationAction: inform
           severity: low
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - default
           object-templates:
             - complianceType: musthave
               objectDefinition:

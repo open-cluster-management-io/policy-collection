@@ -19,7 +19,6 @@ spec:
           remediationAction: inform # will be overridden by remediationAction in parent policy
           severity: high
           namespaceSelector:
-            exclude: ["kube-*"]
             include: ["default"]
           object-templates:
             - complianceType: mustnothave

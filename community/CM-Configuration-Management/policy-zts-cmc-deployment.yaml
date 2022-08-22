@@ -19,8 +19,6 @@ spec:
           remediationAction: inform
           severity: low
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default
           object-templates:
@@ -55,8 +53,6 @@ spec:
           remediationAction: inform
           severity: low
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default
           object-templates:
@@ -83,8 +79,6 @@ spec:
           remediationAction: inform
           severity: low
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default 
           object-templates:
