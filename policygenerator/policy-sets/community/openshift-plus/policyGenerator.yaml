@@ -36,6 +36,7 @@ policies:
 - name: policy-acs-central-ca-bundle
   categories:
     - SI System and Information Integrity
+  consolidateManifests: false
   controls:
     - SI-5 Security Alerts Advisories and Directives
   manifests:
