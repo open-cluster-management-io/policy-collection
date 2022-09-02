@@ -44,6 +44,7 @@ policies:
 - name: policy-advanced-managed-cluster-security
   categories:
     - SI System and Information Integrity
+  consolidateManifests: false
   controls:
     - SI-5 Security Alerts Advisories and Directives
   manifests:
