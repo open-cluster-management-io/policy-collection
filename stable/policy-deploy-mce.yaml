@@ -1,0 +1,97 @@
+# This policy deploys the multicluster engine for Kubernetes operator
+# and verifies the installation by checking the ClusterServiceVersion 
+# is indeed phase: Succeeded.
+#
+# If set to "enforce" it will install the operator.
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-deploy-multicluster-engine
+  annotations:
+    policy.open-cluster-management.io/categories: NIST SP 800-53
+    policy.open-cluster-management.io/controls: CM Configuration Management
+    policy.open-cluster-management.io/standards: CM-2 Baseline Configuration
+spec:
+  disabled: false
+  remediationAction: inform
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: multicluster-engine
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: multicluster-engine    # can be user-configurable, be sure to update the references below
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  name: multicluster-engine
+                  namespace: multicluster-engine
+                spec:
+                  name: multicluster-engine
+                  channel: stable-2.1    # the latest available as of Fall 2022
+                  installPlanApproval: Automatic
+                  source: redhat-operators
+                  sourceNamespace: openshift-marketplace
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1
+                kind: OperatorGroup
+                metadata:
+                  name: multicluster-engine-operatorgroup
+                  namespace: multicluster-engine
+                spec:
+                  targetNamespaces:
+                    - multicluster-engine
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: multicluster.openshift.io/v1
+                kind: MultiClusterEngine
+                metadata:
+                  name: multiclusterengine
+                spec:
+                  availabilityConfig: Basic   # can be either high (for HA config) or basic. for SNO use basic
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: ClusterServiceVersion
+                metadata:
+                  namespace: multicluster-engine
+                spec:
+                  displayName: multicluster engine for Kubernetes
+                status:
+                  phase: Succeeded    # check the csv status to determine if operator is running or not
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-deploy-mce
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: mce, operator: In, values: ["true"]}
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: placement-binding-deploy-mce
+placementRef:
+  name: placement-deploy-mce
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: policy-deploy-multicluster-engine
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
