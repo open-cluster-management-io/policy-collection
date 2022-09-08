@@ -1,0 +1,118 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-openshift-serverless
+  annotations:
+    policy.open-cluster-management.io/standards: Platform
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-openshift-serverless-namespaces
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:   
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  labels:
+                    openshift.io/cluster-monitoring: "true"
+                  name: openshift-serverless
+            - complianceType: musthave
+              objectDefinition:   
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  labels:
+                    kubernetes.io/metadata.name: knative-serving
+                  name: knative-serving
+            - complianceType: musthave
+              objectDefinition:   
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  labels:
+                    kubernetes.io/metadata.name: knative-eventing
+                  name: knative-eventing
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-openshift-serverless-operator
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  labels:
+                    operators.coreos.com/serverless-operator.openshift-serverless: ""
+                  name: serverless-operator
+                  namespace: openshift-serverless
+                spec:
+                  channel: stable
+                  installPlanApproval: Automatic
+                  name: serverless-operator
+                  source: redhat-operators
+                  sourceNamespace: openshift-marketplace
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1
+                kind: OperatorGroup
+                metadata:
+                  name: openshift-serverless
+                  namespace: openshift-serverless
+                spec: {}
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-openshift-serverless-serving
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operator.knative.dev/v1alpha1
+                kind: KnativeServing
+                metadata:
+                    name: knative-serving
+                    namespace: knative-serving
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-openshift-serverless
+placementRef:
+  name: placement-policy-openshift-serverless
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-openshift-serverless
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-openshift-serverless
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}

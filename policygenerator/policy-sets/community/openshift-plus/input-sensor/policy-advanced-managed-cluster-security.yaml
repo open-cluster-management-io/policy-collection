@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: stackrox
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rhacs-operator
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: rhacs-operator-group
+  namespace: rhacs-operator
+spec: {}
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: rhacs-operator
+  namespace: rhacs-operator
+spec:
+  channel: latest
+  installPlanApproval: Automatic
+  name: rhacs-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+---
+apiVersion: v1
+data:
+  admission-control-cert.pem: '{{hub fromSecret "policies" "admission-control-tls" "admission-control-cert.pem" hub}}'
+  admission-control-key.pem: '{{hub fromSecret "policies" "admission-control-tls" "admission-control-key.pem" hub}}'
+  ca.pem: '{{hub fromSecret "policies" "admission-control-tls" "ca.pem" hub}}'
+kind: Secret
+metadata:
+  name: admission-control-tls
+  namespace: stackrox
+type: Opaque
+---
+apiVersion: v1
+data:
+  collector-cert.pem: '{{hub fromSecret "policies" "collector-tls" "collector-cert.pem" hub}}'
+  collector-key.pem: '{{hub fromSecret "policies" "collector-tls" "collector-key.pem" hub}}'
+  ca.pem: '{{hub fromSecret "policies" "collector-tls" "ca.pem" hub}}'
+kind: Secret
+metadata:
+  name: collector-tls
+  namespace: stackrox
+type: Opaque
+---
+apiVersion: v1
+data:
+  sensor-cert.pem: '{{hub fromSecret "policies" "sensor-tls" "sensor-cert.pem" hub}}'
+  sensor-key.pem: '{{hub fromSecret "policies" "sensor-tls" "sensor-key.pem" hub}}'
+  ca.pem: '{{hub fromSecret "policies" "sensor-tls" "ca.pem" hub}}'
+  acs-host: '{{hub fromSecret "policies" "sensor-tls" "acs-host" hub}}'
+kind: Secret
+metadata:
+  name: sensor-tls
+  namespace: stackrox
+type: Opaque
+---
+apiVersion: platform.stackrox.io/v1alpha1
+kind: SecuredCluster
+metadata:
+  namespace: stackrox
+  name: stackrox-secured-cluster-services
+spec:
+  clusterName: |
+    {{ fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "cluster-name" | base64dec }}
+  auditLogs:
+    collection: Auto
+  centralEndpoint: |
+    {{ fromSecret "stackrox" "sensor-tls" "acs-host" | base64dec }}
+  admissionControl:
+    listenOnCreates: false
+    listenOnEvents: true
+    listenOnUpdates: false
+  perNode:
+    collector:
+      collection: KernelModule
+      imageFlavor: Regular
+    taintToleration: TolerateTaints

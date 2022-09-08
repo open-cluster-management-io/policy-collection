@@ -18,15 +18,11 @@ spec:
         spec:
           remediationAction: inform
           severity: low
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - default
           object-templates:
             - complianceType: mustnothave
               objectDefinition:
                 kind: Secret
+                apiVersion: v1
                 metadata:
                   name: kubeadmin
                   namespace: kube-system

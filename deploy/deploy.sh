@@ -9,10 +9,10 @@ help () {
   echo ""
   echo "Prerequisites:"
   echo " - oc or kubectl CLI must be pointing to the cluster to which to deploy policies"
-  echo " - The desired cluster namespace should already exist"
   echo ""
   echo "Usage:"
-  echo "  ./deploy.sh [-u <url>] [-b <branch>] [-p <path/to/dir>] [-n <namespace>] [-a|--name <resource-name>]"
+  echo "  ./deploy.sh [-u <url>] [-b <branch>] [-p <path/to/dir>] [-n <namespace>]"
+  echo "              [-a|--name <resource-name>] [--deploy-app] [--dry-run]"
   echo ""
   echo "  -h|--help                   Display this menu"
   echo "  -u|--url <url>              URL to the Git repository"
@@ -27,6 +27,9 @@ help () {
   echo '                                (Default name: "demo-stable-policies")'
   echo "  -s|--sync <rate>            How frequently the github resources are compared to the hub resources"
   echo '                                (Default rate: "medium") Rates: "high", "medium", "low", "off"'
+  echo "  --deploy-app                Create an Application manifest for additional visibility in the UI"
+  echo "                                (Search should also be enabled in the Hub cluster)"
+  echo "  --dry-run                   Print the YAML to stdout without applying them to the cluster"
   echo ""
 }
 
@@ -68,6 +71,14 @@ while [[ $# -gt 0 ]]; do
             RATE=${1}
             shift
             ;;
+            --deploy-app)
+            shift
+            DEPLOY_APP="true"
+            ;;
+            --dry-run)
+            shift
+            DRY_RUN="true"
+            ;;
             *)    # default
             echo "Invalid input: ${1}"
             exit 1
@@ -87,6 +98,8 @@ echo "Git URL:            ${GH_URL:=https://github.com/stolostron/policy-collect
 echo "Git Branch:         ${GH_BRANCH:=main}"
 echo "Git Path:           ${GH_PATH:=stable}"
 echo "Sync Rate:          ${RATE:=medium}"
+echo "Create Application: ${DEPLOY_APP:=false}"
+echo "Dry run:            ${DRY_RUN:=false}"
 echo "====================================================="
 
 while read -r -p "Would you like to proceed (y/n)? " response; do
@@ -97,6 +110,22 @@ while read -r -p "Would you like to proceed (y/n)? " response; do
                   ;;
   esac
 done
+
+if [ "$DRY_RUN" != "true" ]; then
+  # Check for the namespace
+  echo "* Checking for namespace ${NAMESPACE}"
+  if ! kubectl get ns ${NAMESPACE} &>/dev/null; then
+    while read -r -p "Namespace '${NAMESPACE}' not found. Would you like to create it (y/n)? " response; do
+      case "$response" in
+        Y|y|Yes|yes ) kubectl create ns "${NAMESPACE}"
+                      break
+                      ;;
+        N|n|No|no )   exit 1
+                      ;;
+      esac
+    done
+  fi
+fi
 
 # Populate the Channel template
 CHAN_CFG=$(cat "channel_template.json" |
@@ -113,18 +142,45 @@ SUBSCRIPTION_CFG=$(cat "subscription_template.json" |
   sed "s/##NAMESPACE##/${NAMESPACE}/g")
 echo "$SUBSCRIPTION_CFG" > subscription_patch.json
 
+# The Application and Placement are only needed for `--deploy-app`
+if [ "${DEPLOY_APP}" = "true" ]; then
+  # Populate the Application template
+  APPLICATION_CFG=$(cat "application_template.json" |
+    sed "s/##NAME##/${NAME}/g")
+  echo "$APPLICATION_CFG" > application_patch.json
+
+  # Populate the Placement templates
+  PLACEMENT_CFG=$(cat "placement_template.json" |
+    sed "s/##NAME##/${NAME}/g")
+  echo "$PLACEMENT_CFG" > placement_patch.json
+  SUB_PLACEMENT_CFG=$(cat "subscription_placement_template.json" |
+    sed "s/##NAME##/${NAME}/g")
+  echo "$SUB_PLACEMENT_CFG" > subscription_placement_patch.json
+fi
+
 # Populate the Kustomize template
 KUST_CFG=$(cat "kustomization_template.yaml" |
   sed "s/##NAME##/${NAME}/g" |
   sed "s/##NAMESPACE##/${NAMESPACE}/g")
+# Uncomment Application manifests to generate them
+if [ "${DEPLOY_APP}" = "true" ]; then
+  KUST_CFG=$(echo "$KUST_CFG" | sed "s/##//g")
+fi
 echo "$KUST_CFG" > kustomization.yaml
 
 # Deploy the resources to the cluster
-kubectl kustomize . > resources.yaml
-kubectl apply -f resources.yaml
+kubectl kustomize . > manifests.yaml
+echo "* Subscription manifests saved to 'manifests.yaml'"
+if [ "$DRY_RUN" = "true" ]; then
+  echo "* Dry-run is enabled. Not creating resources on cluster."
+  echo "* Displaying manifests from manifests.yaml:"
+  echo "---"
+  cat manifests.yaml
+else
+  printf ""
+  kubectl apply -f manifests.yaml
+fi
 
 # Remove artifacts
-rm channel_patch.json
-rm subscription_patch.json
+rm *_patch.json
 rm kustomization.yaml
-rm resources.yaml

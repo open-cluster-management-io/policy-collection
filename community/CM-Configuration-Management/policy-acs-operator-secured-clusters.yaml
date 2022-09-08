@@ -35,6 +35,20 @@ spec:
               kind: Namespace
               metadata:
                 name: stackrox
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                name: rhacs-operator
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: operators.coreos.com/v1
+              kind: OperatorGroup
+              metadata:
+                name: rhacs-operator-group
+                namespace: rhacs-operator
+              spec: {}
   - objectDefinition:
       apiVersion: policy.open-cluster-management.io/v1
       kind: ConfigurationPolicy
@@ -50,7 +64,7 @@ spec:
               kind: Subscription
               metadata:
                 name: rhacs-operator
-                namespace: openshift-operators
+                namespace: rhacs-operator
               spec:
                 channel: latest
                 installPlanApproval: Automatic

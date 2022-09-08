@@ -1,6 +1,9 @@
 # This policy installs the Ansible Automation Platform operator.  Many
 # new custom resources are defined that can be added to this policy to
 # install additional components of the Ansible Automation Platform.
+# This policy creates the Operator, a Controller Instance and an Automation Hub.
+# For more details on setting up Ansible, see:
+# https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.1/html/getting_started_with_automation_hub/index
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
@@ -10,7 +13,6 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline
 spec:
-  remediationAction: enforce
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -19,7 +21,7 @@ spec:
         metadata:
           name: ansible-automation-platform
         spec:
-          remediationAction: inform
+          remediationAction: enforce
           severity: high
           object-templates:
             - complianceType: musthave
@@ -43,11 +45,72 @@ spec:
                   name: ansible-automation-operator
                   namespace: ansible-automation-platform
                 spec:
-                  channel: early-access-cluster-scoped
+                  channel: stable-2.1-cluster-scoped
                   installPlanApproval: Automatic
                   name: ansible-automation-platform-operator
                   source: redhat-operators
                   sourceNamespace: openshift-marketplace
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: automationhub.ansible.com/v1beta1
+                kind: AutomationHub
+                metadata:
+                  name: automation-hub
+                  namespace: ansible-automation-platform
+                spec:
+                  route_tls_termination_mechanism: Edge
+                  ingress_type: Route
+                  loadbalancer_port: 80
+                  file_storage_size: 100Gi
+                  image_pull_policy: IfNotPresent
+                  web:
+                    replicas: 1
+                  file_storage_access_mode: ReadWriteOnce
+                  content:
+                    log_level: INFO
+                    replicas: 2
+                  postgres_storage_requirements:
+                    limits:
+                      storage: 50Gi
+                    requests:
+                      storage: 8Gi
+                  api:
+                    log_level: INFO
+                    replicas: 1
+                  postgres_resource_requirements:
+                    limits:
+                      cpu: 1000m
+                      memory: 8Gi
+                    requests:
+                      cpu: 500m
+                      memory: 2Gi
+                  loadbalancer_protocol: http
+                  resource_manager:
+                    replicas: 1
+                  storage_type: File
+                  worker:
+                    replicas: 2
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: automationcontroller.ansible.com/v1beta1
+                kind: AutomationController
+                metadata:
+                  name: automation
+                  namespace: ansible-automation-platform
+                spec:
+                  admin_user: admin
+                  create_preload_data: true
+                  garbage_collect_secrets: false
+                  image_pull_policy: IfNotPresent
+                  loadbalancer_port: 80
+                  loadbalancer_protocol: http
+                  nodeport_port: 30080
+                  projects_persistence: false
+                  projects_storage_access_mode: ReadWriteMany
+                  projects_storage_size: 8Gi
+                  replicas: 1
+                  route_tls_termination_mechanism: Edge
+                  task_privileged: false
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -64,7 +127,7 @@ spec:
                 metadata:
                   namespace: ansible-automation-platform
                 spec:
-                  displayName: Ansible Automation Platform (early access)
+                  displayName: Ansible Automation Platform
                 status:
                   phase: Succeeded   # check the csv status to determine if operator is running or not
 ---

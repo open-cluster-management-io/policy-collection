@@ -1,0 +1,75 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-acm-hardening
+placementBindingDefaults:
+  name: binding-policy-acm-hardening
+policyDefaults:
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: policies
+  policySets:
+    - acm-hardening
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - NIST SP 800-53
+policies:
+- name: policy-check-backups
+  disabled: false
+  manifests:
+    - path: input-backup/
+  remediationAction: "inform"
+- name: policy-check-policyreports
+  categories:
+    - CA Security Assessment and Authorization
+  complianceType: "mustnothave"
+  controls: 
+    - CA-2 Security Assessments
+  disabled: false
+  manifests:
+    - path: input-policyreport/
+  namespaceSelector:
+    include:
+      - "*"
+    exclude:
+      - "openshift*"
+  remediationAction: "inform"
+- name: policy-subscriptions
+  categories:
+    - SI System and Information Integrity
+  complianceType: "mustnothave"
+  controls: 
+    - SI-5 Security Alerts Advisories and Directives
+  disabled: false
+  manifests:
+    - path: input-subscriptions/
+  namespaceSelector:
+    include:
+      - "*"
+    exclude:
+      - "openshift*"
+  remediationAction: "inform"
+- name: policy-managedclusteraddon-available
+  categories:
+    - CA Security Assessment and Authorization
+  complianceType: "mustnothave"
+  controls:
+    - CA-7 Continuous Monitoring
+  disabled: false
+  manifests:
+    - path: input-managedcluster/
+  namespaceSelector:
+    include:
+      - "*"
+    exclude:
+      - "openshift*"
+  remediationAction: "inform"
+policySets:
+  - name: acm-hardening
+    description: Apply standard best practices for hardening your Red Hat Advanced
+      Cluster Management for Kubernetes installation.
+    placement:
+      placementPath: input/placement.yaml

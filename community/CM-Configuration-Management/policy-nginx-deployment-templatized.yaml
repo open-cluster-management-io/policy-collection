@@ -13,7 +13,7 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
-  remediationAction: enforce
+  remediationAction: inform
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -25,8 +25,6 @@ spec:
           remediationAction: inform
           severity: low
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default
           object-templates:
@@ -39,7 +37,7 @@ spec:
                   labels:
                     app: nginx
                 spec:
-                  replicas: 3
+                  replicas: '{{ if eq (fromClusterClaim "env") "prod" }} {{ 3 | toInt }} {{ else }} {{ 1  | toInt }} {{ end }}'
                   selector:
                     matchLabels:
                       app: nginx

@@ -1,0 +1,68 @@
+# This policy only makes sense to place on the hub cluster.  It shows how a namespace can be
+# created and bound to a ClusterSet.  In this example the namespace policies is created
+# and it is bound to the default ClusterSet.  This is useful when using the Cluster Placement
+# APIs instead of the application PlacementRule APIs.
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+  name: policy-managed-clusterset-binding
+spec:
+  disabled: false
+  remediationAction: inform
+  policy-templates:      
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-managed-clusterset-binding
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              name: policies
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: cluster.open-cluster-management.io/v1beta1
+            kind: ManagedClusterSetBinding
+            metadata:
+              namespace: policies
+              name: default
+            spec:
+              clusterSet: default
+        remediationAction: enforce
+        severity: low
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-managed-clusterset-binding
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+    - key: name
+      operator: In
+      values:
+      - local-cluster
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-managed-clusterset-binding
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-policy-managed-clusterset-binding
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: Policy
+  name: policy-managed-clusterset-binding

@@ -1,0 +1,95 @@
+# This policy installs the IDP operator in the namespace idp-mgmt-config
+# PRE-REQS:  This assumes pre-reqs listed in IDP management docs are already applied on the hub cluster
+# mainly  replacing default ingress with signed certs,
+# see https://identitatem.github.io/idp-mgmt-docs/requirements.html#requirements-and-recommendations
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+  name: policy-rhoda-operator
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-rhoda-operator
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: openshift-dbaas-operator
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: CatalogSource
+                metadata:
+                  name: dbaas-operator
+                  namespace: openshift-marketplace
+                spec:
+                  sourceType: grpc
+                  image: quay.io/osd-addons/dbaas-operator-index@sha256:feac28aae2c33fa77122c1a0663a258b851db83beb2c33a281d6b50eab8b96e4
+                  displayName: DBaaS Operator
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1
+                kind: OperatorGroup
+                metadata:
+                  name: dbaas-operator
+                  namespace: openshift-dbaas-operator
+                spec:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  labels:
+                    operators.coreos.com/dbaas-operator.openshift-dbaas-operator: ""
+                  name: dbaas-operator
+                  namespace: openshift-dbaas-operator
+                spec:
+                  channel: alpha
+                  installPlanApproval: Automatic
+                  name: dbaas-operator
+                  source: dbaas-operator
+                  sourceNamespace: openshift-marketplace
+                  startingCSV: dbaas-operator.v0.1.4
+          remediationAction: inform
+          severity: medium
+  remediationAction: enforce
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-rhoda-operator
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-policy-rhoda-operator
+subjects:
+  - apiGroup: policy.open-cluster-management.io
+    kind: Policy
+    name: policy-rhoda-operator
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-rhoda-operator
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: In
+        values:
+          - 'true'

@@ -1,0 +1,136 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-openshift-plus
+placementBindingDefaults:
+  name: binding-policy-openshift-plus-hub
+policyDefaults:
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: policies
+  policySets:
+    - openshift-plus-hub
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - NIST SP 800-53
+policies:
+# ACS Policies - start
+- name: policy-acs-operator-central
+  categories:
+    - SC System and Communications Protection
+  controls: 
+    - SC-1 Policy and Procedures
+  manifests:
+    - path: input-acs-central/policy-acs-operator-central.yaml
+- name: policy-acs-central-status
+  categories:
+    - SI System and Information Integrity
+  controls:
+    - SI-5 Security Alerts Advisories and Directives
+  manifests:
+    - path: input-acs-central/policy-acs-central-status.yaml
+  remediationAction: inform
+- name: policy-acs-central-ca-bundle
+  categories:
+    - SI System and Information Integrity
+  consolidateManifests: false
+  controls:
+    - SI-5 Security Alerts Advisories and Directives
+  manifests:
+    - path: input-sensor/policy-acs-central-ca-bundle.yaml
+- name: policy-advanced-managed-cluster-security
+  categories:
+    - SI System and Information Integrity
+  consolidateManifests: false
+  controls:
+    - SI-5 Security Alerts Advisories and Directives
+  manifests:
+    - path: input-sensor/policy-advanced-managed-cluster-security.yaml
+  policySets:
+    - openshift-plus-clusters
+- name: policy-advanced-managed-cluster-status
+  categories:
+    - SI System and Information Integrity
+  controls:
+    - SI-5 Security Alerts Advisories and Directives
+  manifests:
+    - path: input-sensor/policy-advanced-managed-cluster-status.yaml
+  policySets:
+    - openshift-plus-hub
+    - openshift-plus-clusters
+  remediationAction: inform
+# ACS Policies - end
+# Observability Policy - start
+- name: policy-ocm-observability
+  categories:
+    - CA Assessment Authorization and Monitoring
+  controls: 
+    - CA-7 Continuous Monitoring
+  manifests:
+    - path: input-acm-observability/
+# Observability Policy - end
+# ODF Policies - start
+- name: policy-odf
+  categories:
+    - SI System and Information Integrity
+  controls: 
+    - SI-7 Software Firmware and Information Integrity
+  manifests:
+    - path: input-odf/policy-odf.yaml
+- name: policy-odf-status
+  categories:
+    - SI System and Information Integrity
+  controls: 
+    - SI-7 Software Firmware and Information Integrity
+  manifests:
+    - path: input-odf/policy-odf-status.yaml
+  remediationAction: inform
+# ODF Policies - end
+# Quay Policies - start
+- name: policy-config-quay
+  categories:
+    - SI System and Information Integrity
+  controls: 
+    - SI-7 Software Firmware and Information Integrity
+  manifests:
+    - path: input-quay/policy-config-quay.yaml
+- name: policy-quay-status
+  categories:
+    - SI System and Information Integrity
+  controls:
+    - SI-7 Software Firmware and Information Integrity
+  manifests:
+    - path: input-quay/policy-quay-status.yaml
+  remediationAction: inform
+# Quay Policies - end
+# Compliance Operator Policies - start
+- name: policy-compliance-operator-install
+  categories:
+    - CA Security Assessment and Authorization
+  controls:
+    - CA-2 Security Assessments
+    - CA-7 Continuous Monitoring
+  manifests:
+    - path: input-compliance/
+  policySets:
+    - openshift-plus-clusters
+    - openshift-plus-hub
+# Compliance Operator Policies - end
+policySets:
+  - description: The OpenShift Platform Plus policy set applies several policies
+      that will install the OpenShift Platform Plus products using best practices
+      that allow them to work well together. This policy set is focused on 
+      the components that install to the Advanced Cluster Management hub.
+    name: openshift-plus-hub
+    placement:
+      placementPath: input/hub-placement.yaml
+  - description: The OpenShift Platform Plus policy set applies several policies
+      that install the OpenShift Platform Plus products using best practices
+      that allow them to work well together. This policy set is focused on 
+      the components that install to every managed cluster.
+    name: openshift-plus-clusters
+    placement:
+      placementPath: input/clusters-placement.yaml

@@ -27,8 +27,6 @@ spec:
                 apiVersion: security.openshift.io/v1
                 kind: SecurityContextConstraints # restricted scc
                 metadata:
-                  annotations:
-                    kubernetes.io/description: restricted denies access to all host features and requires pods to be run with a UID, and SELinux context that are allocated to the namespace.  This is the most restrictive SCC and it is used by default for authenticated users.
                   name: restricted
                 allowHostDirVolumePlugin: false
                 allowHostIPC: false
@@ -39,8 +37,6 @@ spec:
                 allowPrivilegedContainer: false
                 fsGroup:
                   type: MustRunAs
-                groups:
-                - system:authenticated
                 readOnlyRootFilesystem: false
                 requiredDropCapabilities:
                 - KILL

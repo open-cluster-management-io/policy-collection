@@ -1,0 +1,257 @@
+# This policy creates 3 OpenShift MachineSets that are intended for installing OpenShift Cluster Storage on AWS.
+#
+# More details on installing OCS including the creation of the MachineSets is located here:
+# https://red-hat-storage.github.io/ocs-training/training/ocs4/ocs.html#_scale_ocp_cluster_and_add_new_worker_nodes
+#
+# This policy contains an Amazon Machine Identifier which must be updated in the policy.  Obtain the AMI id from: 
+# https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/installing/installing-on-aws#installation-aws-ami-stream-metadata_installing-aws-user-infra
+#
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-ocs-machinesets
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: machineset-ocs-worker1
+        spec:
+          object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: machine.openshift.io/v1beta1
+              kind: MachineSet
+              metadata:
+                labels:
+                  machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                  machine.openshift.io/cluster-api-machine-role: workerocs
+                  machine.openshift.io/cluster-api-machine-type: workerocs
+                name: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-workerocs-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}a'
+                namespace: openshift-machine-api
+              spec:
+                replicas: 1
+                selector:
+                  matchLabels:
+                    machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                    machine.openshift.io/cluster-api-machineset: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-workerocs-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}a'
+                template:
+                  metadata:
+                    labels:
+                      machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                      machine.openshift.io/cluster-api-machine-role: workerocs
+                      machine.openshift.io/cluster-api-machine-type: workerocs
+                      machine.openshift.io/cluster-api-machineset: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-workerocs-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}a'
+                  spec:
+                    metadata:
+                      labels:
+                        cluster.ocs.openshift.io/openshift-storage: ""
+                        node-role.kubernetes.io/worker: ""
+                    providerSpec:
+                      value:
+                        ami:
+                          id: ami-09e637fc5885c13cc
+                        apiVersion: awsproviderconfig.openshift.io/v1beta1
+                        blockDevices:
+                        - ebs:
+                            iops: 0
+                            volumeSize: 120
+                            volumeType: gp2
+                        credentialsSecret:
+                          name: aws-cloud-credentials
+                        deviceIndex: 0
+                        iamInstanceProfile:
+                          id: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-worker-profile'
+                        instanceType: m5.4xlarge
+                        kind: AWSMachineProviderConfig
+                        metadata:
+                          creationTimestamp: null
+                        placement:
+                          availabilityZone: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}a'
+                          region: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}'
+                        publicIp: null
+                        securityGroups:
+                        - filters:
+                          - name: tag:Name
+                            values:
+                            - '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-worker-sg'
+                        subnet:
+                          filters:
+                          - name: tag:Name
+                            values:
+                            - '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-private-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}a'
+                        tags:
+                        - name: 'kubernetes.io/cluster/{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                          value: owned
+                        userDataSecret:
+                          name: worker-user-data
+                    versions:
+                      kubelet: ""
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: machine.openshift.io/v1beta1
+              kind: MachineSet
+              metadata:
+                labels:
+                  machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                  machine.openshift.io/cluster-api-machine-role: workerocs
+                  machine.openshift.io/cluster-api-machine-type: workerocs
+                name: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-workerocs-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}b'
+                namespace: openshift-machine-api
+              spec:
+                replicas: 1
+                selector:
+                  matchLabels:
+                    machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                    machine.openshift.io/cluster-api-machineset: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-workerocs-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}b'
+                template:
+                  metadata:
+                    labels:
+                      machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                      machine.openshift.io/cluster-api-machine-role: workerocs
+                      machine.openshift.io/cluster-api-machine-type: workerocs
+                      machine.openshift.io/cluster-api-machineset: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-workerocs-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}b'
+                  spec:
+                    metadata:
+                      labels:
+                        cluster.ocs.openshift.io/openshift-storage: ""
+                        node-role.kubernetes.io/worker: ""
+                    providerSpec:
+                      value:
+                        ami:
+                          id: ami-09e637fc5885c13cc
+                        apiVersion: awsproviderconfig.openshift.io/v1beta1
+                        blockDevices:
+                        - ebs:
+                            iops: 0
+                            volumeSize: 120
+                            volumeType: gp2
+                        credentialsSecret:
+                          name: aws-cloud-credentials
+                        deviceIndex: 0
+                        iamInstanceProfile:
+                          id: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-worker-profile'
+                        instanceType: m5.4xlarge
+                        kind: AWSMachineProviderConfig
+                        metadata:
+                          creationTimestamp: null
+                        placement:
+                          availabilityZone: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}b'
+                          region: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}'
+                        publicIp: null
+                        securityGroups:
+                        - filters:
+                          - name: tag:Name
+                            values:
+                            - '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-worker-sg'
+                        subnet:
+                          filters:
+                          - name: tag:Name
+                            values:
+                            - '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-private-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}b'
+                        tags:
+                        - name: 'kubernetes.io/cluster/{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                          value: owned
+                        userDataSecret:
+                          name: worker-user-data
+                    versions:
+                      kubelet: ""
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: machine.openshift.io/v1beta1
+              kind: MachineSet
+              metadata:
+                labels:
+                  machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                  machine.openshift.io/cluster-api-machine-role: workerocs
+                  machine.openshift.io/cluster-api-machine-type: workerocs
+                name: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-workerocs-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}c'
+                namespace: openshift-machine-api
+              spec:
+                replicas: 1
+                selector:
+                  matchLabels:
+                    machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                    machine.openshift.io/cluster-api-machineset: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-workerocs-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}c'
+                template:
+                  metadata:
+                    labels:
+                      machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                      machine.openshift.io/cluster-api-machine-role: workerocs
+                      machine.openshift.io/cluster-api-machine-type: workerocs
+                      machine.openshift.io/cluster-api-machineset: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-workerocs-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}c'
+                  spec:
+                    metadata:
+                      labels:
+                        cluster.ocs.openshift.io/openshift-storage: ""
+                        node-role.kubernetes.io/worker: ""
+                    providerSpec:
+                      value:
+                        ami:
+                          id: ami-09e637fc5885c13cc
+                        apiVersion: awsproviderconfig.openshift.io/v1beta1
+                        blockDevices:
+                        - ebs:
+                            iops: 0
+                            volumeSize: 120
+                            volumeType: gp2
+                        credentialsSecret:
+                          name: aws-cloud-credentials
+                        deviceIndex: 0
+                        iamInstanceProfile:
+                          id: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-worker-profile'
+                        instanceType: m5.4xlarge
+                        kind: AWSMachineProviderConfig
+                        metadata:
+                          creationTimestamp: null
+                        placement:
+                          availabilityZone: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}c'
+                          region: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}'
+                        publicIp: null
+                        securityGroups:
+                        - filters:
+                          - name: tag:Name
+                            values:
+                            - '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-worker-sg'
+                        subnet:
+                          filters:
+                          - name: tag:Name
+                            values:
+                            - '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-private-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}c'
+                        tags:
+                        - name: 'kubernetes.io/cluster/{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                          value: owned
+                        userDataSecret:
+                          name: worker-user-data
+                    versions:
+                      kubelet: ""
+  severity: high
+  remediationAction: inform
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-ocs-machinesets
+placementRef:
+  name: placement-policy-ocs-machinesets
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-ocs-machinesets
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-ocs-machinesets
+spec:
+  clusterSelector:
+    matchLabels:
+      local-cluster: 'true'

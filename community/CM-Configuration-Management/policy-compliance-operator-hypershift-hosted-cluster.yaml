@@ -1,0 +1,222 @@
+# This policy assumes that the Compliance Operator is installed and running on
+# the managed clusters. It deploys a scan that checks the master and worker
+# nodes, and verifies compliance with the OpenShift Moderate security benchmark.
+#
+# Please replace "MASTER_NAMEAPACE" to the namespace name of check target hosted
+# cluster.
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-hypershift-scan
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-6 Configuration Settings
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: hypershift-cis-scan
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: compliance.openshift.io/v1alpha1
+                kind: ScanSettingBinding
+                metadata:
+                  name: hypershift-cis-scan
+                  namespace: openshift-compliance
+                profiles:
+                - apiGroup: compliance.openshift.io/v1alpha1
+                  kind: Profile
+                  name: hypershift-tailored-profile
+                settingsRef:
+                  apiGroup: compliance.openshift.io/v1alpha1
+                  kind: ScanSetting
+                  name: default
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: hypershift-tailored-profile
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: compliance.openshift.io/v1alpha1
+                kind: TailoredProfile
+                metadata:
+                  name: hypershift-tailored-profile
+                  namespace: openshift-compliance
+                  annotations:
+                    compliance.openshift.io/product-type: Platform
+                spec:
+                  title: CIS Benchmark for Hypershift
+                  description: CIS Benchmark for Hypershift Master-plane components
+                  extends: ocp4-cis
+                  setValues:
+                    - name: ocp4-var-apiserver-bind-address
+                      value: "0.0.0.0:2040"
+                      rationale: HyperShift uses a different port
+                    - name: ocp4-var-openshift-kube-apiserver-config
+                      value: kas-config
+                      rationale: HyperShift stores configration in a different ConfigMap resource
+                    - name: ocp4-var-openshift-kube-apiserver-config-data-name
+                      value: "config.json"
+                      rationale: Kube API server config values are stored under "config.json" key of the ConfigMap in HyperShift
+                    - name: ocp4-var-openshift-kube-apiserver-namespace
+                      value: MASTER_NAMESPACE
+                      rationale: ConfigMap for Kube API server config is stored in master namespace of a HyperShift hosted cluster
+                    - name: ocp4-var-apiserver-client-ca
+                      value: "/etc/kubernetes/certs/client-ca/ca.crt"
+                      rationale: Certificate and key files are stored in different locations in HyperShift
+                    - name: ocp4-var-apiserver-etcd-ca
+                      value: "/etc/kubernetes/certs/etcd/etcd-client-ca.crt"
+                      rationale: Certificate and key files are stored in different locations in HyperShift
+                    - name: ocp4-var-apiserver-kubelet-certificate-authority
+                      value: "/etc/kubernetes/certs/kubelet-ca/ca.crt"
+                      rationale: Certificate and key files are stored in different locations in HyperShift
+                    - name: ocp4-var-apiserver-kubelet-client-cert
+                      value: "/etc/kubernetes/certs/kubelet/tls.crt"
+                      rationale: Certificate and key files are stored in different locations in HyperShift
+                    - name: ocp4-var-apiserver-kubelet-client-key
+                      value: "/etc/kubernetes/certs/kubelet/tls.key"
+                      rationale: Certificate and key files are stored in different locations in HyperShift
+                    - name: ocp4-var-apiserver-tls-cert
+                      value: "/etc/kubernetes/certs/server/tls.crt"
+                      rationale: Certificate and key files are stored in different locations in HyperShift
+                    - name: ocp4-var-apiserver-tls-private-key
+                      value: "/etc/kubernetes/certs/server/tls.key"
+                      rationale: Certificate and key files are stored in different locations in HyperShift
+                    - name: ocp4-var-kube-controller-manager-config-filepath
+                      value: '/api/v1/namespaces/MASTER_NAMESPACE/pods?labelSelector=app%3Dkube-controller-manager'
+                      rationale: Kube controller manager config can only be retrieved from an actual controller manager pod in HyperShift
+                    - name: ocp4-var-kube-controller-manager-config-data-name
+                      value: "config.json"
+                      rationale: Kube controller manager config values are stored under "config.json" key of the ConfigMap in HyperShift
+                    - name: ocp4-var-kube-controller-manager-rotate-kubelet-server-certs-filter
+                      value: '.items[0].spec.containers[0].args'
+                      rationale: Server certs configuration of Kube controller manager config can be retrieved using different jqfilter in HyperShift
+                    - name: ocp4-var-kube-controller-manager-port-zero-filter
+                      value: '[[.items[0].spec.containers[0].args[] | select(. | match("--port=[1-9]*[1-9]+") )] | length | if . == 0 then true else false end]'
+                      rationale: Logic to check whether port of Kube controller manager is compliant or not in HyperShift
+                    - name: ocp4-var-kube-controller-manager-secure-port-filter
+                      value: '[[.items[0].spec.containers[0].args[] | select(. | match("--secure-port=10257") )] | length | if . ==1 then true else false end]'
+                      rationale: Logic to check whether TLS port of Kube controller manager is compliant or not in HyperShift
+                    - name: ocp4-var-kube-controller-manager-service-account-ca-filter
+                      value: '[[.items[0].spec.containers[0].args[] | select(. | match("--root-ca-file") )] | length | if . ==1 then true else false end]'
+                      rationale: Logic to check whether CA file of Kube controller manager is compliant or not in HyperShift
+                    - name: ocp4-var-kube-controller-manager-service-account-private-key-filter
+                      value: '[[.items[0].spec.containers[0].args[] | select(. | match("--service-account-private-key-file") )] | length | if . ==1 then true else false end]'
+                      rationale: Logic to check whether service account private key file of Kube controller manager is compliant or not in HyperShift
+                    - name: ocp4-var-kube-controller-manager-use-service-account-filter
+                      value: '[[.items[0].spec.containers[0].args[] | select(. | match("--use-service-account-credentials=true") )] | length | if . ==1 then true else false end]'
+                      rationale: Logic to check whether specific service account credential of Kube controller manager is used or not in HyperShift
+                    - name: ocp4-var-etcd-argument-filter
+                      value: '[.items[0].spec.containers[0].command | join(" ")]'
+                      rationale: Logic to check the arguments of Etcd in HyperShift
+                    - name: ocp4-var-etcd-filepath
+                      value: '/api/v1/namespaces/MASTER_NAMESPACE/pods?labelSelector=app%3Detcd'
+                      rationale: Etcd config can only be retrieved from an actual Etcd pod in HyperShift
+                    - name: ocp4-var-scheduler-argument-filter
+                      value: '[.items[0].spec.containers[0].args | join(" ")]'
+                      rationale: Logic to check the arguments of kube scheduler in HyperShift
+                    - name: ocp4-var-scheduler-filepath
+                      value: '/api/v1/namespaces/MASTER_NAMESPACE/pods?labelSelector=app%3Dkube-scheduler'
+                      rationale: Kube scheduler config can only be retrieved from an actual scheduler pod in HyperShift
+                  disableRules:
+                    - name: ocp4-audit-log-forwarding-enabled
+                      rationale: enough size of audit log is preserved on a master plane
+                    - name: ocp4-file-permissions-proxy-kubeconfig
+                      rationale: HyperShift does not use openshift-sdn
+                    - name: ocp4-api-server-encryption-provider-cipher
+                      rationale: HyperShift does not encrypt etcd
+                    - name: ocp4-api-server-encryption-provider-config
+                      rationale: HyperShift does not encrypt etcd
+                    - name: ocp4-idp-is-configured
+                      rationale: Hosted cluster of HyperShift is usually linked with authentication mechanism of its management cluster
+                    - name: ocp4-api-server-api-priority-gate-enabled
+                      rationale: This rule depends on alpha feature that HyperShift does not use
+                    - name: ocp4-ocp-api-server-audit-log-maxbackup
+                      rationale: audit log is preserved by specifying enough size of log (--audit-log-maxsize) in HyperShift
+                    - name: ocp4-scc-limit-container-allowed-capabilities
+                      rationale: Some HyperShift hosted cluster runs with IBM-specific SCC with some privileged capabilities
+                    - name: ocp4-api-server-insecure-port
+                      rationale: insecure port it not explicitly configured
+                    - name: ocp4-configure-network-policies-namespaces
+                      rationale: NetworkPolicy for each namespace must be configured manually
+                    - name: ocp4-kubeadmin-removed
+                      rationale: kubeadmin password needs to be stored in secrets
+    - objectDefinition: 
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: compliance-suite-moderate
+          namespace: openshift-compliance
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave # this template checks if scan has completed by checking the status field
+              objectDefinition:
+                apiVersion: compliance.openshift.io/v1alpha1
+                kind: ComplianceSuite
+                metadata:
+                  name: moderate
+                  namespace: openshift-compliance
+                status:
+                  phase: DONE
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: compliance-suite-moderate-results
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: mustnothave # this template reports the results for scan suite: moderate by looking at ComplianceCheckResult CRs
+              objectDefinition:
+                apiVersion: compliance.openshift.io/v1alpha1
+                kind: ComplianceCheckResult
+                metadata:
+                  namespace: openshift-compliance
+                  labels:
+                    compliance.openshift.io/check-status: FAIL
+                    compliance.openshift.io/suite: moderate
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-hypershift-cis-scan
+placementRef:
+  name: hypershift-cis-scan-placement
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-hypershift-scan
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: hypershift-cis-scan-placement
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+    - key: name
+      operator: In
+      values:
+      - local-cluster

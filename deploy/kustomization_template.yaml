@@ -4,6 +4,8 @@ kind: Kustomization
 
 # namespace to deploy all Resources to
 namespace: ##NAMESPACE##
+commonLabels:
+  app: ##NAME##
 
 generatorOptions:
   disableNameSuffixHash: true
@@ -12,8 +14,28 @@ generatorOptions:
 resources:
   - channel.yaml
   - subscription.yaml
+##  - application.yaml
+##  - placement.yaml
 
 patchesJson6902:
+##- path: application_patch.json
+##  target:
+##    group: app.k8s.io
+##    version: v1beta1
+##    kind: Application
+##    name: demo-stable-policies-app
+##- path: placement_patch.json
+##  target:
+##    group: apps.open-cluster-management.io
+##    version: v1
+##    kind: PlacementRule
+##    name: demo-stable-policies-placement
+##- path: subscription_placement_patch.json
+##  target:
+##    group: apps.open-cluster-management.io
+##    version: v1
+##    kind: Subscription
+##    name: demo-stable-policies-sub
 - path: subscription_patch.json
   target:
     group: apps.open-cluster-management.io

@@ -19,7 +19,6 @@ spec:
           severity: low
           namespaceSelector:
             include: ["default"]
-            exclude: ["kube-system"]
           remediationAction: inform
           imageRegistry: quay.io
 ---

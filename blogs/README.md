@@ -26,6 +26,8 @@ Read our blogs for more information and best practices for Red Hat Advanced Clus
 
 * [Using Policy Metrics to View Compliance Trends](https://cloud.redhat.com/blog/using-policy-metrics-to-view-compliance-trends)
 
+* [Using PolicyReports to Generate Alerts](https://cloud.redhat.com/blog/using-policyreports-to-view-and-alert-for-governance-violations)
+
 ## Red Hat Supported Integrations
 
 * [Initiating Ansible Automation on Policy Violations](https://cloud.redhat.com/blog/initiating-ansible-automation-on-policy-violations)
@@ -41,3 +43,11 @@ Read our blogs for more information and best practices for Red Hat Advanced Clus
 * [K8s Integrity Shield (tech-preview): Protecting the Integrity of Kubernetes Resource with Signature](https://www.openshift.com/blog/k8s-integrity-shield-tech-preview-protecting-the-integrity-of-kubernetes-resources-with-signature)
 
 * [Protecting Your Red Hat Advanced Cluster Management for Kubernetes Policies with Signature](https://cloud.redhat.com/blog/protecting-your-red-hat-advanced-cluster-management-for-kubernetes-policies-with-signature)
+
+* [Latest Integrity Shield protects Red Hat Advanced Cluster Management for Kubernetes policies](https://cloud.redhat.com/blog/latest-integrity-shield-protects-red-hat-advanced-cluster-management-for-kubernetes-policies)
+
+* [Deploying Red Hat Advanced Cluster Security with Red Hat Advanced Cluster Management](https://cloud.redhat.com/blog/deploying-red-hat-advanced-cluster-security-with-red-hat-advanced-cluster-management-2)
+
+## Video blogs (vlogs)
+
+* [The Cloud Multiplier: Ep. 2 | Fleet-wide Policy, Governance, and Compliance](https://www.youtube.com/watch?v=SRUJJFi1Jew)

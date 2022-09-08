@@ -14,7 +14,7 @@ metadata:
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/categories: SI System and Information Integrity
-    policy.open-cluster-management.io/controls: SI-5 Security Alerts, Advisories, and Directives
+    policy.open-cluster-management.io/controls: SI-5 Security Alerts Advisories and Directives
 spec:
   remediationAction: enforce
   disabled: false

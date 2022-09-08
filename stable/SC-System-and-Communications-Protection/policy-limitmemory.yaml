@@ -19,10 +19,9 @@ spec:
           remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: medium
           namespaceSelector:
-            exclude: ["kube-*"]
             include: ["default"]
           object-templates:
-            - complianceType: musthave
+            - complianceType: mustonlyhave
               objectDefinition:
                 apiVersion: v1
                 kind: LimitRange # limit memory usage

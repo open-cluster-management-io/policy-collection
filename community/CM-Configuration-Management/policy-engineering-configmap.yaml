@@ -19,8 +19,6 @@ spec:
           remediationAction: enforce
           severity: low
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default
           object-templates:

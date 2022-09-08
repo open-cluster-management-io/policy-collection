@@ -14,7 +14,7 @@ metadata:
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/categories: SI System and Information Integrity
-    policy.open-cluster-management.io/controls: SI-5 Security Alerts, Advisories, and Directives
+    policy.open-cluster-management.io/controls: SI-5 Security Alerts Advisories and Directives
 spec:
   remediationAction: enforce
   disabled: false
@@ -27,9 +27,6 @@ spec:
         spec:
           remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["*"]
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -46,9 +43,6 @@ spec:
         spec:
           remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["sysdig-operator"]
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -68,9 +62,6 @@ spec:
         spec:
           remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["sysdig-operator"]
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -93,9 +84,6 @@ spec:
         spec:
           remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["sysdig-operator"]
           object-templates:
             - complianceType: musthave
               objectDefinition:

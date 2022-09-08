@@ -18,7 +18,6 @@ spec:
         spec:
           namespaceSelector:
             include: ["default"]
-            exclude: ["kube-*"]
           remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: low
           minimumDuration: 300h

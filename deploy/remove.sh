@@ -145,17 +145,34 @@ if [[ "${RESOURCE}-chan" != "${CHANREF}" ]]; then
   exit 1
 fi
 
+# Check for Application and Placement resources
+APP_FOUND=$(kubectl get app -n ${NAMESPACE} ${PREFIX}-app &>/dev/null || echo "false")
+PLACEMENT_FOUND=$(kubectl get placementrule -n ${NAMESPACE} ${PREFIX}-placement &>/dev/null || echo "false")
+
 # Delete Subscription and Channel resources
 echo "This will delete these resources as well as resources they have deployed:"
+if [ "${APP_FOUND}" != "false" ]; then
+  echo "- Application:  ${RESOURCE}-app"
+fi
+if [ "${PLACEMENT_FOUND}" != "false" ]; then
+  echo "- Placement:  ${RESOURCE}-placement"
+fi
 echo "- Channel:      ${RESOURCE}-chan"
 echo "- Subscription: ${RESOURCE}-sub"
 while read -r -p "Would you like to proceed (y/n)? " response; do
   case "$response" in
-    Y|y|Yes|yes ) kubectl delete appsub -n ${NAMESPACE} ${PREFIX}-sub
-                  kubectl delete channels -n ${NAMESPACE} ${PREFIX}-chan
-                  break
+    Y|y|Yes|yes ) break
                   ;;
     N|n|No|no )   exit 1
                   ;;
   esac
 done
+
+if [ "${APP_FOUND}" != "false" ]; then
+  kubectl delete app -n ${NAMESPACE} ${PREFIX}-app
+fi
+if [ "${PLACEMENT_FOUND}" != "false" ]; then
+  kubectl delete placementrule -n ${NAMESPACE} ${PREFIX}-placement
+fi
+kubectl delete appsub -n ${NAMESPACE} ${PREFIX}-sub
+kubectl delete channels -n ${NAMESPACE} ${PREFIX}-chan

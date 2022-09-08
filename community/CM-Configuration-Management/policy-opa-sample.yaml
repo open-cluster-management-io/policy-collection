@@ -19,7 +19,6 @@ spec:
           remediationAction: enforce
           severity: high
           namespaceSelector:
-            exclude: ["kube-*"]
             include: ["default"]
           object-templates:
             - complianceType: musthave

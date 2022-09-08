@@ -18,11 +18,6 @@ spec:
         spec:
           remediationAction: inform
           severity: low
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - default
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -44,11 +39,6 @@ spec:
         spec:
           remediationAction: inform
           severity: low
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - default
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -104,17 +94,27 @@ spec:
                       packageOverrides:
                       - path: spec
                         value:
+                            extraArgs:
+                              - '--clientRateLimitQPS=20'
+                              - '--clientRateLimitBurst=50'
                             resources:
                               limits:
                                 memory: 768Mi
                             initResources:
                               limits:
                                 memory: 512Mi
+                            livenessProbe:
+                              initialDelaySeconds: 45
+                              periodSeconds: 40
+                            readinessProbe:
+                              initialDelaySeconds: 35
+                              periodSeconds: 20
+                            securityContext: null
                   placement:
                     placementRef:
                       name: kyverno-placement-1
                       kind: PlacementRule
-            - complianceType: musthave
+            - complianceType: mustonlyhave
               objectDefinition:
                 apiVersion: apps.open-cluster-management.io/v1
                 kind: PlacementRule

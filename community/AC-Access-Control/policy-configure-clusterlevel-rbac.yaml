@@ -1,0 +1,116 @@
+# This is a sample policy to demonstrate configuring  RBAC for managed clusters using admin and view-only roles
+# This Policy considers that below groups needs to be pre-existing before the policy can be configured.
+#   Groups:  acm-admins, ac-viewonly-users
+#   Group acm-admins to have admin access to all managed clusters
+#   Group ac-viewonly-users to have view-only access to all managed clusters
+# ManagedclusterX refers to the name of any managed cluster
+# This Policy Configures the following rbac model for the above scenario
+#   UsersGroups:  acm-admins, ac-viewonly-users
+#   Rolebindings:
+#     acm-admins group has cluster-admin access to all managed clusters including the hub cluster
+#     ac-viewonly-users group has view-only access to all managed clusters including the hub cluster
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-configure-clusterlevel-rbac
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-configure-clusterlevel-rbac-example
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: 'mc-view-clusterX'
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: ac-viewonly-users
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: 'open-cluster-management:view:clusterX'
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: 'ns-view-clusterX'
+                  namespace: clusterX
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: ac-viewonly-users
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: view
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: mc-admin-clusterX
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: 'open-cluster-management:admin:clusterX'
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: 'ns-admin-clusterX'
+                  namespace: clusterX
+                subjects:
+                  - kind: Group
+                    apiGroup: rbac.authorization.k8s.io
+                    name: acm-admins
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: admin   
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-configure-clusterlevel-rbac
+placementRef:
+  name: placement-policy-configure-clusterlevel-rbac
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-configure-clusterlevel-rbac
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-configure-clusterlevel-rbac
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: local-cluster, operator: In, values: ['true']}

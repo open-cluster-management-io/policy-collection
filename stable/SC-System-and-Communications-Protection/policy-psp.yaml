@@ -19,7 +19,6 @@ spec:
           remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: high
           namespaceSelector:
-            exclude: ["kube-*"]
             include: ["default"]
           object-templates:
             - complianceType: musthave
@@ -31,7 +30,7 @@ spec:
                   annotations:
                     seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
                 spec:
-                  privileged: false # no priviliedged pods
+                  privileged: false # no privileged pods
                   allowPrivilegeEscalation: false
                   allowedCapabilities:
                   - '*'
