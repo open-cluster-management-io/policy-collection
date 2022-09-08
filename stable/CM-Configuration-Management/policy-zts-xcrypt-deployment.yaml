@@ -1,4 +1,4 @@
-#Dockerhub version of XCrypt Operator
+#Dockerhub version of XCrypt Operator Deployment
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
