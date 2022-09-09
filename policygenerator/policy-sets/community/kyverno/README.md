@@ -16,6 +16,7 @@ oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/
 oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/community/CM-Configuration-Management/policy-managedclustersetbinding.yaml
 oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/community/CM-Configuration-Management/policy-openshift-gitops.yaml
 oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/community/CM-Configuration-Management/policy-install-kyverno.yaml
+oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/community/CM-Configuration-Management/policy-kyverno-config-exclude-resources.yaml
 ```
 
 Ensure that the Policies are applied to the Hub-Cluster, you might review the labels like `environment=dev`

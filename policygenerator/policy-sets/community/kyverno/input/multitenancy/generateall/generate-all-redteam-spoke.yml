@@ -92,7 +92,7 @@ spec:
         spec:
           clusterSets:
           - redteam
-  - name: generate-resourcequota
+  - name: generate-resourcequota-red
     match:
       resources:
         kinds:
@@ -110,7 +110,7 @@ spec:
             requests.memory: '16Gi'
             limits.cpu: '4'
             limits.memory: '16Gi'
-  - name: generate-limitrange
+  - name: generate-limitrange-red
     match:
       resources:
         kinds:
