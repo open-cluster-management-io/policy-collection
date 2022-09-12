@@ -1,0 +1,31 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-redteam-destination
+spec:
+  validationFailureAction: enforce
+  background: false
+  rules:
+  - name: restrict-to-argoproject
+    match:
+      resources:
+        kinds:
+        - ApplicationSet  
+      subjects:
+      - kind: Group
+        name: red-sre-group
+    preconditions:
+      any:
+      - key: "{{request.operation}}"
+        operator: In
+        value:
+        - CREATE
+        - UPDATE           
+    validate:
+      message: "For any `red-sre-group` member, creation of ArgoCD Application must be against the `redteam` namespace pattern"
+      pattern:
+        spec:
+          template:
+            spec:
+              destination:
+                namespace: redteam*

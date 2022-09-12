@@ -40,7 +40,7 @@ spec:
                   namespace: kyverno
                 data:       # specify all filters you need to exclude
                   generateSuccessEvents: "false"
-                  resourceFilters: '[Event,*,*][*,kube-system,*][*,kube-public,*][*,kube-node-lease,*][Node,*,*][APIService,*,*][TokenReview,*,*][SubjectAccessReview,*,*][SelfSubjectAccessReview,*,*][*,kyverno,*][*,openshift-*,*][*,open-cluster-*,*][Binding,*,*][ReplicaSet,*,*][ReportChangeRequest,*,*][ClusterReportChangeRequest,*,*]'
+                  resourceFilters: '[Event,*,*][*,kube-system,*][*,kube-public,*][*,kube-node-lease,*][Node,*,*][APIService,*,*][TokenReview,*,*][SubjectAccessReview,*,*][SelfSubjectAccessReview,*,*][*,kyverno,*][*,hive,*][*,multicluster-engine,*][*,openshift-*,*][*,open-cluster-*,*][Binding,*,*][ReplicaSet,*,*][ReportChangeRequest,*,*][ClusterReportChangeRequest,*,*]'
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding

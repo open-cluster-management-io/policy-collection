@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-http-routes
+spec:
+  background: true
+  validationFailureAction: audit
+  rules:
+    - name: Prevent users from deploying Routes with no https
+      match:
+        resources:
+          kinds:
+            - Route
+      validate:
+        pattern:
+          spec:
+            tls: 
+              termination: "?*"
+        message: "Routes must be configured configured with TLS!"
