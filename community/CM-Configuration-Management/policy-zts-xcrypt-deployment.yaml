@@ -19,11 +19,6 @@ spec:
         spec:
           remediationAction: inform
           severity: low
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - zts-xcrypt
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -75,11 +70,6 @@ spec:
         spec:
           remediationAction: inform
           severity: low
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - zts-xcrypt 
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -146,11 +136,6 @@ spec:
         spec:
           remediationAction: inform
           severity: low
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - zts-xcrypt
           object-templates:
             - complianceType: musthave
               objectDefinition:

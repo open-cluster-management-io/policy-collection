@@ -19,11 +19,6 @@ spec:
         spec:
           remediationAction: inform
           severity: low
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - default
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -246,7 +241,6 @@ spec:
                    kind: ClusterRole
                    name: zts-external-attacher-role 
                    apiGroup: rbac.authorization.k8s.io
-              
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
