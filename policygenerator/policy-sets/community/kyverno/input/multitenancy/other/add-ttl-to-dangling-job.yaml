@@ -1,0 +1,40 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    policies.kyverno.io/title: Add TTL to dangling Job
+    policies.kyverno.io/category: The cool company policy collection
+    policies.kyverno.io/description: >-
+            Autoclean dangling jobs by add TTL to spec.
+  name: add-ttl-to-dangling-job
+spec:
+  background: false
+  failurePolicy: Ignore
+  validationFailureAction: enforce
+  rules:
+    - name: add-ttl-to-dangling-job
+      match:
+        resources:
+          kinds:
+            # We only deal with Job in this policy
+            - "Job"
+      preconditions:
+        any:
+          # If the Job is created by CronJob, it will have ".metadata.ownerReferences" field,
+          # Which is an array. But the exactly value doesn't really matter here.
+          # We only need to whether this field exists.
+          #
+          # Thw following line of "key" is bascially saying:
+          # If there is no ".metadata.ownerReferences", then fallback to an empty string (''),
+          - key: "{{ request.object.metadata.ownerReferences || '' }}"
+            operator: Equals
+            # And if the value is empty string, means there is no ".metadata.ownerReferences".
+            # That's the kind of Job we want to set ".spec.ttlSecondsAfterFinished"
+            value: ''
+      mutate:
+        patchStrategicMerge:
+          spec:
+            # Add ".spec.ttlSecondsAfterFinished" (if it's not specified),
+            # so the Job will be deleted in 15 minutes after completion.
+            # Set to the value you like.
+            +(ttlSecondsAfterFinished): 900

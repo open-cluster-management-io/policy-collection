@@ -1,0 +1,48 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: team-validate-red-ns-schema
+  annotations:
+    policies.kyverno.io/title: Validate Team Namespace Schema
+    policies.kyverno.io/category: Other
+    policies.kyverno.io/severity: medium
+    kyverno.io/kyverno-version: 1.7.0
+    policies.kyverno.io/minversion: 1.7.0
+    kyverno.io/kubernetes-version: "1.23"
+    policies.kyverno.io/subject: Group
+    policies.kyverno.io/description: >-
+      Denies the creation of a namespace is the name of the namespace does
+      not follow a specific naming defined by the cluster admins.
+spec:
+  validationFailureAction: enforce
+  background: false
+  rules:
+  - name: namespace-name
+    match:
+      any:
+      - resources:
+          kinds:
+            - Namespace
+            - ProjectRequest
+            - Project
+        subjects:
+        - kind: Group
+          name: "red-sre-group"
+    preconditions:
+      any:
+      - key: "{{request.operation}}"
+        operator: In
+        value:
+        - CREATE
+        - UPDATE        
+    validate:
+      message: The only names approved for your namespaces are the ones starting by redteam*
+      foreach:
+      - list: "request.userInfo.groups[?contains(@,':') == `false`][].{name:@}"
+        elementScope: true
+        deny:
+          conditions:
+            any:
+            - key: "{{request.object.metadata.name}}"
+              operator: AnyNotIn
+              value: "redteam*"
