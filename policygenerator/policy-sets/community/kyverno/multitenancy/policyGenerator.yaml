@@ -17,8 +17,6 @@ policyDefaults:
     - kyverno-multitenancy-policyset
   standards:
     - generic
-  placementPath:  
-    - placement.yaml
 policies:
 - name: add-labels-to-tenant
   categories:
@@ -121,20 +119,4 @@ policySets:
     name: kyverno-multitenancy-policyset
     placement:
       placementPath: placement.yaml
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
