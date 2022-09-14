@@ -1,0 +1,197 @@
+# This policy creates a namespace based backup using Triliovault for Kubernetes (TVK)
+# on all OpenShift managed clusters with a label "protected-by=triliovault".
+#
+# This policy creates backup for all the namespaces with a lable "protected-by=tvk-ns-backup"
+#
+# To create the namespace backup, following process is followed
+# 1. Create the target object to store backup data
+#    This policy creates AWS S3 based target storage for storing backup images.
+# 2. Create a backup plan that references the following:
+#      Namespace to be backed up
+#      Default Scheduling Policy - create daily 1 backup
+#      Target to where the data should be backed up
+# 3. Apply the Backup CR that references the Backup
+#    This policy creates a full backup.
+#
+# IMPORTANT: Please replace below values for the poliy to work
+# AWS S3 details for target creation
+#   accessKey - line no. 56
+#   secretKey - line no. 57
+#   bucketName - line no. 107
+#   region - line no. 108
+#
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-kyverno-tvk-create-ns-backup
+  namespace: default
+  annotations:
+    policy.open-cluster-management.io/categories: CA Security Assessment and Authorization
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/controls: CA-2 Security Assessments, CA-7 Continuous Monitoring
+spec:
+  disabled: false
+  remediationAction: enforce
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-s3-secret
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Secret
+                metadata:
+                  name: tvk-s3-secret
+                  namespace: default
+                type: Opaque
+                stringData:
+                  accessKey: "PROVIDE_ACCESS_KEY"
+                  secretKey: "PROVIDE_SECRET_KEY"
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-kyverno-tvk-create-ns-backup
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: kyverno.io/v1
+                kind: ClusterPolicy
+                metadata:
+                  name: kyverno-tvk-create-ns-backup
+                  annotations:
+                    policies.kyverno.io/title: Create Namespace Backup
+                    policies.kyverno.io/category: TrilioVault for Kubernetes
+                    kyverno.io/kyverno-version: 1.6.2
+                    policies.kyverno.io/minversion: 1.6.2
+                    kyverno.io/kubernetes-version: "1.21-1.22"
+                    policies.kyverno.io/subject: Policy
+                    policies.kyverno.io/description: >-
+                      Create Target, BackupPlan and Backup for any namespace with the label "protected-by: tvk-ns-backup"
+                      This policy works best to protect a namespace by creating backup via lables.
+                spec:
+                  background: true
+                  rules:
+                    - name: kyverno-tvk-create-target
+                      match:
+                        resources:
+                          kinds:
+                            - Namespace
+                          selector:
+                            matchLabels:
+                              protected-by: tvk-ns-backup # match with a corresponding ClusterPolicy that checks for this label
+                      generate:
+                        apiVersion: triliovault.trilio.io/v1
+                        kind: Target
+                        name: tvk-{{ `{{request.object.metadata.name}}` }}-s3-target
+                        namespace: "{{ `{{request.object.metadata.name}}` }}"
+                        data:
+                          metadata:
+                            name: tvk-{{ `{{request.object.metadata.name}}` }}-s3-target
+                            namespace: "{{ `{{request.object.metadata.name}}` }}"
+                          spec:
+                            type: "ObjectStore"
+                            vendor: AWS
+                            objectStoreCredentials:
+                              bucketName: "PROVIDE_BUCKET_NAME"
+                              region: "PROVIDE_REGION"
+                              credentialSecret:
+                                name: tvk-s3-secret
+                                namespace: default
+                            thresholdCapacity: 100Gi
+                    - name: kyverno-tvk-create-backupplan
+                      match:
+                        resources:
+                          kinds:
+                            - Namespace
+                          selector:
+                            matchLabels:
+                              protected-by: tvk-ns-backup # match with a corresponding ClusterPolicy that checks for this label
+                      generate:
+                        apiVersion: triliovault.trilio.io/v1
+                        kind: BackupPlan
+                        name: tvk-{{ `{{request.object.metadata.name}}` }}-backupplan
+                        namespace: "{{ `{{request.object.metadata.name}}` }}"
+                        data:
+                          metadata:
+                            name: tvk-{{ `{{request.object.metadata.name}}` }}-backupplan
+                            namespace: "{{ `{{request.object.metadata.name}}` }}"
+                          spec:
+                            backupNamespace: "{{ `{{request.object.metadata.name}}` }}"
+                            backupConfig:
+                              target:
+                                name: tvk-{{ `{{request.object.metadata.name}}` }}-s3-target
+                                namespace: "{{ `{{request.object.metadata.name}}` }}"
+                              schedulePolicy:
+                                fullBackupPolicy:
+                                  name: trilio-daily-schedule-policy
+                                  namespace: default
+                            backupPlanFlags:
+                              skipImageBackup: true
+                            retainHelmApps: false
+                    - name: kyverno-tvk-create-backup
+                      match:
+                        resources:
+                          kinds:
+                            - Namespace
+                          selector:
+                            matchLabels:
+                              protected-by: tvk-ns-backup # match with a corresponding ClusterPolicy that checks for this label
+                      generate:
+                        apiVersion: triliovault.trilio.io/v1
+                        kind: Backup
+                        name: tvk-{{ `{{request.object.metadata.name}}` }}-backup
+                        namespace: "{{ `{{request.object.metadata.name}}` }}"
+                        data:
+                          metadata:
+                            name: tvk-{{ `{{request.object.metadata.name}}` }}-backup
+                            namespace: "{{ `{{request.object.metadata.name}}` }}"
+                          spec:
+                            type: Full
+                            backupPlan:
+                              name: tvk-{{ `{{request.object.metadata.name}}` }}-backupplan
+                              namespace: "{{ `{{request.object.metadata.name}}` }}"
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: policy-kyverno-tvk-create-ns-backup-placement
+  namespace: default
+spec:
+  clusterSelector:
+    matchExpressions:
+      - key: protected-by
+        operator: In
+        values:
+          - triliovault
+      - key: vendor
+        operator: In
+        values:
+          - OpenShift
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: policy-kyverno-tvk-create-ns-backup-placement
+  namespace: default
+placementRef:
+  name: policy-kyverno-tvk-create-ns-backup-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: policy-kyverno-tvk-create-ns-backup
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
+
