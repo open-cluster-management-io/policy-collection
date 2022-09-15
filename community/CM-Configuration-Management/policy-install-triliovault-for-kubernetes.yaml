@@ -55,14 +55,13 @@ spec:
                   installPlanApproval: Automatic
                   source: certified-operators
                   sourceNamespace: openshift-marketplace
-                  startingCSV: k8s-triliovault-stable.2.10.4
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
           name: tvk-operator-status
         spec:
-          remediationAction: inform
+          remediationAction: enforce
           severity: high
           object-templates:
             - complianceType: musthave
