@@ -1,0 +1,103 @@
+# This policy assumes that the Compliance Operator is installed and running on
+# the managed clusters. It deploys a scan that checks the master and worker
+# nodes, and verifies compliance with the PCI-DSS v3.2.1 Control Baseline for
+# Red Hat OpenShift Container Platform 4 benchmark.
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-pci-dss-scan
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-6 Configuration Settings
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: compliance-pci-dss-scan
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave # this template creates ScanSettingBinding:pci-dss
+              objectDefinition:
+                apiVersion: compliance.openshift.io/v1alpha1
+                kind: ScanSettingBinding
+                metadata:
+                  name: pci-dss
+                  namespace: openshift-compliance
+                profiles:
+                - apiGroup: compliance.openshift.io/v1alpha1
+                  kind: Profile
+                  name: ocp4-pci-dss
+                - apiGroup: compliance.openshift.io/v1alpha1
+                  kind: Profile
+                  name: ocp4-pci-dss-node
+                settingsRef:
+                  apiGroup: compliance.openshift.io/v1alpha1
+                  kind: ScanSetting
+                  name: default
+    - objectDefinition: 
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: compliance-suite-pci-dss
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave # this template checks if scan has completed by checking the status field
+              objectDefinition:
+                apiVersion: compliance.openshift.io/v1alpha1
+                kind: ComplianceSuite
+                metadata:
+                  name: pci-dss
+                  namespace: openshift-compliance
+                status:
+                  phase: DONE
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: compliance-suite-pci-dss-results
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: mustnothave # this template reports the results for scan suite: pci-dss by looking at ComplianceCheckResult CRs
+              objectDefinition:
+                apiVersion: compliance.openshift.io/v1alpha1
+                kind: ComplianceCheckResult
+                metadata:
+                  namespace: openshift-compliance
+                  labels:
+                    compliance.openshift.io/check-status: FAIL
+                    compliance.openshift.io/suite: pci-dss
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-pci-dss-scan
+placementRef:
+  name: placement-policy-pci-dss-scan
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-pci-dss-scan
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-pci-dss-scan
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: vendor, operator: In, values: ["OpenShift"]}
