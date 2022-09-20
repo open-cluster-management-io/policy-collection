@@ -13,8 +13,8 @@
 # 3. Apply the Backup CR that references the Backup
 #    This policy creates a full backup.
 #
-# IMPORTANT: Please follow below instructions for the poliy to work
-# Create a secret aws-s3-secret in "default" namespace which has AWS S3 details for target creation
+# IMPORTANT: Please follow below instructions for the policy to work
+# On the hub cluster, create a secret aws-s3-secret in "default" namespace which has AWS S3 details for target creation
 # example yaml (replace the values)
 # apiVersion: v1
 # kind: Secret
@@ -59,8 +59,8 @@ spec:
                   namespace: default
                 type: Opaque
                 stringData:
-                  accessKey: '{{ fromSecret "default" "aws-s3-secret" "accessKey" }}'
-                  secretKey: '{{ fromSecret "default" "aws-s3-secret" "secretKey" }}'
+                  accessKey: '{{hub fromSecret "default" "aws-s3-secret" "accessKey" hub}}'
+                  secretKey: '{{hub fromSecret "default" "aws-s3-secret" "secretKey" hub}}'
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -110,12 +110,12 @@ spec:
                             type: "ObjectStore"
                             vendor: AWS
                             objectStoreCredentials:
-                              bucketName: '{{ fromSecret "default" "aws-s3-secret" "bucketName" }}'
-                              region: '{{ fromSecret "default" "aws-s3-secret" "region" }}'
+                              bucketName: '{{hub fromSecret "default" "aws-s3-secret" "bucketName" hub}}'
+                              region: '{{hub fromSecret "default" "aws-s3-secret" "region" hub}}'
                               credentialSecret:
                                 name: tvk-s3-secret
                                 namespace: default
-                            thresholdCapacity: '{{ fromSecret "default" "aws-s3-secret" "thresholdCapacity" }}'
+                            thresholdCapacity: '{{hub fromSecret "default" "aws-s3-secret" "thresholdCapacity" hub}}'
                     - name: kyverno-tvk-create-backupplan
                       match:
                         resources:
