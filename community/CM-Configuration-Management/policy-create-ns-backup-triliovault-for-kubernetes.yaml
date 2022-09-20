@@ -11,27 +11,35 @@
 # 3. Apply the Backup CR that references the Backup
 #    This policy creates a full backup.
 #
-# IMPORTANT: Please replace below values for the poliy to work
+# IMPORTANT: Please follow below instructions for the poliy to work
 # 1. Namespace "test" - replace with namespace for which backup to be created
 #      Replace all the occurences of "test"
-# 2. AWS S3 details for target creation
-#      accessKey - line no. 66
-#      secretKey - line no. 67
-#      bucketName - line no. 88
-#      region - line no. 89
+# 2. Create a secret aws-s3-secret in "default" namespace which has AWS S3 details for target creation
+# example yaml (replace the values)
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: aws-s3-secret
+#   namespace: default
+# type: Opaque
+# stringData:
+#   accessKey: "PROVIDE_ACCESS_KEY"
+#   secretKey: "PROVIDE_SECRET_KEY"
+#   bucketName: "PROVIDE_S3_BUCKET_NAME"
+#   region: "PROVIDE_REGION"
+#   thresholdCapacity: 100Gi
 
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: create-tvk-backup
-  namespace: default
   annotations:
     policy.open-cluster-management.io/categories: CA Security Assessment and Authorization
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/controls: CA-2 Security Assessments, CA-7 Continuous Monitoring
 spec:
   disabled: false
-  remediationAction: enforce
+  remediationAction: inform
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
@@ -66,8 +74,8 @@ spec:
                   namespace: default
                 type: Opaque
                 stringData:
-                  accessKey: "PROVIDE_ACCESS_KEY"
-                  secretKey: "PROVIDE_SECRET_KEY"
+                  accessKey: '{{ fromSecret "default" "aws-s3-secret" "accessKey" }}'
+                  secretKey: '{{ fromSecret "default" "aws-s3-secret" "secretKey" }}'
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -88,12 +96,12 @@ spec:
                   type: ObjectStore
                   vendor: AWS
                   objectStoreCredentials:
-                    bucketName: "PROVIDE_BUCKET_NAME"
-                    region: "PROVIDE_REGION_NAME"
+                    bucketName: '{{ fromSecret "default" "aws-s3-secret" "bucketName" }}'
+                    region: '{{ fromSecret "default" "aws-s3-secret" "region" }}'
                     credentialSecret:
                       name: tvk-s3-secret
                       namespace: default
-                  thresholdCapacity: 100Gi
+                  thresholdCapacity: '{{ fromSecret "default" "aws-s3-secret" "thresholdCapacity" }}'
                 status:
                   status: Available
     - objectDefinition:
@@ -155,7 +163,6 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: tvk-backup-placement
-  namespace: default
 spec:
   clusterSelector:
     matchExpressions:
@@ -167,15 +174,11 @@ spec:
         operator: In
         values:
           - OpenShift
-  clusterConditions:
-    - status: "True"
-      type: ManagedClusterConditionAvailable
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: tvk-backup-placement
-  namespace: default
 placementRef:
   name: tvk-backup-placement
   apiGroup: apps.open-cluster-management.io

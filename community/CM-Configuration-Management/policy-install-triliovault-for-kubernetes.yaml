@@ -9,7 +9,6 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: install-tvk
-  namespace: default
   annotations:
     policy.open-cluster-management.io/categories: CA Security Assessment and Authorization
     policy.open-cluster-management.io/standards: NIST SP 800-53
@@ -99,7 +98,6 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: install-tvk-placement
-  namespace: default
 spec:
   clusterSelector:
     matchExpressions:
@@ -111,15 +109,11 @@ spec:
         operator: In
         values:
           - OpenShift
-  clusterConditions:
-    - status: "True"
-      type: ManagedClusterConditionAvailable
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: install-tvk-placement
-  namespace: default
 placementRef:
   name: install-tvk-placement
   apiGroup: apps.open-cluster-management.io
