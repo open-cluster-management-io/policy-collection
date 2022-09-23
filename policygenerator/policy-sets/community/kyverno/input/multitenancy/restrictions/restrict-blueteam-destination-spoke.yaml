@@ -22,7 +22,7 @@ spec:
         - CREATE
         - UPDATE           
     validate:
-      message: "For any `red-sre-group` member, creation of ArgoCD Application must be against the `blueteam` namespace pattern"
+      message: "For any `blue-sre-group` member, creation of ArgoCD Application must be against the `blueteam` namespace pattern"
       pattern:
         spec:  
           template:

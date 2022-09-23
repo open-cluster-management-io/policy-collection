@@ -17,8 +17,6 @@ policyDefaults:
     - kyverno-security-policyset
   standards:
     - generic
-  placementPath:  
-    - placement.yaml
 policies:
 - name: restrict-annotations
   categories:
@@ -124,7 +122,7 @@ policies:
   disabled: false
   manifests:
     - path: ../input/security/networking/block-nodeport-services
-- name: authorization
+- name: authorization-disallow-scc-runasany
   categories:
     - setup
   controls: 
@@ -132,7 +130,7 @@ policies:
   disabled: false
   manifests:
     - path: ../input/security/authorization
-- name: authorizationhost-namespaces
+- name: authorization-host-namespaces
   categories:
     - setup
   controls: 
@@ -140,7 +138,7 @@ policies:
   disabled: false
   manifests:
     - path: ../input/security/authorization/host-namespaces
-- name: authorizationhost-protect-default-scc
+- name: authorization-protect-default-scc
   categories:
     - setup
   controls: 
@@ -153,11 +151,3 @@ policySets:
     name: kyverno-security-policyset
     placement:
       placementPath: placement.yaml
-
-    
-
-
-    
-   
-
-

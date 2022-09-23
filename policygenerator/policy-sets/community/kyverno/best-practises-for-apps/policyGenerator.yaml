@@ -16,12 +16,8 @@ policyDefaults:
   namespace: policies
   remediationAction: enforce
   severity: medium
-  deploy-bestpractises:
-    - kyverno-deploy-bestpractise
   standards:
     - generic
-  placementPath:  
-    - placement.yaml
 policies:
 - name: require-probes
   categories:
@@ -84,11 +80,4 @@ policySets:
     name: kyverno-deploy-bestpractise
     placement:
       placementPath: placement.yaml
-
-    
-
-
-    
-   
-
 

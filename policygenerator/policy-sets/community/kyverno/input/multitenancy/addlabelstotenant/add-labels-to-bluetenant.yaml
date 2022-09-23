@@ -11,7 +11,7 @@ metadata:
     policies.kyverno.io/minversion: 1.6.0
     kyverno.io/kubernetes-version: "1.23"
     policies.kyverno.io/description: >-
-      Add labels to redteam. see for detailled description https://cloud.redhat.com/blog/managing-applications-via-a-gitops-control-plane
+      Add labels to blueteam. see for detailled description https://cloud.redhat.com/blog/managing-applications-via-a-gitops-control-plane
       This demonstrates the ability of a development team to manage OCP objects in multiple namespaces from one Git repo.
 spec:
   background: false
