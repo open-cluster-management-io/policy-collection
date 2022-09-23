@@ -7,7 +7,7 @@ metadata:
       on the host, potentially exposing process information. To avoid pod container from
       having visibility to host process space, validate that 'hostPID' is set to 'false'.
 spec:
-  background: true
+  background: false
   validationFailureAction: audit
   rules:
     - name: validate-hostPID-scc

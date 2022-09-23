@@ -19,7 +19,7 @@ metadata:
       of a ClusterRole if it contains the nodes/proxy resource. 
 spec:
   validationFailureAction: audit
-  background: true
+  background: false
   rules:
     - name: clusterrole-nodesproxy
       match:

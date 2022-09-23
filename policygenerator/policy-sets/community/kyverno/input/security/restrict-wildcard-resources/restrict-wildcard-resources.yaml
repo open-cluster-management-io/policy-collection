@@ -18,7 +18,7 @@ metadata:
       the resources list found in any rule.
 spec:
   validationFailureAction: audit
-  background: true
+  background: false
   rules:
     - name: wildcard-resources
       match:

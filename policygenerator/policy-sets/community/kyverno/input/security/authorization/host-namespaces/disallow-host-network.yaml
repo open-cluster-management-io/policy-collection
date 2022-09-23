@@ -7,7 +7,7 @@ metadata:
       Providing access to the host's network gives the pod access to the host's network devices.
       Pods with access to the host's network devices can be used to snoop on network activity of other pods on the same node.
 spec:
-  background: true
+  background: false
   validationFailureAction: audit
   rules:
     - name: validate-host-network-scc

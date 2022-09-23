@@ -19,7 +19,7 @@ metadata:
       service. This policy prohibits the use of the defaultBackend field.
 spec:
   validationFailureAction: audit
-  background: true
+  background: false
   rules:
   - name: restrict-ingress-defaultbackend
     match:

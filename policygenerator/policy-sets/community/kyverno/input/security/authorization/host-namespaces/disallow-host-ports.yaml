@@ -6,7 +6,7 @@ metadata:
     policies.kyverno.io/description: Provides a list of allowed ports in the host network namespace.
       Access to host ports allows potential snooping of network traffic and should be forbidden / minimized.
 spec:
-  background: true
+  background: false
   validationFailureAction: audit
   rules:
     - name: validate-host-ports-scc

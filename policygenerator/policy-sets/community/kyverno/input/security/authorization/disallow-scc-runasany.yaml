@@ -5,7 +5,7 @@ metadata:
   annotations:
     policies.kyverno.io/description: Using RunAsAny in one of available SCC strategies can be used for privilege escalation and should not be allowed
 spec:
-  background: true
+  background: false
   validationFailureAction: audit
   rules:
     - name: Avoid using RunAsAny in scc policies for `runAsUser`
