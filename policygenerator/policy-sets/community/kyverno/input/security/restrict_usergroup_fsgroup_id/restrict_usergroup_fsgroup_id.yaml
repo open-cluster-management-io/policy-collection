@@ -14,7 +14,7 @@ metadata:
       This policy validates that these fields are set to the defined values.
 spec:
   validationFailureAction: audit
-  background: true
+  background: false
   rules:
   - name: validate-userid
     match:

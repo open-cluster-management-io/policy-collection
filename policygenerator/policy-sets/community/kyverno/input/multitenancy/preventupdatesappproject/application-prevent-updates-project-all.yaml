@@ -14,7 +14,7 @@ metadata:
             This policy prevents updates to the project field after an Application is created.
 spec:
   validationFailureAction: audit
-  background: true
+  background: false
   rules:
     - name: project-updates
       match:

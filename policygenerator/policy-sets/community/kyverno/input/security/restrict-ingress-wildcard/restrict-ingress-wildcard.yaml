@@ -18,7 +18,7 @@ metadata:
       character.
 spec:
   validationFailureAction: audit
-  background: true
+  background: false
   rules:
     - name: block-ingress-wildcard
       match:

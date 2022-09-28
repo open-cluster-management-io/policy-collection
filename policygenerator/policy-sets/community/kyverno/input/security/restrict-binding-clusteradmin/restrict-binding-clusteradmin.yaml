@@ -17,7 +17,7 @@ metadata:
       RoleBinding or ClusterRoleBinding resources.
 spec:
   validationFailureAction: audit
-  background: true
+  background: false
   rules:
     - name: clusteradmin-bindings
       match:

@@ -16,7 +16,7 @@ metadata:
       resource.
 spec:
   validationFailureAction: audit
-  background: true
+  background: false
   rules:
   - name: validate-ingress
     match:

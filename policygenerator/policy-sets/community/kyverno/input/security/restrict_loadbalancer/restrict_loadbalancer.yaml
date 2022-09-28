@@ -15,7 +15,7 @@ metadata:
       use of the Service type LoadBalancer.
 spec:
   validationFailureAction: audit
-  background: true
+  background: false
   rules:
   - name: no-LoadBalancer
     match:
