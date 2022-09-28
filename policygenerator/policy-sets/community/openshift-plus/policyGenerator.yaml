@@ -36,11 +36,18 @@ policies:
 - name: policy-acs-central-ca-bundle
   categories:
     - SI System and Information Integrity
-  consolidateManifests: false
   controls:
     - SI-5 Security Alerts Advisories and Directives
   manifests:
     - path: input-sensor/policy-acs-central-ca-bundle.yaml
+- name: policy-acs-sync-resources
+  categories:
+    - SI System and Information Integrity
+  consolidateManifests: false
+  controls:
+    - SI-5 Security Alerts Advisories and Directives
+  manifests:
+    - path: input-sensor/policy-acs-sync-resources.yaml
 - name: policy-advanced-managed-cluster-security
   categories:
     - SI System and Information Integrity
@@ -65,6 +72,7 @@ policies:
 # ACS Policies - end
 # Observability Policy - start
 - name: policy-ocm-observability
+  consolidateManifests: false
   categories:
     - CA Assessment Authorization and Monitoring
   controls: 
@@ -90,6 +98,13 @@ policies:
   remediationAction: inform
 # ODF Policies - end
 # Quay Policies - start
+- name: policy-install-quay
+  categories:
+    - SI System and Information Integrity
+  controls:
+    - SI-7 Software Firmware and Information Integrity
+  manifests:
+    - path: input-quay/policy-install-quay.yaml
 - name: policy-config-quay
   categories:
     - SI System and Information Integrity
