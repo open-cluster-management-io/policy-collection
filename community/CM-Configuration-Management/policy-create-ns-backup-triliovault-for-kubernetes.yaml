@@ -14,22 +14,30 @@
 # IMPORTANT: Please follow below instructions for the policy to work
 # 1. Namespace "test" - replace with namespace for which backup to be created
 #      Replace all the occurences of "test"
-# 2. On the hub cluster, create a secret aws-s3-secret in the namespace where 
-#    this policy is placed. This secret has AWS S3 details for target creation.
-# Example yaml (replace the values)
+# 2. On the hub cluster, create a secret aws-s3-secret and a configmap aws-s3-configmap
+#    in the namespace where this policy is placed. The secret and configmap have AWS S3
+#    details for target creation.
+#
+# 2.1 Secret Example yaml (replace the values)
 # apiVersion: v1
 # kind: Secret
 # metadata:
 #   name: aws-s3-secret
-#   namespace: default
 # type: Opaque
 # stringData:
 #   accessKey: "PROVIDE_ACCESS_KEY"
 #   secretKey: "PROVIDE_SECRET_KEY"
+#
+# 2.2 ConfigMap Example yaml (replace the values)
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: aws-s3-configmap
+# Data:
 #   bucketName: "PROVIDE_S3_BUCKET_NAME"
 #   region: "PROVIDE_REGION"
-#   thresholdCapacity: 100Gi
-
+#   thresholdCapacity: "100Gi"
+#
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
@@ -72,11 +80,11 @@ spec:
                 kind: Secret
                 metadata:
                   name: tvk-s3-secret
-                  namespace: default
+                  namespace: test
                 type: Opaque
-                stringData:
-                  accessKey: '{{hub  fromSecret "" "aws-s3-secret" "accessKey" hub}}'
-                  secretKey: '{{hub  fromSecret "" "aws-s3-secret" "secretKey" hub}}'
+                data:
+                  accessKey: '{{hub fromSecret "" "aws-s3-secret" "accessKey" hub}}'
+                  secretKey: '{{hub fromSecret "" "aws-s3-secret" "secretKey" hub}}'
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -97,12 +105,12 @@ spec:
                   type: ObjectStore
                   vendor: AWS
                   objectStoreCredentials:
-                    bucketName: '{{hub  fromSecret "" "aws-s3-secret" "bucketName" hub}}'
-                    region: '{{hub  fromSecret "" "aws-s3-secret" "region" hub}}'
+                    bucketName: '{{hub fromConfigMap "" "aws-s3-configmap" "bucketName" hub}}'
+                    region: '{{hub fromConfigMap "" "aws-s3-configmap" "region" hub}}'
                     credentialSecret:
                       name: tvk-s3-secret
-                      namespace: default
-                  thresholdCapacity: '{{hub  fromSecret "" "aws-s3-secret" "thresholdCapacity" hub}}'
+                      namespace: test
+                  thresholdCapacity: '{{hub fromConfigMap "" "aws-s3-configmap" "thresholdCapacity" hub}}'
                 status:
                   status: Available
     - objectDefinition:
