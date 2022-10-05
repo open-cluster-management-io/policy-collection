@@ -1,7 +1,7 @@
 # Use this policy to create NetworkPolicies in new namespaces.
 # This policy requires the Kyverno policy enforcement point to be installed
 # separately.  The policy is based off of a kyverno community policy 
-# located here: https://kyverno.io/policies/best-practices/add_network_policy/
+# located here: https://kyverno.io/policies/best-practices/add_network_policy/add_network_policy/
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
