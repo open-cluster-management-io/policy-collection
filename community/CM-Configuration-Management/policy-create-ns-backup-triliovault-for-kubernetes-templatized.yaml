@@ -54,7 +54,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: tvk-s3-secret
+          name: policy-kyverno-tvk-s3-secret
         spec:
           remediationAction: enforce
           severity: high
@@ -74,7 +74,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: tvk-scheduling-policy
+          name: policy-kyverno-tvk-scheduling-policy
         spec:
           remediationAction: inform
           severity: high
@@ -95,7 +95,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: tvk-retention-policy
+          name: policy-kyverno-tvk-retention-policy
         spec:
           remediationAction: inform
           severity: high
