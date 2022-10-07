@@ -21,7 +21,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: install-tvk
+          name: check-ns-openshift-operators
         spec:
           remediationAction: inform
           severity: high

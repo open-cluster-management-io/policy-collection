@@ -69,6 +69,48 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
+          name: tvk-scheduling-policy
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: Policy
+                metadata:
+                  name: trilio-daily-schedule-policy
+                  namespace: default
+                spec:
+                  scheduleConfig:
+                    schedule:
+                    - 0 23 * * *
+                  type: Schedule
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-retention-policy
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: Policy
+                metadata:
+                  name: trilio-latest-retention-policy
+                  namespace: default
+                spec:
+                  default: false
+                  retentionConfig:
+                    latest: 5
+                  type: Retention
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
           name: tvk-s3-secret
         spec:
           remediationAction: enforce
@@ -139,6 +181,9 @@ spec:
                       fullBackupPolicy:
                         name: trilio-daily-schedule-policy
                         namespace: default
+                    retentionPolicy:
+                      name: trilio-latest-retention-policy
+                      namespace: default
                   backupPlanFlags:
                     skipImageBackup: true
                   retainHelmApps: false
