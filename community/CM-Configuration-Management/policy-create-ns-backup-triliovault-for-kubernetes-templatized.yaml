@@ -54,7 +54,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: tvk-s3-secret
+          name: policy-kyverno-tvk-s3-secret
         spec:
           remediationAction: enforce
           severity: high
@@ -70,6 +70,48 @@ spec:
                 data:
                   accessKey: '{{hub fromSecret "" "aws-s3-secret" "accessKey" hub}}'
                   secretKey: '{{hub fromSecret "" "aws-s3-secret" "secretKey" hub}}'
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-kyverno-tvk-scheduling-policy
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: Policy
+                metadata:
+                  name: trilio-daily-schedule-policy
+                  namespace: default
+                spec:
+                  scheduleConfig:
+                    schedule:
+                    - 0 23 * * *
+                  type: Schedule
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-kyverno-tvk-retention-policy
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: Policy
+                metadata:
+                  name: trilio-latest-retention-policy
+                  namespace: default
+                spec:
+                  default: false
+                  retentionConfig:
+                    latest: 5
+                  type: Retention
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -152,6 +194,9 @@ spec:
                                 fullBackupPolicy:
                                   name: trilio-daily-schedule-policy
                                   namespace: default
+                              retentionPolicy:
+                                name: trilio-latest-retention-policy
+                                namespace: default
                             backupPlanFlags:
                               skipImageBackup: true
                             retainHelmApps: false
