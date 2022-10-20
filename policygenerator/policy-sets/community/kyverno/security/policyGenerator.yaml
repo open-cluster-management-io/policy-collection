@@ -16,133 +16,129 @@ policyDefaults:
   policySets:
     - kyverno-security-policyset
   standards:
-    - generic
+    - NIST SP 800-53
 policies:
 - name: restrict-annotations
-  categories:
-    - setup
-  controls: 
-    - setup
   disabled: false
   manifests:
     - path: ../input/security/restrict_annotations
 - name: restrict-automount-sa-token
   categories:
-    - setup
+    - AC Access Control
   controls: 
-    - setup
+    - AC-3 Access Enforcement
   disabled: false
   manifests:
     - path: ../input/security/restrict_automount_sa_token
 - name: restrict-binding-clusteradmin
   categories:
-    - setup
+    - AC Access Control
   controls: 
-    - setup
+    - AC-3 Access Enforcement
   disabled: false
   manifests:
     - path: ../input/security/restrict-binding-clusteradmin
 - name: restrict-clusterrole-nodesproxy
   categories:
-    - setup
+    - AC Access Control
   controls: 
-    - setup
+    - AC-3 Access Enforcement
   disabled: false
   manifests:
     - path: ../input/security/restrict-clusterrole-nodesproxy
 - name: restrict-ingress-wildcard
   categories:
-    - setup
+    - SC System and Communications Protection
   controls: 
-    - setup
+    - SC-11 Trusted Path
   disabled: false
   manifests:
     - path: ../input/security/restrict-ingress-wildcard
 - name: restrict-loadbalancer
   categories:
-    - setup
+    - SC System and Communications Protection
   controls: 
-    - setup
+    - SC-11 Trusted Path
   disabled: false
   manifests:
     - path: ../input/security/restrict_loadbalancer
 - name: restrict-node-selection
   categories:
-    - setup
+    - SC System and Communications Protection
   controls: 
-    - setup
+    - SC-4 Information in Shared System Resources
   disabled: false
   manifests:
     - path: ../input/security/restrict_node_selection
 - name: restrict-secret-role-verbs
   categories:
-    - setup
+    - AC Access Control
   controls: 
-    - setup
+    - AC-3 Access Enforcement
   disabled: false
   manifests:
     - path: ../input/security/restrict-secret-role-verbs
 - name: restrict-service-account
   categories:
-    - setup
+    - AC Access Control
   controls: 
-    - setup
+    - AC-3 Access Enforcement
   disabled: false
   manifests:
     - path: ../input/security/restrict-service-account
 - name: restrict-service-port-range
   categories:
-    - setup
+    - SC System and Communications Protection
   controls: 
-    - setup
+    - SC-4 Information in Shared System Resources
   disabled: false
   manifests:
     - path: ../input/security/restrict_service_port_range
 - name: restrict-wildcard-resources
   categories:
-    - setup
+    - SC System and Communications Protection
   controls: 
-    - setup
+    - SC-11 Trusted Path
   disabled: false
   manifests:
     - path: ../input/security/restrict-wildcard-resources
 - name: restrict-wildcard-verbs
   categories:
-    - setup
+    - SC System and Communications Protection
   controls: 
-    - setup
+    - SC-11 Trusted Path
   disabled: false
   manifests:
     - path: ../input/security/restrict-wildcard-verbs
 - name: networking-block-nodeport-services
   categories:
-    - setup
+    - SC System and Communications Protection
   controls: 
-    - setup
+    - SC-7 Boundary Protection
   disabled: false
   manifests:
     - path: ../input/security/networking/block-nodeport-services
 - name: authorization-disallow-scc-runasany
   categories:
-    - setup
+    - AC Access Control
   controls: 
-    - setup
+    - AC-3 Access Enforcement
   disabled: false
   manifests:
     - path: ../input/security/authorization
 - name: authorization-host-namespaces
   categories:
-    - setup
+    - AC Access Control
   controls: 
-    - setup
+    - AC-3 Access Enforcement
   disabled: false
   manifests:
     - path: ../input/security/authorization/host-namespaces
 - name: authorization-protect-default-scc
   categories:
-    - setup
+    - AC Access Control
   controls: 
-    - setup
+    - AC-3 Access Enforcement
   disabled: false
   manifests:
     - path: ../input/security/authorization/protect-default-scc

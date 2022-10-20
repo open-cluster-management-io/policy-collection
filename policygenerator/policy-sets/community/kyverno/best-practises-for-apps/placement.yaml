@@ -1,7 +1,7 @@
 apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
-  name: kyverno-placement
+  name: kyverno-app-placement
   namespace: policies
 spec:
   predicates:
