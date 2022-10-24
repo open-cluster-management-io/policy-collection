@@ -1,0 +1,54 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: dashboard-react-app
+  namespace: telescope
+  annotations:
+    apps.open-cluster-management.io/deployables: ''
+    apps.open-cluster-management.io/subscriptions: telescope/dashboard-react-app-subscription,telescope/dashboard-react-app-subscription-local
+spec:
+  componentKinds:
+    - group: apps.open-cluster-management.io
+      kind: Subscription
+  descriptor: {}
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - dashboard-react-app
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  name: dashboard-react-app-subscription
+  namespace: telescope
+  labels:
+    app: dashboard-react-app
+    app.kubernetes.io/part-of: dashboard-react-app
+    apps.open-cluster-management.io/reconcile-rate: medium
+spec:
+  name: dashboard-react-app
+  channel: telescope-channel/telescope
+  packageOverrides:
+    - packageAlias: dashboard-react-app
+      packageName: dashboard-react-app
+  placement:
+    placementRef:
+      name: dashboard-react-app-placement
+      kind: PlacementRule
+posthooks: {}
+prehooks: {}
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: dashboard-react-app-placement
+  namespace: telescope
+  labels:
+    app: dashboard-react-app
+spec:
+  clusterSelector:
+    matchLabels:
+      local-cluster: 'true'
+

@@ -1,0 +1,70 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: psql-telescope
+  namespace: telescope
+  annotations:
+    apps.open-cluster-management.io/deployables: ''
+    apps.open-cluster-management.io/subscriptions: telescope/psql-telescope-subscription,telescope/psql-telescope-subscription-local
+spec:
+  componentKinds:
+    - group: apps.open-cluster-management.io
+      kind: Subscription
+  descriptor: {}
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - psql-telescope
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  name: psql-telescope-subscription
+  namespace: telescope
+  labels:
+    app: psql-telescope
+    app.kubernetes.io/part-of: psql-telescope
+    apps.open-cluster-management.io/reconcile-rate: medium
+spec:
+  name: postgresql
+  channel: telescopedb-channel/postgresql
+  packageOverrides:
+    - packageAlias: postgresql
+      packageName: postgresql
+      packageOverrides:
+        - path: spec
+          value:
+            global:
+              postgresql:
+                auth:
+                  postgresqlPassword: scope123
+                  username: telescope-db
+                  password: scope123
+                  database: telescope
+            primary:
+              persistence:
+                enabled: true
+                existingClaim: telescopedb-pv-claim
+            volumePermissions:
+              enabled: true
+  placement:
+    placementRef:
+      name: postgresql-placement
+      kind: PlacementRule
+posthooks: {}
+prehooks: {}
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: postgresql-placement
+  namespace: telescope
+  labels:
+    app: psql-telescope
+spec:
+  clusterSelector:
+    matchLabels:
+      local-cluster: 'true'
+

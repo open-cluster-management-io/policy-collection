@@ -1,0 +1,21 @@
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  annotations:
+    apps.open-cluster-management.io/reconcile-rate: medium
+  name: telescope
+  namespace: telescope-channel
+spec:
+  pathname: https://rh-telescope.github.io/helm-charts
+  type: HelmRepo
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  annotations:
+    apps.open-cluster-management.io/reconcile-rate: medium
+  name: postgresql
+  namespace: telescopedb-channel
+spec:
+  pathname: https://charts.bitnami.com/bitnami
+  type: HelmRepo
