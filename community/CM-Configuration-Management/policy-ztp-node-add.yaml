@@ -1,5 +1,5 @@
 #This policy is used to add nodes to an existing cluster that was deployed with ACM ZTP.  
-#The policy will create the BMH and NMStateconfigs that are necessary to add the node.  ACM will pick up the new node and automatically start provisioning it once this policy is set to enforce.
+#The policy will create the BMH that are necessary to add the node.  ACM will pick up the new node and automatically start provisioning it once this policy is set to enforce.
 #
 #Ensure that the managed cluster namespace, InfraEnv, and name match the existing cluster in ACM and update the BMC Address as necessary.
 #See https://docs.openshift.com/container-platform/4.11/scalability_and_performance/ztp-deploying-disconnected.html#ztp-manually-install-a-single-managed-cluster_ztp-deploying-disconnected for examples of the BMH Resource.
