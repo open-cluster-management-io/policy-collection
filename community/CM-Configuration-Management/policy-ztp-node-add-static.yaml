@@ -1,0 +1,119 @@
+#This policy is used to add nodes with static IP addressing to an existing cluster that was deployed with ACM ZTP.  
+#The policy will create the BMH and NMStateconfigs that are necessary to add the node.  ACM will pick up the new node and automatically start provisioning it once this policy is set to enforce.
+#
+#Ensure that the managed cluster namespace, InfraEnv, and name match the existing cluster in ACM
+#See https://docs.openshift.com/container-platform/4.11/scalability_and_performance/ztp-deploying-disconnected.html#ztp-manually-install-a-single-managed-cluster_ztp-deploying-disconnected for examples of the BMH Resource.
+#
+#Update BMC address, Interface names, MACs and IPs as necessary.  
+#See https://docs.openshift.com/container-platform/4.11/networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.html for examples of NMState Configs.
+#
+#The secret for the BMH will need to be created separately.  
+#
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-ztp-node-add-static
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST 800-53
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-ztp-node-add-static
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: metal3.io/v1alpha1
+                kind: BareMetalHost
+                metadata:
+                  name: hostX
+                  namespace: <managed cluster NS>
+                  labels:
+                    infraenvs.agent-install.openshift.io: "<managed cluster InfraEnv>"
+                  annotations:
+                    inspect.metal3.io: disabled
+                    bmac.agent-install.openshift.io/hostname: "hostX"
+                    bmac.agent-install.openshift.io/role: worker
+                spec:
+                  online: true
+                  bootMACAddress: 00:11:22:33:44:55
+                  automatedCleaningMode: metadata
+                  rootDeviceHints:
+                    deviceName: "/dev/sda"
+                  bmc:
+                    address: "idrac-virtualmedia+https://<BMC IP>/redfish/v1/Systems/System.Embedded.1"
+                    credentialsName: bmc-secret-hostx
+                    disableCertificateVerification: true
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: agent-install.openshift.io/v1beta1
+                kind: NMStateConfig
+                metadata:
+                  name: hostx-nmstate
+                  namespace: <managed cluster NS>
+                  labels:
+                    cluster-name: <mnanaged cluster name>
+                spec:
+                  config:
+                    interfaces:
+                      - name: ens1f1
+                        state: up
+                        type: ethernet
+                        ipv4:
+                          address:
+                          - ip: 10.0.0.10
+                            prefix-length: 24
+                          dhcp: false
+                          enabled: true
+                        ipv6:
+                          enable: false
+                    dns-resolver:
+                      config:
+                        server:
+                          - 10.0.0.53
+                    routes:
+                      config:
+                        - destination: 0.0.0.0/0
+                          next-hop-address: 10.0.0.1
+                          next-hop-interface: ens1f1
+                          table-id: 254
+                  interfaces:
+                    - name: "ens1f1"
+                      macAddress: "00:11:22:33:44:55"
+          remediationAction: inform
+          severity: medium
+  remediationAction: inform
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: policy-ztp-node-add-static-placement
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: In
+        values:
+          - "true"
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: policy-ztp-node-add-static-placement
+placementRef:
+  name: policy-ztp-node-add-static-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: policy-ztp-node-add-static
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
