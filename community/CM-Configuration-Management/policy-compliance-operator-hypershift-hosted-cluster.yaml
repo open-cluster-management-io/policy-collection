@@ -1,6 +1,6 @@
 # This policy assumes that the Compliance Operator is installed and running on
 # the managed clusters. It deploys a scan that checks the master and worker
-# nodes, and verifies compliance with the OpenShift Moderate security benchmark.
+# nodes, and verifies compliance with the OpenShift CIS Benchmark.
 #
 # Please replace "MASTER_NAMEAPACE" to the namespace name of check target hosted
 # cluster.
@@ -159,7 +159,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: compliance-suite-moderate
+          name: compliance-suite-cis
           namespace: openshift-compliance
         spec:
           remediationAction: inform
@@ -170,7 +170,7 @@ spec:
                 apiVersion: compliance.openshift.io/v1alpha1
                 kind: ComplianceSuite
                 metadata:
-                  name: moderate
+                  name: cis
                   namespace: openshift-compliance
                 status:
                   phase: DONE
@@ -178,12 +178,12 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: compliance-suite-moderate-results
+          name: compliance-suite-cis-results
         spec:
           remediationAction: inform
           severity: high
           object-templates:
-            - complianceType: mustnothave # this template reports the results for scan suite: moderate by looking at ComplianceCheckResult CRs
+            - complianceType: mustnothave # this template reports the results for scan suite: cis by looking at ComplianceCheckResult CRs
               objectDefinition:
                 apiVersion: compliance.openshift.io/v1alpha1
                 kind: ComplianceCheckResult
@@ -191,7 +191,7 @@ spec:
                   namespace: openshift-compliance
                   labels:
                     compliance.openshift.io/check-status: FAIL
-                    compliance.openshift.io/suite: moderate
+                    compliance.openshift.io/suite: cis
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
