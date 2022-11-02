@@ -1,7 +1,7 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-enableclusterlogforwarder
+  name: policy-enableclusterlogforwarder-templated
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
@@ -14,7 +14,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-enableclusterlogforwarder
+          name: policy-enableclusterlogforwarder-templated
         spec:
           remediationAction: inform
           severity: low
@@ -42,20 +42,20 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-enableclusterlogforwarder
+  name: binding-policy-enableclusterlogforwarder-templated
 placementRef:
-  name: placement-policy-enableclusterlogforwarder
+  name: placement-policy-enableclusterlogforwarder-templated
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-  - name: policy-enableclusterlogforwarder
+  - name: policy-enableclusterlogforwarder-templated
     kind: Policy
     apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-enableclusterlogforwarder
+  name: placement-policy-enableclusterlogforwarder-templated
 spec:
   clusterConditions:
     - status: 'True'
