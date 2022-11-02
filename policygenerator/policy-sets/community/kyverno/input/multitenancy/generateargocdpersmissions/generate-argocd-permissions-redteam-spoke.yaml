@@ -6,7 +6,9 @@ metadata:
     policies.kyverno.io/title: Add ArgoCD Rolebinding
     policies.kyverno.io/category: Multi-Tenancy
     policies.kyverno.io/subject: ClusterRoleBinding
-    policies.kyverno.io/description: test
+    policies.kyverno.io/description: >-
+      When a user from red team creates a namespace, a ClusterRoleBinding gets created so
+      it can access ArgoCD.
 spec:
   background: false
   rules:
@@ -39,7 +41,4 @@ spec:
         - apiGroup: rbac.authorization.k8s.io
           kind: Group
           name: red-sre-group
-
-
-             
 

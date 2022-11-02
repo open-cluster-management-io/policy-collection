@@ -8,7 +8,7 @@ metadata:
     policies.kyverno.io/category: Multi-Tenancy
     policies.kyverno.io/subject: ClusterRoleBinding
     policies.kyverno.io/description: >-
-      When a user from Team1 creates a NS a ClusterRoleBinding gets created so
+      When a user from blue team creates a namespace, a ClusterRoleBinding gets created so
       it can access ArgoCD.
 spec:
   background: false

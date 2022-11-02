@@ -1,18 +1,17 @@
-# governance-best-practises-for-apps
+# Kyverno Multitenancy Best Practices Sample
 
-repository showing best practices for apps
+Repository showing best practices sample for two tenants
+that can be separated using Kyverno policies.
 
-Based on the following links:
+## Kyverno multitenancy
 
-* https://cloud.redhat.com/blog/9-best-practices-for-deploying-highly-available-applications-to-openshift
-* https://cloud.redhat.com/blog/14-best-practices-for-developing-applications-on-openshift
-
-## Kyverno best prastices
-
-https://kyverno.io/policies/?policytypes=Best%2520Practices
+https://kyverno.io/policies/?policytypes=Multi-Tenancy
 
 
-we look to create a PolicySet based on RHACM-Policies and Kyverno Integration
+This is a sample that creates policy sets to provide multitenancy
+best practices.  There are two policy sets created by this solution:
+1. kyverno-multitenancy-hub-policyset - a set of policies deployed to the hub for multitenancy.  This placement should remain configured for hub deployment only.
+2. kyverno-multitenancy-policyset - a set of policies that should be deployed to the clusters running the application workloads from the 2 tenants. Update the placement for this policy set.  The default deploys placement is hub only.
 
 ## List of Policies 
 

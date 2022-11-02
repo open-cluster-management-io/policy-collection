@@ -18,42 +18,63 @@ policyDefaults:
   standards:
     - NIST SP 800-53
 policies:
-- name: add-labels-to-tenant
-  disabled: false
-  manifests:
-    - path: ../input/multitenancy/addlabelstotenant
+# hub policies
 - name: disallow-placementrules
   disabled: false
   manifests:
     - path: ../input/multitenancy/disallowplacementrules
-- name: generate-all
-  disabled: false
-  manifests:
-    - path: ../input/multitenancy/generateall
-- name: gen-argocdpersmissions
-  disabled: false
-  manifests:
-    - path: ../input/multitenancy/generateargocdpersmissions
+  policySets:
+    - kyverno-multitenancy-hub-policyset
 - name: gen-managed-clusterset-binding
   disabled: false
   manifests:
     - path: ../input/multitenancy/generateManagedClusterSetBinding
+  policySets:
+    - kyverno-multitenancy-hub-policyset
 - name: gen-placement-rules
   disabled: false
   manifests:
     - path: ../input/multitenancy/generatePlacementRules
-- name: add-job-ttl
+  policySets:
+    - kyverno-multitenancy-hub-policyset
+- name: generate-all
   disabled: false
   manifests:
-    - path: ../input/multitenancy/other
+    - path: ../input/multitenancy/generateall
+  policySets:
+    - kyverno-multitenancy-hub-policyset
+- name: validate-placement
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/validateplacement
+  policySets:
+    - kyverno-multitenancy-hub-policyset
 - name: preventupdatesappproject
   disabled: false
   manifests:
     - path: ../input/multitenancy/preventupdatesappproject
+  policySets:
+    - kyverno-multitenancy-hub-policyset
 - name: team-restrictions
   disabled: false
   manifests:
     - path: ../input/multitenancy/restrictions
+  policySets:
+    - kyverno-multitenancy-hub-policyset
+# end hub policies
+# managed cluster policies
+- name: add-labels-to-tenant
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/addlabelstotenant
+- name: gen-argocdpersmissions
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/generateargocdpersmissions
+- name: add-job-ttl
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/other
 - name: team-sharedresources
   disabled: false
   manifests:
@@ -62,11 +83,12 @@ policies:
   disabled: false
   manifests:
     - path: ../input/multitenancy/validatens
-- name: validate-placement
-  disabled: false
-  manifests:
-    - path: ../input/multitenancy/validateplacement
+# end managed cluster policies
 policySets:
+  - description: kyverno-multitenancy-hub-policyset to apply set of kyverno-policies on the open cluster management hub.
+    name: kyverno-multitenancy-hub-policyset
+    placement:
+      placementPath: placement-hub.yaml
   - description: kyverno-multitenancy-policyset to apply set of kyverno-policies.
     name: kyverno-multitenancy-policyset
     placement:
