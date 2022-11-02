@@ -15,6 +15,7 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
+  remediationAction: inform
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -23,6 +24,7 @@ spec:
         metadata:
           name: machineset-ocs-worker1
         spec:
+          severity: high
           object-templates:
           - complianceType: musthave
             objectDefinition:
@@ -231,8 +233,6 @@ spec:
                           name: worker-user-data
                     versions:
                       kubelet: ""
-  severity: high
-  remediationAction: inform
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
