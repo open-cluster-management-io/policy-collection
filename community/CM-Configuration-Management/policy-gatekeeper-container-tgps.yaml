@@ -43,9 +43,9 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-gatekeeper-annotation-owner
+  name: binding-policy-gatekeeper-container-tgps
 placementRef:
-  name: placement-policy-gatekeeper-annotation-owner
+  name: placement-policy-gatekeeper-container-tgps
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
@@ -56,7 +56,7 @@ subjects:
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-gatekeeper-annotation-owner
+  name: placement-policy-gatekeeper-container-tgps
 spec:
   clusterConditions:
     - status: "True"
