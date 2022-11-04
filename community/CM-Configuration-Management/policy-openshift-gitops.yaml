@@ -3,9 +3,9 @@ kind: Policy
 metadata:
   name: openshift-gitops-installed
   annotations:
-    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
-    policy.open-cluster-management.io/controls: CM-2 Baseline 
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
   remediationAction: enforce
   disabled: false

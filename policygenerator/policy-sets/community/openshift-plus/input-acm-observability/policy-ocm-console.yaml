@@ -1,0 +1,11 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: observability
+spec:
+  applicationMenu:
+    section: Red Hat applications
+    imageURL: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenShift-LogoType.svg'
+  href: https://{{ (lookup "route.openshift.io/v1" "Route" "open-cluster-management-observability" "grafana").spec.host }}
+  location: ApplicationMenu
+  text: 'Red Hat Advanced Cluster Management Observability'

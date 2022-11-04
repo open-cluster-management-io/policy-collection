@@ -1,0 +1,42 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-host-network
+  annotations:
+    policies.kyverno.io/description: Host network Controls whether the pod may use the host's network namespace.
+      Providing access to the host's network gives the pod access to the host's network devices.
+      Pods with access to the host's network devices can be used to snoop on network activity of other pods on the same node.
+spec:
+  background: false
+  validationFailureAction: audit
+  rules:
+    - name: validate-host-network-scc
+      match:
+        resources:
+          kinds:
+            - SecurityContextConstraints
+      preconditions:
+        - key: "{{ request.object.metadata.name }}"
+          operator: NotIn
+          value: ["privileged", "hostaccess", "hostnetwork", "node-exporter", "machine-api-termination-handler"]
+      validate:
+        message: "Creating SCC that allows access to hosts network namespace in custom created scc is forbidden"
+        pattern:
+          =(allowHostNetwork): "false"
+    - name: validate-host-network-pod
+      match:
+        resources:
+          kinds:
+            - Pod
+      exclude:
+        resources:
+          namespaces:
+            - "openshift-*"
+            - "openshift*"
+            - "kube-*"
+            - "kube*"
+      validate:
+        message: "Use of hosts network namespace is not allowed in pods"
+        pattern:
+          spec:
+            =(hostNetwork): "false"

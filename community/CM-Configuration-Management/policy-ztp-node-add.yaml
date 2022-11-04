@@ -1,0 +1,80 @@
+#This policy is used to add nodes to an existing cluster that was deployed with ACM ZTP.  
+#The policy will create the BMH that are necessary to add the node.  ACM will pick up the new node and automatically start provisioning it once this policy is set to enforce.
+#
+#Ensure that the managed cluster namespace, InfraEnv, and name match the existing cluster in ACM and update the BMC Address as necessary.
+#See https://docs.openshift.com/container-platform/4.11/scalability_and_performance/ztp-deploying-disconnected.html#ztp-manually-install-a-single-managed-cluster_ztp-deploying-disconnected for examples of the BMH Resource.
+#
+#The secret for the BMH will need to be created separately.  
+#
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-ztp-node-add
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST 800-53
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-ztp-node-add
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: metal3.io/v1alpha1
+                kind: BareMetalHost
+                metadata:
+                  name: hostX
+                  namespace: <managed cluster NS>
+                  labels:
+                    infraenvs.agent-install.openshift.io: "<managed cluster InfraEnv>"
+                  annotations:
+                    inspect.metal3.io: disabled
+                    bmac.agent-install.openshift.io/hostname: "hostX"
+                    bmac.agent-install.openshift.io/role: worker
+                spec:
+                  online: true
+                  bootMACAddress: 00:11:22:33:44:55
+                  automatedCleaningMode: metadata
+                  rootDeviceHints:
+                    deviceName: "/dev/sda"
+                  bmc:
+                    address: "idrac-virtualmedia+https://<BMC IP>/redfish/v1/Systems/System.Embedded.1"
+                    credentialsName: bmc-secret-hostx
+                    disableCertificateVerification: true
+          remediationAction: inform
+          severity: medium
+  remediationAction: inform
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: policy-ztp-node-add-placement
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: In
+        values:
+          - "true"
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: policy-ztp-node-add-placement
+placementRef:
+  name: policy-ztp-node-add-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: policy-ztp-node-add
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy

@@ -28,6 +28,8 @@ Read our blogs for more information and best practices for Red Hat Advanced Clus
 
 * [Using PolicyReports to Generate Alerts](https://cloud.redhat.com/blog/using-policyreports-to-view-and-alert-for-governance-violations)
 
+* [Applying Policy-Based Governance at Scale Using Templates](https://cloud.redhat.com/blog/applying-policy-based-governance-at-scale-using-templates)
+
 ## Red Hat Supported Integrations
 
 * [Initiating Ansible Automation on Policy Violations](https://cloud.redhat.com/blog/initiating-ansible-automation-on-policy-violations)

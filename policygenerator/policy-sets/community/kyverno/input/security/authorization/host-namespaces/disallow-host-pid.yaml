@@ -1,0 +1,42 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-host-pid
+  annotations:
+    policies.kyverno.io/description: Sharing the host's PID namespace allows process visibility
+      on the host, potentially exposing process information. To avoid pod container from
+      having visibility to host process space, validate that 'hostPID' is set to 'false'.
+spec:
+  background: false
+  validationFailureAction: audit
+  rules:
+    - name: validate-hostPID-scc
+      match:
+        resources:
+          kinds:
+            - SecurityContextConstraints
+      preconditions:
+        - key: "{{ request.object.metadata.name }}"
+          operator: NotIn
+          value: ["privileged", "hostaccess", "node-exporter"]
+      validate:
+        message: "Creating SCC that allows host PID namespaces in custom created scc is forbidden"
+        pattern:
+          =(allowHostPID): "false"
+    - name: validate-hostIPC-pod
+      match:
+        resources:
+          kinds:
+            - Pod
+      exclude:
+        resources:
+          namespaces:
+            - "openshift-*"
+            - "openshift*"
+            - "kube-*"
+            - "kube*"
+      validate:
+        message: "Use of host PID namespaces is not allowed in pods"
+        pattern:
+          spec:
+            =(hostPID): "false"

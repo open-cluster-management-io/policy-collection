@@ -1,0 +1,33 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-redteam-to-its-placement
+spec:
+  validationFailureAction: enforce
+  background: false
+  rules:
+  - name: restrict-to-argoproject
+    match:
+      resources:
+        kinds:
+        - ApplicationSet 
+      subjects:
+      - kind: Group
+        name: red-sre-group
+    preconditions:
+      any:
+      - key: "{{request.operation}}"
+        operator: In
+        value:
+        - CREATE
+        - UPDATE           
+    validate:
+      message: "For any `red-sre-group` member, creation of ArgoCD ApplicationSet must point to red-placement"
+      pattern:
+        spec:
+          generators:
+            - clusterDecisionResource:
+                configMapRef: acm-placement
+                labelSelector:
+                  matchLabels:
+                    cluster.open-cluster-management.io/placement: red-placement

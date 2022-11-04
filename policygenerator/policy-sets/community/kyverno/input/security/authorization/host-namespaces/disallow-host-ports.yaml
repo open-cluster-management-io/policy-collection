@@ -1,0 +1,48 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-host-ports
+  annotations:
+    policies.kyverno.io/description: Provides a list of allowed ports in the host network namespace.
+      Access to host ports allows potential snooping of network traffic and should be forbidden / minimized.
+spec:
+  background: false
+  validationFailureAction: audit
+  rules:
+    - name: validate-host-ports-scc
+      match:
+        resources:
+          kinds:
+            - SecurityContextConstraints
+      preconditions:
+        - key: "{{ request.object.metadata.name }}"
+          operator: NotIn
+          value: ["privileged", "hostaccess", "hostnetwork", "node-exporter"]
+      validate:
+        message: "Creating or modifying custom SCC that allows host ports is forbidden"
+        pattern:
+          =(allowHostPorts): "false"
+    - name: validate-host-ports-pod
+      match:
+        resources:
+          kinds:
+            - Pod
+      exclude:
+        resources:
+          namespaces:
+            - "openshift-*"
+            - "openshift*"
+            - "kube-*"
+            - "kube*"
+      validate:
+        message: >-
+          Use of host ports is disallowed. The fields spec.containers[*].ports[*].hostPort
+          and spec.initContainers[*].ports[*].hostPort must be empty.
+        pattern:
+          spec:
+            =(initContainers):
+              - =(ports):
+                  - X(hostPort): 0
+            containers:
+              - =(ports):
+                  - X(hostPort): 0

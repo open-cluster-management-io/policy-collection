@@ -1,0 +1,52 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-scc-runasany
+  annotations:
+    policies.kyverno.io/description: Using RunAsAny in one of available SCC strategies can be used for privilege escalation and should not be allowed
+spec:
+  background: false
+  validationFailureAction: audit
+  rules:
+    - name: Avoid using RunAsAny in scc policies for `runAsUser`
+      match:
+        resources:
+          kinds:
+            - SecurityContextConstraints
+      preconditions:
+        - key: "{{ request.object.metadata.name }}"
+          operator: NotIn
+          value: ["privileged", "hostaccess", "hostnetwork", "anyuid", "hostmount-anyuid", "restricted", "nonroot", "node-exporter", "machine-api-termination-handler"]
+      validate:
+        message: "Avoid using `RunAsAny` for `runAsUser.type`. Use `MustRunAsRange` / `MustRunAs` / `MustRunAsNonRoot` instead"
+        pattern:
+          =(runAsUser):
+            type: "!RunAsAny"
+    - name: Avoid using RunAsAny in scc policies for `seLinuxContext`
+      match:
+        resources:
+          kinds:
+            - SecurityContextConstraints
+      preconditions:
+        - key: "{{ request.object.metadata.name }}"
+          operator: NotIn
+          value: ["privileged", "hostaccess", "hostnetwork", "anyuid", "hostmount-anyuid", "restricted", "nonroot", "node-exporter"]
+      validate:
+        message: "Avoid using `RunAsAny` for `seLinuxContext.type`. Use `MustRunAs` instead"
+        pattern:
+          =(seLinuxContext):
+            type: "!RunAsAny"
+    - name: Avoid using RunAsAny in scc policies for `fsGroup`
+      match:
+        resources:
+          kinds:
+            - SecurityContextConstraints
+      preconditions:
+        - key: "{{ request.object.metadata.name }}"
+          operator: NotIn
+          value: ["privileged", "hostaccess", "hostnetwork", "anyuid", "hostmount-anyuid", "restricted", "nonroot", "node-exporter"]
+      validate:
+        message: "Avoid using `RunAsAny` for `fsGroup.type`. Use `MustRunAs` instead"
+        pattern:
+          =(fsGroup):
+            type: "!RunAsAny"

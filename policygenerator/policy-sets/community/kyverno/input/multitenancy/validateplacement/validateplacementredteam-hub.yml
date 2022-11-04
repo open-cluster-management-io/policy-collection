@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-placement-redteam
+spec:
+  validationFailureAction: enforce
+  background: false
+  rules:
+  - name: restrict-to-argoproject
+    match:
+      resources:
+        kinds:
+        - Placement
+      subjects:
+      - kind: Group
+        name: red-sre-group
+    validate:
+      message: "For any `red-sre-group` member, creation of Placement must be bound to its clusterset"
+      pattern:
+        spec:
+         clusterSets:
+         - redteam

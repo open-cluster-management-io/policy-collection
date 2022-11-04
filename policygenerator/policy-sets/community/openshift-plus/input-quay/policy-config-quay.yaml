@@ -1,98 +1,22 @@
 apiVersion: v1
-kind: Namespace
+kind: ConfigMap
 metadata:
-  labels:
-    openshift.io/cluster-monitoring: "true"
-  name: local-quay
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: create-admin-user
-  namespace: local-quay
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: create-admin-user
-  namespace: local-quay
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
-  - list
-  - create
-  - patch
-  - update
-- apiGroups:
-  - route.openshift.io
-  resources:
-  - routes
-  verbs:
-  - get
-  - list
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: create-admin-user
-  namespace: local-quay
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: create-admin-user
-subjects:
-- kind: ServiceAccount
-  name: create-admin-user
-  namespace: local-quay
----
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
-metadata:
-  name: local-quay
-  namespace: local-quay
-spec:
-  targetNamespaces:
-  - local-quay
----
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  labels:
-    operators.coreos.com/quay-operator.local-quay: ""
-  name: quay-operator
-  namespace: local-quay
-spec:
-  channel: stable-3.7
-  installPlanApproval: Automatic
-  name: quay-operator
-  source: redhat-operators
-  sourceNamespace: openshift-marketplace
----
-apiVersion: v1
+  name: quay-config
+  namespace: policies
 data:
-  config.yaml: RkVBVFVSRV9VU0VSX0lOSVRJQUxJWkU6IHRydWUKQlJPV1NFUl9BUElfQ0FMTFNfWEhSX09OTFk6IGZhbHNlClNVUEVSX1VTRVJTOgotIHF1YXlhZG1pbgpGRUFUVVJFX1VTRVJfQ1JFQVRJT046IGZhbHNlCg==
-kind: Secret
-metadata:
-  name: init-config-bundle-secret
-  namespace: local-quay
-type: Opaque
+  host: '{{ (lookup "route.openshift.io/v1" "Route" "local-quay" "registry-quay" ).spec.host }}'
 ---
-apiVersion: quay.redhat.com/v1
-kind: QuayRegistry
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
 metadata:
-  name: registry
-  namespace: local-quay
+  name: quay
 spec:
-  configBundleSecret: init-config-bundle-secret
-  components:
-    - kind: objectstorage
-      managed: true
-    - managed: true
-      kind: tls
+  applicationMenu:
+    section: Red Hat applications
+    imageURL: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenShift-LogoType.svg'
+  href: 'https://{{ (lookup "route.openshift.io/v1" "Route" "local-quay" "registry-quay" ).spec.host }}'
+  location: ApplicationMenu
+  text: 'Red Hat Quay Enterprise Registry'
 ---
 apiVersion: batch/v1
 kind: Job
@@ -155,6 +79,17 @@ spec:
             password: $(echo ${ADMINPASS} | base64)
           EOF
             echo "Quay password successfully set for user quayadmin and stored in secret local-quay/quayadmin."
+            TOKEN=$(echo "$RESULT" | tr ',' '\n' | grep access_token | awk -F: '{print $2}' | sed 's/"//g')
+            cat <<EOF | kubectl create -f -
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: quay-api-token
+          type: Opaque
+          data:
+            token: $(echo ${TOKEN} | base64)
+          EOF
+            echo "Quay token successfully obtained and stored in secret quay-api-token."
           fi
         image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
         imagePullPolicy: Always

@@ -31,21 +31,28 @@ spec:
                 spec:
                   match:
                     - excludedNamespaces:
+                        - ansible-automation-platform
                         - hive
                         - kube-node-lease
                         - kube-public
                         - kube-storage-version-migrator-operator
                         - kube-system
+                        - local-quay
+                        - multicluster-engine
                         - open-cluster-management
-                        - open-cluster-management-hub
+                        - open-cluster-management-addon-observability
                         - open-cluster-management-agent
                         - open-cluster-management-agent-addon
+                        - open-cluster-management-hub
+                        - open-cluster-management-observability
                         - openshift
                         - openshift-apiserver
                         - openshift-apiserver-operator
                         - openshift-authentication
                         - openshift-authentication-operator
+                        - openshift-cloud-controller-manager-operator
                         - openshift-cloud-credential-operator
+                        - openshift-cloud-network-config-controller
                         - openshift-cluster-csi-drivers
                         - openshift-cluster-machine-approver
                         - openshift-cluster-node-tuning-operator
@@ -63,10 +70,12 @@ spec:
                         - openshift-controller-manager-operator
                         - openshift-dns
                         - openshift-dns-operator
+                        - openshift-dr-system
                         - openshift-etcd
                         - openshift-etcd-operator
                         - openshift-gatekeeper-operator
                         - openshift-gatekeeper-system
+                        - openshift-gitops
                         - openshift-image-registry
                         - openshift-infra
                         - openshift-ingress
@@ -100,8 +109,11 @@ spec:
                         - openshift-sdn
                         - openshift-service-ca
                         - openshift-service-ca-operator
+                        - openshift-storage
                         - openshift-user-workload-monitoring
                         - openshift-vsphere-infra
+                        - rhacs-operator
+                        - stackrox
                       processes:
                         - '*'
 ---

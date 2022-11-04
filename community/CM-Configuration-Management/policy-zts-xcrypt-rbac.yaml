@@ -1,0 +1,269 @@
+# Role based Administration For Zts-Xcrypt
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-zts-xcrypt-rbac
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-zts-xcrypt-rbac
+        spec:
+          remediationAction: inform
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace 
+                metadata:
+                   name: zts-xcrypt
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: ServiceAccount
+                metadata:
+                   name: zts-xcrypt-operator
+                   namespace: zts-xcrypt
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1 
+                kind: ClusterRole
+                metadata:
+                   name: zts-xcrypt-operator
+                   namespace: zts-xcrypt
+                rules:
+                - apiGroups:
+                  - security.openshift.io
+                  resources:
+                  - securitycontextconstraints
+                  resourceNames:
+                  - privileged
+                  - anyuid
+                  - hostmount-anyuid
+                  - hostnetwork
+                  verbs:
+                  - use
+                - apiGroups:
+                  - ""
+                  resources:
+                  - pods
+                  - services
+                  - services/finalizers
+                  - endpoints
+                  - persistentvolumeclaims
+                  - events
+                  - configmaps
+                  - secrets
+                  verbs:
+                  - create
+                  - delete
+                  - get
+                  - list
+                  - patch
+                  - update
+                  - watch
+                - apiGroups:
+                  - xcrypt.zettaset.com
+                  resources:
+                  - '*'
+                  verbs:
+                  - create
+                  - delete
+                  - get
+                  - list
+                  - patch
+                  - update
+                  - watch
+                - apiGroups:
+                  - apps
+                  resources:
+                  - deployments
+                  - daemonsets
+                  - replicasets
+                  - statefulsets
+                  verbs:
+                  - create
+                  - delete
+                  - get
+                  - list
+                  - patch
+                  - update
+                  - watch
+                - apiGroups:
+                  - apps
+                  resourceNames:
+                  - zts-xcrypt-operator
+                  resources:
+                  - deployments/finalizers
+                  verbs:
+                  - update
+                - apiGroups:
+                  - storage.k8s.io
+                  resources:
+                  - csidrivers
+                  verbs:
+                  - create
+                  - delete
+                  - get
+                  - list
+                  - patch
+                  - update
+                  - watch
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1 
+                kind: ClusterRoleBinding 
+                metadata:
+                   name: zts-xcrypt-operator
+                   namespace: zts-xcrypt
+                subjects:
+                  - kind: ServiceAccount
+                    name: zts-xcrypt-operator
+                    namespace: zts-xcrypt
+                roleRef:
+                   kind: ClusterRole
+                   name: zts-xcrypt-operator
+                   apiGroup: rbac.authorization.k8s.io
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: ServiceAccount
+                metadata:
+                   name: zts-csi-controller-sa
+                   namespace: zts-xcrypt
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1 
+                kind: ClusterRole
+                metadata:
+                   name: zts-external-provisioner-role 
+                   namespace: zts-xcrypt
+                rules:
+                  - apiGroups: [""]
+                    resources: ["persistentvolumes"]
+                    verbs: ["get", "list", "watch", "create", "delete"]
+                  - apiGroups: [""]
+                    resources: ["persistentvolumeclaims"]
+                    verbs: ["get", "list", "watch", "update"]
+                  - apiGroups: ["storage.k8s.io"]
+                    resources: ["storageclasses"]
+                    verbs: ["get", "list", "watch"]
+                  - apiGroups: [""]
+                    resources: ["events"]
+                    verbs: ["list", "watch", "create", "update", "patch"]
+                  - apiGroups: ["storage.k8s.io"]
+                    resources: ["csinodes"]
+                    verbs: ["get", "list", "watch"]
+                  - apiGroups: [""]
+                    resources: ["nodes"]
+                    verbs: ["get", "list", "watch"]
+                  - apiGroups: ["coordination.k8s.io"]
+                    resources: ["leases"]
+                    verbs: ["get", "watch", "list", "delete", "update", "create"]
+                  - verbs:
+                    - use
+                    apiGroups:
+                    - security.openshift.io
+                    resources:
+                    - securitycontextconstraints
+                    resourceNames:
+                    - privileged
+                    - anyuid
+                    - hostmount-anyuid
+                    - hostnetwork
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1 
+                kind: ClusterRoleBinding 
+                metadata:
+                   name: zts-csi-provisioner-binding 
+                   namespace: zts-xcrypt
+                subjects:
+                  - kind: ServiceAccount
+                    name: zts-csi-controller-sa 
+                    namespace: zts-xcrypt
+                roleRef:
+                   kind: ClusterRole
+                   name: zts-external-provisioner-role 
+                   apiGroup: rbac.authorization.k8s.io
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1 
+                kind: ClusterRole
+                metadata:
+                   name: zts-external-attacher-role 
+                   namespace: zts-xcrypt
+                rules:
+                  - apiGroups: [""]
+                    resources: ["persistentvolumes"]
+                    verbs: ["get", "list", "watch", "update"]
+                  - apiGroups: [""]
+                    resources: ["nodes"]
+                    verbs: ["get", "list", "watch"]
+                  - apiGroups: ["csi.storage.k8s.io"]
+                    resources: ["csinodeinfos"]
+                    verbs: ["get", "list", "watch"]
+                  - apiGroups: ["storage.k8s.io"]
+                    resources: ["volumeattachments"]
+                    verbs: ["get", "list", "watch", "update"]
+                  - verbs:
+                    - use
+                    apiGroups:
+                    - security.openshift.io
+                    resources:
+                    - securitycontextconstraints
+                    resourceNames:
+                    - privileged
+                    - anyuid
+                    - hostmount-anyuid
+                    - hostnetwork
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1 
+                kind: ClusterRoleBinding 
+                metadata:
+                   name: zts-csi-attacher-binding 
+                   namespace: zts-xcrypt
+                subjects:
+                  - kind: ServiceAccount
+                    name: zts-csi-controller-sa 
+                    namespace: zts-xcrypt
+                roleRef:
+                   kind: ClusterRole
+                   name: zts-external-attacher-role 
+                   apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-zts-xcrypt-rbac
+placementRef:
+  name: placement-policy-zts-xcrypt-rbac
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-zts-xcrypt-rbac
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-zts-xcrypt-rbac
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
+

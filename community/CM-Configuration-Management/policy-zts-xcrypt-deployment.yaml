@@ -1,0 +1,174 @@
+#Dockerhub version of XCrypt Operator Deployment
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-zts-xcrypt-deployment
+  annotations:
+    policy.open-cluster-management.io/standards: NIST 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-install-xcrypts-crd
+        spec:
+          remediationAction: inform
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apiextensions.k8s.io/v1
+                kind: CustomResourceDefinition
+                metadata:
+                  name: xcrypts.xcrypt.zettaset.com
+                  namespace: zts-xcrypt
+                spec:
+                  group: xcrypt.zettaset.com
+                  names:
+                    kind: XCrypt
+                    listKind: XCryptList
+                    plural: xcrypts
+                    singular: xcrypt
+                  scope: Namespaced
+                  versions:
+                  - name: v1alpha1
+                    schema:
+                      openAPIV3Schema:
+                        description: XCrypt is the Schema for the xcrypts API
+                        properties:
+                          apiVersion:
+                            description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+                            type: string
+                          kind:
+                            description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                            type: string
+                          metadata:
+                            type: object
+                          spec:
+                            description: XCryptSpec defines the desired state of XCrypt
+                            type: object
+                          status:
+                            description: XCryptStatus defines the observed state of XCrypt
+                            type: object
+                        type: object
+                    served: true
+                    storage: true
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-zts-xcrypt-deployment
+        spec:
+          remediationAction: inform
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps/v1
+                kind: Deployment
+                metadata:
+                  name: zts-xcrypt-operator
+                  namespace: zts-xcrypt
+                spec:
+                  replicas: 1
+                  selector:
+                    matchLabels:
+                      name: zts-xcrypt-operator
+                  template:
+                    metadata:
+                      labels:
+                        name: zts-xcrypt-operator
+                    spec:
+                      serviceAccountName: zts-xcrypt-operator
+                      containers:
+                        - name: zts-xcrypt-operator
+                          imagePullPolicy: IfNotPresent
+                          image: zettasetimg/zts-xcrypt-operator:zts-xcrypt-operator-13-6f1d3f
+                          command:
+                          - zts-xcrypt-operator
+                          env:
+                            - name: WATCH_NAMESPACE
+                              valueFrom:
+                                fieldRef:
+                                  fieldPath: metadata.namespace
+                            - name: POD_NAME
+                              valueFrom:
+                                fieldRef:
+                                  fieldPath: metadata.name
+                            - name: OPERATOR_NAME
+                              value: "zts-xcrypt-operator"
+                            - name: AUTH_TOKEN_NAME
+                              value: "zts-dockerhub-token"
+                            - name: RELATED_IMAGE_CA
+                              value: "zettasetimg/zts-ca-server:zts-ca-server-13"
+                            - name: RELATED_IMAGE_KMIP
+                              value: "zettasetimg/zts-kmip-server:zts-kmip-server-7-f4fbeb69a"
+                            - name: RELATED_IMAGE_LS
+                              value: "zettasetimg/zts-license-server:zts-license-server-6"
+                            - name: RELATED_IMAGE_HM
+                              value: "zettasetimg/zts-host-manager:zts-host-manager-13-default-79c9f2"
+                            - name: RELATED_IMAGE_CSI_DRIVER
+                              value: "zettasetimg/test:zts-csi-driver-5-0381e7-1"
+                            - name: RELATED_IMAGE_CSI_PROVISIONER
+                              value: "quay.io/k8scsi/csi-provisioner:v1.3.0"
+                            - name: RELATED_IMAGE_CSI_ATTACHER
+                              value: "quay.io/k8scsi/csi-attacher:v1.2.0"
+                            - name: RELATED_IMAGE_LIVENSSPROBE
+                              value: "quay.io/k8scsi/livenessprobe:v1.1.0"
+                            - name: RELATED_IMAGE_CSI_NODE_DRIVER_REGISTRAR
+                              value: "quay.io/k8scsi/csi-node-driver-registrar:v1.1.0"
+                      imagePullSecrets:
+                        - name: zts-dockerhub-token
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-zts-xcrypt-operator-executor-deployment
+        spec:
+          remediationAction: inform
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: xcrypt.zettaset.com/v1alpha1
+                kind: XCrypt
+                metadata:
+                  name: example-xcrypt
+                  namespace: zts-xcrypt
+                spec:
+                  replicas: 1
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-zts-xcrypt-deployment
+placementRef:
+  name: placement-policy-zts-xcrypt-deployment
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-zts-xcrypt-deployment
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-zts-xcrypt-deployment
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}
+

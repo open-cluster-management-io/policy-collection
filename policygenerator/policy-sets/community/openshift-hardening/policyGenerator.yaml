@@ -25,7 +25,7 @@ policies:
     - SC System and Communications Protection
   complianceType: "mustnothave"
   controls: 
-    - SC-1 SYSTEM AND COMMUNICATIONS PROTECTION POLICY AND PROCEDURES
+    - SC-1 Policy and Procedures
   manifests:
     - path: input-admin/policy-remove-kubeadmin.yaml
   remediationAction: "inform"
@@ -103,7 +103,7 @@ policies:
   categories:
     - SC System and Communications Protection
   controls: 
-    - SC-4 Information In Shared Resources
+    - SC-4 Information In Shared System Resources
   manifests:
     - path: input-scc/
   remediationAction: "inform"

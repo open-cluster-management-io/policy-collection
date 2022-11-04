@@ -1,0 +1,67 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: kyverno-deploy-bestpractise
+placementBindingDefaults:
+  name: kyverno-deploy-bestpractise
+policyDefaults:
+  informKyvernoPolicies: true
+  configurationPolicyAnnotations: {"policy.open-cluster-management.io/disable-templates": "true"}
+  policySets:
+    - kyverno-deploy-bestpractise
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: policies
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - NIST SP 800-53
+policies:
+- name: require-probes
+  disabled: false
+  manifests:
+    - path: ../input/apps/require_probes  
+- name: allowed-base-images
+  categories:
+    - SI System and Information Integrity
+  controls: 
+    - SI-4 Information System Monitoring
+  disabled: false
+  manifests:
+    - path: ../input/apps/base_images  
+- name: require-tls-routes
+  categories:
+    - SC System and Communications Protection
+  controls: 
+    - SC-8 Transmission Confidentiality and Integrity
+  disabled: false
+  manifests:
+    - path: ../input/apps/routes 
+- name: generate-poddisruptionbudget  
+  categories:
+    - SI System and Information Integrity
+  controls:
+    - SI-4 Information System Monitoring
+  disabled: false
+  manifests:
+    - path: ../input/apps/poddisruptionbudget  
+- name: require-deploy-multireplicas
+  disabled: false
+  manifests:
+    - path: ../input/apps/require_deployments_have_multiple_replicas  
+- name: validate-git-url
+  disabled: false
+  manifests:
+    - path: ../input/apps/validate_git  
+- name: require-limitsrequests
+  disabled: false
+  manifests:
+    - path: ../input/apps/limitsrequests
+policySets:
+  - description: kyverno-deploy-bestpractise to apply set of kyverno-policies.
+    name: kyverno-deploy-bestpractise
+    placement:
+      placementPath: placement.yaml
+

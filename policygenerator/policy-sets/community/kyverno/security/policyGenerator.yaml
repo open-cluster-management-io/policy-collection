@@ -1,0 +1,149 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: kyverno-security-policyset
+placementBindingDefaults:
+  name: kyverno-security-policyset
+policyDefaults:
+  configurationPolicyAnnotations: {"policy.open-cluster-management.io/disable-templates": "true"}
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: policies
+  remediationAction: enforce
+  severity: medium
+  policySets:
+    - kyverno-security-policyset
+  standards:
+    - NIST SP 800-53
+policies:
+- name: restrict-annotations
+  disabled: false
+  manifests:
+    - path: ../input/security/restrict_annotations
+- name: restrict-automount-sa-token
+  categories:
+    - AC Access Control
+  controls: 
+    - AC-3 Access Enforcement
+  disabled: false
+  manifests:
+    - path: ../input/security/restrict_automount_sa_token
+- name: restrict-binding-clusteradmin
+  categories:
+    - AC Access Control
+  controls: 
+    - AC-3 Access Enforcement
+  disabled: false
+  manifests:
+    - path: ../input/security/restrict-binding-clusteradmin
+- name: restrict-clusterrole-nodesproxy
+  categories:
+    - AC Access Control
+  controls: 
+    - AC-3 Access Enforcement
+  disabled: false
+  manifests:
+    - path: ../input/security/restrict-clusterrole-nodesproxy
+- name: restrict-ingress-wildcard
+  categories:
+    - SC System and Communications Protection
+  controls: 
+    - SC-11 Trusted Path
+  disabled: false
+  manifests:
+    - path: ../input/security/restrict-ingress-wildcard
+- name: restrict-loadbalancer
+  categories:
+    - SC System and Communications Protection
+  controls: 
+    - SC-11 Trusted Path
+  disabled: false
+  manifests:
+    - path: ../input/security/restrict_loadbalancer
+- name: restrict-node-selection
+  categories:
+    - SC System and Communications Protection
+  controls: 
+    - SC-4 Information in Shared System Resources
+  disabled: false
+  manifests:
+    - path: ../input/security/restrict_node_selection
+- name: restrict-secret-role-verbs
+  categories:
+    - AC Access Control
+  controls: 
+    - AC-3 Access Enforcement
+  disabled: false
+  manifests:
+    - path: ../input/security/restrict-secret-role-verbs
+- name: restrict-service-account
+  categories:
+    - AC Access Control
+  controls: 
+    - AC-3 Access Enforcement
+  disabled: false
+  manifests:
+    - path: ../input/security/restrict-service-account
+- name: restrict-service-port-range
+  categories:
+    - SC System and Communications Protection
+  controls: 
+    - SC-4 Information in Shared System Resources
+  disabled: false
+  manifests:
+    - path: ../input/security/restrict_service_port_range
+- name: restrict-wildcard-resources
+  categories:
+    - SC System and Communications Protection
+  controls: 
+    - SC-11 Trusted Path
+  disabled: false
+  manifests:
+    - path: ../input/security/restrict-wildcard-resources
+- name: restrict-wildcard-verbs
+  categories:
+    - SC System and Communications Protection
+  controls: 
+    - SC-11 Trusted Path
+  disabled: false
+  manifests:
+    - path: ../input/security/restrict-wildcard-verbs
+- name: networking-block-nodeport-services
+  categories:
+    - SC System and Communications Protection
+  controls: 
+    - SC-7 Boundary Protection
+  disabled: false
+  manifests:
+    - path: ../input/security/networking/block-nodeport-services
+- name: authorization-disallow-scc-runasany
+  categories:
+    - AC Access Control
+  controls: 
+    - AC-3 Access Enforcement
+  disabled: false
+  manifests:
+    - path: ../input/security/authorization
+- name: authorization-host-namespaces
+  categories:
+    - AC Access Control
+  controls: 
+    - AC-3 Access Enforcement
+  disabled: false
+  manifests:
+    - path: ../input/security/authorization/host-namespaces
+- name: authorization-protect-default-scc
+  categories:
+    - AC Access Control
+  controls: 
+    - AC-3 Access Enforcement
+  disabled: false
+  manifests:
+    - path: ../input/security/authorization/protect-default-scc
+policySets:
+  - description: kyverno-policyset to apply set of kyverno-policies.
+    name: kyverno-security-policyset
+    placement:
+      placementPath: placement.yaml

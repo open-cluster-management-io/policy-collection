@@ -1,0 +1,74 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: kyverno-multitenancy-policyset
+placementBindingDefaults:
+  name: kyverno-multitenancy-policyset
+policyDefaults:
+  configurationPolicyAnnotations: {"policy.open-cluster-management.io/disable-templates": "true"}
+  categories:
+    - AC Access Control
+  controls: 
+    - AC-3 Access Enforcement
+  namespace: policies
+  remediationAction: enforce
+  severity: medium
+  policySets:
+    - kyverno-multitenancy-policyset
+  standards:
+    - NIST SP 800-53
+policies:
+- name: add-labels-to-tenant
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/addlabelstotenant
+- name: disallow-placementrules
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/disallowplacementrules
+- name: generate-all
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/generateall
+- name: gen-argocdpersmissions
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/generateargocdpersmissions
+- name: gen-managed-clusterset-binding
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/generateManagedClusterSetBinding
+- name: gen-placement-rules
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/generatePlacementRules
+- name: add-job-ttl
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/other
+- name: preventupdatesappproject
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/preventupdatesappproject
+- name: team-restrictions
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/restrictions
+- name: team-sharedresources
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/sharedresources
+- name: team-validate-ns
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/validatens
+- name: validate-placement
+  disabled: false
+  manifests:
+    - path: ../input/multitenancy/validateplacement
+policySets:
+  - description: kyverno-multitenancy-policyset to apply set of kyverno-policies.
+    name: kyverno-multitenancy-policyset
+    placement:
+      placementPath: placement.yaml
+

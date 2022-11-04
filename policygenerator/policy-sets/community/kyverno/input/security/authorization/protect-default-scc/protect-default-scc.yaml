@@ -1,0 +1,21 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: protect-default-scc
+spec:
+  background: false
+  validationFailureAction: audit
+  rules:
+    - name: Prevent users from modifying or deleting default scc
+      match:
+        resources:
+          kinds:
+            - SecurityContextConstraints
+      exclude:
+        resources:
+          kinds:
+            - SecurityContextConstraints
+          name: "custom-scc-*"
+      validate:
+        message: "Modifying or deleting default scc is forbidden. You can create custom scc. The custom scc name syntax should begin with 'custom-scc-'"
+        deny: {}
