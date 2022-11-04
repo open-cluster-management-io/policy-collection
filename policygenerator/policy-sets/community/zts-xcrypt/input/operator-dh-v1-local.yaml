@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zts-xcrypt-operator
+  namespace: zts-xcrypt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: zts-xcrypt-operator
+  template:
+    metadata:
+      labels:
+        name: zts-xcrypt-operator
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: zts-master
+                operator: In
+                values:
+                - "true"
+              # - key: zts
+              #   operator: In
+              #   values:
+              #   - zts-master
+      serviceAccountName: zts-xcrypt-operator
+      containers:
+      - name: zts-xcrypt-operator
+        image: zettasetimg/zts-xcrypt-operator:zts-xcrypt-operator-v1.0.3-c4fd66
+        imagePullPolicy: IfNotPresent
+        command:
+        - zts-xcrypt-operator
+        env:
+          - name: WATCH_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: OPERATOR_NAME
+            value: "zts-xcrypt-operator"
+          - name: AUTH_TOKEN_NAME
+            value: "zts-dockerhub-token"
+          # - name: K8S_KUBELET_DIR
+            # value: "/var/data/kubelet"
+          - name: RELATED_IMAGE_CA
+            value: "zettasetimg/zts-ca-server:zts-ca-server-14"
+          - name: RELATED_IMAGE_KMIP
+            value: "zettasetimg/zts-kmip-server:zts-kmip-server-7-f4fbeb69a"
+          - name: RELATED_IMAGE_LS
+            value: "zettasetimg/zts-license-server:zts-license-server-6"
+          - name: RELATED_IMAGE_HM
+            value: "zettasetimg/zts-host-manager:zts-host-manager-13-local-bec5a4"
+          - name: RELATED_IMAGE_CSI_DRIVER
+            value: "zettasetimg/zts-csi-driver:zts-csi-driver-v1.0.6-167006"
+          - name: RELATED_IMAGE_CSI_PROVISIONER
+            value: "quay.io/k8scsi/csi-provisioner:v1.6.0"
+          - name: RELATED_IMAGE_CSI_ATTACHER
+            value: "quay.io/k8scsi/csi-attacher:v3.1.0"
+          - name: RELATED_IMAGE_LIVENSSPROBE
+            value: "quay.io/k8scsi/livenessprobe:v1.1.0"
+          - name: RELATED_IMAGE_CSI_NODE_DRIVER_REGISTRAR
+            value: "quay.io/k8scsi/csi-node-driver-registrar:v1.1.0"
+      imagePullSecrets:
+        - name: "zts-dockerhub-token"

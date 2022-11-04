@@ -1,0 +1,7 @@
+apiVersion: xcrypt.zettaset.com/v1
+kind: XCrypt
+metadata:
+  name: xcrypt-launcher
+  namespace: zts-xcrypt
+spec:
+  replicas: 1
