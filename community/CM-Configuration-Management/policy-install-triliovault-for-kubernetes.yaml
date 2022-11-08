@@ -54,7 +54,6 @@ spec:
                   installPlanApproval: Automatic
                   source: certified-operators
                   sourceNamespace: openshift-marketplace
-                  startingCSV: k8s-triliovault-stable.2.10.6
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -74,6 +73,45 @@ spec:
                   displayName: TrilioVault for Kubernetes
                 status:
                   phase: Succeeded
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-manager-cr
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: TrilioVaultManager
+                metadata:
+                  name: triliovault-manager
+                  namespace: openshift-operators
+                spec:
+                  applicationScope: Cluster
+                  componentConfiguration:
+                    ingress-controller:
+                      enabled: false
+                  dataJobResources:
+                    limits:
+                      cpu: 1500m
+                      memory: 5Gi
+                    requests:
+                      cpu: 100m
+                      memory: 800Mi
+                  logLevel: Info
+                  metadataJobResources:
+                    limits:
+                      cpu: 500m
+                      memory: 1Gi
+                    requests:
+                      cpu: 10m
+                      memory: 10Mi
+                  tvkInstanceName: tvk-instance
+                status:
+                  status: Deployed
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
