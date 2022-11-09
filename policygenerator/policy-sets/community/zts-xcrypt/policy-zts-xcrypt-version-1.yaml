@@ -1,0 +1,556 @@
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+    annotations:
+        policy.open-cluster-management.io/categories: CM Configuration Management
+        policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+        policy.open-cluster-management.io/standards: NIST 800-53
+    name: policy-zts-rbac
+    namespace: zts-xcrypt
+spec:
+    disabled: false
+    policy-templates:
+        - objectDefinition:
+            apiVersion: policy.open-cluster-management.io/v1
+            kind: ConfigurationPolicy
+            metadata:
+                name: policy-zts-rbac
+            spec:
+                object-templates:
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: v1
+                        kind: Namespace
+                        metadata:
+                            name: zts-xcrypt
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: v1
+                        kind: ServiceAccount
+                        metadata:
+                            name: zts-xcrypt-operator
+                            namespace: zts-xcrypt
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: rbac.authorization.k8s.io/v1
+                        kind: ClusterRole
+                        metadata:
+                            name: zts-xcrypt-operator
+                            namespace: zts-xcrypt
+                        rules:
+                            - apiGroups:
+                                - security.openshift.io
+                              resourceNames:
+                                - privileged
+                                - anyuid
+                                - hostmount-anyuid
+                                - hostnetwork
+                              resources:
+                                - securitycontextconstraints
+                              verbs:
+                                - use
+                            - apiGroups:
+                                - ""
+                              resources:
+                                - pods
+                                - services
+                                - services/finalizers
+                                - endpoints
+                                - persistentvolumeclaims
+                                - events
+                                - configmaps
+                                - secrets
+                              verbs:
+                                - create
+                                - delete
+                                - get
+                                - list
+                                - patch
+                                - update
+                                - watch
+                            - apiGroups:
+                                - xcrypt.zettaset.com
+                              resources:
+                                - '*'
+                              verbs:
+                                - create
+                                - delete
+                                - get
+                                - list
+                                - patch
+                                - update
+                                - watch
+                            - apiGroups:
+                                - apps
+                              resources:
+                                - deployments
+                                - daemonsets
+                                - replicasets
+                                - statefulsets
+                              verbs:
+                                - create
+                                - delete
+                                - get
+                                - list
+                                - patch
+                                - update
+                                - watch
+                            - apiGroups:
+                                - apps
+                              resourceNames:
+                                - zts-xcrypt-operator
+                              resources:
+                                - deployments/finalizers
+                              verbs:
+                                - update
+                            - apiGroups:
+                                - storage.k8s.io
+                              resources:
+                                - csidrivers
+                              verbs:
+                                - create
+                                - delete
+                                - get
+                                - list
+                                - patch
+                                - update
+                                - watch
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: rbac.authorization.k8s.io/v1
+                        kind: ClusterRoleBinding
+                        metadata:
+                            name: zts-xcrypt-operator
+                            namespace: zts-xcrypt
+                        roleRef:
+                            apiGroup: rbac.authorization.k8s.io
+                            kind: ClusterRole
+                            name: zts-xcrypt-operator
+                        subjects:
+                            - kind: ServiceAccount
+                              name: zts-xcrypt-operator
+                              namespace: zts-xcrypt
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: v1
+                        kind: ServiceAccount
+                        metadata:
+                            name: zts-csi-controller-sa
+                            namespace: zts-xcrypt
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: rbac.authorization.k8s.io/v1
+                        kind: ClusterRole
+                        metadata:
+                            name: zts-external-provisioner-role
+                            namespace: zts-xcrypt
+                        rules:
+                            - apiGroups:
+                                - ""
+                              resources:
+                                - persistentvolumes
+                              verbs:
+                                - get
+                                - list
+                                - watch
+                                - create
+                                - delete
+                                - patch
+                            - apiGroups:
+                                - ""
+                              resources:
+                                - persistentvolumeclaims
+                              verbs:
+                                - get
+                                - list
+                                - watch
+                                - update
+                            - apiGroups:
+                                - storage.k8s.io
+                              resources:
+                                - storageclasses
+                              verbs:
+                                - get
+                                - list
+                                - watch
+                            - apiGroups:
+                                - ""
+                              resources:
+                                - events
+                              verbs:
+                                - list
+                                - watch
+                                - create
+                                - update
+                                - patch
+                            - apiGroups:
+                                - storage.k8s.io
+                              resources:
+                                - csinodes
+                              verbs:
+                                - get
+                                - list
+                                - watch
+                            - apiGroups:
+                                - ""
+                              resources:
+                                - nodes
+                              verbs:
+                                - get
+                                - list
+                                - watch
+                            - apiGroups:
+                                - coordination.k8s.io
+                              resources:
+                                - leases
+                              verbs:
+                                - get
+                                - watch
+                                - list
+                                - delete
+                                - update
+                                - create
+                            - apiGroups:
+                                - security.openshift.io
+                              resourceNames:
+                                - privileged
+                                - anyuid
+                                - hostmount-anyuid
+                                - hostnetwork
+                              resources:
+                                - securitycontextconstraints
+                              verbs:
+                                - use
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: rbac.authorization.k8s.io/v1
+                        kind: ClusterRoleBinding
+                        metadata:
+                            name: zts-csi-provisioner-binding
+                        roleRef:
+                            apiGroup: rbac.authorization.k8s.io
+                            kind: ClusterRole
+                            name: zts-external-provisioner-role
+                        subjects:
+                            - kind: ServiceAccount
+                              name: zts-csi-controller-sa
+                              namespace: zts-xcrypt
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: rbac.authorization.k8s.io/v1
+                        kind: ClusterRole
+                        metadata:
+                            name: zts-external-attacher-role
+                            namespace: zts-xcrypt
+                        rules:
+                            - apiGroups:
+                                - ""
+                              resources:
+                                - persistentvolumes
+                              verbs:
+                                - get
+                                - list
+                                - watch
+                                - update
+                                - patch
+                            - apiGroups:
+                                - ""
+                              resources:
+                                - nodes
+                              verbs:
+                                - get
+                                - list
+                                - watch
+                            - apiGroups:
+                                - csi.storage.k8s.io
+                              resources:
+                                - csinodeinfos
+                              verbs:
+                                - get
+                                - list
+                                - watch
+                            - apiGroups:
+                                - storage.k8s.io
+                              resources:
+                                - volumeattachments
+                              verbs:
+                                - get
+                                - list
+                                - watch
+                                - update
+                                - patch
+                            - apiGroups:
+                                - storage.k8s.io
+                              resources:
+                                - volumeattachments/status
+                              verbs:
+                                - patch
+                            - apiGroups:
+                                - security.openshift.io
+                              resourceNames:
+                                - privileged
+                                - anyuid
+                                - hostmount-anyuid
+                                - hostnetwork
+                              resources:
+                                - securitycontextconstraints
+                              verbs:
+                                - use
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: rbac.authorization.k8s.io/v1
+                        kind: ClusterRoleBinding
+                        metadata:
+                            name: zts-csi-attacher-binding
+                            namespace: zts-xcrypt
+                        roleRef:
+                            apiGroup: rbac.authorization.k8s.io
+                            kind: ClusterRole
+                            name: zts-external-attacher-role
+                        subjects:
+                            - kind: ServiceAccount
+                              name: zts-csi-controller-sa
+                              namespace: zts-xcrypt
+                remediationAction: enforce
+                severity: medium
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+    annotations:
+        policy.open-cluster-management.io/categories: CM Configuration Management
+        policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+        policy.open-cluster-management.io/standards: NIST 800-53
+    name: policy-zts-install-xcrypts-crd-v1
+    namespace: zts-xcrypt
+spec:
+    disabled: false
+    policy-templates:
+        - objectDefinition:
+            apiVersion: policy.open-cluster-management.io/v1
+            kind: ConfigurationPolicy
+            metadata:
+                name: policy-zts-install-xcrypts-crd-v1
+            spec:
+                object-templates:
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: apiextensions.k8s.io/v1
+                        kind: CustomResourceDefinition
+                        metadata:
+                            name: xcrypts.xcrypt.zettaset.com
+                        spec:
+                            group: xcrypt.zettaset.com
+                            names:
+                                kind: XCrypt
+                                listKind: XCryptList
+                                plural: xcrypts
+                                singular: xcrypt
+                            scope: Namespaced
+                            versions:
+                                - name: v1
+                                  schema:
+                                    openAPIV3Schema:
+                                        description: XCrypt is the Schema for the xcrypts API
+                                        properties:
+                                            apiVersion:
+                                                description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+                                                type: string
+                                            kind:
+                                                description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                                                type: string
+                                            metadata:
+                                                type: object
+                                            spec:
+                                                description: XCryptSpec defines the desired state of XCrypt
+                                                properties:
+                                                    replicas:
+                                                        format: int32
+                                                        type: integer
+                                                required:
+                                                    - replicas
+                                                type: object
+                                            status:
+                                                description: XCryptStatus defines the observed state of XCrypt
+                                                properties:
+                                                    podNames:
+                                                        items:
+                                                            type: string
+                                                        type: array
+                                                    replicas:
+                                                        format: int32
+                                                        type: integer
+                                                required:
+                                                    - podNames
+                                                    - replicas
+                                                type: object
+                                        type: object
+                                  served: true
+                                  storage: true
+                remediationAction: enforce
+                severity: medium
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+    annotations:
+        policy.open-cluster-management.io/categories: CM Configuration Management
+        policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+        policy.open-cluster-management.io/standards: NIST 800-53
+    name: policy-zts-xcrypts-deployment
+    namespace: zts-xcrypt
+spec:
+    disabled: false
+    policy-templates:
+        - objectDefinition:
+            apiVersion: policy.open-cluster-management.io/v1
+            kind: ConfigurationPolicy
+            metadata:
+                name: policy-zts-xcrypts-deployment
+            spec:
+                object-templates:
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: apps/v1
+                        kind: Deployment
+                        metadata:
+                            name: zts-xcrypt-operator
+                            namespace: zts-xcrypt
+                        spec:
+                            replicas: 1
+                            selector:
+                                matchLabels:
+                                    name: zts-xcrypt-operator
+                            template:
+                                metadata:
+                                    labels:
+                                        name: zts-xcrypt-operator
+                                spec:
+                                    affinity:
+                                        nodeAffinity:
+                                            requiredDuringSchedulingIgnoredDuringExecution:
+                                                nodeSelectorTerms:
+                                                    - matchExpressions:
+                                                        - key: zts-master
+                                                          operator: In
+                                                          values:
+                                                            - "true"
+                                    containers:
+                                        - command:
+                                            - zts-xcrypt-operator
+                                          env:
+                                            - name: WATCH_NAMESPACE
+                                              valueFrom:
+                                                fieldRef:
+                                                    fieldPath: metadata.namespace
+                                            - name: POD_NAME
+                                              valueFrom:
+                                                fieldRef:
+                                                    fieldPath: metadata.name
+                                            - name: OPERATOR_NAME
+                                              value: zts-xcrypt-operator
+                                            - name: AUTH_TOKEN_NAME
+                                              value: zts-dockerhub-token
+                                            - name: RELATED_IMAGE_CA
+                                              value: zettasetimg/zts-ca-server:zts-ca-server-14
+                                            - name: RELATED_IMAGE_KMIP
+                                              value: zettasetimg/zts-kmip-server:zts-kmip-server-7-f4fbeb69a
+                                            - name: RELATED_IMAGE_LS
+                                              value: zettasetimg/zts-license-server:zts-license-server-6
+                                            - name: RELATED_IMAGE_HM
+                                              value: zettasetimg/zts-host-manager:zts-host-manager-13-local-bec5a4
+                                            - name: RELATED_IMAGE_CSI_DRIVER
+                                              value: zettasetimg/zts-csi-driver:zts-csi-driver-v1.0.6-167006
+                                            - name: RELATED_IMAGE_CSI_PROVISIONER
+                                              value: quay.io/k8scsi/csi-provisioner:v1.6.0
+                                            - name: RELATED_IMAGE_CSI_ATTACHER
+                                              value: quay.io/k8scsi/csi-attacher:v3.1.0
+                                            - name: RELATED_IMAGE_LIVENSSPROBE
+                                              value: quay.io/k8scsi/livenessprobe:v1.1.0
+                                            - name: RELATED_IMAGE_CSI_NODE_DRIVER_REGISTRAR
+                                              value: quay.io/k8scsi/csi-node-driver-registrar:v1.1.0
+                                          image: zettasetimg/zts-xcrypt-operator:zts-xcrypt-operator-v1.0.3-c4fd66
+                                          imagePullPolicy: IfNotPresent
+                                          name: zts-xcrypt-operator
+                                    imagePullSecrets:
+                                        - name: zts-dockerhub-token
+                                    serviceAccountName: zts-xcrypt-operator
+                remediationAction: enforce
+                severity: medium
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+    annotations:
+        policy.open-cluster-management.io/categories: CM Configuration Management
+        policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+        policy.open-cluster-management.io/standards: NIST 800-53
+    name: policy-zts-xcrypt-operator-executor-deployment
+    namespace: zts-xcrypt
+spec:
+    disabled: false
+    policy-templates:
+        - objectDefinition:
+            apiVersion: policy.open-cluster-management.io/v1
+            kind: ConfigurationPolicy
+            metadata:
+                name: policy-zts-xcrypt-operator-executor-deployment
+            spec:
+                object-templates:
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: xcrypt.zettaset.com/v1
+                        kind: XCrypt
+                        metadata:
+                            name: xcrypt-launcher
+                            namespace: zts-xcrypt
+                        spec:
+                            replicas: 1
+                remediationAction: enforce
+                severity: medium
+---
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+    name: policyset-xcrypt
+    namespace: zts-xcrypt
+spec:
+    description: this is a zts-xcrypt
+    policies:
+        - policy-zts-install-xcrypts-crd-v1
+        - policy-zts-rbac
+        - policy-zts-xcrypt-operator-executor-deployment
+        - policy-zts-xcrypts-deployment
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+    labels:
+        custom: myApp
+    name: placement-dev
+    namespace: zts-xcrypt
+spec:
+    clusterConditions:
+        - status: "True"
+          type: ManagedClusterConditionAvailable
+    clusterSelector:
+        matchExpressions:
+            - key: environment
+              operator: In
+              values:
+                - dev
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+    name: binding-xcrypt
+    namespace: zts-xcrypt
+placementRef:
+    apiGroup: apps.open-cluster-management.io
+    kind: PlacementRule
+    name: placement-dev
+subjects:
+    - apiGroup: policy.open-cluster-management.io
+      kind: PolicySet
+      name: policyset-xcrypt

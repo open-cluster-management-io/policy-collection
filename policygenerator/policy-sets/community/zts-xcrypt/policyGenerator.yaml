@@ -1,0 +1,46 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-xcrypt
+placementBindingDefaults:
+  name: binding-xcrypt
+policyDefaults:
+  controls: 
+    - CM-2 Baseline Configuration 
+  namespace: zts-xcrypt 
+  placement:
+    placementRulePath: input/placementrule.yaml
+  remediationAction: enforce 
+  severity: medium
+  standards:
+    - NIST 800-53
+  policySets: 
+    - policyset-xcrypt
+policies:
+- name: policy-zts-rbac
+  disabled: false
+  manifests:
+    - path: input/zts-rbac.yaml
+  remediationAction: enforce
+- name: policy-zts-install-xcrypts-crd-v1
+  disabled: false
+  manifests:
+    - path: input/xcrypt.zettaset.com_xcrypts.yaml
+  remediationAction: enforce 
+- name: policy-zts-xcrypts-deployment
+  disabled: false
+  manifests:
+    - path: input/operator-dh-v1-local.yaml
+  remediationAction: enforce 
+- name: policy-zts-xcrypt-operator-executor-deployment  
+  disabled: false
+  manifests:
+    - path: input/operator-executor.yaml
+  remediationAction: enforce 
+policySets:
+- name: policyset-xcrypt
+  description: Zettaset Xcrypt product is deployed using an Operator Deployment
+    on an Openshift cluster. This policy set is focused on the components that 
+    install on every managed cluster.
+  placement:
+    placementRulePath: input/placementrule.yaml
