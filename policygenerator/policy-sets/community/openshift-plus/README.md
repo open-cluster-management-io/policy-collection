@@ -5,9 +5,9 @@
 ## Prerequisites
  To install OpenShift Plus using this PolicySet, you must first have:
  - A supported Red Hat OpenShift Container Platform version
-   - Follow the document [1.4 Prepare your hub cluster for installation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.0/html/install/installing#preparing-your-hub-cluster-for-installation)
+   - Follow the document [1.1 Requirements and recommendations](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/install/installing#requirements-and-recommendations)
  - A supported Red Hat Advanced Cluster Management for Kubernetes version
-   - Follow the document [1.5 Installing while connected online](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.0/html/install/installing#installing-while-connected-online)
+   - Follow the document [1.3 Installing while connected online](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/install/installing#installing-while-connected-online)
   
 
 ## Installation
