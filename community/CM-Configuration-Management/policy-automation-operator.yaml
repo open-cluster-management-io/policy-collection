@@ -3,7 +3,7 @@
 # install additional components of the Ansible Automation Platform.
 # This policy creates the Operator, a Controller Instance and an Automation Hub.
 # For more details on setting up Ansible, see:
-# https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.1/html/getting_started_with_automation_hub/index
+# https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.3/html/getting_started_with_automation_hub/index
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
