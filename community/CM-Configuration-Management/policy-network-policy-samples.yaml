@@ -54,8 +54,8 @@ spec:
                 metadata:
                   name: deny-all
                 spec:
-                  podSelector:
-                    ingress: []
+                  podSelector: {}
+                  ingress: []
           severity: low
           remediationAction: inform
     - objectDefinition:
@@ -75,10 +75,10 @@ spec:
                 metadata:
                   name: allow-same-namespace
                 spec:
-                  podSelector:
-                    ingress:
-                      - from:
-                          - podSelector: {}
+                  podSelector: {}
+                  ingress:
+                    - from:
+                        - podSelector: {}
           severity: low
           remediationAction: inform
     - objectDefinition:
