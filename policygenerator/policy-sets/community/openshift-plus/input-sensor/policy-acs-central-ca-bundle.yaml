@@ -119,8 +119,6 @@ spec:
             echo "Applying bundle"
             # No jq in container, python to the rescue
             cat /tmp/bundle.json | python3 -c "import sys, json; print(json.load(sys.stdin)['kubectlBundle'])" | ${BASE} -d | oc apply -f -
-            # Touch SecuredCluster to force operator to reconcile
-            oc label SecuredCluster local-cluster cluster-init-job-status=created
             ACS_HOST="$(oc get route central -o custom-columns=HOST:.spec.host --no-headers):443"
             oc patch secret sensor-tls --type='json' -p="[{\"op\" : \"add\", \"path\" : \"/data/acs-host\", \"value\" : \"$(echo $ACS_HOST | ${BASE})\"}]"
 
