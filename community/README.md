@@ -10,24 +10,31 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
 
 ## Security control catalog
 
-- [AC - Access Control](#access-control)
-- [AT - Awareness and Training](#awareness-and-training)
-- [AU - Audit and Accountability](#audit-and-accountability)
-- [CA - Security Assessment and Authorization](#security-assessment-and-authorization)
-- [CM - Configuration Management](#configuration-management)
-- [CP - Contingency Planning](#contingency-planning)
-- [IA - Identification and Authentication](#identification-and-authentication)
-- [IR - Incident Response](#incident-response)
-- [MA - Maintenance](#maintenance)
-- [MP - Media Protection](#media-protection)
-- [PE - Physical and Environmental Protection](#physical-and-environmental-protection)
-- [PL - Planning](#planning)
-- [PS - Personnel Security](#personnel-security)
-- [RA - Risk Assessment](#risk-assessment)
-- [SA - System and Services Acquisition](#system-and-services-acquisition)
-- [SC - System and Communications Protection](#system-and-communications-protection)
-- [SI - System and Information Integrity](#system-and-information-integrity)
-- [Templatized Policies](#templatized-policies)
+- [Policies -- Community](#policies----community)
+  - [Table of Contents](#table-of-contents)
+  - [Security control catalog](#security-control-catalog)
+    - [Access Control](#access-control)
+    - [Awareness and Training](#awareness-and-training)
+    - [Audit and Accountability](#audit-and-accountability)
+    - [Security Assessment and Authorization](#security-assessment-and-authorization)
+    - [Configuration Management](#configuration-management)
+    - [Contingency Planning](#contingency-planning)
+    - [Identification and Authentication](#identification-and-authentication)
+    - [Incident Response](#incident-response)
+    - [Maintenance](#maintenance)
+    - [Media Protection](#media-protection)
+    - [Physical and Environmental Protection](#physical-and-environmental-protection)
+    - [Planning](#planning)
+    - [Personnel Security](#personnel-security)
+    - [Risk Assessment](#risk-assessment)
+    - [System and Services Acquisition](#system-and-services-acquisition)
+    - [System and Communications Protection](#system-and-communications-protection)
+    - [System and Information Integrity](#system-and-information-integrity)
+    - [Templatized Policies](#templatized-policies)
+  - [Deploying community policies to your cluster](#deploying-community-policies-to-your-cluster)
+    - [Custom policy controllers](#custom-policy-controllers)
+    - [Policy consumers on operator hub](#policy-consumers-on-operator-hub)
+    - [Other custom policy consumers](#other-custom-policy-consumers)
 
 ### Access Control
 
@@ -152,6 +159,8 @@ Policy  | Description | Prerequisites
 [Policy checking for ConfigurationPolicies stuck in a Terminating state](./CM-Configuration-Management/terminating-configpolicies.yaml) | Notifies that a ConfigurationPolicy was not able to delete some objects from its `PruneObjectBehavior` setting. Those related objects, and/or the ConfigurationPolicy might need to be manually cleaned up. |
 [Policy to add node to an existing ACM cluster](./CM-Configuration-Management/policy-ztp-node-add.yaml) | Adds a new node to an existing ZTP cluster in ACM.  Useful to scale capacity to existing clusters as a day 2 operation.  This policy will apply to the hub cluster and deploy a new `BareMetalHost` resource in the managed cluster's namespace. | The multicluster-engine operator must be set up and configured on the hub cluster.  This policy assumes that DHCP is available for the node to obtain network information.  BMH secrets must be created separately.
 [Policy to add node wtih static IP configurations to an existing ACM cluster](./CM-Configuration-Management/policy-ztp-node-add-static.yaml) | Adds a new node with a Static IP to an existing ZTP cluster in ACM.  Useful to scale capacity to existing clusters as a day 2 operation.  This policy will apply to the hub cluster and deploy new `BareMetalHost` and `NMStateConfig` resources in the managed cluster's namespace. | The multicluster-engine operator must be set up and configured on the hub cluster. BMH secrets must be created separately. 
+[Policy to create a MachineSet for infrastructure nodes on a vSphere environment](./CM-Configuration-Management/policy-vsphere-machine-set.yaml) | Adds a new MachineSet for infrastructure nodes by using a vSphere cloud provider. This policy creates the virtual machines in the vCenter and adds the machines to the OpenShift cluster. | OpenShift 4.x is required. For more information on creating infrastructure machine sets, see the OpenShift documentation: [Creating infrastructure machine sets](https://docs.openshift.com/container-platform/4.10/machine_management/creating-infrastructure-machinesets.html)
+[Policy to configure the OAuth in OpenShift and sync with LDAP](./CM-Configuration-Management/policy-oauth-ldapsync.yaml) | Adds some objects to configure the OAuth in a OpenShift cluster by using an external IDP and htpasswd also. In addition to this, a CronJob is created to sync the OpenShift cluster with an external LDAP. | OpenShift 4.x is required. For more information on configuring the OAuth clients, see the OpenShift documentation: [Configurating the ldap identity provider](https://docs.openshift.com/container-platform/4.10/authentication/identity_providers/configuring-ldap-identity-provider.html)
 
 ### Contingency Planning
 
