@@ -1,5 +1,7 @@
 # This policy configures the oauth for htpasswd and ldap provider, and create a job to sync with an external LDAP.
 # In this example, Active Directory is used as external IDP.
+# For more information on configuring the OAuth server, consult the OpenShift documentation: 
+# https://docs.openshift.com/container-platform/4.10/authentication/identity_providers/configuring-ldap-identity-provider.html
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
