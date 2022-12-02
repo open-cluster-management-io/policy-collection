@@ -291,3 +291,31 @@ spec:
           remediationAction: inform
           severity: high
   remediationAction: enforce
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: policy-oauth-placement
+placementRef:
+  name: policy-oauth-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: policy-oauth
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: policy-oauth-placement
+spec:
+  clusterSelector:
+    matchExpressions:
+      - key: entorno
+        operator: In
+        values:
+          - dev
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
