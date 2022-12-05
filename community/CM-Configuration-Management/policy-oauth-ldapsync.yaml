@@ -1,11 +1,11 @@
-# This policy configures the oauth for htpasswd and ldap provider, and create a job to sync with an external LDAP.
+# This policy configures the OAuth for using an LDAP provider, and creates a job to sync with an external LDAP.
 # In this example, Active Directory is used as external IDP.
 # For more information on configuring the OAuth server, consult the OpenShift documentation: 
 # https://docs.openshift.com/container-platform/4.10/authentication/identity_providers/configuring-ldap-identity-provider.html
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-oauth
+  name: policy-oauth-ldap
   annotations:
     policy.open-cluster-management.io/categories: CM Configuration Management, AC Access Control
     policy.open-cluster-management.io/controls: AC-3 Access Enforcement
@@ -14,6 +14,7 @@ spec:
   disabled: false
   policy-templates:
     # Create a secret that stores the LDAP bind password
+    # bindPassword: <password> --> Password used by the bindDN to connect with the LDAP. Since this object is a Kubernetes secret, encode the password in base64.
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -34,28 +35,9 @@ spec:
           pruneObjectBehavior: DeleteIfCreated
           remediationAction: inform
           severity: high
-    # Create a secret that stores information about htpasswd users
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: policy-oauth-htpasswd-secret
-        spec:
-          object-templates:
-            - complianceType: mustonlyhave
-              objectDefinition:
-                apiVersion: v1
-                data:
-                  htpasswd: <data>
-                kind: Secret
-                metadata:
-                  name: htpass-secret
-                  namespace: openshift-config
-                type: Opaque
-          pruneObjectBehavior: DeleteIfCreated
-          remediationAction: inform
-          severity: high
-    # Configure the OAuth for using ldap and htpasswd providers
+    # Configure the OAuth for using LDAP as the identity provider
+    # bindDN: <bindDN> --> Full DN of the user account used to connect with the LDAP. Example: CN=user1,CN=Users,DC=example,DC=com
+    # url: <ldapurl> --> The LDAP url. The configured url is an RFC 2255 URL, which specifies the LDAP host and search parameters to use. The format is ldap://host:port/basedn?attribute?scope?filter
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -71,12 +53,6 @@ spec:
                   name: cluster
                 spec:
                   identityProviders:
-                    - name: htpasswd_provider
-                      htpasswd:
-                        fileData:
-                          name: htpass-secret
-                      mappingMethod: claim
-                      type: HTPasswd
                     - name: ldapidp
                       ldap:
                         attributes:
@@ -98,7 +74,7 @@ spec:
           pruneObjectBehavior: DeleteIfCreated
           remediationAction: inform
           severity: high
-    # Create a CronJob in the cluster-ops namespace to sync with LDAP. In this example, AD is used
+    # Create a CronJob in the cluster-ops namespace to sync with LDAP. In this example, AD is used.
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -116,6 +92,12 @@ spec:
           pruneObjectBehavior: DeleteIfCreated
           remediationAction: inform
           severity: high
+    # Create a ConfigMap that stores the LDAP sync configuration.
+    # url: <ldapurl> --> The LDAP url. The configured url is an RFC 2255 URL, which specifies the LDAP host and search parameters to use. The format is ldap://host:port/basedn?attribute?scope?filter
+    # bindDN: <bindDN> --> Full DN of the user account used to connect with the LDAP. Example: CN=user1,CN=Users,DC=example,DC=com
+    # bindPassword: <password> --> Password used by the bindDN to connect with the LDAP. Since this object is a Kubernetes configmap, the password is stored in plaintext.
+    # baseDN: <baseDN> --> The starting point an LDAP server uses when searching for users within your directory.
+    # filter: <filter> --> A valid LDAP search filter. If not provided, defaults to (objectClass=*)
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -290,29 +272,29 @@ spec:
           pruneObjectBehavior: DeleteIfCreated
           remediationAction: inform
           severity: high
-  remediationAction: enforce
+  remediationAction: inform
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: policy-oauth-placement
+  name: policy-oauth-ldap-placement
 placementRef:
-  name: policy-oauth-placement
+  name: policy-oauth-ldap-placement
   apiGroup: apps.open-cluster-management.io
   kind: PlacementRule
 subjects:
-  - name: policy-oauth
+  - name: policy-oauth-ldap
     apiGroup: policy.open-cluster-management.io
     kind: Policy
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: policy-oauth-placement
+  name: policy-oauth-ldap-placement
 spec:
   clusterSelector:
     matchExpressions:
-      - key: entorno
+      - key: environment
         operator: In
         values:
           - dev

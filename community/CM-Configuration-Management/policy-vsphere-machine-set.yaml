@@ -1,4 +1,16 @@
 # This policy creates 1 OpenShift MachineSet that are intended for infrastructure workloads.
+# 
+# The following information is required to create the machine set:
+#   infrastructureID: the infrastructure ID label that is based on the cluster ID that is set when provisioning the cluster.
+#   networkName: Specify the vSphere VM network to deploy the machine set to. This VM network must be where other compute machines reside in the cluster.
+#   datacenterName: Specify the vCenter Datacenter to deploy the machine set on.
+#   datastoreName: Specify the vCenter Datastore to deploy the machine set on.
+#   vSphereFolderName: Specify the path to the vSphere VM folder in vCenter.
+#   resourcePoolName: Specify the vSphere resource pool for your VMs.
+#   vCenterServer: Specify the vCenter server IP or fully qualified domain name.
+#   
+# For more information on creating a machine set on vSphere, consult the OpenShift documentation: 
+# https://docs.openshift.com/container-platform/4.10/machine_management/creating_machinesets/creating-machineset-vsphere.html
 #
 # More details on Infrastructure Nodes in OpenShift 4 here:
 # https://access.redhat.com/solutions/5034771
@@ -94,7 +106,7 @@ metadata:
 spec:
   clusterSelector:
     matchExpressions:
-      - key: entorno
+      - key: environment
         operator: In
         values:
           - dev
