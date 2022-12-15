@@ -1,0 +1,156 @@
+# This policy installs the CrowdStrike Falcon Operator.  For more information about
+# CrowdStrike, see https://crowdstrike.com/
+#
+# This policy is set to inform by default. If necessary, update the placement rule.
+#
+# Please make sure to configure the following if using the Falcon API:
+#
+# falcon_api:
+#   client_id: PLEASE_FILL_IN
+#   client_secret: PLEASE_FILL_IN
+#
+# Alternatively, you can set the following if using your own registry:
+#
+# node:
+#   image: <myimage>
+# falcon:
+#   cid: <my_CS_Falcon_CID>
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-crowdstrike-falcon-rhmp
+  annotations:
+    policy.open-cluster-management.io/standards: "NIST SP 800-53, NIST SP 800-171, ISO/IEC 27001"
+    policy.open-cluster-management.io/categories: "AU - AUDIT AND ACCOUNTABILITY, CA - ASSESSMENT AUTHORIZATION AND MONITORING, IA - IDENTIFICATION AND AUTHENTICATION, IR - INCIDENT RESPONSE, SI - SYSTEM AND INFORMATION INTEGRITY"
+    policy.open-cluster-management.io/controls: "AU-2, AU-3, AU-4, AU-5, AU-6, AU-9, AU-12, AU-14, AU-15, CA-7, IA-10, IR-4, IR-5, SI-3, SI-4, 3.3.1, 3.3.2, 3.3.4, 3.3.8, 3.6.1, 3.6.2, 3.14.2, 3.14.3, 3.14.4, 3.14.5, 3.14.6, A.12.4.1, A.16.1.4, A.16.1.5, A.12.2.1"
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-crowdstrike-falcon-rhmp-namespace
+        spec:
+          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: falcon-operator
+                  annotations:
+                    openshift.io/node-selector: ""
+                  labels:
+                    security.openshift.io/scc.podSecurityLabelSync: "false"
+                    pod-security.kubernetes.io/audit: privileged
+                    pod-security.kubernetes.io/warn: privileged
+                    pod-security.kubernetes.io/enforce: privileged
+                spec: {}
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-crowdstrike-falcon-rhmp-operatorgroup
+        spec:
+          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1
+                kind: OperatorGroup
+                metadata:
+                  name: falcon-operatorgroup
+                  namespace: falcon-operator
+                spec:
+                  targetNamespaces:
+                    - falcon-operator
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-crowdstrike-falcon-rhmp-subscription
+        spec:
+          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  name: falcon-operator
+                  namespace: falcon-operator
+                spec:
+                  channel: alpha
+                  installPlanApproval: Automatic
+                  name: falcon-operator-rhmp
+                  source: redhat-marketplace
+                  sourceNamespace: openshift-marketplace
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-crowdstrike-falcon-rhmp-daemonset-install
+        spec:
+          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: falcon.crowdstrike.com/v1alpha1
+                kind: FalconNodeSensor
+                metadata:
+                  name: falcon-node-sensor
+                  namespace: falcon-operator
+                spec:
+                  falcon:
+                    apd: false
+                    trace: none
+                  falcon_api:
+                    client_id: PLEASE_FILL_IN
+                    client_secret: PLEASE_FILL_IN
+                    cloud_region: autodiscover
+                  node:
+                    imagePullPolicy: Always
+                    terminationGracePeriod: 30
+                    disableCleanup: false
+                    tolerations:
+                      - effect: NoSchedule
+                        key: node-role.kubernetes.io/master
+                        operator: Exists
+                      - effect: NoSchedule
+                        key: node-role.kubernetes.io/control-plane
+                        operator: Exists
+                    updateStrategy:
+                      type: RollingUpdate
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-crowdstrike-falcon-rhmp
+placementRef:
+  name: placement-policy-crowdstrike-falcon-rhmp
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-crowdstrike-falcon-rhmp
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-crowdstrike-falcon-rhmp
+spec:
+  clusterSelector:
+    matchExpressions:
+      - key: Vendor
+        operator: In
+        values:
+          - OpenShift
