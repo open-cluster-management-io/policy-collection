@@ -48,11 +48,13 @@ spec:
   externalStorage: {}
   managedResources:
     cephBlockPools: {}
+    cephCluster: {}
     cephConfig: {}
     cephDashboard: {}
     cephFilesystems: {}
     cephObjectStoreUsers: {}
     cephObjectStores: {}
+    cephToolbox: {}
   mirroring: {}
   nodeTopologies: {}
   storageDeviceSets:
