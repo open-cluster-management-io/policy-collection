@@ -292,14 +292,10 @@ metadata:
 spec:
   clusterSelector:
     matchExpressions:
-      # - key: environment
-      #   operator: In
-      #   values:
-      #     - dev
-      - key: local-cluster
+      - key: environment
         operator: In
         values:
-          - 'true'
+          - dev
   clusterConditions:
   - status: "True"
     type: ManagedClusterConditionAvailable
