@@ -45,7 +45,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-odf-operator-subscription
+          name: policy-oadp-operator-subscription
         spec:
           object-templates:
             - complianceType: musthave
