@@ -67,26 +67,6 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-secret-cloud-credentials
-        spec:
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                kind: Secret
-                apiVersion: v1
-                metadata:
-                  name: cloud-credentials
-                  namespace: openshift-adp
-                data:
-                  cloud: >-
-                    W2RlZmF1bHRdCmF3c19hY2Nlc3Nfa2V5X2lkPQphd3Nfc2VjcmV0X2FjY2Vzc19rZXk9CgoK
-                type: Opaque
-          remediationAction: inform
-          severity: low
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
           name: policy-dataprotectionapplication
         spec:
           object-templates:
