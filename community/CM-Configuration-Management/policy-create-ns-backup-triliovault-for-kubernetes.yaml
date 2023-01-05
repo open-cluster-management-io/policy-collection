@@ -12,13 +12,13 @@
 #    This policy creates a full backup.
 #
 # IMPORTANT: Please follow below instructions for the policy to work
-# 1. Namespace "test" - replace with namespace for which backup to be created
-#      Replace all the occurences of "test"
-# 2. On the hub cluster, create a secret aws-s3-secret and a configmap aws-s3-configmap
-#    in the namespace where this policy is placed. The secret and configmap have AWS S3
-#    details for target creation.
+# 1. On the hub cluster, create a secret aws-s3-secret in the namespace where
+#    this policy is placed. The secret has AWS S3 credentials for target creation.
+# 2. On the hub cluster, create a configmap aws-s3-configmap in the namespace
+#    where this policy is placed. The configmap has AWS S3 details for target creation,
+#    and name of the namespace for creating namespace based backup.
 #
-# 2.1 Secret Example yaml (replace the values)
+# 1. Secret Example yaml (replace the values)
 # apiVersion: v1
 # kind: Secret
 # metadata:
@@ -28,7 +28,7 @@
 #   accessKey: "PROVIDE_ACCESS_KEY"
 #   secretKey: "PROVIDE_SECRET_KEY"
 #
-# 2.2 ConfigMap Example yaml (replace the values)
+# 2. ConfigMap Example yaml (replace the values)
 # apiVersion: v1
 # kind: ConfigMap
 # metadata:
@@ -37,11 +37,12 @@
 #   bucketName: "PROVIDE_S3_BUCKET_NAME"
 #   region: "PROVIDE_REGION"
 #   thresholdCapacity: "100Gi"
+#   backupNS: "PROVIDE_NAMESPACE"
 #
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: create-tvk-backup
+  name: create-tvk-ns-backup
   annotations:
     policy.open-cluster-management.io/categories: CA Security Assessment and Authorization
     policy.open-cluster-management.io/standards: NIST SP 800-53
@@ -54,7 +55,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: tvk-backup-ns
+          name: tvk-check-backup-ns
         spec:
           remediationAction: inform
           severity: high
@@ -64,7 +65,7 @@ spec:
                 apiVersion: v1
                 kind: Namespace
                 metadata:
-                  name: test
+                  name: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -122,7 +123,7 @@ spec:
                 kind: Secret
                 metadata:
                   name: tvk-s3-secret
-                  namespace: test
+                  namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
                 type: Opaque
                 data:
                   accessKey: '{{hub fromSecret "" "aws-s3-secret" "accessKey" hub}}'
@@ -131,7 +132,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: tvk-s3-target-test
+          name: tvk-s3-target
         spec:
           remediationAction: enforce
           severity: high
@@ -142,7 +143,7 @@ spec:
                 kind: Target
                 metadata:
                   name: tvk-s3-target
-                  namespace: test
+                  namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
                 spec:
                   type: ObjectStore
                   vendor: AWS
@@ -151,7 +152,7 @@ spec:
                     region: '{{hub fromConfigMap "" "aws-s3-configmap" "region" hub}}'
                     credentialSecret:
                       name: tvk-s3-secret
-                      namespace: test
+                      namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
                   thresholdCapacity: '{{hub fromConfigMap "" "aws-s3-configmap" "thresholdCapacity" hub}}'
                 status:
                   status: Available
@@ -159,7 +160,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: tvk-backupplan
+          name: tvk-ns-backupplan
         spec:
           remediationAction: enforce
           severity: high
@@ -169,14 +170,14 @@ spec:
                 apiVersion: triliovault.trilio.io/v1
                 kind: BackupPlan
                 metadata:
-                  name: test-backupplan
-                  namespace: test
+                  name: tvk-ns-backupplan
+                  namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
                 spec:
-                  backupNamespace: test
+                  backupNamespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
                   backupConfig:
                     target:
                       name: tvk-s3-target
-                      namespace: test
+                      namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
                     schedulePolicy:
                       fullBackupPolicy:
                         name: trilio-daily-schedule-policy
@@ -193,7 +194,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: tvk-backup
+          name: tvk-ns-backup
         spec:
           remediationAction: enforce
           severity: high
@@ -203,13 +204,13 @@ spec:
                 apiVersion: triliovault.trilio.io/v1
                 kind: Backup
                 metadata:
-                  name: test-full-backup
-                  namespace: test
+                  name: tvk-ns-full-backup
+                  namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
                 spec:
                   type: Full
                   backupPlan:
-                    name: test-backupplan
-                    namespace: test
+                    name: tvk-ns-backupplan
+                    namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
                 status: 
                   status: Available
 ---
