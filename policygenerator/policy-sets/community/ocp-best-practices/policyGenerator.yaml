@@ -1,9 +1,9 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: PolicyGenerator
 metadata:
-  name: policy-openshift-hardening
+  name: policy-openshift-best-practices
 placementBindingDefaults:
-  name: binding-policy-openshift-hardening
+  name: binding-policy-openshift-best-practices
 policyDefaults:
   categories:
     - CM Configuration Management
@@ -11,7 +11,7 @@ policyDefaults:
     - CM-2 Baseline Configuration
   namespace: policies
   policySets:
-    - openshift-hardening
+    - openshift-best-practices
   remediationAction: enforce
   severity: medium
   standards:
@@ -109,6 +109,6 @@ policies:
   remediationAction: "inform"
 policySets:
   - description: Applies the OpenShift best practices for how to harden your OpenShift clusters.
-    name: openshift-hardening
+    name: openshift-best-practices
     placement:
       placementPath: input/placement.yaml

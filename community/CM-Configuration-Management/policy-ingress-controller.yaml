@@ -26,11 +26,16 @@ spec:
                 metadata:
                   name: default
                   namespace: openshift-ingress-operator
-                  spec:
-                    nodePlacement:
-                      nodeSelector:
-                        matchLabels:
-                          node-role.kubernetes.io/infra: ""
+                spec:
+                  nodePlacement:
+                    nodeSelector:
+                      matchLabels:
+                        node-role.kubernetes.io/infra: ""
+                    tolerations:
+                      - effect: NoSchedule
+                        operator: Exists
+                      - effect: NoExecute
+                        operator: Exists
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
