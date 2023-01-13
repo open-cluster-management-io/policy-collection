@@ -16,9 +16,7 @@ policyDefaults:
   policySets:
     - gatekeeper-policyset
   standards:
-    - generic
-  placementPath:  
-    - placement.yaml
+    - NIST SP 800-53
 policies:    
 - name: container-deny-escalation
   categories:
@@ -117,19 +115,8 @@ policies:
   manifests:
     - path: input/suspicious_self_subject_review  
 policySets:
-  - description: gatekeeper-policyset to apply set of gatekeeper-policies.
+  - description: A set of open policy agent gatekeeper admission controls that require best practices to be followed for applications being installed onto the managed cluster
     name: gatekeeper-policyset
     placement:
       placementPath: placement.yaml
-
-
-
-
-
-
-
-
-
-
-
 
