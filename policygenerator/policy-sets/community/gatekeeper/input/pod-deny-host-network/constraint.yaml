@@ -1,0 +1,17 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: PodDenyHostNetwork
+metadata:
+  name: poddenyhostnetwork
+spec:
+  match:
+    kinds:
+    - apiGroups:
+      - ""
+      kinds:
+      - Pod
+    - apiGroups:
+      - apps
+      kinds:
+      - DaemonSet
+      - Deployment
+      - StatefulSet

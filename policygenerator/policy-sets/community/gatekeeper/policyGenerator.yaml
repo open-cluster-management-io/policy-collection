@@ -1,0 +1,122 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: gatekeeper-policyset
+placementBindingDefaults:
+  name: gatekeeper-policyset
+policyDefaults:
+  policyAnnotations: {"policy.open-cluster-management.io/disable-templates": "true"}
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: policies
+  remediationAction: enforce
+  severity: medium
+  policySets:
+    - gatekeeper-policyset
+  standards:
+    - NIST SP 800-53
+policies:    
+- name: container-deny-escalation
+  categories:
+    - setup
+  controls: 
+    - setup
+  disabled: false
+  manifests:
+    - path: input/container-deny-escalation
+- name: container-deny-latest-tag
+  categories:
+    - setup
+  controls: 
+    - setup
+  disabled: false
+  manifests:
+    - path: input/container-deny-latest-tag
+- name: container-deny-privileged
+  categories:
+    - setup
+  controls: 
+    - setup
+  disabled: false
+  manifests:
+    - path: input/container-deny-privileged
+- name: container-deny-privileged-if-tenant 
+  categories:
+    - setup
+  controls: 
+    - setup
+  disabled: false
+  manifests:
+    - path: input/container-deny-privileged-if-tenant    
+- name: container-deny-no-resource-constraints
+  categories:
+    - setup
+  controls: 
+    - setup
+  disabled: false
+  manifests:
+    - path: input/container-deny-no-resource-constraints
+- name: pod-deny-host-alias
+  categories:
+    - setup
+  controls: 
+    - setup
+  disabled: false
+  manifests:
+    - path: input/pod-deny-host-alias
+- name: pod-deny-host-ipc
+  categories:
+    - setup
+  controls: 
+    - setup
+  disabled: false
+  manifests:
+    - path: input/pod-deny-host-ipc
+- name: pod-deny-host-network
+  categories:
+    - setup
+  controls: 
+    - setup
+  disabled: false
+  manifests:
+    - path: input/pod-deny-host-network
+- name: pod-deny-host-pid
+  categories:
+    - setup
+  controls: 
+    - setup
+  disabled: false
+  manifests:
+    - path: input/pod-deny-host-pid
+- name: poddenywithoutrunasnonroot
+  categories:
+    - setup
+  controls: 
+    - setup
+  disabled: false
+  manifests:
+    - path: input/pod-deny-without-runasnonroot
+- name: suspiciousserviceaccounts
+  categories:
+    - setup
+  controls: 
+    - setup
+  disabled: false
+  manifests:
+    - path: input/suspicious_assignment_of_controller_service_accounts
+- name: suspiciousselfsubjectreview
+  categories:
+    - setup
+  controls: 
+    - setup
+  disabled: false
+  manifests:
+    - path: input/suspicious_self_subject_review  
+policySets:
+  - description: A set of open policy agent gatekeeper admission controls that require best practices to be followed for applications being installed onto the managed cluster
+    name: gatekeeper-policyset
+    placement:
+      placementPath: placement.yaml
+
