@@ -1,0 +1,130 @@
+# This is the first policy to setup Continuous Restore Functionality using
+# Triliovault for Kubernetes (TVK). 
+#
+# This policy creates an event target on 2 clusters (source and target) participating in the 
+# Continuous Restore Functionality defined with labels "protected-by=triliovault" and 
+# "tvk-continuous-restore=enabled"
+#
+# The event target is a shared backup target between 2 clusters (source and target).
+#
+# Please note TVK should be installed and configured on both the clusters before applying this policy.
+#
+# Refer - https://docs.trilio.io/kubernetes/management-console/index/continuous-restore#create-an-event-target
+#
+# IMPORTANT: Please follow below instructions for the policy to work
+# 1. On the hub cluster, create a secret aws-s3-secret and a configmap aws-s3-configmap
+#    in the namespace where this policy is placed. The secret and configmap have AWS S3
+#    details for target creation.
+#
+# 1.1 Secret Example yaml (replace the values)
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: aws-s3-secret
+# type: Opaque
+# stringData:
+#   accessKey: "PROVIDE_ACCESS_KEY"
+#   secretKey: "PROVIDE_SECRET_KEY"
+#
+# 1.2 ConfigMap Example yaml (replace the values)
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: aws-s3-configmap
+# Data:
+#   bucketName: "PROVIDE_S3_BUCKET_NAME"
+#   region: "PROVIDE_REGION"
+#   thresholdCapacity: "100Gi"
+#
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: tvk-continuous-restore-event-target
+  annotations:
+    policy.open-cluster-management.io/categories: CA Security Assessment and Authorization
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/controls: CA-2 Security Assessments, CA-7 Continuous Monitoring
+spec:
+  disabled: false
+  remediationAction: inform
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-s3-secret
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Secret
+                metadata:
+                  name: tvk-s3-secret
+                  namespace: default
+                type: Opaque
+                data:
+                  accessKey: '{{hub fromSecret "" "aws-s3-secret" "accessKey" hub}}'
+                  secretKey: '{{hub fromSecret "" "aws-s3-secret" "secretKey" hub}}'
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-s3-event-target
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: Target
+                metadata:
+                  name: tvk-s3-event-target
+                  namespace: default
+                  annotations:
+                    trilio.io/event-target: "true"
+                spec:
+                  type: ObjectStore
+                  vendor: AWS
+                  objectStoreCredentials:
+                    bucketName: '{{hub fromConfigMap "" "aws-s3-configmap" "bucketName" hub}}'
+                    region: '{{hub fromConfigMap "" "aws-s3-configmap" "region" hub}}'
+                    credentialSecret:
+                      name: tvk-s3-secret
+                      namespace: default
+                  thresholdCapacity: '{{hub fromConfigMap "" "aws-s3-configmap" "thresholdCapacity" hub}}'
+                status:
+                  status: Available
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: tvk-cr-event-target-placement
+spec:
+  clusterSelector:
+    matchExpressions:
+      - key: protected-by
+        operator: In
+        values:
+          - triliovault
+      - key: tvk-continuous-restore
+        operator: In
+        values:
+          - enabled
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: tvk-cr-event-target-placement
+placementRef:
+  name: tvk-cr-event-target-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: tvk-continuous-restore-event-target
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
+

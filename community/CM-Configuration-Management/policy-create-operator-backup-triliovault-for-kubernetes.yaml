@@ -1,0 +1,256 @@
+# This policy creates an operator based backup using Triliovault for Kubernetes (TVK)
+# on all clusters with a label "protected-by=triliovault".
+#
+# To create operator based application backup, following process is followed
+# 1. Create the target object to store backup data
+#    This policy creates AWS S3 based target storage for storing backup images. 
+# 2. Create a backup plan that references the following:
+#      Application to be backed up selected by specified Operator ID
+#      Default Scheduling Policy - create daily 1 backup
+#      Target to where the data should be backed up
+# 3. Apply the Backup CR that references the Backup
+#    This policy creates a full backup.
+#
+# IMPORTANT: Please follow below instructions for the policy to work
+# 1. On the hub cluster, create a secret aws-s3-secret in the namespace where 
+#    this policy is placed. The secret has AWS S3 credentials for target creation.
+# 2. On the hub cluster, create a configmap aws-s3-configmap in the namespace 
+#    where this policy is placed. The configmap has AWS S3 details for target creation,
+#    backup namespace, the Operator ID, Operator resources label-value and Operator
+#    Application label-value.
+#
+# 2.1 Secret Example yaml (replace the values)
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: aws-s3-secret
+# type: Opaque
+# stringData:
+#   accessKey: "PROVIDE_ACCESS_KEY"
+#   secretKey: "PROVIDE_SECRET_KEY"
+#
+# 2.2 ConfigMap Example yaml (replace the values)
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: aws-s3-configmap
+# Data:
+#   bucketName: "PROVIDE_S3_BUCKET_NAME"
+#   region: "PROVIDE_REGION"
+#   thresholdCapacity: "100Gi"
+#   backupNS: "PROVIDE_APP_NAMESPACE"
+#   operatorID: "PROVIDE_OPERATOR_ID"
+#   operatorResourceLabel: "PROVIDE_OPERATOR_RESOURCE_LABEL"
+#   operatorResourceValue: "PROVIDE_OPERATOR_RESOURCE_VALUE"
+#   operatorAppLabel: "PROVIDE_OPERATOR_APPLICATION_LABEL"
+#   operatorAppValue: "PROVIDE_OPERATOR_APPLICATION_VALUE"
+#
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: create-tvk-operator-backup
+  annotations:
+    policy.open-cluster-management.io/categories: CA Security Assessment and Authorization
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/controls: CA-2 Security Assessments, CA-7 Continuous Monitoring
+spec:
+  disabled: false
+  remediationAction: inform
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-backup-operator-ns
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-scheduling-policy
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: Policy
+                metadata:
+                  name: trilio-daily-schedule-policy
+                  namespace: default
+                spec:
+                  scheduleConfig:
+                    schedule:
+                    - 0 23 * * *
+                  type: Schedule
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-retention-policy
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: Policy
+                metadata:
+                  name: trilio-latest-retention-policy
+                  namespace: default
+                spec:
+                  default: false
+                  retentionConfig:
+                    latest: 5
+                  type: Retention
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-s3-secret
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Secret
+                metadata:
+                  name: tvk-s3-secret
+                  namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
+                type: Opaque
+                data:
+                  accessKey: '{{hub fromSecret "" "aws-s3-secret" "accessKey" hub}}'
+                  secretKey: '{{hub fromSecret "" "aws-s3-secret" "secretKey" hub}}'
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-s3-target
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: Target
+                metadata:
+                  name: tvk-s3-target
+                  namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
+                spec:
+                  type: ObjectStore
+                  vendor: AWS
+                  objectStoreCredentials:
+                    bucketName: '{{hub fromConfigMap "" "aws-s3-configmap" "bucketName" hub}}'
+                    region: '{{hub fromConfigMap "" "aws-s3-configmap" "region" hub}}'
+                    credentialSecret:
+                      name: tvk-s3-secret
+                      namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
+                  thresholdCapacity: '{{hub fromConfigMap "" "aws-s3-configmap" "thresholdCapacity" hub}}'
+                status:
+                  status: Available
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-operator-backupplan
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: BackupPlan
+                metadata:
+                  name: tvk-operator-backupplan
+                  namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
+                spec:
+                  backupConfig:
+                    target:
+                      name: tvk-s3-target
+                      namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
+                    schedulePolicy:
+                      fullBackupPolicy:
+                        name: trilio-daily-schedule-policy
+                        namespace: default
+                    retentionPolicy:
+                      name: trilio-latest-retention-policy
+                      namespace: default
+                  backupPlanComponents:
+                    operators: 
+                    - operatorId: '{{hub fromConfigMap "" "aws-s3-configmap" "operatorID" hub}}'
+                      operatorResources:
+                        labelSelector:
+                        - matchLabels:
+                            '{{hub fromConfigMap "" "aws-s3-configmap" "operatorResourceLabel" hub}}': '{{hub fromConfigMap "" "aws-s3-configmap" "operatorResourceValue" hub}}'
+                      applicationResources:
+                        labelSelector:
+                        - matchLabels:
+                            '{{hub fromConfigMap "" "aws-s3-configmap" "operatorAppLabel" hub}}': '{{hub fromConfigMap "" "aws-s3-configmap" "operatorAppValue" hub}}'
+                  backupPlanFlags:
+                    skipImageBackup: true
+                status:
+                  status: Available
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-operator-backup
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: Backup
+                metadata:
+                  name: tvk-operator-full-backup
+                  namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}' 
+                spec:
+                  type: Full
+                  backupPlan:
+                    name: tvk-operator-backupplan
+                    namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
+                status: 
+                  status: Available
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: tvk-operator-backup-placement
+spec:
+  clusterSelector:
+    matchExpressions:
+      - key: protected-by
+        operator: In
+        values:
+          - triliovault
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: tvk-operator-backup-placement
+placementRef:
+  name: tvk-operator-backup-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: create-tvk-operator-backup
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
+
