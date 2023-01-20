@@ -21,51 +21,51 @@ policies:
 - name: add-labels-to-tenant
   disabled: false
   manifests:
-    - path: ../input/multitenancy/addlabelstotenant
+    - path: input/addlabelstotenant
 - name: disallow-placementrules
   disabled: false
   manifests:
-    - path: ../input/multitenancy/disallowplacementrules
+    - path: input/disallowplacementrules
 - name: generate-all
   disabled: false
   manifests:
-    - path: ../input/multitenancy/generateall
+    - path: input/generateall
 - name: gen-argocdpersmissions
   disabled: false
   manifests:
-    - path: ../input/multitenancy/generateargocdpersmissions
+    - path: input/generateargocdpersmissions
 - name: gen-managed-clusterset-binding
   disabled: false
   manifests:
-    - path: ../input/multitenancy/generateManagedClusterSetBinding
+    - path: input/generateManagedClusterSetBinding
 - name: gen-placement-rules
   disabled: false
   manifests:
-    - path: ../input/multitenancy/generatePlacementRules
+    - path: input/generatePlacementRules
 - name: add-job-ttl
   disabled: false
   manifests:
-    - path: ../input/multitenancy/other
+    - path: input/other
 - name: preventupdatesappproject
   disabled: false
   manifests:
-    - path: ../input/multitenancy/preventupdatesappproject
+    - path: input/preventupdatesappproject
 - name: team-restrictions
   disabled: false
   manifests:
-    - path: ../input/multitenancy/restrictions
+    - path: input/restrictions
 - name: team-sharedresources
   disabled: false
   manifests:
-    - path: ../input/multitenancy/sharedresources
+    - path: input/sharedresources
 - name: team-validate-ns
   disabled: false
   manifests:
-    - path: ../input/multitenancy/validatens
+    - path: input/validatens
 - name: validate-placement
   disabled: false
   manifests:
-    - path: ../input/multitenancy/validateplacement
+    - path: input/validateplacement
 policySets:
   - description: kyverno-multitenancy-policyset to apply set of kyverno-policies.
     name: kyverno-multitenancy-policyset

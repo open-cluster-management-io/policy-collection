@@ -1,0 +1,28 @@
+name: Validation tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+defaults:
+  run:
+    shell: bash
+    working-directory: policy-collection
+
+jobs:
+  validation-tests:
+    runs-on: ubuntu-latest
+    name: Validation tests
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        path: policy-collection
+
+    - name: Verify content
+      run: |
+        ./build/validate-policies.sh

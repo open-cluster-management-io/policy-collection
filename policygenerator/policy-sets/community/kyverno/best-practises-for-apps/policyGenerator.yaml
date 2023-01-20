@@ -22,7 +22,7 @@ policies:
 - name: require-probes
   disabled: false
   manifests:
-    - path: ../input/apps/require_probes  
+    - path: input/require_probes  
 - name: allowed-base-images
   categories:
     - SI System and Information Integrity
@@ -30,7 +30,7 @@ policies:
     - SI-4 Information System Monitoring
   disabled: false
   manifests:
-    - path: ../input/apps/base_images  
+    - path: input/base_images  
 - name: require-tls-routes
   categories:
     - SC System and Communications Protection
@@ -38,7 +38,7 @@ policies:
     - SC-8 Transmission Confidentiality and Integrity
   disabled: false
   manifests:
-    - path: ../input/apps/routes 
+    - path: input/routes 
 - name: generate-poddisruptionbudget  
   categories:
     - SI System and Information Integrity
@@ -46,19 +46,19 @@ policies:
     - SI-4 Information System Monitoring
   disabled: false
   manifests:
-    - path: ../input/apps/poddisruptionbudget  
+    - path: input/poddisruptionbudget  
 - name: require-deploy-multireplicas
   disabled: false
   manifests:
-    - path: ../input/apps/require_deployments_have_multiple_replicas  
+    - path: input/require_deployments_have_multiple_replicas  
 - name: validate-git-url
   disabled: false
   manifests:
-    - path: ../input/apps/validate_git  
+    - path: input/validate_git  
 - name: require-limitsrequests
   disabled: false
   manifests:
-    - path: ../input/apps/limitsrequests
+    - path: input/limitsrequests
 policySets:
   - description: kyverno-deploy-bestpractise to apply set of kyverno-policies.
     name: kyverno-deploy-bestpractise
