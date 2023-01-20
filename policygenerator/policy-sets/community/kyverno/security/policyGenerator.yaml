@@ -21,7 +21,7 @@ policies:
 - name: restrict-annotations
   disabled: false
   manifests:
-    - path: ../input/security/restrict_annotations
+    - path: input/restrict_annotations
 - name: restrict-automount-sa-token
   categories:
     - AC Access Control
@@ -29,7 +29,7 @@ policies:
     - AC-3 Access Enforcement
   disabled: false
   manifests:
-    - path: ../input/security/restrict_automount_sa_token
+    - path: input/restrict_automount_sa_token
 - name: restrict-binding-clusteradmin
   categories:
     - AC Access Control
@@ -37,7 +37,7 @@ policies:
     - AC-3 Access Enforcement
   disabled: false
   manifests:
-    - path: ../input/security/restrict-binding-clusteradmin
+    - path: input/restrict-binding-clusteradmin
 - name: restrict-clusterrole-nodesproxy
   categories:
     - AC Access Control
@@ -45,7 +45,7 @@ policies:
     - AC-3 Access Enforcement
   disabled: false
   manifests:
-    - path: ../input/security/restrict-clusterrole-nodesproxy
+    - path: input/restrict-clusterrole-nodesproxy
 - name: restrict-ingress-wildcard
   categories:
     - SC System and Communications Protection
@@ -53,7 +53,7 @@ policies:
     - SC-11 Trusted Path
   disabled: false
   manifests:
-    - path: ../input/security/restrict-ingress-wildcard
+    - path: input/restrict-ingress-wildcard
 - name: restrict-loadbalancer
   categories:
     - SC System and Communications Protection
@@ -61,7 +61,7 @@ policies:
     - SC-11 Trusted Path
   disabled: false
   manifests:
-    - path: ../input/security/restrict_loadbalancer
+    - path: input/restrict_loadbalancer
 - name: restrict-node-selection
   categories:
     - SC System and Communications Protection
@@ -69,7 +69,7 @@ policies:
     - SC-4 Information in Shared System Resources
   disabled: false
   manifests:
-    - path: ../input/security/restrict_node_selection
+    - path: input/restrict_node_selection
 - name: restrict-secret-role-verbs
   categories:
     - AC Access Control
@@ -77,7 +77,7 @@ policies:
     - AC-3 Access Enforcement
   disabled: false
   manifests:
-    - path: ../input/security/restrict-secret-role-verbs
+    - path: input/restrict-secret-role-verbs
 - name: restrict-service-account
   categories:
     - AC Access Control
@@ -85,7 +85,7 @@ policies:
     - AC-3 Access Enforcement
   disabled: false
   manifests:
-    - path: ../input/security/restrict-service-account
+    - path: input/restrict-service-account
 - name: restrict-service-port-range
   categories:
     - SC System and Communications Protection
@@ -93,7 +93,7 @@ policies:
     - SC-4 Information in Shared System Resources
   disabled: false
   manifests:
-    - path: ../input/security/restrict_service_port_range
+    - path: input/restrict_service_port_range
 - name: restrict-wildcard-resources
   categories:
     - SC System and Communications Protection
@@ -101,7 +101,7 @@ policies:
     - SC-11 Trusted Path
   disabled: false
   manifests:
-    - path: ../input/security/restrict-wildcard-resources
+    - path: input/restrict-wildcard-resources
 - name: restrict-wildcard-verbs
   categories:
     - SC System and Communications Protection
@@ -109,7 +109,7 @@ policies:
     - SC-11 Trusted Path
   disabled: false
   manifests:
-    - path: ../input/security/restrict-wildcard-verbs
+    - path: input/restrict-wildcard-verbs
 - name: networking-block-nodeport-services
   categories:
     - SC System and Communications Protection
@@ -117,7 +117,7 @@ policies:
     - SC-7 Boundary Protection
   disabled: false
   manifests:
-    - path: ../input/security/networking/block-nodeport-services
+    - path: input/networking/block-nodeport-services
 - name: authorization-disallow-scc-runasany
   categories:
     - AC Access Control
@@ -125,7 +125,7 @@ policies:
     - AC-3 Access Enforcement
   disabled: false
   manifests:
-    - path: ../input/security/authorization
+    - path: input/authorization
 - name: authorization-host-namespaces
   categories:
     - AC Access Control
@@ -133,7 +133,7 @@ policies:
     - AC-3 Access Enforcement
   disabled: false
   manifests:
-    - path: ../input/security/authorization/host-namespaces
+    - path: input/authorization/host-namespaces
 - name: authorization-protect-default-scc
   categories:
     - AC Access Control
@@ -141,7 +141,7 @@ policies:
     - AC-3 Access Enforcement
   disabled: false
   manifests:
-    - path: ../input/security/authorization/protect-default-scc
+    - path: input/authorization/protect-default-scc
 policySets:
   - description: kyverno-policyset to apply set of kyverno-policies.
     name: kyverno-security-policyset
