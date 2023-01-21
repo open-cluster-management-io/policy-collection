@@ -40,18 +40,15 @@ fi
 set -euo pipefail  # exit on errors and unset vars, and stop on the first error in a "pipeline"
 
 # Install kubeconform
-OUT=`which kubeconform`
-RC=$?
-if [ $RC -ne 0 ]; then
-	go install github.com/yannh/kubeconform/cmd/kubeconform@$KC_VERSION
-fi
+echo "Installing kubeconform"
+go install github.com/yannh/kubeconform/cmd/kubeconform@$KC_VERSION
 
 # Get the CRDs needed for policy validation
 if [ ! -d schemas ]; then
 	echo "Getting Schema conversion tool"
 	mkdir schemas
 	cd schemas
-	curl -o crd-schema.py https://raw.githubusercontent.com/yannh/$KUBECONFORM/$KC_VERSION/scripts/openapi2jsonschema.py
+	curl -s -o crd-schema.py https://raw.githubusercontent.com/yannh/$KUBECONFORM/$KC_VERSION/scripts/openapi2jsonschema.py
 	chmod a+x crd-schema.py
 
 	echo "Converting CRDs to Schemas"
@@ -74,21 +71,17 @@ validatePolicies community
 # Switching to check generator projects now
 
 # Install kustomize
-if [ ! -f ${GOBIN}/kustomize ]; then
-	echo "Installing kustomize"
-	GO111MODULE=on go install sigs.k8s.io/kustomize/kustomize/v4@$KUSTOMIZE_VERSION
-fi
+echo "Installing kustomize"
+GO111MODULE=on go install sigs.k8s.io/kustomize/kustomize/v4@$KUSTOMIZE_VERSION
 
 # Install the Policy Generator kustomize plugin
 export KUSTOMIZE_PLUGIN_HOME=${GOBIN}
-if [ ! -f ${KUSTOMIZE_PLUGIN_HOME}/${GENERATOR_PATH}/PolicyGenerator ]; then
-	echo "Downloading the generator"
-	PLATFORM=`uname | tr '[:upper:]' '[:lower:]'`
-	curl -L -o generator https://github.com/stolostron/policy-generator-plugin/releases/latest/download/${PLATFORM}-amd64-PolicyGenerator
-	chmod a+x generator
-	mkdir -p ${KUSTOMIZE_PLUGIN_HOME}/${GENERATOR_PATH}
-	mv generator ${KUSTOMIZE_PLUGIN_HOME}/${GENERATOR_PATH}/PolicyGenerator
-fi
+echo "Downloading the generator"
+PLATFORM=`uname | tr '[:upper:]' '[:lower:]'`
+curl -Ls -o generator https://github.com/stolostron/policy-generator-plugin/releases/latest/download/${PLATFORM}-amd64-PolicyGenerator
+chmod a+x generator
+mkdir -p ${KUSTOMIZE_PLUGIN_HOME}/${GENERATOR_PATH}
+mv generator ${KUSTOMIZE_PLUGIN_HOME}/${GENERATOR_PATH}/PolicyGenerator
 
 # Validate the generator projects
 
