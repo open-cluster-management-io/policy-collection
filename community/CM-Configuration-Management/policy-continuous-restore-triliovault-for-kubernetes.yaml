@@ -83,7 +83,7 @@ spec:
                   source:
                     type: ConsistentSet
                     consistentSet:
-                      name: {{ (index (lookup "triliovault.trilio.io/v1" "ConsistentSet" "" "").items (len (slice (index (lookup "triliovault.trilio.io/v1" "ConsistentSet" "" "").items) 1))).metadata.name }}
+                      name: '{{ (index (lookup "triliovault.trilio.io/v1" "ConsistentSet" "" "").items (len (slice (index (lookup "triliovault.trilio.io/v1" "ConsistentSet" "" "").items) 1))).metadata.name }}'
                   restoreNamespace: '{{hub fromConfigMap "" "tvk-cr-restore-configmap" "restoreNS" hub}}'
                   skipIfAlreadyExists: true
                 status:
