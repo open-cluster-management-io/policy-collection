@@ -17,7 +17,7 @@ The OpenShift Plus PolicySet contains two `PolicySets` that will be deployed.  T
 Prior to applying the `PolicySet`, perform these steps:
 
 1. Create the namespace `policies`: `oc create ns policies`
-2. Prepare for Red Hat OpenShift Data Foundation by adding worker nodes for storage described [here](https://red-hat-storage.github.io/ocs-training/training/ocs4/ocs.html#_scale_ocp_cluster_and_add_new_worker_nodes)
+2. Prepare for Red Hat OpenShift Data Foundation by adding worker nodes for storage described [here](https://red-hat-storage.github.io/ocs-training/training/ocs4/ocs.html#_scale_ocp_cluster_and_add_new_worker_nodes). If you have any difficulties, follow this [link](#1-add-new-worker-nodes). 
 3. Create the namespace `openshift-storage`: `oc create ns openshift-storage`
 4. Label the storage namespace: `oc label namespace openshift-storage "openshift.io/cluster-monitoring=true"`
 5. To allow for subscriptions to be applied below you must apply and set to enforce the policy [policy-configure-subscription-admin-hub.yaml](https://github.com/stolostron/policy-collection/blob/main/community/CM-Configuration-Management/policy-configure-subscription-admin-hub.yaml) in the policies namespace.
@@ -31,8 +31,140 @@ Prior to applying the `PolicySet`, perform these steps:
     spec:
         clusterSet: default
     ```
+    ```bash
+    oc apply -f managed-cluster.yaml 
+    ```
+  7. Install Kustomize plugin
+     Install plugin for kustomize command. ***[here](https://github.com/stolostron/policy-generator-plugin#installation)***
+     ***NOTE*** recommend Kustomize version above v4.5
 
 Apply the policies using the kustomize command or subscribing to a fork of the repository and pointing to this directory.  See 
-the details for using the Policy Generator for more information.  The command to run is `kustomize build --enable-alpha-plugins  | oc apply -f -`
+the details for using the Policy Generator for [more information](https://github.com/stolostron/policy-collection/tree/main/policygenerator).  The command to run is `kustomize build --enable-alpha-plugins  | oc apply -f -`
 
 **Note**: For any components of OpenShift Plus that you do not wish to install, edit the `policyGenerator.yaml` file and remove or comment out the policies for those components.
+
+## Troubleshooting
+
+### Add new worker nodes 
+  #### 1. Check your worker node is not enough to install odf
+  ```bash
+  oc get nodes -l node-role.kubernetes.io/worker -l '!node-role.kubernetes.io/master'
+  ```
+ **Note:** make sure that the installing OCP cluster is large enough to hold the ACM installation.  Example: 3 master m6a.2xlarge nodes with 1 worker m6a.2xlarge node.
+The added nodes for the storage and the rest of OPP are 6 m6a.2xlarge worker nodes all labeled for use by ODF storage and are also available for the other OPP components.
+
+  #### 2. Acquire your availability-zone and region of your cluster
+  Display availability-zone 
+  ```bash
+  oc get machineset -n openshift-machine-api -o jsonpath='{.items[0].spec.template.spec.providerSpec.value.placement.availabilityZone}'
+  ```
+
+  Display region 
+
+  ```bash
+  oc get machineset -n openshift-machine-api -o jsonpath='{.items[0].spec.template.spec.providerSpec.value.placement.region}'  
+  ```
+  #### 3. Create new MachineSets
+
+  Save your Cluster ID
+
+  ```bash
+  CLUSTERID=$(oc get machineset -n openshift-machine-api -o jsonpath='{.items[0].metadata.labels.machine\.openshift\.io/cluster-api-cluster}')
+echo $CLUSTERID
+  ```
+
+Save this file as ***add-node.yaml*** and apply your region and availability-zone 
+
+```
+---
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: CLUSTERID
+    machine.openshift.io/cluster-api-machine-role: workerocs
+    machine.openshift.io/cluster-api-machine-type: workerocs
+  name: CLUSTERID-workerocs-us-east-1f  # 🔴change to your AZ
+  namespace: openshift-machine-api
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: CLUSTERID
+      machine.openshift.io/cluster-api-machineset: CLUSTERID-workerocs-us-east-1f # 🔴change to your AZ
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        machine.openshift.io/cluster-api-cluster: CLUSTERID
+        machine.openshift.io/cluster-api-machine-role: workerocs
+        machine.openshift.io/cluster-api-machine-type: workerocs
+        machine.openshift.io/cluster-api-machineset: CLUSTERID-workerocs-us-east-1f # 🔴change to your AZ
+    spec:
+      metadata:
+        creationTimestamp: null
+        labels:
+          cluster.ocs.openshift.io/openshift-storage: ""
+          node-role.kubernetes.io/worker: ""
+      providerSpec:
+        value:
+          ami:
+            id: ami-0fe05b1aa8dacfa90
+          apiVersion: awsproviderconfig.openshift.io/v1beta1
+          blockDevices:
+          - ebs:
+              iops: 0
+              volumeSize: 100
+              volumeType: gp3 # 🔴change to your volumeType 
+          credentialsSecret:
+            name: aws-cloud-credentials
+          deviceIndex: 0
+          iamInstanceProfile:
+            id: CLUSTERID-worker-profile
+          instanceType: m6a.2xlarge # 🔴change to your instanceType 
+          kind: AWSMachineProviderConfig
+          metadata:
+            creationTimestamp: null
+          placement:
+            availabilityZone: us-east-1f  # 🔴change to your AZ
+            region: us-east-1   # 🔴change to your reion
+          publicIp: null
+          securityGroups:
+          - filters:
+            - name: tag:Name
+              values:
+              - CLUSTERID-worker-sg
+          subnet:
+            filters:
+            - name: tag:Name
+              values:
+              - CLUSTERID-private-us-east-1f # 🔴change to your AZ
+          tags:
+          - name: kubernetes.io/cluster/CLUSTERID
+            value: owned
+          userDataSecret:
+            name: worker-user-data
+      versions:
+        kubelet: ""
+---
+```
+
+
+
+Create new MachineSets
+
+```bash
+cat add-node.yaml | sed -e "s/CLUSTERID/${CLUSTERID}/g" | oc apply -f -
+```
+Wait a few minutes for all nodes to be up. 
+Check with this command 
+
+```bash
+oc get nodes -l node-role.kubernetes.io/worker -l '!node-role.kubernetes.io/master'
+```
+
+***NOTE:*** For your volumeType or other values, you can get from machineset yaml.
+
+### policy-odf-status NonCompliant 
+
+Installing odf takes over ***15 mins*** from the policies deployed. Wait 40 mins. If the status still remains NonCompliant, check to see if your worker nodes meet the requirements. 
