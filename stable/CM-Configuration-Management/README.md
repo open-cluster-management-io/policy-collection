@@ -1,6 +1,6 @@
 # Configuration Management 
 
-See [NIST Special Publication 800-53 (Rev. 4)](https://nvd.nist.gov/800-53/Rev4/family/Configuration%20Management) for a description of the Configuration Management control. View the configuration policies that map to the Configuration Management catalog, and helps to detect or remediate security issues that are in the category. See the following table list of the stable policies that are supported by [Red Hat Advanced Cluster Management for Kubernetes](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/governance/index):
+See [Security and Privacy Controls for Information Systems and Organizations, Revision 5](https://csrc.nist.gov/projects/cprt/catalog#/cprt/framework/version/SP_800_53_5_1_0/home?element=CM) for details about the Configuration Management controls. View the configuration policies that map to the Configuration Management category, and helps to detect or remediate security issues that are in the category.
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
@@ -14,4 +14,4 @@ Policy  | Description | Prerequisites
 [Kyverno Generate Quota](../CM-Configuration-Management/policy-kyverno-add-quota.yaml) | Configures new `ResourceQuota` and `LimitRange` resources anytime a new Namespace is created. | See the [Kyverno project](https://github.com/kyverno/kyverno). **Note**: Kyverno controller must be installed to use the kyverno policy. See the [Policy to install Kyverno](../../community/CM-Configuration-Management/policy-install-kyverno.yaml) in the community folder.
 [Kyverno Sync Secrets](../CM-Configuration-Management/policy-kyverno-sync-secrets.yaml) | This policy will copy a Secret called `regcred` which exists in the `default` Namespace to new Namespaces when they are created and it will keep the secret updated with changes. | See the [Kyverno project](https://github.com/kyverno/kyverno). **Note**: Kyverno controller must be installed to use the kyverno policy. See the [Policy to install Kyverno](../../community/CM-Configuration-Management/policy-install-kyverno.yaml) in the community folder.
 
-You can contribute more policies that map to the Configuration Management catalog. See [Contibuting policies](https://github.com/stolostron/policy-collection/blob/main/docs/CONTRIBUTING.md) for more details.
+You can contribute more policies that map to the Configuration Management catalog. See [Contibuting policies](https://github.com/open-cluster-management-io/policy-collection/blob/main/docs/CONTRIBUTING.md) for more details.

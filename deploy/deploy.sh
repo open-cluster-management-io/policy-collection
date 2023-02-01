@@ -5,7 +5,7 @@ set -o pipefail
 
 # Display help information
 help () {
-  echo "Deploy policies to Red Hat Advanced Cluster Management via GitOps"
+  echo "Deploy policies to Open Cluster Management via GitOps"
   echo ""
   echo "Prerequisites:"
   echo " - oc or kubectl CLI must be pointing to the cluster to which to deploy policies"
@@ -16,7 +16,7 @@ help () {
   echo ""
   echo "  -h|--help                   Display this menu"
   echo "  -u|--url <url>              URL to the Git repository"
-  echo '                                (Default URL: "https://github.com/stolostron/policy-collection.git")'
+  echo '                                (Default URL: "https://github.com/open-cluster-management-io/policy-collection.git")'
   echo "  -b|--branch <branch>        Branch of the Git repository to point to"
   echo '                                (Default branch: "main")'
   echo "  -p|--path <path/to/dir>     Path to the desired subdirectory of the Git repository"
@@ -94,7 +94,7 @@ echo "====================================================="
 echo "kubectl config:     $(kubectl config get-contexts | awk '/^\052/ {print $4"/"$3}')"
 echo "Cluster Namespace:  ${NAMESPACE:=policies}"
 echo "Resource Prefix:    ${NAME:=demo-stable-policies}"
-echo "Git URL:            ${GH_URL:=https://github.com/stolostron/policy-collection.git}"
+echo "Git URL:            ${GH_URL:=https://github.com/open-cluster-management-io/policy-collection.git}"
 echo "Git Branch:         ${GH_BRANCH:=main}"
 echo "Git Path:           ${GH_PATH:=stable}"
 echo "Sync Rate:          ${RATE:=medium}"

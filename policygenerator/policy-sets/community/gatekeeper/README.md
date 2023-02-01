@@ -1,4 +1,4 @@
-## PolicySets for integrating Gatekeeper into RHACM
+## PolicySets for integrating Gatekeeper into Open Cluster Management
 
 This Policysets cover:
 
@@ -8,16 +8,16 @@ the examples are based on:  https://github.com/plexsystems/konstraint/tree/main/
 
 ## Further notes on installation.
 
-When using ACM-Subscriptions and Placement we strongly recommend to install the following policies before you apply the Policy (Policies need to be set to enforce).
+When using Open Cluster Management Subscriptions and Placement we strongly recommend to install the following policies before you apply the Policy (Policies need to be set to enforce).
 **Note** Be sure to install the policies into an appropriate namespace such as `policies`.
 
 ```
 oc project policies
-oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/community/CM-Configuration-Management/policy-configure-subscription-admin-hub.yaml
-oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/community/CM-Configuration-Management/policy-managedclustersetbinding.yaml
-oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/community/CM-Configuration-Management/policy-openshift-gitops.yaml
-oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/community/CM-Configuration-Management/policy-gatekeeper-config-exclude-namespaces.yaml
-oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/stable/CM-Configuration-Management/policy-gatekeeper-operator-downstream.yaml
+oc apply -f https://raw.githubusercontent.com/open-cluster-management-io/policy-collection/main/community/CM-Configuration-Management/policy-configure-subscription-admin-hub.yaml
+oc apply -f https://raw.githubusercontent.com/open-cluster-management-io/policy-collection/main/community/CM-Configuration-Management/policy-managedclustersetbinding.yaml
+oc apply -f https://raw.githubusercontent.com/open-cluster-management-io/policy-collection/main/community/CM-Configuration-Management/policy-openshift-gitops.yaml
+oc apply -f https://raw.githubusercontent.com/open-cluster-management-io/policy-collection/main/community/CM-Configuration-Management/policy-gatekeeper-config-exclude-namespaces.yaml
+oc apply -f https://raw.githubusercontent.com/open-cluster-management-io/policy-collection/main/stable/CM-Configuration-Management/policy-gatekeeper-operator-downstream.yaml
 ```
 
 Ensure that the Policies are applied to the Hub-Cluster, you might review the `PlacementRule` labels 
@@ -28,8 +28,8 @@ The Policies should look like this in the UI.
 
 ![Policies](images/policies-installed.png)
 
-Now you can create the Gatekeeper Policy Applications in the RHACM-UI where the Application corresponds to the path under `policy-generator/policy-sets/community/gatekeeper`.
-**NOTE** Policy applications must always be deployed only to the RHACM hub managed cluster named `local-cluster`. Policy applications contain an additional placement resource that must be modified to control where the policies are distributed.
+Now you can create the Gatekeeper Policy Applications where the Application corresponds to the path under `policy-generator/policy-sets/community/gatekeeper`.
+**NOTE** Policy applications must always be deployed only to the Open Cluster Management hub managed cluster named `local-cluster`. Policy applications contain an additional placement resource that must be modified to control where the policies are distributed.
 
 ![Subscriptions](images/subscription.png)
 

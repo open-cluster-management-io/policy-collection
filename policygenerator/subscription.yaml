@@ -28,7 +28,7 @@ metadata:
   namespace: policy-generator-demo
 spec:
   type: Git
-  pathname: https://github.com/stolostron/policy-collection.git
+  pathname: https://github.com/open-cluster-management-io/policy-collection.git
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: Subscription

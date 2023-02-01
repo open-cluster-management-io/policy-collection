@@ -1,7 +1,7 @@
 # Install falco using helm instead of using the operator. 
 
 # You must make sure the PlacementRule for the Policy installs the policy on the
-# ACM hub.  The PlacementRule inside the Policy is what determines which clusters
+# Open Cluster Management hub.  The PlacementRule inside the Policy is what determines which clusters
 # falco will be installed on.
 
 # Edit the parameters for the helm chart inside the Subscription resource to

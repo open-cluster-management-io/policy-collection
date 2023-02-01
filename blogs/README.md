@@ -1,6 +1,6 @@
 # Blogs
 
-Read our blogs for more information and best practices for Red Hat Advanced Cluster Management for Kubernetes governance capability.
+Read our blogs for more information and best practices for Open Cluster Management governance capability.
 
 ## Community policy contribution and deployment
 
