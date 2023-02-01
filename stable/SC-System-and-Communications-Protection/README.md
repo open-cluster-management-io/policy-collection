@@ -1,6 +1,6 @@
 # System and Communications Protection
 
-See the [NIST Special Publication 800-53 (Rev. 4)](https://nvd.nist.gov/800-53/Rev4/control/SC-1) for a description of the System and Communications Protection control family. View the following table list of with the stable policy that is supported by [Red Hat Advanced Cluster Management for Kubernetes](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/governance/index):
+See the [Security and Privacy Controls for Information Systems and Organizations, Revision 5](https://csrc.nist.gov/projects/cprt/catalog#/cprt/framework/version/SP_800_53_5_1_0/home?element=SC) for details of the System and Communications Protection control family.
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
@@ -10,4 +10,4 @@ Policy  | Description | Prerequisites
 [policy-psp](../SC-System-and-Communications-Protection/policy-psp.yaml) | Ensure a pod security policy exists as specified. |
 [policy-scc](../SC-System-and-Communications-Protection/policy-scc.yaml) | Ensure a Security Context Constraint (SCC) exists as specified. |
 
-You can contribute more policies that map to the System and Communications Protection control family. See [Contibuting policies](https://github.com/stolostron/policy-collection/blob/main/docs/CONTRIBUTING.md) for more details.
+You can contribute more policies that map to the System and Communications Protection control family. See [Contibuting policies](https://github.com/open-cluster-management-io/policy-collection/blob/main/docs/CONTRIBUTING.md) for more details.

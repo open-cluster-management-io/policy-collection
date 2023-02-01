@@ -48,7 +48,7 @@ In this `policygenerator/` folder you will find:
   - [`policy3_kyverno/`](kustomize/policy3_kyverno) - Kyverno policy manifests to wrap in a policy
     (assumes Kyverno is installed)
 - `policy-sets/` - A directory of generator manifests that are each using the `PolicySet` mechanism
-  for organizing related policies. Requires Advanced Cluster Management 2.5 and newer for the
+  for organizing related policies. Requires Open Cluster Management 0.8.0 and newer for the
   `PolicySet` support.
   - [`stable/`](policy-sets/stable) - tested and supported PolicySets
   - [`community/`](policy-sets/community) - PolicySets that have been contributed by the community

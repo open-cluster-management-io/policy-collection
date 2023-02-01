@@ -2,7 +2,7 @@
 # specifically for administering policies on the hub
 #
 # This Policy considers the following example scenario
-#   An ACM Hub shared by two tenants named teamA and teamB
+#   An Open Cluster Management Hub shared by two tenants named teamA and teamB
 #   ( for e.g these teams could dev or test teams or two differnt departments in an organization )
 #   Organization wide governance policies are in namespace global-policies
 #   TeamA specific policies are in namespace team-a-policies

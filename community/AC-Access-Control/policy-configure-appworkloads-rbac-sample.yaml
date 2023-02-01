@@ -1,6 +1,6 @@
 # This is a sample policy to demonstrate configuring  RBAC for application workloads
 # running on managedclusters.
-# NOTE* This policy is not rbac for administering applications or policies through ACM hub,
+# NOTE* This policy is not rbac for administering applications or policies through Open Cluster Management hub,
 # it is rbac for directly  accessing and  working with applications on the managedclusters.
 #
 # This Policy considers the following example scenario

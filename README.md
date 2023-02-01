@@ -4,13 +4,27 @@ A collection of policy examples for Open Cluster Management.
 
 ## Repository structure
 
-This repository hosts policies for Open Cluster Management. You can find policies from the following
-folders:
+This repository hosts policies for Open Cluster Management. You can deploy these policies using
+[Open Cluster Management](https://open-cluster-management.io/) which includes a policy framework
+that is available as an addon. Policies are organized in two ways:
 
-- [stable](stable) -- Policies in the `stable` folder can be applied with
-  [Red Hat Advanced Cluster Management for Kubernetes](https://www.redhat.com/en/technologies/management/advanced-cluster-management).
+1. By support expectations which are detailed below.
+2. By [NIST Special Publication 800-53](https://nvd.nist.gov/800-53). 
+
+The following folders are used to separate policies by the support expectations:
+
+- [stable](stable) -- Policies in the `stable` folder are contributions that are being supported by
+  the Open Cluster Management Policy SIG.
+- [3rd-party](3rd-party) -- Policies in the `3rd-party` folder are contributions that are being
+  supported, but not by the Open Cluster Management Policy SIG.  See the details of the policy to understand
+  the support being provided.
 - [community](community) -- Policies in the `community` folder are contributed from the open source
-  community and can be applied with the product governance framework.
+  community.  Contributions should start in the community.
+
+In addition to policy contributions, there is the option to contribute groups of policies as a set.
+This is known as `PolicySets` and these contributions are made in directories organized as
+`PolicyGenerator` projects.  The folder containing these contributions is located here:
+[`PolicySet` projects](https://github.com/open-cluster-management-io/policy-collection/tree/main/policygenerator/policy-sets).
 
 ## Using GitOps to deploy policies to a cluster
 
@@ -28,7 +42,10 @@ namespace something else, you can run `kubectl create ns <custom ns>` instead.
 
 From within this directory in terminal, run `cd deploy` to access the deployment directory, then run
 `bash ./deploy.sh -u <url> -p <path> -n <namespace>`. (Details on all of the parameters for this
-command can be viewed in its [README](deploy/README.md).)
+command can be viewed in its [README](deploy/README.md).) This script assumes you have enabled 
+Application lifecycle management as an addon in your Open Cluster Management installation. See
+[Application lifecycle management](https://open-cluster-management.io/getting-started/integration/app-lifecycle/) 
+for details on installing the Application addon.
 
 The policies are applied to all managed clusters that are available, and have the `environment` set
 to `dev`. Specifically, an available managed cluster has the `status` parameter set to `true` by the
@@ -87,19 +104,10 @@ For additional information about the Policy Generator:
 Check the [Contributing policies](CONTRIBUTING.md) document for guidelines on how to contribute to
 the repository.
 
-You can reach the maintainers of this project at:
-
-- acm-contact@redhat.com
-
 **Blogs**: Read our blogs that are in the [blogs folder](blogs/README.md).
 
 **Resources**: View the following resources for more information on the components and mechanisms
 are implemented in the product governance framework.
 
-- [Product documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/)
+- [Open Cluster Management Quick Start](https://https://open-cluster-management.io/getting-started/quick-start/)
 
-- National Cyber security Center of Excellence (NCCoE) blog,
-  [Policy Based Governance in Trusted Container Platform](https://www.nccoe.nist.gov/news/policy-based-governance-trusted-container-platform)
-
-- IBM Developer blog,
-  [Policy based governance for open hybrid cloud](http://ibm.biz/policy-based-governance-for-open-hybrid-cloud)

@@ -5,7 +5,7 @@
 # Please conact sales@trilio.io for further support.
 #
 # You must make sure the PlacementRule for the Policy installs the policy on the
-# ACM hub. The PlacementRule inside the Policy is what determines which clusters
+# Open Cluster Management hub. The PlacementRule inside the Policy is what determines which clusters
 # TVK will be installed on.
 #
 # Note that it is set to enforce by default.

@@ -33,8 +33,8 @@ mkdir -p ${GOBIN}
 
 # Configure org for manual validation runs
 if [ -z "${GITHUB_REPOSITORY_OWNER}" ]; then
-	echo "Set GITHUB_REPOSITORY_OWNER=[github org], using stolostron by default"
-	GITHUB_REPOSITORY_OWNER=stolostron
+	echo "Set GITHUB_REPOSITORY_OWNER=[github org], using open-cluster-management-io by default"
+	GITHUB_REPOSITORY_OWNER=open-cluster-management-io
 fi
 
 set -euo pipefail  # exit on errors and unset vars, and stop on the first error in a "pipeline"

@@ -12,7 +12,7 @@ Based on the following links:
 https://kyverno.io/policies/?policytypes=Best%2520Practices
 
 
-we look to create a PolicySet based on RHACM-Policies and Kyverno Integration
+We look to create a `PolicySet` based on Open Cluster Management Policies and Kyverno Integration
 
 ## List of Policies 
 
