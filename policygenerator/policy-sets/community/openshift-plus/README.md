@@ -17,7 +17,7 @@ The OpenShift Plus PolicySet contains two `PolicySets` that will be deployed.  T
 Prior to applying the `PolicySet`, perform these steps:
 
 1. Create the namespace `policies`: `oc create ns policies`
-2. Prepare for Red Hat OpenShift Data Foundation by adding worker nodes for storage described [here](https://red-hat-storage.github.io/ocs-training/training/ocs4/ocs.html#_scale_ocp_cluster_and_add_new_worker_nodes). If you have any difficulties, follow this [link](#1-add-new-worker-nodes). 
+2. Prepare for Red Hat OpenShift Data Foundation by adding worker nodes for storage described [here](https://red-hat-storage.github.io/ocs-training/training/ocs4/ocs.html#_scale_ocp_cluster_and_add_new_worker_nodes). If you have any difficulties, see the [Add New Worker Nodes section](#1-add-new-worker-nodes). 
 3. Create the namespace `openshift-storage`: `oc create ns openshift-storage`
 4. Label the storage namespace: `oc label namespace openshift-storage "openshift.io/cluster-monitoring=true"`
 5. To allow for subscriptions to be applied below you must apply and set to enforce the policy [policy-configure-subscription-admin-hub.yaml](https://github.com/stolostron/policy-collection/blob/main/community/CM-Configuration-Management/policy-configure-subscription-admin-hub.yaml) in the policies namespace.
