@@ -17,7 +17,7 @@ The OpenShift Plus PolicySet contains two `PolicySets` that will be deployed.  T
 Prior to applying the `PolicySet`, perform these steps:
 
 1. Create the namespace `policies`: `oc create ns policies`
-2. Prepare for Red Hat OpenShift Data Foundation by adding worker nodes for storage described [here](https://red-hat-storage.github.io/ocs-training/training/ocs4/ocs.html#_scale_ocp_cluster_and_add_new_worker_nodes). If you have any difficulties, follow this [link](#1-add-new-worker-nodes). 
+2. Prepare for Red Hat OpenShift Data Foundation by adding worker nodes for storage described [here](https://red-hat-storage.github.io/ocs-training/training/ocs4/ocs.html#_scale_ocp_cluster_and_add_new_worker_nodes). If you have any difficulties, see the [Add New Worker Nodes section](#1-add-new-worker-nodes). 
 3. Create the namespace `openshift-storage`: `oc create ns openshift-storage`
 4. Label the storage namespace: `oc label namespace openshift-storage "openshift.io/cluster-monitoring=true"`
 5. To allow for subscriptions to be applied below you must apply and set to enforce the policy [policy-configure-subscription-admin-hub.yaml](https://github.com/stolostron/policy-collection/blob/main/community/CM-Configuration-Management/policy-configure-subscription-admin-hub.yaml) in the policies namespace.
@@ -34,9 +34,7 @@ Prior to applying the `PolicySet`, perform these steps:
     ```bash
     oc apply -f managed-cluster.yaml 
     ```
-  7. Install Kustomize plugin
-     Install plugin for kustomize command. ***[here](https://github.com/stolostron/policy-generator-plugin#installation)***
-     ***NOTE*** recommend Kustomize version above v4.5
+  7. Install the Policy generator Kustomize plugin by following the [installation instructions](https://github.com/stolostron/policy-generator-plugin#installation). It is recommended to use Kustomize v4.5+.
 
 Apply the policies using the kustomize command or subscribing to a fork of the repository and pointing to this directory.  See 
 the details for using the Policy Generator for [more information](https://github.com/stolostron/policy-collection/tree/main/policygenerator).  The command to run is `kustomize build --enable-alpha-plugins  | oc apply -f -`
@@ -45,21 +43,21 @@ the details for using the Policy Generator for [more information](https://github
 
 ## Troubleshooting
 
-### Add new worker nodes 
-  #### 1. Check your worker node is not enough to install odf
+### Add New Worker Nodes 
+  #### 1. Check your worker node to verify it has enough resources available to install ODF
   ```bash
   oc get nodes -l node-role.kubernetes.io/worker -l '!node-role.kubernetes.io/master'
   ```
- **Note:** make sure that the installing OCP cluster is large enough to hold the ACM installation.  Example: 3 master m6a.2xlarge nodes with 1 worker m6a.2xlarge node.
-The added nodes for the storage and the rest of OPP are 6 m6a.2xlarge worker nodes all labeled for use by ODF storage and are also available for the other OPP components.
+ **Note:** make sure that the OpenShift cluster is large enough to hold the ACM installation.  An example of a working deployment topology is to use 3 master `m6a.2xlarge` nodes with 1 worker `m6a.2xlarge` node.
+The added nodes for storage and the rest of OpenShift Platform Plus (OPP) are 6 `m6a.2xlarge` worker nodes all labeled for use by ODF storage and are also available for the other OPP components.
 
   #### 2. Acquire your availability-zone and region of your cluster
-  Display availability-zone 
+  To display the availability-zone:
   ```bash
   oc get machineset -n openshift-machine-api -o jsonpath='{.items[0].spec.template.spec.providerSpec.value.placement.availabilityZone}'
   ```
 
-  Display region 
+  To display the region used:
 
   ```bash
   oc get machineset -n openshift-machine-api -o jsonpath='{.items[0].spec.template.spec.providerSpec.value.placement.region}'  
@@ -72,10 +70,11 @@ The added nodes for the storage and the rest of OPP are 6 m6a.2xlarge worker nod
   CLUSTERID=$(oc get machineset -n openshift-machine-api -o jsonpath='{.items[0].metadata.labels.machine\.openshift\.io/cluster-api-cluster}')
 echo $CLUSTERID
   ```
-
-Save this file as ***add-node.yaml*** and apply your region and availability-zone 
+Apply the yaml and create new MachineSets. 
+***NOTE*** The below sample is for 1 zone and 6 replicas. [This](https://github.com/open-cluster-management-io/policy-collection/blob/main/community/CM-Configuration-Management/policy-aws-machine-sets.yaml) is another sample of 3 machinesets for 3 zones.
 
 ```
+cat <<EOF | sed -e "s/CLUSTERID/${CLUSTERID}/g" | oc apply -f -
 ---
 apiVersion: machine.openshift.io/v1beta1
 kind: MachineSet
@@ -109,7 +108,7 @@ spec:
       providerSpec:
         value:
           ami:
-            id: ami-0fe05b1aa8dacfa90
+            id: ami-0fe05b1aa8dacfa90 # 🔴change to your AMI,  AMI IDs are region specific 
           apiVersion: awsproviderconfig.openshift.io/v1beta1
           blockDevices:
           - ebs:
@@ -148,14 +147,6 @@ spec:
         kubelet: ""
 ---
 ```
-
-
-
-Create new MachineSets
-
-```bash
-cat add-node.yaml | sed -e "s/CLUSTERID/${CLUSTERID}/g" | oc apply -f -
-```
 Wait a few minutes for all nodes to be up. 
 Check with this command 
 
@@ -167,4 +158,4 @@ oc get nodes -l node-role.kubernetes.io/worker -l '!node-role.kubernetes.io/mast
 
 ### policy-odf-status NonCompliant 
 
-Installing odf takes over ***15 mins*** from the policies deployed. Wait 40 mins. If the status still remains NonCompliant, check to see if your worker nodes meet the requirements. 
+Installing ODF takes over ***15 mins*** after the policies deployed. If the policy status still remains NonCompliant after 40 minutes, check to see if your worker nodes meet the requirements. 
