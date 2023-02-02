@@ -34,9 +34,7 @@ Prior to applying the `PolicySet`, perform these steps:
     ```bash
     oc apply -f managed-cluster.yaml 
     ```
-  7. Install Kustomize plugin
-     Install plugin for kustomize command. ***[here](https://github.com/stolostron/policy-generator-plugin#installation)***
-     ***NOTE*** recommend Kustomize version above v4.5
+  7. Install the Policy generator Kustomize plugin by following the [installation instructions](https://github.com/stolostron/policy-generator-plugin#installation). It is recommended to use Kustomize v4.5+.
 
 Apply the policies using the kustomize command or subscribing to a fork of the repository and pointing to this directory.  See 
 the details for using the Policy Generator for [more information](https://github.com/stolostron/policy-collection/tree/main/policygenerator).  The command to run is `kustomize build --enable-alpha-plugins  | oc apply -f -`
