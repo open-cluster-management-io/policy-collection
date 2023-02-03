@@ -149,7 +149,7 @@ spec:
 
 
 
-Create new MachineSets
+Create the new MachineSets:
 
 ```bash
 cat add-node.yaml | sed -e "s/CLUSTERID/${CLUSTERID}/g" | oc apply -f -
