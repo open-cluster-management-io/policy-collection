@@ -52,7 +52,7 @@ the details for using the Policy Generator for [more information](https://github
 The added nodes for storage and the rest of OpenShift Platform Plus (OPP) are 6 `m6a.2xlarge` worker nodes all labeled for use by ODF storage and are also available for the other OPP components.
 
   #### 2. Acquire your availability-zone and region of your cluster
-  Display availability-zone 
+  To display the availability-zone:
   ```bash
   oc get machineset -n openshift-machine-api -o jsonpath='{.items[0].spec.template.spec.providerSpec.value.placement.availabilityZone}'
   ```
