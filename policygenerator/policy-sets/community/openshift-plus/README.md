@@ -44,20 +44,20 @@ the details for using the Policy Generator for [more information](https://github
 ## Troubleshooting
 
 ### Add New Worker Nodes 
-  #### 1. Check your worker node is not enough to install odf
+  #### 1. Check your worker node to verify it has enough resources available to install ODF
   ```bash
   oc get nodes -l node-role.kubernetes.io/worker -l '!node-role.kubernetes.io/master'
   ```
- **Note:** make sure that the installing OCP cluster is large enough to hold the ACM installation.  Example: 3 master m6a.2xlarge nodes with 1 worker m6a.2xlarge node.
-The added nodes for the storage and the rest of OPP are 6 m6a.2xlarge worker nodes all labeled for use by ODF storage and are also available for the other OPP components.
+ **Note:** make sure that the OpenShift cluster is large enough to hold the ACM installation.  An example of a working deployment topology is to use 3 master `m6a.2xlarge` nodes with 1 worker `m6a.2xlarge` node.
+The added nodes for storage and the rest of OpenShift Platform Plus (OPP) are 6 `m6a.2xlarge` worker nodes all labeled for use by ODF storage and are also available for the other OPP components.
 
   #### 2. Acquire your availability-zone and region of your cluster
-  Display availability-zone 
+  To display the availability-zone:
   ```bash
   oc get machineset -n openshift-machine-api -o jsonpath='{.items[0].spec.template.spec.providerSpec.value.placement.availabilityZone}'
   ```
 
-  Display region 
+  To display the region used:
 
   ```bash
   oc get machineset -n openshift-machine-api -o jsonpath='{.items[0].spec.template.spec.providerSpec.value.placement.region}'  
@@ -71,7 +71,7 @@ The added nodes for the storage and the rest of OPP are 6 m6a.2xlarge worker nod
 echo $CLUSTERID
   ```
 Apply the yaml and create new MachineSets. 
-***NOTE*** The below sample is for 1 zone and 6 replicas. [This](https://github.com/open-cluster-management-io/policy-collection/blob/main/community/CM-Configuration-Management/policy-aws-machine-sets.yaml) is another sample of 3 machinesets for 3 zones.
+***Note:*** The below sample is for 1 zone and 6 replicas. [This](https://github.com/open-cluster-management-io/policy-collection/blob/main/community/CM-Configuration-Management/policy-aws-machine-sets.yaml) is another sample of 3 machinesets for 3 zones.
 
 ```
 cat <<EOF | sed -e "s/CLUSTERID/${CLUSTERID}/g" | oc apply -f -
@@ -158,4 +158,4 @@ oc get nodes -l node-role.kubernetes.io/worker -l '!node-role.kubernetes.io/mast
 
 ### policy-odf-status NonCompliant 
 
-Installing odf takes over ***15 mins*** from the policies deployed. Wait 40 mins. If the status still remains NonCompliant, check to see if your worker nodes meet the requirements. 
+Installing ODF takes over ***15 mins*** after the policies deployed. If the policy status still remains NonCompliant after 40 minutes, check to see if your worker nodes meet the requirements. 
