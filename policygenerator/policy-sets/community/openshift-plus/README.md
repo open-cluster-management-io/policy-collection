@@ -57,7 +57,7 @@ The added nodes for storage and the rest of OpenShift Platform Plus (OPP) are 6 
   oc get machineset -n openshift-machine-api -o jsonpath='{.items[0].spec.template.spec.providerSpec.value.placement.availabilityZone}'
   ```
 
-  Display region 
+  To display the region used:
 
   ```bash
   oc get machineset -n openshift-machine-api -o jsonpath='{.items[0].spec.template.spec.providerSpec.value.placement.region}'  
