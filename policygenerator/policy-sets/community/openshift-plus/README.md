@@ -70,10 +70,11 @@ The added nodes for the storage and the rest of OPP are 6 m6a.2xlarge worker nod
   CLUSTERID=$(oc get machineset -n openshift-machine-api -o jsonpath='{.items[0].metadata.labels.machine\.openshift\.io/cluster-api-cluster}')
 echo $CLUSTERID
   ```
-
-Save this file as ***add-node.yaml*** and apply your region and availability-zone 
+Apply the yaml and create new MachineSets. 
+***NOTE*** The below sample is for 1 zone and 6 replicas. [This](https://github.com/open-cluster-management-io/policy-collection/blob/main/community/CM-Configuration-Management/policy-aws-machine-sets.yaml) is another sample of 3 machinesets for 3 zones.
 
 ```
+cat <<EOF | sed -e "s/CLUSTERID/${CLUSTERID}/g" | oc apply -f -
 ---
 apiVersion: machine.openshift.io/v1beta1
 kind: MachineSet
@@ -107,7 +108,7 @@ spec:
       providerSpec:
         value:
           ami:
-            id: ami-0fe05b1aa8dacfa90
+            id: ami-0fe05b1aa8dacfa90 # 🔴change to your AMI,  AMI IDs are region specific 
           apiVersion: awsproviderconfig.openshift.io/v1beta1
           blockDevices:
           - ebs:
@@ -145,14 +146,6 @@ spec:
       versions:
         kubelet: ""
 ---
-```
-
-
-
-Create new MachineSets
-
-```bash
-cat add-node.yaml | sed -e "s/CLUSTERID/${CLUSTERID}/g" | oc apply -f -
 ```
 Wait a few minutes for all nodes to be up. 
 Check with this command 
