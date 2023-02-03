@@ -44,7 +44,7 @@ the details for using the Policy Generator for [more information](https://github
 ## Troubleshooting
 
 ### Add New Worker Nodes 
-  #### 1. Check your worker node is not enough to install odf
+  #### 1. Check your worker node to verify it has enough resources available to install ODF
   ```bash
   oc get nodes -l node-role.kubernetes.io/worker -l '!node-role.kubernetes.io/master'
   ```
