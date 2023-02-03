@@ -49,7 +49,7 @@ the details for using the Policy Generator for [more information](https://github
   oc get nodes -l node-role.kubernetes.io/worker -l '!node-role.kubernetes.io/master'
   ```
  **Note:** make sure that the OpenShift cluster is large enough to hold the ACM installation.  An example of a working deployment topology is to use 3 master `m6a.2xlarge` nodes with 1 worker `m6a.2xlarge` node.
-The added nodes for the storage and the rest of OPP are 6 m6a.2xlarge worker nodes all labeled for use by ODF storage and are also available for the other OPP components.
+The added nodes for storage and the rest of OpenShift Platform Plus (OPP) are 6 `m6a.2xlarge` worker nodes all labeled for use by ODF storage and are also available for the other OPP components.
 
   #### 2. Acquire your availability-zone and region of your cluster
   Display availability-zone 
