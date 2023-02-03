@@ -165,4 +165,4 @@ oc get nodes -l node-role.kubernetes.io/worker -l '!node-role.kubernetes.io/mast
 
 ### policy-odf-status NonCompliant 
 
-Installing odf takes over ***15 mins*** from the policies deployed. Wait 40 mins. If the status still remains NonCompliant, check to see if your worker nodes meet the requirements. 
+Installing ODF takes over ***15 mins*** after the policies deployed. If the policy status still remains NonCompliant after 40 minutes, check to see if your worker nodes meet the requirements. 
