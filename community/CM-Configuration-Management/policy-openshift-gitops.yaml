@@ -21,7 +21,6 @@ spec:
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                # This is an auto-generated file. DO NOT EDIT
                 apiVersion: operators.coreos.com/v1alpha1
                 kind: Subscription
                 metadata:
@@ -39,9 +38,9 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-argo-development
+  name: binding-openshift-gitops-installed
 placementRef:
-  name: all-openshift
+  name: placement-openshift-gitops-installed
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
@@ -49,15 +48,11 @@ subjects:
     kind: Policy
     apiGroup: policy.open-cluster-management.io
 ---
----
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: all-openshift
+  name: placement-openshift-gitops-installed
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}
