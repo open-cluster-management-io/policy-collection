@@ -1,0 +1,135 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: openshift-gitops-policygenerator
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: openshift-gitops-policygenerator
+        spec:
+          remediationAction: inform
+          severity: medium
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: argoproj.io/v1alpha1
+                kind: ArgoCD
+                metadata:
+                  name: openshift-gitops
+                  namespace: openshift-gitops
+                spec:
+                  repo:
+                    env:
+                    - name: KUSTOMIZE_PLUGIN_HOME
+                      value: /etc/kustomize/plugin
+                    initContainers:
+                    - args:
+                      - -c
+                      - cp /etc/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator/PolicyGenerator
+                        /policy-generator/PolicyGenerator
+                      command:
+                      - /bin/bash
+                      image: registry.redhat.io/rhacm2/multicluster-operators-subscription-rhel8:v2.7
+                      name: policy-generator-install
+                      volumeMounts:
+                      - mountPath: /policy-generator
+                        name: policy-generator
+                    volumeMounts:
+                    - mountPath: /etc/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator
+                      name: policy-generator
+                    volumes:
+                    - emptyDir: {}
+                      name: policy-generator
+                  kustomizeBuildOptions: --enable-alpha-plugins
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRole
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: openshift-gitops-policy-admin
+                rules:
+                  - verbs:
+                      - get
+                      - list
+                      - watch
+                      - create
+                      - update
+                      - patch
+                      - delete
+                    apiGroups:
+                      - policy.open-cluster-management.io
+                    resources:
+                      - policies
+                      - placementbindings
+                  - verbs:
+                      - get
+                      - list
+                      - watch
+                      - create
+                      - update
+                      - patch
+                      - delete
+                    apiGroups:
+                      - apps.open-cluster-management.io
+                    resources:
+                      - placementrules
+                  - verbs:
+                      - get
+                      - list
+                      - watch
+                      - create
+                      - update
+                      - patch
+                      - delete
+                    apiGroups:
+                      - cluster.open-cluster-management.io
+                    resources:
+                      - placements
+                      - placements/status
+                      - placementdecisions
+                      - placementdecisions/status
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: openshift-gitops-policy-admin
+                subjects:
+                  - kind: ServiceAccount
+                    name: openshift-gitops-argocd-application-controller
+                    namespace: openshift-gitops
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: openshift-gitops-policy-admin
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-openshift-gitops-policygenerator
+placementRef:
+  name: placement-openshift-gitops-policygenerator
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: openshift-gitops-policygenerator
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-openshift-gitops-policygenerator
+spec:
+  clusterSelector:
+    matchExpressions:
+      - {key: name, operator: In, values: ["local-cluster"]}
