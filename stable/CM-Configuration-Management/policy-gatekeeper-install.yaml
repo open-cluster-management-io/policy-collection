@@ -1,0 +1,233 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-gatekeeper
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: gatekeeper-namespace
+      spec:
+        remediationAction: enforce
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                name: openshift-gatekeeper-system
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-gatekeeper-application
+      spec:
+        remediationAction: enforce
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: app.k8s.io/v1beta1
+              kind: Application
+              metadata:
+                name: opa-gatekeeper
+                namespace: openshift-gatekeeper-system
+              spec:
+                componentKinds:
+                  - group: apps.open-cluster-management.io
+                    kind: Subscription
+                descriptor: {}
+                selector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - opa-gatekeeper
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: opa-gatekeeper-channel
+      spec:
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: apps.open-cluster-management.io/v1
+              kind: Channel
+              metadata:
+                annotations:
+                  apps.open-cluster-management.io/reconcile-rate: medium
+                name: opa-gatekeeper
+                namespace: openshift-gatekeeper-system
+              spec:
+                pathname: https://open-policy-agent.github.io/gatekeeper/charts
+                type: HelmRepo
+        remediationAction: enforce
+        severity: high
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-gatekeeper-subscription
+      spec:
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: apps.open-cluster-management.io/v1
+              kind: Subscription
+              metadata:
+                labels:
+                  app: opa-gatekeeper
+                name: opa-gatekeeper-subscription
+                namespace: openshift-gatekeeper-system
+              spec:
+                channel: openshift-gatekeeper-system/opa-gatekeeper
+                name: gatekeeper
+                packageOverrides:
+                  - packageAlias: gatekeeper
+                    packageName: gatekeeper
+                    packageOverrides:
+                    - path: spec
+                      value:
+                        constraintViolationsLimit: 20
+                        crds:
+                          securityContext: null
+                        image:
+                          pullPolicy: IfNotPresent
+                          repository: quay.io/thomasmckay/gatekeeper
+                          crdRepository: quay.io/thomasmckay/gatekeeper
+                          release: crds
+                          tag: crds
+                        logLevel: INFO
+                        maxServingThreads: -1
+                        mutatingWebhookFailurePolicy: Ignore
+                        mutatingWebhookReinvocationPolicy: Never
+                        podCountLimit: "100"
+                        psp:
+                          enabled: false
+                        validatingWebhookTimeoutSeconds: 3
+                        validatingWebhookFailurePolicy: Ignore
+                        validatingWebhookCheckIgnoreFailurePolicy: Fail
+                        enableRuntimeDefaultSeccompProfile: false
+                        controllerManager:
+                          extraRules:
+                          - apiGroups:
+                            - security.openshift.io
+                            resourceNames:
+                            - anyuid
+                            resources:
+                            - securitycontextconstraints
+                            verbs:
+                            - use
+                        audit:
+                          extraRules:
+                          - apiGroups:
+                            - security.openshift.io
+                            resourceNames:
+                            - anyuid
+                            resources:
+                            - securitycontextconstraints
+                            verbs:
+                            - use
+                        upgradeCRDs:
+                          extraRules:
+                          - apiGroups:
+                            - security.openshift.io
+                            resourceNames:
+                            - anyuid
+                            resources:
+                            - securitycontextconstraints
+                            verbs:
+                            - use
+                        postUpgrade:
+                          labelNamespace:
+                            image:
+                              repository: quay.io/thomasmckay/gatekeeper
+                              tag: crds
+                        postInstall:
+                          labelNamespace:
+                            extraRules:
+                            - apiGroups:
+                              - security.openshift.io
+                              resourceNames:
+                              - anyuid
+                              resources:
+                              - securitycontextconstraints
+                              verbs:
+                              - use
+                            image:
+                              repository: quay.io/thomasmckay/gatekeeper
+                              tag: crds
+                        preUninstall:
+                          deleteWebhookConfigurations:
+                            extraRules:
+                            - apiGroups:
+                              - security.openshift.io
+                              resourceNames:
+                              - anyuid
+                              resources:
+                              - securitycontextconstraints
+                              verbs:
+                              - use
+                            image:
+                              repository: quay.io/thomasmckay/gatekeeper
+                              tag: crds
+                placement:
+                  placementRef:
+                    kind: PlacementRule
+                    name: opa-gatekeeper-placement
+        remediationAction: enforce
+        severity: low
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: opa-gatekeeper-placement
+      spec:
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: apps.open-cluster-management.io/v1
+              kind: PlacementRule
+              metadata:
+                name: opa-gatekeeper-placement
+                namespace: openshift-gatekeeper-system
+                labels:
+                  app: opa-gatekeeper
+              spec:
+                clusterSelector:
+                  matchLabels:
+                    name: local-cluster
+        remediationAction: enforce
+        severity: high
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-gatekeeper
+placementRef:
+  name: placement-policy-gatekeeper
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-gatekeeper
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-gatekeeper
+spec:
+  clusterSelector:
+    matchExpressions:
+      - {key: name, operator: In, values: ["local-cluster"]}
