@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: quay-config
+  namespace: policies
+data:
+  host: '{{ (lookup "route.openshift.io/v1" "Route" "local-quay" "registry-quay" ).spec.host }}'
+---
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: quay
+spec:
+  applicationMenu:
+    section: Red Hat applications
+    imageURL: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenShift-LogoType.svg'
+  href: 'https://{{ (lookup "route.openshift.io/v1" "Route" "local-quay" "registry-quay" ).spec.host }}'
+  location: ApplicationMenu
+  text: 'Red Hat Quay Enterprise Registry'
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-admin-user
+  namespace: local-quay
+spec:
+  template:
+    spec:
+      containers:
+      - command:
+        - /bin/bash
+        - -c
+        - |
+          #!/usr/bin/env bash
+
+          # Wait for quay to be ready
+          attempt_counter=0
+          max_attempts=80
+          echo "Waiting for quay to be available..."
+          until $(curl --output /dev/null --silent --head --fail http://registry-quay-app); do
+              if [ ${attempt_counter} -eq ${max_attempts} ];then
+                echo "Max attempts reached"
+                exit 1
+              fi
+
+              printf '.'
+              attempt_counter=$(($attempt_counter+1))
+              echo "Made attempt $attempt_counter, waiting..."
+              sleep 30
+          done
+
+          QUAYHOST=$(oc get route -n local-quay registry-quay -o jsonpath='{.spec.host}')
+          if [ $? -ne 0 ]; then
+            echo "Quay route does not exist yet, please wait and try again."
+            exit 1
+          fi
+          RESULT=$(oc get secret -n local-quay quayadmin)
+          if [ $? -eq 0 ]; then
+            echo "Quay user configuration secret already exists: quayadmin in namespace local-quay"
+            exit 1
+          fi
+
+          ADMINPASS=`head -c 8 /dev/urandom | base64 | sed 's/=//'`
+          
+          RESULT=$(curl -X POST -k -s https://$QUAYHOST/api/v1/user/initialize --header 'Content-Type: application/json' --data "{ \"username\": \"quayadmin\", \"password\":\"${ADMINPASS}\", \"email\": \"quayadmin@example.com\", \"access_token\": true}")
+          echo "$RESULT" | grep -q "non-empty database"
+          if [ $? -eq 0 ]; then
+            echo "Quay user configuration failed, the database has been initialized."
+            exit 1
+          else
+            cat <<EOF | kubectl create -f -
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: quayadmin
+            namespace: local-quay
+          type: Opaque
+          data:
+            password: $(echo ${ADMINPASS} | base64)
+          EOF
+            echo "Quay password successfully set for user quayadmin and stored in secret local-quay/quayadmin."
+            TOKEN=$(echo "$RESULT" | tr ',' '\n' | grep access_token | awk -F: '{print $2}' | sed 's/"//g')
+            cat <<EOF | kubectl create -f -
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: quay-api-token
+          type: Opaque
+          data:
+            token: $(echo ${TOKEN} | base64)
+          EOF
+            echo "Quay token successfully obtained and stored in secret quay-api-token."
+          fi
+        image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+        imagePullPolicy: Always
+        name: create-admin-user
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      serviceAccount: create-admin-user
+      serviceAccountName: create-admin-user
+      terminationGracePeriodSeconds: 30

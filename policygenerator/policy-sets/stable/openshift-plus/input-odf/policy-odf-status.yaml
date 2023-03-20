@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: noobaa-operator
+  namespace: openshift-storage
+status:
+  conditions:
+    - status: "True"
+      type: Available
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ocs-operator
+  namespace: openshift-storage
+status:
+  conditions:
+    - status: "True"
+      type: Available
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odf-operator-controller-manager
+  namespace: openshift-storage
+status:
+  conditions:
+    - status: "True"
+      type: Available
+---
+apiVersion: ocs.openshift.io/v1
+kind: StorageCluster
+metadata:
+  name: ocs-storagecluster
+  namespace: openshift-storage
+status:
+  phase: Ready
+---
+apiVersion: noobaa.io/v1alpha1
+kind: NooBaa
+metadata:
+  name: noobaa
+  namespace: openshift-storage
+status:
+  phase: Ready
+---
+apiVersion: noobaa.io/v1alpha1
+kind: BackingStore
+metadata:
+  name: noobaa-default-backing-store
+  namespace: openshift-storage
+status:
+  phase: Ready
+---
+apiVersion: noobaa.io/v1alpha1
+kind: BucketClass
+metadata:
+  name: noobaa-default-bucket-class
+  namespace: openshift-storage
+status:
+  phase: Ready
+---
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: obc-observability
+  namespace: openshift-storage
+status:
+  phase: Bound
