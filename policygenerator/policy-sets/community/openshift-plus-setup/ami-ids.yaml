@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  us-east-1-4.12: ami-0fe05b1aa8dacfa90
+  us-east-2-4.12: ami-0ff64f495c7e977cf
+  us-east-1-4.11: ami-0722eb0819717090f
+  us-east-2-4.11: ami-026e5701f495c94a2
+  us-east-1-4.10: ami-0c72f473496a7b1c2
+  us-east-2-4.10: ami-09e637fc5885c13cc
+  replicas: "2"
+  instanceType: m6a.2xlarge
+  zone1: a
+  zone2: b
+  zone3: c
+kind: ConfigMap
+metadata:
+  name: aws-ocp-ami-ids
+  namespace: policies

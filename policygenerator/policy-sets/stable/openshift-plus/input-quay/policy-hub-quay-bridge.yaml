@@ -1,0 +1,35 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    operators.coreos.com/quay-bridge-operator.openshift-operators: ""
+  name: quay-bridge-operator
+  namespace: openshift-operators
+spec:
+  installPlanApproval: Automatic
+  name: quay-bridge-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+---
+apiVersion: quay.redhat.com/v1
+kind: QuayIntegration
+metadata:
+ name: quay
+ annotations:
+   argocd.argoproj.io/sync-wave: "8"
+spec:
+ clusterID: openshift
+ credentialsSecret:
+   name: quay-integration
+   namespace: policies
+ insecureRegistry: false
+ quayHostname: https://{{ fromConfigMap "policies" "quay-config" "host" }}
+---
+kind: Secret
+type: Opaque
+metadata:
+  name: quay-integration
+  namespace: policies
+apiVersion: v1
+data:
+  token: '{{ fromSecret "openshift-operators" "quay-integration" "token" }}'
