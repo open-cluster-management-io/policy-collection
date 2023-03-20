@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry-quay-app
+  namespace: local-quay
+status:
+  conditions:
+    - status: "True"
+      type: Available
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry-quay-database
+  namespace: local-quay
+status:
+  conditions:
+    - status: "True"
+      type: Available

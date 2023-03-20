@@ -1,0 +1,69 @@
+apiVersion: platform.stackrox.io/v1alpha1
+kind: SecuredCluster
+metadata:
+  name: stackrox-secured-cluster-services
+  namespace: stackrox
+spec:
+  clusterName: |
+    {{ fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "cluster-name" | base64dec }}
+  auditLogs:
+    collection: Auto
+  centralEndpoint: |
+    {{ fromSecret "stackrox" "sensor-tls" "acs-host" | base64dec }}
+  admissionControl:
+    listenOnCreates: false
+    listenOnEvents: true
+    listenOnUpdates: false
+  scanner:
+    scannerComponent: Disabled
+  perNode:
+    collector:
+      collection: KernelModule
+      imageFlavor: Regular
+    taintToleration: TolerateTaints
+---
+apiVersion: v1
+data:
+  admission-control-cert.pem: '{{ fromSecret "stackrox" "admission-control-tls" "admission-control-cert.pem" }}'
+  admission-control-key.pem: '{{ fromSecret "stackrox" "admission-control-tls" "admission-control-key.pem" }}'
+  ca.pem: '{{ fromSecret "stackrox" "admission-control-tls" "ca.pem" }}'
+kind: Secret
+metadata:
+  name: admission-control-tls
+  namespace: policies
+type: Opaque
+---
+apiVersion: v1
+data:
+  collector-cert.pem: '{{ fromSecret "stackrox" "collector-tls" "collector-cert.pem" }}'
+  collector-key.pem: '{{ fromSecret "stackrox" "collector-tls" "collector-key.pem" }}'
+  ca.pem: '{{ fromSecret "stackrox" "collector-tls" "ca.pem" }}'
+kind: Secret
+metadata:
+  name: collector-tls
+  namespace: policies
+type: Opaque
+---
+apiVersion: v1
+data:
+  sensor-cert.pem: '{{ fromSecret "stackrox" "sensor-tls" "sensor-cert.pem" }}'
+  sensor-key.pem: '{{ fromSecret "stackrox" "sensor-tls" "sensor-key.pem" }}'
+  ca.pem: '{{ fromSecret "stackrox" "sensor-tls" "ca.pem" }}'
+  acs-host: '{{ fromSecret "stackrox" "sensor-tls" "acs-host" }}'
+kind: Secret
+metadata:
+  name: sensor-tls
+  namespace: policies
+type: Opaque
+---
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: acs
+spec:
+  applicationMenu:
+    section: Red Hat applications
+    imageURL: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenShift-LogoType.svg'
+  href: https://{{ (lookup "route.openshift.io/v1" "Route" "stackrox" "central").spec.host }}
+  location: ApplicationMenu
+  text: 'Red Hat Advanced Cluster Security for Kubernetes'
