@@ -1,0 +1,122 @@
+# This policy applies the spoke-side artifacts required to enable Keycloak-based SSO for OCM managed clusters.
+# It is applied to managed-clusters with label rhsso=true
+# 
+# It sets up 
+# a Secret with (keycloak client id and secret for the managedcluster 
+# a Configmap with the keycloak cluster's router-ca.crt
+# and it also add a  openid idp  to  cluster OAuth resource for the rhsso instance on the hub
+
+# This policy has a dependency on "configure-mc-rhsso-hubresources" policy (which applies the hub-side aritifact for managed cluster sso)
+# and will only be applied if "configure-mc-rhsso-hubresources" policy is compliant
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management, AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+  labels:
+    app: rhsso
+  name: configure-mc-rhsso-spokeresources
+  namespace: rhsso
+spec:
+  dependencies:
+    - apiVersion: policy.open-cluster-management.io/v1
+      kind: Policy
+      name: configure-mc-rhsso-hubresources
+      namespace: rhsso-policies
+      compliance: Compliant
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: configure-mc-rhsso-spokeresources
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            data:
+              clientSecret: '{{hub fromSecret "rhsso" (printf "keycloak-client-secret-%s-client" .ManagedClusterName) "CLIENT_SECRET" hub}}'
+            kind: Secret
+            metadata:
+              name: rhsso-client-secret
+              namespace: openshift-config
+            type: Opaque
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            data:
+              ca.crt: |
+                {{hub fromConfigMap "rhsso" "rhsso-ca-crt" "ca.crt" | autoindent hub}}
+            kind: ConfigMap
+            metadata:
+              name: rhsso-ca-crt
+              namespace: openshift-config
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: config.openshift.io/v1
+            kind: OAuth
+            metadata:
+              name: cluster
+            spec:
+              identityProviders:
+              - mappingMethod: claim
+                name: rhsso
+                type: OpenID
+                openID:
+                  ca:
+                    name: rhsso-ca-crt
+                  claims:
+                    email:
+                    - custom_email_claim
+                    - email
+                    name:
+                    - nickname
+                    - given_name
+                    - name
+                    preferredUsername:
+                    - preferred_username
+                    - email
+                  clientID: '{{hub .ManagedClusterName hub}}'
+                  clientSecret:
+                    name: rhsso-client-secret
+                  issuer: '{{hub (lookup "keycloak.org/v1alpha1" "Keycloak" "rhsso" "rhsso").status.externalURL hub}}/auth/realms/acm'
+        remediationAction: enforce
+        severity: medium
+  remediationAction: enforce
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: sso
+  name: placement-configure-mc-rhsso-spokeresources
+  namespace: rhsso
+spec:
+  clusterSelector:
+    matchExpressions:
+    - key: rhsso
+      operator: In
+      values:
+      - "true"
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  labels:
+    app: sso
+  name: binding-configure-mc-rhsso-spokeresources
+  namespace: rhsso
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-configure-mc-rhsso-spokeresources
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: Policy
+  name: configure-mc-rhsso-spokeresources
+---

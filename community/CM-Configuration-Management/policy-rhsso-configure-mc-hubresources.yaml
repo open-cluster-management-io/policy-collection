@@ -1,0 +1,130 @@
+# This policy applies the hub-side artifacts required to enable Keycloak based SSO for OCM managed clusters.
+
+# For every managedcluster labeled with  rhsso=true, this policy creates
+# a KeyCloakClient and a Secret object for  client_id & client_secret
+# client_id == <managedcluster-name> and client secret is intentionally left unset, 
+# in which case keycloak auto-generates a unique key
+# These objects are created in the same namespace as the rhsso operator.
+
+# This policy also makes a copy of the  router-ca configmap into the rhsso namespace for convenience, 
+# so that it can be referenced in hub-templates policies in rhsso namespaces and propagated to the managedclusters
+
+# This policy has a dependency on  "setup-rhsso-for-acm" policy (which sets up the objects needed to enable sso on managed clusters)
+# and will only be applied if "setup-rhsso-for-acm" policy is compliant
+
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+  labels:
+    app: sso
+  name: configure-mc-rhsso-hubresources
+  namespace: rhsso-policies
+spec:
+  dependencies:
+    - apiVersion: policy.open-cluster-management.io/v1
+      kind: Policy
+      name: setup-rhsso-for-acm
+      namespace: rhsso-policies
+      compliance: Compliant
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: configure-mc-rhsso-hubresources
+      spec:
+        remediationAction: enforce
+        severity: medium
+        object-templates-raw: |
+          {{- range (lookup "cluster.open-cluster-management.io/v1" "ManagedCluster" "" "").items }}
+          {{- if eq .metadata.labels.rhsso "true"}}
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                labels:
+                  app: keycloak
+                name: {{ (printf "keycloak-client-secret-%s-client" .metadata.name) }}
+                namespace: rhsso
+              data:
+                CLIENT_ID: {{  .metadata.name | base64enc }}
+              type: Opaque
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: keycloak.org/v1alpha1
+              kind: KeycloakClient
+              metadata:
+                labels:
+                  app: sso
+                name: {{ (printf "%s-client" .metadata.name) }}
+                namespace: rhsso
+              spec:
+                client:
+                  clientAuthenticatorType: client-secret
+                  clientId: {{ .metadata.name }}
+                  consentRequired: false
+                  directAccessGrantsEnabled: true
+                  implicitFlowEnabled: true
+                  redirectUris:
+                    {{- range .status.clusterClaims }}
+                    {{- if eq .name "oauthredirecturis.openshift.io" }}
+                    - {{ .value | replace "oauth/token/implicit" "oauth2callback/rhsso" | quote }}
+                    {{- end }}
+                    {{- end }}
+                  standardFlowEnabled: true
+                realmSelector:
+                  matchLabels:
+                    app: sso
+          {{- end }}
+          {{- end }}
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: v1
+              data:
+                ca.crt: |
+                  {{ fromSecret "openshift-ingress-operator" "router-ca" "tls.crt" | base64dec | autoindent }}
+              kind: ConfigMap
+              metadata:
+                name: rhsso-ca-crt
+                namespace: rhsso
+  remediationAction: enforce
+---
+
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: sso
+  name: placement-configure-mc-rhsso-hubresources
+  namespace: rhsso-policies
+spec:
+  clusterSelector:
+    matchExpressions:
+    - key: local-cluster
+      operator: In
+      values:
+      - "true"
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  labels:
+    app: sso
+  name: binding-configure-mc-rhsso-hubresources
+  namespace: rhsso-policies
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-configure-mc-rhsso-hubresources
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: Policy
+  name: configure-mc-rhsso-hubresources
+---

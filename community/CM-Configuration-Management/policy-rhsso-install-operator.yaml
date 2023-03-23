@@ -1,0 +1,91 @@
+# This policy installs the RHSSO Operator v7.6.2  on the Open Cluster Management hub-cluster
+# Operator is intalled into the namespace "rhsso"
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+  labels:
+    app: sso
+  name: install-rhsso-operator
+  namespace: rhsso-policies
+spec:
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: install-rhsso-operator
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              name: rhsso
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1
+            kind: OperatorGroup
+            metadata:
+              annotations: null
+              name: rhsso-opgrp
+              namespace: rhsso
+            spec:
+              targetNamespaces:
+              - rhsso
+              upgradeStrategy: Default
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1alpha1
+            kind: Subscription
+            metadata:
+              name: rhsso-operator
+              namespace: rhsso
+            spec:
+              channel: stable
+              installPlanApproval: Automatic
+              name: rhsso-operator
+              source: redhat-operators
+              sourceNamespace: openshift-marketplace
+              startingCSV: rhsso-operator.7.6.2-opr-001
+        remediationAction: enforce
+        severity: medium
+  remediationAction: enforce
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: sso
+  name: placement-install-rhsso-operator
+  namespace: rhsso-policies
+spec:
+  clusterSelector:
+    matchExpressions:
+    - key: local-cluster
+      operator: In
+      values:
+      - "true"
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  labels:
+    app: sso
+  name: binding-install-rhsso-operator
+  namespace: rhsso-policies
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-install-rhsso-operator
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: Policy
+  name: install-rhsso-operator
+---
