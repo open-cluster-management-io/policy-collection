@@ -1,0 +1,12 @@
+# The configmap sets configuration options for the backup storage location, for the backup schedule 
+# backing up applications, and for the restore resource used to restore applications backups.
+# Update all settings with valid values before applying the `hdr-app-configmap` resource on the hub.
+# use ./input/pv-snap/hdr-app-configmap.yaml if you want to use volume snapshots instead of restic
+- ./input/restic/hdr-app-configmap.yaml 
+- ./policies/oadp-hdr-app-install.yaml
+# install the backup or restore policyset, or both ( comment out the policyset not used on this hub ) 
+- ./policy-sets/acm-app-backup-policy-set.yaml
+- ./policy-sets/acm-app-restore-policy-set.yaml
+# install the backup or restore policy, or both ( comment out the policy not used on this hub ) 
+- ./policies/oadp-hdr-app-backup.yaml
+- ./policies/oadp-hdr-app-restore.yaml

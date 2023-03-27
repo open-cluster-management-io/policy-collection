@@ -1,0 +1,193 @@
+#
+# This policy creates a velero restore resource on managed clusters matching the acm-app-restore-placement rule 
+# defined with the ../policy-sets/acm-app-restore-policy-set.yaml
+# The restore resource is used to restore applications resources and PVs from a selected backup.
+# The restore uses the `restore.nsToRestore` hdr-app-configmap property to specify the namespaces for the applications to restore 
+#
+# This policy is contained by the acm-app-restore policy set. 
+# Create this policy on the hub managing clusters where you plan to restore a backup 
+# created by the oadp-hdr-app-backup policy. 
+#
+# Both policies, oadp-hdr-app-backup and oadp-hdr-app-restore can be installed on the same hub,
+# if this hub manages clusters where applications need to be backed up or restored. 
+#
+# If the managed cluster (or hub) matches the acm-app-restore-placement then the oadp-hdr-app-restore policy 
+# is propagated to this cluster for a restore operation. 
+# Make sure the hdr-app-configmap's restore resource settings are properly set before applying this policy.
+#
+# Note that it is set to enforce by default.
+#
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: oadp-hdr-app-restore
+  annotations:
+    policy.open-cluster-management.io/categories: PR.IP Information Protection Processes and Procedures
+    policy.open-cluster-management.io/controls: PR.IP-4 Backups of information are conducted maintained and tested
+    policy.open-cluster-management.io/standards: NIST-CSF
+spec:
+  dependencies:
+  - apiVersion: policy.open-cluster-management.io/v1
+    compliance: Compliant
+    kind: Policy
+    name: oadp-hdr-app-install
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: check-storage-class-map
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: ConfigMap
+                metadata:
+                  name: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.storage.config.name" hub}}'
+                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                  labels:
+                    velero.io/plugin-config: ""
+                    velero.io/change-storage-class: RestoreItemAction
+                data: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.storage.config.mappings" | toLiteral hub}}'
+          remediationAction: enforce
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: check-restore-resource
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: velero.io/v1
+                kind: Restore
+                metadata:
+                  name: 'restore-{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'
+                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                  labels:
+                    cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
+                    cluster-name: '{{ fromClusterClaim "name" }}'
+                spec:
+                  existingResourcePolicy: update
+                  includedNamespaces: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.nsToRestore" | toLiteral hub}}'
+                  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'
+                  restorePVs: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.restorePVs" | toBool hub}}'            
+          remediationAction: enforce
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: check-restore-failed
+        spec:
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: velero.io/v1
+                kind: Restore
+                metadata:
+                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                spec:
+                  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'  
+                status:
+                  phase: Failed                                                            
+          remediationAction: inform
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: check-restore-partially-failed
+        spec:
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: velero.io/v1
+                kind: Restore
+                metadata:
+                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                spec:
+                  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'  
+                status:
+                  phase: PartiallyFailed                                                            
+          remediationAction: inform
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: check-restore-failed-validation
+        spec:
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: velero.io/v1
+                kind: Restore
+                metadata:
+                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                spec:
+                  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'  
+                status:
+                  phase: FailedValidation                                                            
+          remediationAction: inform
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: check-restore-in-progress
+        spec:
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: velero.io/v1
+                kind: Restore
+                metadata:
+                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                spec:
+                  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'  
+                status:
+                  phase: InProgress                                                            
+          remediationAction: inform
+          severity: low
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: check-restore-no-status
+        spec:
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: velero.io/v1
+                kind: Restore
+                metadata:
+                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                spec:
+                  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'  
+                status:
+                  phase: ''                                                            
+          remediationAction: inform
+          severity: low
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: check-restore-completed
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: velero.io/v1
+                kind: Restore
+                metadata:
+                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                spec:
+                  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'  
+                status:
+                  phase: Completed                                                            
+          remediationAction: inform
+          severity: low

@@ -1,0 +1,38 @@
+# The PolicySet is used to place the oadp-hdr-app-install and oadp-hdr-app-restore policies on managed clusters
+# using the acm-app-restore-placement rule in this file, which is all managed clusters with a label "acm-pv-dr=restore". 
+# Update the placement rule if you want to customize the target cluster list.
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: acm-app-restore
+spec:
+  description: restore support for stateful apps running on managed clusters
+  policies:
+    - oadp-hdr-app-install
+    - oadp-hdr-app-restore
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: acm-app-restore-placement
+spec:
+  clusterConditions: []
+  clusterSelector:
+    matchExpressions:
+      - key: acm-pv-dr
+        operator: In
+        values:
+          - restore
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: acm-app-restore-placement-binding
+placementRef:
+  name: acm-app-restore-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: acm-app-restore
+    apiGroup: policy.open-cluster-management.io
+    kind: PolicySet

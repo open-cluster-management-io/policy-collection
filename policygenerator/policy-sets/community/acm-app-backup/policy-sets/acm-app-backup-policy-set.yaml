@@ -1,0 +1,38 @@
+# The PolicySet is used to place the oadp-hdr-app-install and oadp-hdr-app-backup policies on managed clusters
+# using the acm-app-backup-placement rule in this file, which is all managed clusters with a label "acm-pv-dr=backup". 
+# Update the placement rule if you want to customize the target cluster list.
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: acm-app-backup
+spec:
+  description: backup support for stateful apps running on managed clusters
+  policies:
+    - oadp-hdr-app-install
+    - oadp-hdr-app-backup
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: acm-app-backup-placement
+spec:
+  clusterConditions: []
+  clusterSelector:
+    matchExpressions:
+      - key: acm-pv-dr
+        operator: In
+        values:
+          - backup
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: acm-app-backup-placement-binding
+placementRef:
+  name: acm-app-backup-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: acm-app-backup
+    apiGroup: policy.open-cluster-management.io
+    kind: PolicySet
