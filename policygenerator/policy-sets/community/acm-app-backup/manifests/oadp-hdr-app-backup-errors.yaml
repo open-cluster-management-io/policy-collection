@@ -1,0 +1,17 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{ fromClusterClaim "name" }}'
+  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+labels:
+  cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
+  cluster-name: '{{ fromClusterClaim "name" }}'
+spec:
+  schedule: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.schedule" hub}}' 
+  template:
+    volumeSnapshotLocations:
+      - '{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}' 
+    snapshotVolumes: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.snapshotVolumes" | toBool hub}}'
+    defaultVolumesToRestic: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.defaultVolumesToRestic" | toBool hub}}'
+    includedNamespaces: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.nsToBackup" | toLiteral hub}}' 
+    ttl: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.ttl" hub}}'  

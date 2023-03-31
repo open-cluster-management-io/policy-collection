@@ -1,0 +1,44 @@
+apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+spec:
+  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'  
+status:
+  phase: Failed                                                            
+---
+apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+spec:
+  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'  
+status:
+  phase: PartiallyFailed                                                            
+---
+apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+spec:
+  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'  
+status:
+  phase: FailedValidation                                                            
+---
+apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+spec:
+  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'  
+status:
+  phase: InProgress                                                            
+---
+apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+spec:
+  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'  
+status:
+  phase: ''                                                            

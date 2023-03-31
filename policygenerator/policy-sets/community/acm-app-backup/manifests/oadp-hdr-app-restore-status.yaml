@@ -1,0 +1,8 @@
+apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+spec:
+  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'  
+status:
+  phase: Completed                                                            

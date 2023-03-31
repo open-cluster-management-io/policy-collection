@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.storage.config.name" hub}}'
+  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+  labels:
+    velero.io/plugin-config: ""
+    velero.io/change-storage-class: RestoreItemAction
+data: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.storage.config.mappings" | toLiteral hub}}'
+---
+apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  name: 'restore-{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'
+  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+  labels:
+    cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
+    cluster-name: '{{ fromClusterClaim "name" }}'
+spec:
+  existingResourcePolicy: update
+  includedNamespaces: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.nsToRestore" | toLiteral hub}}'
+  backupName: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.backupName" hub}}'
+  restorePVs: '{{hub fromConfigMap "" "hdr-app-configmap" "restore.restorePVs" | toBool hub}}'            

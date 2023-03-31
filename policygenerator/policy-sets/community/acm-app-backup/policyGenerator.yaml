@@ -1,0 +1,96 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-acm-backup
+placementBindingDefaults:
+  name: binding-policy-acm-backup
+policyDefaults:
+  categories:
+    - CA Security Assessment and Authorization
+  controls: 
+    - CA-2 Security Assessments
+    - CA-7 Continuous Monitoring
+  namespace: policies
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - NIST SP 800-53
+policies:
+# config policy
+- name: oadp-hdr-app-config
+  disabled: false
+  manifests:
+    - path: input/restic/hdr-app-configmap.yaml
+  placement:
+    placementPath: config-placement.yaml
+# install policies
+- name: oadp-hdr-app-install
+  disabled: false
+  manifests:
+    - path: manifests/oadp-hdr-app-install.yaml
+  policySets:
+    - acm-app-backup
+    - acm-app-restore
+  pruneObjectBehavior: DeleteIfCreated
+- name: oadp-hdr-app-install-status
+  disabled: false
+  manifests:
+    - path: manifests/oadp-hdr-app-status.yaml
+  policySets:
+    - acm-app-backup
+    - acm-app-restore
+  remediationAction: inform
+# backup policies
+- name: oadp-hdr-app-backup
+  disabled: false
+  manifests:
+    - path: manifests/oadp-hdr-app-backup.yaml
+  policySets:
+    - acm-app-backup
+  pruneObjectBehavior: DeleteIfCreated
+- name: oadp-hdr-app-backup-status
+  disabled: false
+  manifests:
+    - path: manifests/oadp-hdr-app-backup-status.yaml
+  policySets:
+    - acm-app-backup
+  remediationAction: inform
+- name: oadp-hdr-app-backup-errors
+  complianceType: "mustnothave"
+  disabled: false
+  manifests:
+    - path: manifests/oadp-hdr-app-backup-errors.yaml
+  policySets:
+    - acm-app-backup
+  remediationAction: "inform"
+# restore policies
+- name: oadp-hdr-app-restore
+  disabled: false
+  manifests:
+    - path: manifests/oadp-hdr-app-restore.yaml
+  policySets:
+    - acm-app-restore
+- name: oadp-hdr-app-restore-errors
+  complianceType: "mustnothave"
+  disabled: false
+  manifests:
+    - path: manifests/oadp-hdr-app-restore-errors.yaml
+  policySets:
+    - acm-app-restore
+  remediationAction: "inform"
+- name: oadp-hdr-app-restore-status
+  disabled: false
+  manifests:
+    - path: manifests/oadp-hdr-app-restore-status.yaml
+  policySets:
+    - acm-app-restore
+  remediationAction: "inform"
+policySets:
+  - name: acm-app-backup
+    description: backup support for stateful apps running on managed clusters
+    placement:
+      placementPath: backup-placement.yaml
+  - name: acm-app-restore
+    description: restore support for stateful apps running on managed clusters
+    placement:
+      placementPath: restore-placement.yaml

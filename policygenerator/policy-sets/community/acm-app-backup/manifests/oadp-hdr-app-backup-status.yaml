@@ -1,0 +1,10 @@
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+  labels:
+    velero.io/schedule-name: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{ fromClusterClaim "name" }}'
+    cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
+    cluster-name: '{{ fromClusterClaim "name" }}'              
+status:
+  phase: Completed              
