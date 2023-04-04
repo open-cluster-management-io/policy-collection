@@ -1,0 +1,187 @@
+# This policy deploys Triliovault for Kubernetes (TVK) to all non-OpenShift clusters 
+# with a label "protected-by=triliovault" using Helm. To deploy a basic (trial) license,
+# use the policy to deploy license for Triliovault for Kubernetes available at 
+# ./CM-Configuration-Management/policy-create-license-triliovault-for-kubernetes-upstream.yaml.  
+# Please conact sales@trilio.io for further support.
+#
+# You must make sure the PlacementRule for the Policy installs the policy on the
+# Open Cluster Management hub. The PlacementRule inside the Policy is what determines which clusters
+# TVK will be installed on.
+#
+# Note that it is set to enforce by default.
+#
+# Please refer product documentation at https://docs.trilio.io/kubernetes/overview/readme 
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: install-tvk-helm
+  annotations:
+    policy.open-cluster-management.io/categories: CA Security Assessment and Authorization
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/controls: CA-2 Security Assessments, CA-7 Continuous Monitoring
+spec:
+  disabled: false
+  remediationAction: inform
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-ns-trilio-system
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: trilio-system
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-chart-ns
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: hchartsk8strilionet-trilio-chart-ns
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-tvk-application
+        spec:
+          remediationAction: enforce 
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: app.k8s.io/v1beta1
+                kind: Application
+                metadata:
+                  name: tvk
+                  namespace: trilio-system
+                spec:
+                  componentKinds:
+                    - group: apps.open-cluster-management.io
+                      kind: Subscription
+                  descriptor: {}
+                  selector:
+                    matchExpressions:
+                      - key: app
+                        operator: In
+                        values:
+                          - tvk
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-tvk-channel
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: Channel
+                metadata:
+                  annotations:
+                    apps.open-cluster-management.io/reconcile-rate: medium
+                  name: hchartsk8strilionet-trilio-chart
+                  namespace: hchartsk8strilionet-trilio-chart-ns
+                spec:
+                  pathname: 'https://charts.k8strilio.net/trilio-stable/k8s-triliovault-operator'
+                  type: HelmRepo
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-tvk-subscription
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: Subscription
+                metadata:
+                  name: tvk-subscription-1
+                  namespace: trilio-system
+                  annotations: {}
+                  labels:
+                    app: tvk
+                    apps.open-cluster-management.io/reconcile-rate: medium
+                spec:
+                  name: k8s-triliovault-operator
+                  channel: hchartsk8strilionet-trilio-chart-ns/hchartsk8strilionet-trilio-chart
+                  packageOverrides:
+                  - packageName: k8s-triliovault-operator
+                    packageAlias: k8s-triliovault-operator
+                  placement:
+                    placementRef:
+                      name: placement-policy-tvk-1
+                      kind: PlacementRule
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-tvk-placement
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps.open-cluster-management.io/v1
+                kind: PlacementRule
+                metadata:
+                  name: placement-policy-tvk-1
+                  namespace: trilio-system
+                  labels:
+                    app: tvk
+                spec:
+                  clusterSelector:
+                    matchExpressions:
+                      - key: vendor
+                        operator: NotIn
+                        values:
+                          - OpenShift
+                      - key: protected-by
+                        operator: In
+                        values:
+                          - triliovault
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: install-tvk-placement
+spec:
+  clusterSelector:
+    matchExpressions:
+      - key: name
+        operator: In
+        values:
+          - local-cluster
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: install-tvk-placement
+placementRef:
+  name: install-tvk-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: install-tvk-helm
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy

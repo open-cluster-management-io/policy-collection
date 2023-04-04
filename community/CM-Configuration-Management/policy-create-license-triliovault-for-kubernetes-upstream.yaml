@@ -1,0 +1,70 @@
+# This policy deploys a basic (trial) license for Triliovault for Kubernetes (TVK) to all
+# non-OpenShift clusters with a label "protected-by=triliovault". The TVK needs to be
+# deployed using ./CM-Configuration-Management/policy-install-triliovault-for-kubernetes-using-helm.yaml.
+# 
+# Please conact sales@trilio.io for further support.
+#
+# Note that it is set to enforce by default.
+#
+# Please refer product documentation at https://docs.trilio.io/kubernetes/overview/readme 
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: add-tvk-license
+  annotations:
+    policy.open-cluster-management.io/categories: CA Security Assessment and Authorization
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/controls: CA-2 Security Assessments, CA-7 Continuous Monitoring
+spec:
+  disabled: false
+  remediationAction: inform
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: add-tvk-license
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: License
+                metadata:
+                  name: triliovault-license
+                  namespace: trilio-system
+                spec:
+                  key: xYsNDgwKD3jajZFPj4IwEMXv/RRN9tyEUlxgEw6KzYbIohFwz0M77DZRJPwx67df1MMaMGbn0ENf573pb14+UdN5/0WpoJy/2fabY1Hbsm0SNgidOVZL6JD+VXARmeUxSxCpzeUFHVWwgNYoAqozJ6QTtWt6JHujsGpxh0177xDY5ANM1WEFlUL5U5vmfBvgkutec10SHg81VOeJc7aN4mjNVvlCbhOZyZTFUSiTVLJ3mbDFPI1CkvSHApt1mbdD9F0v4yTF5oRNtBzblgIKbTsuA1cgc7gHzHN8l5VKixJnjnacoVkm9EEFwz3zZ4V2PB8ZF3w4OGpWCBADQiV0wX3kIEh8IzKOD7LdPI+zm4dvw1OPKzCY7OSe3aZv1De0+GStqTrW+OArat+33UDtImuy6gvMJ7D+SSuEGpTpxisM+KtFw03e/gL3OqHJMC0CFHH459/Qe76ztoGQGLcHHWb1X1zYAhUAj0X1sX2KJDgewP/aaCML+WiMJwE=X02gc
+                status:
+                  status: Active
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: tvk-license-placement
+spec:
+  clusterSelector:
+    matchExpressions:
+      - key: vendor
+        operator: NotIn
+        values:
+          - OpenShift
+      - key: protected-by
+        operator: In
+        values:
+          - triliovault
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: tvk-license-placement
+placementRef:
+  name: tvk-license-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: add-tvk-license
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy

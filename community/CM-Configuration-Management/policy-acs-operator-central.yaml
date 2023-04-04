@@ -1,4 +1,4 @@
-# This policy installs the Advanced Cluster Security Operator on the ACM hub
+# This policy installs the Advanced Cluster Security Operator on the Open Cluster Management hub
 # cluster and it create the Central Server.
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy

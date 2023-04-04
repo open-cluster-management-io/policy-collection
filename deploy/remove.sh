@@ -5,7 +5,7 @@ set -o pipefail
 
 # Display help information
 help () {
-  echo "Find and remove resources from Red Hat Advanced Cluster Management created via deploy.sh"
+  echo "Find and remove resources from Open Cluster Management created via deploy.sh"
   echo ""
   echo "Prerequisites:"
   echo " - oc or kubectl CLI should be pointing to the cluster from which to remove resources"

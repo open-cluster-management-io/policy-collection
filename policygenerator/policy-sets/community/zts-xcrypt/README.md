@@ -64,7 +64,7 @@ The Zettaset PolicySet contains a single `policyset-xcrypt` that will be deploye
     [root@zts-masterset-hm-kglph container]#  /usr/share/zts/bin/add_device.sh -d /dev/xvdf -s 15
 ```
 
-5.  Create an application from RHACM
+5.  Create an application from Open Cluster Management
 ```
     Application: mariadb
     Namespace: mariadb

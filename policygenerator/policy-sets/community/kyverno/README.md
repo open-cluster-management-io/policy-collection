@@ -1,4 +1,4 @@
-## PolicySets for integrating Kyverno into RHACM
+## PolicySets for integrating Kyverno into Open Cluster Management
 
 The three Policysets cover:
 
@@ -9,14 +9,14 @@ The three Policysets cover:
 
 ## Further notes on installation.
 
-When using ACM-Subscriptions and Placement we strongly recommend to install the following policies before you apply the Policy (Policies need to be set to enforce)
+When using Open Cluster Management Subscriptions and Placement we strongly recommend to install the following policies before you apply the Policy (Policies need to be set to enforce)
 
 ```
-oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/community/CM-Configuration-Management/policy-configure-subscription-admin-hub.yaml
-oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/community/CM-Configuration-Management/policy-managedclustersetbinding.yaml
-oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/community/CM-Configuration-Management/policy-openshift-gitops.yaml
-oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/community/CM-Configuration-Management/policy-install-kyverno.yaml
-oc apply -f https://raw.githubusercontent.com/stolostron/policy-collection/main/community/CM-Configuration-Management/policy-kyverno-config-exclude-resources.yaml
+oc apply -f https://raw.githubusercontent.com/open-cluster-management-io/policy-collection/main/community/CM-Configuration-Management/policy-configure-subscription-admin-hub.yaml
+oc apply -f https://raw.githubusercontent.com/open-cluster-management-io/policy-collection/main/community/CM-Configuration-Management/policy-managedclustersetbinding.yaml
+oc apply -f https://raw.githubusercontent.com/open-cluster-management-io/policy-collection/main/community/CM-Configuration-Management/policy-openshift-gitops.yaml
+oc apply -f https://raw.githubusercontent.com/open-cluster-management-io/policy-collection/main/community/CM-Configuration-Management/policy-install-kyverno.yaml
+oc apply -f https://raw.githubusercontent.com/open-cluster-management-io/policy-collection/main/community/CM-Configuration-Management/policy-kyverno-config-exclude-resources.yaml
 ```
 
 Ensure that the Policies are applied to the Hub-Cluster, you might review the labels like `environment=dev`
@@ -26,7 +26,7 @@ The Policies should look like this in the UI.
 
 ![Policies](images/policies-installed.png)
 
-Now you can create three Applications in RHACM-UI where every Application corresponds to a path under `policy-sets/community/kyverno`
+Now you can create three Applications in Open Cluster Management where every Application corresponds to a path under `policy-sets/community/kyverno`
 
 ![Subsriptions](images/subscription.png)
 

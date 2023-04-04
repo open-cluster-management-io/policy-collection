@@ -22,7 +22,7 @@ Usage:
 
   -h|--help                   Display this menu
   -u|--url <url>              URL to the Git repository
-                                (Default URL: "https://github.com/stolostron/policy-collection.git")
+                                (Default URL: "https://github.com/open-cluster-management-io/policy-collection.git")
   -b|--branch <branch>        Branch of the Git repository to point to
                                 (Default branch: "main")
   -p|--path <path/to/dir>     Path to the desired subdirectory of the Git repository
@@ -39,7 +39,7 @@ Usage:
 ```
 
 For more details on the `sync` parameter values, see the git subscription chapter
-[Resource reconciliation rate settings](https://github.com/stolostron/multicloud-operators-subscription/blob/main/docs/gitrepo_subscription.md#resource-reconciliation-rate-settings).
+[Resource reconciliation rate settings](https://github.com/open-cluster-management-io/multicloud-operators-subscription/blob/main/docs/gitrepo_subscription.md#resource-reconciliation-rate-settings).
 
 ## Remove resources
 

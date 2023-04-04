@@ -1,0 +1,107 @@
+# This policy stands up an instance of Keycloak on the hub-cluster, 
+# it also sets up for the KeyCloak Realm for use by OCM managed clusters
+
+# This policy has a dependency on policy  "install-rhsso-operator" policy (which installs the rhsso operator)
+# and will only be applied if "install-rhsso-operator" is compliant
+
+# Resources are setup in the same namespace as the rhsso operator (i.e rhsso)
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+  labels:
+    app: sso
+  name: setup-rhsso-for-acm
+  namespace: rhsso-policies
+spec:
+  dependencies:
+    - apiVersion: policy.open-cluster-management.io/v1
+      kind: Policy
+      name: install-rhsso-operator
+      namespace: rhsso-policies
+      compliance: Compliant
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: setup-rhsso-for-acm
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: keycloak.org/v1alpha1
+            kind: Keycloak
+            metadata:
+              labels:
+                app: sso
+              name: rhsso
+              namespace: rhsso
+            spec:
+              externalAccess:
+                enabled: true
+              instances: 1
+              keycloakDeploymentSpec:
+                experimental:
+                  env:
+                  - name: JAVA_TOOL_OPTIONS
+                    value: -Dcom.redhat.fips=false
+                imagePullPolicy: Always
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: keycloak.org/v1alpha1
+            kind: KeycloakRealm
+            metadata:
+              labels:
+                app: sso
+              name: acm
+              namespace: rhsso
+            spec:
+              instanceSelector:
+                matchLabels:
+                  app: sso
+              realm:
+                displayName: ACM Clusters
+                enabled: true
+                id: acm
+                realm: acm
+        remediationAction: enforce
+        severity: medium
+  remediationAction: enforce
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: sso
+  name: placement-setup-rhsso-for-acm
+  namespace: rhsso-policies
+spec:
+  clusterSelector:
+    matchExpressions:
+    - key: local-cluster
+      operator: In
+      values:
+      - "true"
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  labels:
+    app: sso
+  name: binding-setup-rhsso-for-acm
+  namespace: rhsso-policies
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-setup-rhsso-for-acm
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: Policy
+  name: setup-rhsso-for-acm
+---

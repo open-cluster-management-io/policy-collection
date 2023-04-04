@@ -7,8 +7,13 @@ contains.
 
 # Stable `PolicySets`
 
-A stable `PolicySet` is a `PolicySet` that is tested and supported by Red Hat. These `PolicySets`
+A stable `PolicySet` is a `PolicySet` that is tested and supported by the Open Cluster Management Policy SIG. These `PolicySets`
 work with little or no modifications.
+
+# 3rd-party `PolicySets`
+
+A 3rd-party `PolicySet` is a `PolicySet` that is supported by a 3rd-party contributor. The extent of support provided
+is documented with the contributed `PolicySet`.
 
 # Community `PolicySets`
 

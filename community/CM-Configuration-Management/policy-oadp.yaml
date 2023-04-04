@@ -1,0 +1,122 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: "policy-oadp-operator"
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-oadp-namespace
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: openshift-adp
+                  labels:
+                    openshift.io/cluster-monitoring: "true"
+          remediationAction: inform
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-oadp-operator-operatorgroup
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha2
+                kind: OperatorGroup
+                metadata:
+                  name: openshift-adp-operatorgroup
+                  namespace: openshift-adp
+                spec:
+                  targetNamespaces:
+                    - openshift-adp
+          remediationAction: inform
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-oadp-operator-subscription
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  name: redhat-oadp-operator
+                  namespace: openshift-adp
+                spec:
+                  channel: stable
+                  installPlanApproval: Automatic
+                  name: redhat-oadp-operator
+                  source: redhat-operators
+                  sourceNamespace: openshift-marketplace
+          remediationAction: inform
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-dataprotectionapplication
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: oadp.openshift.io/v1alpha1
+                kind: DataProtectionApplication
+                metadata:
+                  name: cluster-dpa
+                  namespace: openshift-adp
+                spec:
+                  backupImages: false
+                  configuration:
+                    restic:
+                      enable: true
+                    velero:
+                      defaultPlugins:
+                        - openshift
+                        - aws
+                        - kubevirt
+                        - csi
+                      noDefaultBackupLocation: true
+          remediationAction: inform
+          severity: low
+  remediationAction: enforce
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+ name: binding-policy-oadp-operator
+placementRef:
+ apiGroup: apps.open-cluster-management.io
+ kind: PlacementRule
+ name: placement-policy-oadp-operator
+subjects:
+ - apiGroup: policy.open-cluster-management.io
+   kind: Policy
+   name: policy-oadp-operator
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+ name: placement-policy-oadp-operator
+spec:
+ clusterConditions:
+   - status: 'True'
+     type: ManagedClusterConditionAvailable
+ clusterSelector:
+   matchExpressions:
+     - key: environment
+       operator: In
+       values:
+         - dev

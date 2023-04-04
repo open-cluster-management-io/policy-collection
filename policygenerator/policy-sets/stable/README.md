@@ -8,4 +8,4 @@ Kustomize plugin for more information on using the policy generator.
 
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-[Advanced Cluster Management Hardening](./openshift-hardening) | Applies best practices for how to harden your Advanced Cluster Management hub installation. | Needs to be deployed only to the Advanced Cluster Management hub cluster. The `PolicySet` uses cluster `Placement` and not the `PlacementRule` placement mechanism.
+[Advanced Cluster Management Hardening](./acm-hardening) | Applies best practice policies for your Advanced Cluster Management hub installation. | Needs to be deployed only to the Advanced Cluster Management hub cluster. The `PolicySet` uses cluster `Placement` and not the `PlacementRule` placement mechanism.

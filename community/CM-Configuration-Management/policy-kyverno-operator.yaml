@@ -1,0 +1,315 @@
+# This policy installs the Kyverno Admissions Controller Operator.
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-kyverno-operator
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: kyverno-subscription
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: operators.coreos.com/v1alpha1
+              kind: Subscription
+              metadata:
+                name: kyverno-operator
+                namespace: openshift-operators
+              spec:
+                channel: alpha
+                installPlanApproval: Automatic
+                name: enterprise-kyverno
+                source: certified-operators
+                sourceNamespace: openshift-marketplace
+                startingCSV: enterprise-kyverno.v0.0.2
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        annotations:
+          policy.open-cluster-management.io/disable-templates: "true"
+        name: kyverno-example
+      spec:
+        remediationAction: inform
+        severity: high
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: security.nirmata.io/v1alpha1
+              kind: EnterpriseKyverno
+              metadata:
+                name: enterprisekyverno
+                namespace: openshift-operators
+              spec:
+                antiAffinity:
+                  enable: true
+                config:
+                  annotations: {}
+                  existingConfig: ''
+                  generateSuccessEvents: false
+                  metricsConfig:
+                    annotations: {}
+                    namespaces:
+                      exclude: []
+                      include: []
+                  resourceFilters:
+                    - '[Event,*,*]'
+                    - '[*,kube-system,*]'
+                    - '[*,kube-public,*]'
+                    - '[*,kube-node-lease,*]'
+                    - '[Node,*,*]'
+                    - '[APIService,*,*]'
+                    - '[TokenReview,*,*]'
+                    - '[SubjectAccessReview,*,*]'
+                    - '[SelfSubjectAccessReview,*,*]'
+                    - '[Binding,*,*]'
+                    - '[ReplicaSet,*,*]'
+                    - '[AdmissionReport,*,*]'
+                    - '[ClusterAdmissionReport,*,*]'
+                    - '[BackgroundScanReport,*,*]'
+                    - '[ClusterBackgroundScanReport,*,*]'
+                    - '[ClusterRole,*,{{ template "kyverno.fullname" . }}:*]'
+                    - '[ClusterRoleBinding,*,{{ template "kyverno.fullname" . }}:*]'
+                    - >-
+                      [ServiceAccount,{{ include "kyverno.namespace" . }},{{ template
+                      "kyverno.serviceAccountName" . }}]
+                    - >-
+                      [ConfigMap,{{ include "kyverno.namespace" . }},{{ template
+                      "kyverno.configMapName" . }}]
+                    - >-
+                      [ConfigMap,{{ include "kyverno.namespace" . }},{{ template
+                      "kyverno.metricsConfigMapName" . }}]
+                    - >-
+                      [Deployment,{{ include "kyverno.namespace" . }},{{ template
+                      "kyverno.fullname" . }}]
+                    - >-
+                      [Job,{{ include "kyverno.namespace" . }},{{ template "kyverno.fullname"
+                      . }}-hook-pre-delete]
+                    - >-
+                      [NetworkPolicy,{{ include "kyverno.namespace" . }},{{ template
+                      "kyverno.fullname" . }}]
+                    - >-
+                      [PodDisruptionBudget,{{ include "kyverno.namespace" . }},{{ template
+                      "kyverno.fullname" . }}]
+                    - >-
+                      [Role,{{ include "kyverno.namespace" . }},{{ template "kyverno.fullname"
+                      . }}:*]
+                    - >-
+                      [RoleBinding,{{ include "kyverno.namespace" . }},{{ template
+                      "kyverno.fullname" . }}:*]
+                    - >-
+                      [Secret,{{ include "kyverno.namespace" . }},{{ template
+                      "kyverno.serviceName" . }}.{{ template "kyverno.namespace" . }}.svc.*]
+                    - >-
+                      [Service,{{ include "kyverno.namespace" . }},{{ template
+                      "kyverno.serviceName" . }}]
+                    - >-
+                      [Service,{{ include "kyverno.namespace" . }},{{ template
+                      "kyverno.serviceName" . }}-metrics]
+                    - >-
+                      [ServiceMonitor,{{ if .Values.serviceMonitor.namespace }}{{
+                      .Values.serviceMonitor.namespace }}{{ else }}{{ template
+                      "kyverno.namespace" . }}{{ end }},{{ template "kyverno.serviceName" .
+                      }}-service-monitor]
+                    - >-
+                      [Pod,{{ include "kyverno.namespace" . }},{{ template "kyverno.fullname"
+                      . }}-test]
+                createSelfSignedCert: false
+                customLabels: {}
+                dnsPolicy: ClusterFirst
+                envVars: {}
+                envVarsInit: {}
+                excludeKyvernoNamespace: true
+                extraArgs:
+                  - '--autogenInternals=true'
+                  - '--loggingFormat=text'
+                extraContainers: []
+                extraInitContainers: []
+                generatecontrollerExtraResources: []
+                hostNetwork: false
+                image:
+                  pullPolicy: IfNotPresent
+                  pullSecrets:
+                    create: false
+                    name: image-pull-secret
+                    registry: ghcr.io
+                  repository: ghcr.io/nirmata/kyverno
+                  tag: v1.8.1-n4kbuild.1
+                imagePullSecret:
+                  create: false
+                  name: kyverno-operator-image-pull-secret
+                  registry: ghcr.io
+                imagePullSecrets: {}
+                initContainer:
+                  extraArgs:
+                    - '--loggingFormat=text'
+                initImage:
+                  repository: ghcr.io/nirmata/kyvernopre
+                  tag: v1.8.1-n4kbuild.1
+                initResources:
+                  limits:
+                    cpu: 100m
+                    memory: 256Mi
+                  requests:
+                    cpu: 10m
+                    memory: 64Mi
+                installCRDs: true
+                kyvernoOperatorImage: ghcr.io/nirmata/nirmata-kyverno-monitor
+                kyvernoOperatorImageTag: 0.1.0
+                livenessProbe:
+                  failureThreshold: 2
+                  httpGet:
+                    path: /health/liveness
+                    port: 9443
+                    scheme: HTTPS
+                  initialDelaySeconds: 15
+                  periodSeconds: 30
+                  successThreshold: 1
+                  timeoutSeconds: 5
+                metricsService:
+                  annotations: {}
+                  create: true
+                  port: 8000
+                  type: ClusterIP
+                networkPolicy:
+                  enabled: false
+                  ingressFrom: []
+                nodeAffinity: {}
+                nodeSelector: {}
+                podAffinity: {}
+                podAnnotations: {}
+                podAntiAffinity:
+                  preferredDuringSchedulingIgnoredDuringExecution:
+                    - podAffinityTerm:
+                        labelSelector:
+                          matchExpressions:
+                            - key: app.kubernetes.io/name
+                              operator: In
+                              values:
+                                - kyverno
+                        topologyKey: kubernetes.io/hostname
+                      weight: 1
+                podDisruptionBudget:
+                  minAvailable: 1
+                podLabels: {}
+                podSecurityContext: {}
+                priorityClassName: ''
+                rbac:
+                  create: true
+                  serviceAccount:
+                    annotations: {}
+                    create: true
+                readinessProbe:
+                  failureThreshold: 6
+                  httpGet:
+                    path: /health/readiness
+                    port: 9443
+                    scheme: HTTPS
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 5
+                resourceFiltersExcludeNamespaces: []
+                resources:
+                  limits:
+                    memory: 384Mi
+                  requests:
+                    cpu: 100m
+                    memory: 128Mi
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                      - ALL
+                  privileged: false
+                  readOnlyRootFilesystem: true
+                  runAsNonRoot: true
+                  seccompProfile:
+                    type: RuntimeDefault
+                service:
+                  annotations: {}
+                  port: 443
+                  type: ClusterIP
+                serviceMonitor:
+                  enabled: false
+                  interval: 30s
+                  scrapeTimeout: 25s
+                  secure: false
+                  tlsConfig: {}
+                startupProbe:
+                  failureThreshold: 12
+                  httpGet:
+                    path: /health/liveness
+                    port: 9443
+                    scheme: HTTPS
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                testImage:
+                  repository: busybox
+                testResources:
+                  limits:
+                    cpu: 100m
+                    memory: 256Mi
+                  requests:
+                    cpu: 10m
+                    memory: 64Mi
+                testSecurityContext:
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                      - ALL
+                  privileged: false
+                  readOnlyRootFilesystem: true
+                  runAsGroup: 65534
+                  runAsNonRoot: true
+                  runAsUser: 65534
+                  seccompProfile:
+                    type: RuntimeDefault
+                tolerations: []
+                topologySpreadConstraints: []
+                tufRootMountPath: /.sigstore
+                updateStrategy:
+                  rollingUpdate:
+                    maxSurge: 1
+                    maxUnavailable: 40%
+                  type: RollingUpdate
+                validKyvernoImages: >-
+                  ghcr.io/nirmata/kyverno@sha256:3b7bdd7ad2aeddb9b5ab323bb166863cb00c0977c9eede200808b5832c4a2069
+                webhookEnabled: false
+                webhooksCleanup:
+                  enable: false
+                  image: 'bitnami/kubectl:latest'
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-kyverno-operator
+placementRef:
+  name: placement-policy-kyverno-operator
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-kyverno-operator
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-kyverno-operator
+spec:
+  clusterSelector:
+    matchExpressions:
+      - {key: environment, operator: In, values: ["dev"]}

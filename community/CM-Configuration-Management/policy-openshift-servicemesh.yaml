@@ -1,0 +1,301 @@
+# Install OpenShift Service Mesh 2.3 and configure a basic Service Mesh Control Plane in OpenShift Container Platform 4.11.
+# This policy is valid for any other OpenShift Service Mesh and OpenShift Container Platform versions.
+# 1. Install the required operators: Red Hat OpenShift distributed tracing platform, Kiali, and Red Hat OpenShift Service Mesh [1]
+# 2. Create Service Mesh Control Plane and Service Mesh Member Roll [2]
+# [1] https://docs.openshift.com/container-platform/4.11/service_mesh/v2x/installing-ossm.html
+# [2] https://docs.openshift.com/container-platform/4.11/service_mesh/v2x/ossm-create-smcp.html, https://docs.openshift.com/container-platform/4.11/service_mesh/v2x/ossm-create-mesh.html
+# For more information on installing and configuring OpenShift Service Mesh, consult the OpenShift documentation:
+# https://docs.openshift.com/container-platform/4.11/service_mesh/v2x/preparing-ossm-installation.html
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-openshift-servicemesh
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management, AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+spec:
+  disabled: false
+  policy-templates:
+    # Create the openshift-distributed-tracing project
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-distributed-tracing-operator-project
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: project.openshift.io/v1
+                kind: Project
+                metadata:
+                  name: openshift-distributed-tracing
+                spec: {}
+          pruneObjectBehavior: None
+          remediationAction: inform
+          severity: high
+    # Create the istio-system project (Control Plane's namespace)
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-istio-system-project
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: project.openshift.io/v1
+                kind: Project
+                metadata:
+                  name: istio-system
+                spec: {}
+          pruneObjectBehavior: None
+          remediationAction: inform
+          severity: high
+    # Create the operator group for distributed-tracing operator
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-distributed-tracing-operator-group
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1
+                kind: OperatorGroup
+                metadata:
+                  annotations:
+                    olm.providedAPIs: Jaeger.v1.jaegertracing.io
+                  name: openshift-distributed-tracing-b2llf
+                  namespace: openshift-distributed-tracing
+                spec:
+                  upgradeStrategy: Default
+          pruneObjectBehavior: None
+          remediationAction: inform
+          severity: high
+    # Install the Red Hat OpenShift distributed tracing platform operator
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-distributed-tracing-operator
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  labels:
+                    operators.coreos.com/jaeger-product.openshift-distributed-tracing: ""
+                  name: jaeger-product
+                  namespace: openshift-distributed-tracing
+                spec:
+                  channel: stable
+                  installPlanApproval: Automatic
+                  name: jaeger-product
+                  source: redhat-operators
+                  sourceNamespace: openshift-marketplace
+          pruneObjectBehavior: None
+          remediationAction: inform
+          severity: high
+    # Install the Kiali operator provided by Red Hat
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-kiali-ossm-operator
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  labels:
+                    operators.coreos.com/kiali-ossm.openshift-operators: ""
+                  name: kiali-ossm
+                  namespace: openshift-operators
+                spec:
+                  channel: stable
+                  installPlanApproval: Automatic
+                  name: kiali-ossm
+                  source: redhat-operators
+                  sourceNamespace: openshift-marketplace
+          pruneObjectBehavior: None
+          remediationAction: inform
+          severity: high
+    # Install the OpenShift Service Mesh operator provided by Red Hat
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-ossm-operator
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  labels:
+                    operators.coreos.com/servicemeshoperator.openshift-operators: ""
+                  name: servicemeshoperator
+                  namespace: openshift-operators
+                spec:
+                  channel: stable
+                  installPlanApproval: Automatic
+                  name: servicemeshoperator
+                  source: redhat-operators
+                  sourceNamespace: openshift-marketplace
+          pruneObjectBehavior: None
+          remediationAction: inform
+          severity: high
+    # Create a Service Mesh Control Plane resource which is the Control and Data Plane definition
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-ossm-smcp
+        spec:
+          object-templates:
+            - complianceType: mustonlyhave # This option is recommended to overwrite the configuration defined in the policy into the managed cluster.
+              objectDefinition:
+                apiVersion: maistra.io/v2
+                kind: ServiceMeshControlPlane
+                metadata:
+                  name: basic
+                  namespace: istio-system
+                spec:
+                  addons:
+                    grafana:
+                      enabled: true
+                    jaeger:
+                      name: jaeger
+                      install:
+                        storage:
+                          type: Memory
+                          memory:
+                            maxTraces: 100000
+                        ingress:
+                          enabled: true
+                    kiali:
+                      enabled: true
+                      name: kiali
+                    prometheus:
+                      enabled: true
+                  gateways:
+                    egress:
+                      enabled: true
+                      service:
+                        ports:
+                        - name: http
+                          port: 80
+                          targetPort: 8080
+                        - name: https
+                          port: 443
+                          targetPort: 8443
+                        - name: http2-secure
+                          port: 9443
+                          targetPort: 9443
+                        - name: status-port
+                          port: 15020
+                          targetPort: 15020
+                    ingress:
+                      enabled: true
+                      namespace: istio-system
+                      service:
+                        ports:
+                        - name: http
+                          port: 80
+                          targetPort: 8080
+                        - name: https
+                          port: 443
+                          targetPort: 8443
+                        - name: tls
+                          port: 15443
+                          targetPort: 15443
+                        - name: status-port
+                          port: 15020
+                          targetPort: 15020
+                        type: ClusterIP
+                    openshiftRoute:
+                      enabled: true
+                  general:
+                    logging:
+                      componentLevels:
+                        default: info
+                    validationMessages: true
+                  proxy:
+                    logging:
+                      level: info
+                    networking:
+                      trafficControl:
+                        inbound: {}
+                        outbound:
+                          policy: ALLOW_ANY
+                  security:
+                    controlPlane:
+                      mtls: true
+                    dataPlane:
+                      automtls: true
+                      mtls: true
+                  telemetry:
+                    type: Istiod
+                  tracing:
+                    sampling: 10000
+                    type: Jaeger
+                  version: v2.3
+          pruneObjectBehavior: None
+          remediationAction: inform
+          severity: high
+      # Create a Service Mesh Member Roll resource which defines the projects that belong to the Service Mesh.
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-ossm-smmr
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: maistra.io/v1
+                kind: ServiceMeshMemberRoll
+                metadata:
+                  name: default
+                  namespace: istio-system
+                spec: {}
+          pruneObjectBehavior: None
+          remediationAction: inform
+          severity: high
+  remediationAction: inform
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: policy-openshift-servicemesh-placement
+placementRef:
+  name: policy-openshift-servicemesh-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: policy-openshift-servicemesh
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: policy-openshift-servicemesh-placement
+spec:
+  clusterSelector:
+    matchExpressions:
+      - key: environment
+        operator: In
+        values:
+          - dev
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable

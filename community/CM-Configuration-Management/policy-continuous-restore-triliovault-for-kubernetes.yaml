@@ -1,0 +1,120 @@
+# This is the 3rd policy to setup Continuous Restore Functionality using
+# Triliovault for Kubernetes (TVK).
+#
+# This policy recovers the application backed up from the source cluster 
+# to the target cluster participating in the Continuous Restore Functionality.
+# The target cluster i defined with labels "protected-by=triliovault" and
+# "tvk-continuous-restore-cluster=target"
+#
+# Please note TVK should be installed and configured on this cluster and the event
+# target created using policy
+# ./CM-Configuration-Management/policy-continuous-restore-event-target-triliovault-for-kubernetes.yaml
+# before applying this policy.
+#
+# Also, this policy retrieves the consistent set created based on the backup 
+# created using below policy 
+#  ./CM-Configuration-Management/policy-continuous-restore-backup-triliovault-for-kubernetes.yaml
+#
+# Refer - https://docs.trilio.io/kubernetes/management-console/index/continuous-restore - Restore
+#
+# To create the restore, following process is followed
+# 1. Create a restore CR that references the following:
+#      Namespace for restore
+#      Consistent Set - created from successful backup on source cluster
+# 2. Apply the restore CR
+#
+# IMPORTANT: Please follow below instructions for the policy to work
+# 1. On the hub cluster, create a configmap tvk-cr-restore-configmap in the namespace
+#    where this policy is placed. The configmap has the name of the namespace
+#    for the restore on the target cluster.
+#
+# 2. ConfigMap Example yaml (replace the values)
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: tvk-cr-restore-configmap
+# Data:
+#   restoreNS: "PROVIDE_NAMESPACE"
+#
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: tvk-continuous-restore
+  annotations:
+    policy.open-cluster-management.io/categories: CA Security Assessment and Authorization
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/controls: CA-2 Security Assessments, CA-7 Continuous Monitoring
+spec:
+  disabled: false
+  remediationAction: inform
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-restore-ns
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: '{{hub fromConfigMap "" "tvk-cr-restore-configmap" "restoreNS" hub}}'
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: tvk-cr-restore
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: Restore
+                metadata:
+                  name: cr-restore-mysql
+                  namespace: '{{hub fromConfigMap "" "tvk-cr-restore-configmap" "restoreNS" hub}}'
+                spec:
+                  source:
+                    type: ConsistentSet
+                    consistentSet:
+                      name: '{{ (index (lookup "triliovault.trilio.io/v1" "ConsistentSet" "" "").items (len (slice (index (lookup "triliovault.trilio.io/v1" "ConsistentSet" "" "").items) 1))).metadata.name }}'
+                  restoreNamespace: '{{hub fromConfigMap "" "tvk-cr-restore-configmap" "restoreNS" hub}}'
+                  skipIfAlreadyExists: true
+                status:
+                  status: Completed
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: tvk-cr-restore-placement
+spec:
+  clusterSelector:
+    matchExpressions:
+      - key: protected-by
+        operator: In
+        values:
+          - triliovault
+      - key: tvk-continuous-restore-cluster
+        operator: In
+        values:
+          - target
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: tvk-cr-restore-placement
+placementRef:
+  name: tvk-cr-restore-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: tvk-continuous-restore
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
+
