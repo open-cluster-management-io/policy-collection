@@ -12,12 +12,16 @@
 # The file has 3 related policies clubbed together, 
 # when deploying through GRC UI Editor pls copy paste each policy resource individually as the ui can handle only one policy at a time.
 # pls make sure to deploy all 3 policies in the same namespace and replace any placeholder <POLICIESNS> in this file with the policy namespace.
+#
+# Also note that the sum of characters of the Policy name and the <POLICIESNS> must be less than 63 characters or it will fail
+# validation.
 
 
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-autoscaler-templatized
+  namespace: <POLICIESNS>
   annotations:
     policy.open-cluster-management.io/standards: NIST 800-53, NIST-CSF
     policy.open-cluster-management.io/categories: CM Configuration Management, PR.IP Information Protection Processes and Procedures
@@ -69,6 +73,7 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-autoscaler-templatized-config
+  namespace: <POLICIESNS>
   annotations:
     policy.open-cluster-management.io/standards: NIST 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
@@ -112,6 +117,7 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-autoscaler-templatized-enabler
+  namespace: <POLICIESNS>
   annotations:
     policy.open-cluster-management.io/standards: NIST 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
@@ -143,6 +149,7 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: binding-policy-autoscaler-templatized-common
+  namespace: <POLICIESNS>
 placementRef:
   name: placement-policy-autoscaler-templatized-common
   kind: PlacementRule
@@ -162,6 +169,7 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-autoscaler-templatized-common
+  namespace: <POLICIESNS>
 spec:
   clusterConditions:
     - status: 'True'
