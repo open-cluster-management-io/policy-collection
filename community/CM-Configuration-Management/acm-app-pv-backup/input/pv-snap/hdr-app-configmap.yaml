@@ -133,8 +133,8 @@ data:
 
 ###### Configuration for the oadp-hdr-restore policy ###
 ####################################
-  # list here all apps ns you do now want to restore from the specified backup
-  # if empty, all namespaces in thi backup are restored
+  # list here all apps ns you do not want to restore from the specified backup
+  # if empty, all namespaces in this backup are restored
   # for example backup.nsToBackup: "[\"box-ns\"]"
   restore.nsToExcludeFromRestore: "[]"
 
