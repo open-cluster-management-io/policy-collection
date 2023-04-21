@@ -3,12 +3,8 @@
 # with a label "acm-app-restore=<backup-name>". The restore resource is used to restore applications resources and PVs
 # from the <backup-name> specified with this label.
 #
-# Create this policy on the hub managing clusters where you plan to restore a backup created with the oadp-hdr-app-backup policy, 
-# and after you create the oadp-hdr-app-install policy.
-#
-# - If the managed cluster (or hub) has the label "acm-app-restore=<backup-name>" then the 
-# oadp-hdr-app-install and oadp-hdr-app-restore policies
-# are propagated to this cluster for a restore operation. 
+# Create this policy on the hub managing clusters where you plan to restore a backup created with the oadp-hdr-app-backup policy.
+# This policy depends on the oadp-hdr-app-install policy so the install policy must be successfully placed before the restore policy executes.
 #
 # Note that it is set to enforce by default.
 #

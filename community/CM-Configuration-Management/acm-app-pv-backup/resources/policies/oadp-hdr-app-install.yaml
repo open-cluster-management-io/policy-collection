@@ -1,19 +1,19 @@
 #
-# This policy deploys velero using the OADP operator to all managed clusters 
-# matching the placement policy
+# This policy deploys velero using the OADP operator and configures the connection to the storage location
+# for all managed clusters matching the placement policy
 #
-# This policy must be installed first
+# This policy must be installed before the oadp-hdr-app-backup or oadp-hdr-app-restore policies, which depend on it.
 #
 # Create this policy on the hub managing clusters where you want to create stateful applications backups,
 # or where you restore these backup.  
-# Before installing this policy, create the hdr-app-configmap ConfigMap and set all required properties.
+# Before installing this policy on the hub, create the hdr-app-configmap ConfigMap and set all required properties.
 #
 # Make sure the hdr-app-configmap's storage settings are properly set before applying this policy.
 #
 # IMPORTANT: 
 # If the hub is one of the clusters where this policy will be placed, and the backupNS=open-cluster-management-backup
 # then first enable cluster-backup on MultiClusterHub. 
-# MCH looks for the cluster-backup option and if set to false, it uninstalls OADP from the
+# MultiClusterHub looks for the cluster-backup option and if set to false, it uninstalls OADP from the
 # open-cluster-management-backup and deletes the namespace.
 #
 # Note that it is set to enforce by default.
