@@ -1,0 +1,35 @@
+# Update the clusterSelector to match ONLY the clusters set/rules where you want to backup 
+# the application namespaces defined by the hdr-app-configmap backup setup.
+# For example, to backup the application on all clusters with label environment=prod use this matchExpressions:
+#
+#    matchExpressions:
+#      - key: environment
+#        operator: In
+#        values:
+#          - prod
+# 
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: oadp-hdr-app-backup-placement
+spec:
+  clusterConditions: []
+  clusterSelector:
+    matchExpressions:
+      - key: acm-pv-dr
+        operator: In
+        values:
+          - backup 
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: oadp-hdr-app-backup-placement-binding
+placementRef:
+  name: oadp-hdr-app-backup-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: oadp-hdr-app-backup
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
