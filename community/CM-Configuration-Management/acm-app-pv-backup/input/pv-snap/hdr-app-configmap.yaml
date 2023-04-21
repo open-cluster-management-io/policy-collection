@@ -126,6 +126,7 @@ data:
   backup.nsToBackup: "[\"app1-ns\", \"app2-ns\", \"app3-ns\"]" 
 
   # resources to be excluded from backup; if empty, all resources from the specified namespace are included
+  # for example backup.excludedResources: "[\"secrets\", \"configmaps\"]"
   backup.excludedResources: "[]"
 
 ###### End Configuration for the oadp-hdr-backup policy ###
@@ -135,7 +136,7 @@ data:
 ####################################
   # list here all apps ns you do not want to restore from the specified backup
   # if empty, all namespaces in this backup are restored
-  # for example backup.nsToBackup: "[\"box-ns\"]"
+  # for example backup.nsToExcludeFromRestore: "[\"box-ns\"]"
   restore.nsToExcludeFromRestore: "[]"
 
 ## restore storage class mapping ##
