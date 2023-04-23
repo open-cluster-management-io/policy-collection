@@ -1,5 +1,5 @@
 #
-# This configmap is used by all three policies
+# This configmap is used by the all tree policies
 # and specifies the configuration required to install velero, backup or restore
 #
 # This config is set to use snapshotVolumes for backing up PVs; this option works only if 

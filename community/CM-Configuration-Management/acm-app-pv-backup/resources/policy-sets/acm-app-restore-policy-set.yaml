@@ -7,11 +7,24 @@
 #        operator: In
 #        values:
 #          - prod
+#      - key: acm-app-restore
+#        operator: Exists
 # 
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: acm-app-restore
+spec:
+  description: restore support for stateful apps running on managed clusters
+  policies:
+    - oadp-hdr-app-install
+    - oadp-hdr-app-restore
+---
+# the value for the acm-app-restore label is the name of the backup to restore
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: oadp-hdr-app-restore-placement
+  name: acm-app-restore-placement
 spec:
   clusterConditions: []
   clusterSelector:
@@ -22,12 +35,12 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: oadp-hdr-app-restore-placement-binding
+  name: acm-app-restore-placement-binding
 placementRef:
-  name: oadp-hdr-app-restore-placement
+  name: acm-app-restore-placement
   apiGroup: apps.open-cluster-management.io
   kind: PlacementRule
 subjects:
-  - name: oadp-hdr-app-restore
+  - name: acm-app-restore
     apiGroup: policy.open-cluster-management.io
-    kind: Policy
+    kind: PolicySet
