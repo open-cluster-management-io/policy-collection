@@ -115,9 +115,9 @@ For example, if you need to backup `pacman` application running on `managed-1`, 
 
 1. For the `pacman` app:
 
-- update the  `hdr-app-configmap` and set `backup.nsToBackup: "[\"pacman-ns\"]"`
+- update the [hdr-app-configmap](./input/) ConfigMap and set `backup.nsToBackup: "[\"pacman-ns\"]"`
 - update the [acm-app-backup-placement](./resources/policy-sets/acm-app-backup-policy-set.yaml) PlacementRule to match just the `managed-1`, `managed-2` clusters.
-- on the hub, create the `pacman-policy-ns` namespace and apply the install and backup policies and the placement rules.
+- on the hub, create the `pacman-policy-ns` namespace and apply the [backup PolicySet](./resources/policy-sets/acm-app-backup-policy-set.yaml) and updated `hdr-app-configmap` ConfigMap.
 
 `oc project pacman-policy-ns`
 `oc apply -k ./resources`
@@ -125,9 +125,9 @@ For example, if you need to backup `pacman` application running on `managed-1`, 
 
 1. For the `mysql` app:
 
-- update the  `hdr-app-configmap` and set `backup.nsToBackup: "[\"mysql-ns\"]"`
+- update the [hdr-app-configmap](./input/) ConfigMap and set `backup.nsToBackup: "[\"mysql-ns\"]"`
 - update the [acm-app-backup-placement](./resources/policy-sets/acm-app-backup-policy-set.yaml) PlacementRule to match just the `managed-3` cluster.
-- on the hub, create the `mysql-policy-ns` namespace and apply the install and backup policies and the placement rules. 
+- on the hub, create the `mysql-policy-ns` namespace and apply the [backup PolicySet](./resources/policy-sets/acm-app-backup-policy-set.yaml) and updated `hdr-app-configmap` ConfigMap.
 
 `oc project mysql-policy-ns`
 `oc apply -k ./resources`
@@ -175,7 +175,7 @@ Backup step:<br>
 Restore step:<br>
 
 7. Set the `acm-app-restore=<backup_name>` on cluster c2 (`<backup_name>` is a backup resource created from step 6) and update the [oadp-hdr-app-restore-placement](./resources/policy-sets/acm-app-restore-policy-set.yaml) placement rule to match just cluster c2. The `acm-app-restore` label is going to place the restore policy on cluster c2 and restore the `<backup_name>` passed as a value for the restore label. By updating the placement to match only c2 you make sure this policy is only targetting cluster c2, and no other cluster with a `acm-app-restore` label.
-8. You should see the pacman app on c2; launch the pacman app and verify that you see the data saved when running the app on c1.
+8. You should see the pacman app on c2; launch the pacman app and verify that you see the data saved when running the app on cluster c1.
 
 
 # Backup and Restore Hooks
