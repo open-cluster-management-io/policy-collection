@@ -116,7 +116,7 @@ For example, if you need to backup `pacman` application running on `managed-1`, 
 1. For the `pacman` app:
 
 - update the  `hdr-app-configmap` and set `backup.nsToBackup: "[\"pacman-ns\"]"`
-- update the [acm-app-backup-placement](./resources/policy-sets/acm-app-backup-policy-set.yaml) PlacementRule to match the just the `managed-1`, `managed-2` clusters.
+- update the [acm-app-backup-placement](./resources/policy-sets/acm-app-backup-policy-set.yaml) PlacementRule to match just the `managed-1`, `managed-2` clusters.
 - on the hub, create the `pacman-policy-ns` namespace and apply the install and backup policies and the placement rules.
 
 `oc project pacman-policy-ns`
@@ -126,7 +126,7 @@ For example, if you need to backup `pacman` application running on `managed-1`, 
 1. For the `mysql` app:
 
 - update the  `hdr-app-configmap` and set `backup.nsToBackup: "[\"mysql-ns\"]"`
-- update the [acm-app-backup-placement](./resources/policy-sets/acm-app-backup-policy-set.yaml) PlacementRule to match the just the `managed-3` cluster.
+- update the [acm-app-backup-placement](./resources/policy-sets/acm-app-backup-policy-set.yaml) PlacementRule to match just the `managed-3` cluster.
 - on the hub, create the `mysql-policy-ns` namespace and apply the install and backup policies and the placement rules. 
 
 `oc project mysql-policy-ns`
@@ -157,7 +157,7 @@ For example, if you need to backup `pacman` application running on `managed-1`, 
 
 Use the pacman app to test the policies. (You can use 2 separate hubs for the sample below, each managing one cluster. Place the pacman app on the hub managing c1)
 
-1. On the hub, have 2 managed clusters c1 and c1.
+1. On the hub, have 2 managed clusters c1 and c2.
 2. On the hub, create the pacman application subscription 
 - create an app in the `pacman-ns` namespace, of type git and point to this app https://github.com/tesshuflower/demo/tree/main/pacman
 - place this app on c1

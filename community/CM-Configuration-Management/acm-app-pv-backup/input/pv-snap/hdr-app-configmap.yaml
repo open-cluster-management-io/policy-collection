@@ -1,5 +1,5 @@
 #
-# This configmap is used by the all tree policies
+# This configmap is used by all three policies
 # and specifies the configuration required to install velero, backup or restore
 #
 # This config is set to use snapshotVolumes for backing up PVs; this option works only if 
@@ -11,6 +11,10 @@ kind: ConfigMap
 metadata:
   name: hdr-app-configmap
 data:
+
+  ###### Configuration for the oadp-hdr-app-install policy ###
+  ########################################################
+
   # backupNS is the ns where velero/oadp is installed on the cluster
   backupNS: acm-app-backup 
   channel: stable-1.1
@@ -106,10 +110,10 @@ data:
 }"
 ## END DPA ##
 
-###### End Configuration for the oadp-hdr-install policy ###
+###### End Configuration for the oadp-hdr-app-install policy ###
 ###########################################################
 
-### Configuration for the oadp-hdr-backup policy
+### Configuration for the oadp-hdr-app-backup policy
 ################################################
   # the name prefix for the resource to backup
   backup.prefix: acm-pv
@@ -129,10 +133,10 @@ data:
   # for example backup.excludedResources: "[\"secrets\", \"configmaps\"]"
   backup.excludedResources: "[]"
 
-###### End Configuration for the oadp-hdr-backup policy ###
+###### End Configuration for the oadp-hdr-app-backup policy ###
 ###########################################################
 
-###### Configuration for the oadp-hdr-restore policy ###
+###### Configuration for the oadp-hdr-app-restore policy ###
 ####################################
   # list here all apps ns you do not want to restore from the specified backup
   # if empty, all namespaces in this backup are restored
@@ -144,6 +148,5 @@ data:
   restore.storage.config.mappings: "{
           \"managed-csi\": \"thin\",
     }"
-###### End Configuration for the oadp-hdr-restore policy ###
+###### End Configuration for the oadp-hdr-app-restore policy ###
 ###########################################################
-
