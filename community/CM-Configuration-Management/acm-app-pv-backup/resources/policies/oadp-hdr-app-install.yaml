@@ -99,7 +99,7 @@ spec:
             objectDefinition:
               apiVersion: v1
               data:
-                cloud: '{{hub fromConfigMap "" "hdr-app-configmap" "dpa.aws.backup.cloud.credentials" hub}}'
+                cloud: '{{hub fromConfigMap "" "hdr-app-configmap" "dpa.aws.backup.cloud.credentials" | protect hub}}'
               kind: Secret
               metadata:
                 name: '{{hub fromConfigMap "" "hdr-app-configmap" "dpa.backup.cloud.credentials.name" hub}}'
