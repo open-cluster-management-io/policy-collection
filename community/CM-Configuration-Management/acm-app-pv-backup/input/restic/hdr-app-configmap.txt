@@ -101,7 +101,7 @@ data:
 
   backup.snapshotVolumes: "false"
   backup.defaultVolumesToRestic: "true"
-  backup.volumeSnapshotLocation: restic
+  backup.volumeSnapshotLocation: ''
 
   backup.schedule: 0 */1 * * *
   backup.ttl: 240h0m0s
