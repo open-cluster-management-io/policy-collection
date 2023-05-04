@@ -55,6 +55,8 @@ if [ ! -d schemas ]; then
 	./crd-schema.py https://raw.githubusercontent.com/${GITHUB_REPOSITORY_OWNER}/multicloud-operators-subscription/main/deploy/common/apps.open-cluster-management.io_placementrules_crd.yaml
 	./crd-schema.py https://raw.githubusercontent.com/${GITHUB_REPOSITORY_OWNER}/governance-policy-propagator/main/deploy/crds/policy.open-cluster-management.io_placementbindings.yaml
 	./crd-schema.py https://raw.githubusercontent.com/${GITHUB_REPOSITORY_OWNER}/governance-policy-propagator/main/deploy/crds/policy.open-cluster-management.io_policies.yaml
+	./crd-schema.py https://raw.githubusercontent.com/${GITHUB_REPOSITORY_OWNER}/governance-policy-propagator/main/deploy/crds/policy.open-cluster-management.io_policysets.yaml
+	./crd-schema.py https://raw.githubusercontent.com/${GITHUB_REPOSITORY_OWNER}/governance-policy-propagator/main/deploy/crds/policy.open-cluster-management.io_policyautomations.yaml
 	./crd-schema.py https://raw.githubusercontent.com/${GITHUB_REPOSITORY_OWNER}/placement/main/deploy/hub/0000_02_clusters.open-cluster-management.io_placements.crd.yaml
 
 	cd ..
@@ -78,7 +80,7 @@ GO111MODULE=on go install sigs.k8s.io/kustomize/kustomize/v4@$KUSTOMIZE_VERSION
 export KUSTOMIZE_PLUGIN_HOME=${GOBIN}
 echo "Downloading the generator"
 PLATFORM=`uname | tr '[:upper:]' '[:lower:]'`
-curl -Ls -o generator https://github.com/stolostron/policy-generator-plugin/releases/latest/download/${PLATFORM}-amd64-PolicyGenerator
+curl -Ls -o generator https://github.com/${GITHUB_REPOSITORY_OWNER}/policy-generator-plugin/releases/latest/download/${PLATFORM}-amd64-PolicyGenerator
 chmod a+x generator
 mkdir -p ${KUSTOMIZE_PLUGIN_HOME}/${GENERATOR_PATH}
 mv generator ${KUSTOMIZE_PLUGIN_HOME}/${GENERATOR_PATH}/PolicyGenerator
