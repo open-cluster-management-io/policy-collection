@@ -28,7 +28,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-storage-class-map
+          name: create-storage-class-map
         spec:
           object-templates:
             - complianceType: musthave
@@ -48,7 +48,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-restore-resource
+          name: create-restore-resource
         spec:
           object-templates:
             - complianceType: musthave

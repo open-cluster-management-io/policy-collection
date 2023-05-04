@@ -28,7 +28,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-schedule-resource
+          name: create-schedule-resource
         spec:
           object-templates:
             - complianceType: musthave
@@ -92,7 +92,8 @@ spec:
                     cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
                     cluster-name: '{{ fromClusterClaim "name" }}'              
                 status:
-                  phase: Completed              
+                  phase: Completed
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}" "{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}' 
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -113,7 +114,8 @@ spec:
                     cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
                     cluster-name: '{{ fromClusterClaim "name" }}'              
                 status:
-                  phase: Error                
+                  phase: Error
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}" "{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -134,7 +136,8 @@ spec:
                     cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
                     cluster-name: '{{ fromClusterClaim "name" }}'              
                 status:
-                  phase: FailedValidation                
+                  phase: FailedValidation
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}" "{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -155,30 +158,10 @@ spec:
                     cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
                     cluster-name: '{{ fromClusterClaim "name" }}'              
                 status:
-                  phase: PartiallyFailed                
+                  phase: PartiallyFailed
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}" "{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: check-backup-in-progress
-        spec:
-          object-templates:
-            - complianceType: mustnothave
-              objectDefinition:
-                apiVersion: velero.io/v1
-                kind: Backup
-                metadata:
-                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
-                  labels:
-                    velero.io/schedule-name: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{ fromClusterClaim "name" }}'
-                    cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
-                    cluster-name: '{{ fromClusterClaim "name" }}'              
-                status:
-                  phase: InProgress                
-          remediationAction: inform
-          severity: low
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -197,6 +180,7 @@ spec:
                     cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
                     cluster-name: '{{ fromClusterClaim "name" }}'              
                 status:
-                  phase: ''                                                            
+                  phase: ''
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}" "{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: low

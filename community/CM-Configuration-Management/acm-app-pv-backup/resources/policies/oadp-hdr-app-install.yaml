@@ -33,7 +33,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-ns-oadp-operators
+          name: create-ns-oadp-operators
         spec:
           object-templates:
             - complianceType: musthave
@@ -49,7 +49,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-oadp-operator-group
+          name: create-oadp-operator-group
         spec:
           object-templates:
             - complianceType: musthave
@@ -69,7 +69,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-oadp-operator-subscription
+          name: create-oadp-operator-subscription
         spec:
           object-templates:
             - complianceType: musthave
@@ -92,7 +92,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-backup-storage-credentials-secret
+          name: create-backup-storage-credentials-secret
         spec:
           object-templates:
           - complianceType: musthave
@@ -112,7 +112,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-oadp-dpa-resource
+          name: create-oadp-dpa-resource
         spec:
           object-templates:
             - complianceType: musthave
@@ -130,7 +130,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-app-oadp-pod-running
+          name: check-pod-running-app-oadp
         spec:
           object-templates:
             - complianceType: musthave
@@ -149,7 +149,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-app-velero-pod-running
+          name: check-pod-running-app-velero
         spec:
           object-templates:
             - complianceType: musthave
@@ -168,7 +168,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-app-dpa-complete
+          name: check-oadp-dpa-complete
         spec:
           object-templates:
             - complianceType: musthave
