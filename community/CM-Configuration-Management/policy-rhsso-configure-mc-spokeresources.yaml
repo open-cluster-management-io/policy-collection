@@ -21,12 +21,6 @@ metadata:
   name: configure-mc-rhsso-spokeresources
   namespace: rhsso
 spec:
-  dependencies:
-    - apiVersion: policy.open-cluster-management.io/v1
-      kind: Policy
-      name: configure-mc-rhsso-hubresources
-      namespace: rhsso-policies
-      compliance: Compliant
   disabled: false
   policy-templates:
   - objectDefinition:
