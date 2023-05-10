@@ -30,6 +30,8 @@ Read our blogs for more information and best practices for Red Hat Advanced Clus
 
 * [Applying Policy-Based Governance at Scale Using Templates](https://cloud.redhat.com/blog/applying-policy-based-governance-at-scale-using-templates)
 
+* [Using Policy Dependencies to Apply Resources in a Specific Order](https://cloud.redhat.com/blog/using-policy-dependencies-to-apply-resources-in-a-specific-order)
+
 ## Red Hat Supported Integrations
 
 * [Initiating Ansible Automation on Policy Violations](https://cloud.redhat.com/blog/initiating-ansible-automation-on-policy-violations)
