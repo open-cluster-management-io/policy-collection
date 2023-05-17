@@ -36,6 +36,7 @@ spec:
                         - kube-*
                         - local-quay
                         - multicluster-engine
+                        - open-cluster-management
                         - open-cluster-management-*
                         - openshift-*
                         - rhacs-operator
