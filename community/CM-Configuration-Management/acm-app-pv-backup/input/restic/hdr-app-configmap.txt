@@ -1,0 +1,137 @@
+#
+# This configmap is used by all three policies
+# and specifies the configuration required to install velero, backup or restore
+#
+# This config is set to use restic for backing up PVs 
+# https://velero.io/docs/v1.9/restic/
+# see restic limitations here https://velero.io/docs/v1.9/restic/#limitations
+# use this option if the PV snapshot is not supported your backup and restore clusters are running on different platforms
+# or they are in different regions and can't share PV snapshots - otherwise use the configmap from the  pv-snap folder
+# values specified with brackets <> should be updated before applying this configmap
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hdr-app-configmap
+data:
+
+  ###### Configuration for the oadp-hdr-app-install policy ###
+  ########################################################
+
+  # backupNS is the ns where velero/oadp is installed on the cluster
+  backupNS: acm-app-backup 
+  channel: stable-1.1
+  subscriptionName: redhat-oadp-operator
+
+# define cloud-credential used to connect to the storage location, base64 encoded string
+# for example, for an aws storage location, the credential is in this format
+#
+# [default]
+# aws_access_key_id=<id>
+# aws_secret_access_key=<key>
+#
+  dpa.aws.backup.cloud.credentials: W2RlZmF1bHRdCmF3c19hY2Nlc3Nfa2V5X2lkPTxpZD4KYXdzX3NlY3JldF9hY2Nlc3Nfa2V5PTxrZXk+
+
+
+## DPA resource configuration
+#
+  #DPA resource name; use the same name for all hubs, the PV cannot be restored if 
+  # the BackupStorageLocation resource doesn't have the same name
+  # on both backup and restore cluster 
+  dpaName: dpa
+  dpa.backup.cloud.credentials.name: cloud-credentials
+#######
+# DPA spec
+# below is the spec format for an aws storage
+# update this with the DPA format for the type of storage you are using
+# values specified with brackets <> should be updated before appliying this configmap
+  dpa.spec: "{
+  \"backupLocations\": [
+    {
+      \"velero\": {
+        \"config\": {
+          \"profile\": \"default\",
+          \"region\": \"<us-east-1>\"
+        },
+        \"credential\": {
+          \"key\": \"cloud\",
+          \"name\": \"<dpa.backup.cloud.credentials.name>\"
+        },
+        \"default\": true,
+        \"objectStorage\": {
+          \"bucket\": \"<bucket-name>\",
+          \"prefix\": \"<in-bucket-folder-name>\"
+        },
+        \"provider\": \"<aws>\"
+      }
+    }
+  ],
+  \"configuration\": {
+    \"restic\": {
+      \"enable\": true
+    },
+    \"velero\": {
+      \"defaultPlugins\": [
+        \"openshift\",
+        \"aws\"
+      ],
+      \"podConfig\": {
+        \"resourceAllocations\": {
+          \"limits\": {
+            \"cpu\": \"2\",
+            \"memory\": \"1Gi\"
+          },
+          \"requests\": {
+            \"cpu\": \"500m\",
+            \"memory\": \"256Mi\"
+          }
+        }
+      }
+    }
+  }
+}"
+## END DPA ##
+###### End Configuration for the oadp-hdr-app-install policy ###
+###########################################################
+
+### Configuration for the oadp-hdr-app-backup policy
+################################################
+  # the name prefix for the resource to backup
+  backup.prefix: acm-restic
+
+  backup.snapshotVolumes: "false"
+  backup.defaultVolumesToRestic: "true"
+  backup.volumeSnapshotLocation: ''
+
+  backup.schedule: 0 */1 * * *
+  backup.ttl: 240h0m0s
+
+  # list here all applications namespaces you want to backup
+  # for example backup.nsToBackup: "[\"pacman-ns\", \"helloworld-pv-ns\"]"
+  backup.nsToBackup: "[\"app1-ns\", \"app2-ns\", \"app3-ns\"]" 
+
+  # resources to be excluded from backup; if empty, all resources from the specified namespace are included
+  # for example backup.excludedResources: "[\"secrets\", \"configmaps\"]"
+  backup.excludedResources: "[]"
+###### End Configuration for the oadp-hdr-app-backup policy ###
+###########################################################
+
+###### Configuration for the oadp-hdr-app-restore policy ###
+####################################
+  # list here all apps ns you do not want to restore from the specified backup
+  # if empty, all namespaces in this backup are restored
+  # for example restore.nsToExcludeFromRestore: "[\"box-ns\"]"
+  restore.nsToExcludeFromRestore: "[]"
+
+## restore storage class mapping ##
+  restore.storage.config.name: storage-class-acm-app
+  restore.storage.config.mappings: "{
+          \"managed-csi\": \"thin\",
+    }"
+###### End Configuration for the oadp-hdr-app-restore policy ###
+###########################################################
+
+
+
+
+
