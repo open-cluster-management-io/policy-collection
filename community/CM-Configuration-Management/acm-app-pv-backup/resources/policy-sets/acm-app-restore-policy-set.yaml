@@ -1,0 +1,46 @@
+# Update the clusterSelector to match ONLY the cluster where you want to restore 
+# a backup as defined by the hdr-app-configmap restore section.
+# For example, to restore the backup on the cluster with label environment=prod use this matchExpressions:
+#
+#    matchExpressions:
+#      - key: environment
+#        operator: In
+#        values:
+#          - prod
+#      - key: acm-app-restore
+#        operator: Exists
+# 
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: acm-app-restore
+spec:
+  description: restore support for stateful apps running on managed clusters
+  policies:
+    - oadp-hdr-app-install
+    - oadp-hdr-app-restore
+---
+# the value for the acm-app-restore label is the name of the backup to restore
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: acm-app-restore-placement
+spec:
+  clusterConditions: []
+  clusterSelector:
+    matchExpressions:
+      - key: acm-app-restore
+        operator: Exists
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: acm-app-restore-placement-binding
+placementRef:
+  name: acm-app-restore-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: acm-app-restore
+    apiGroup: policy.open-cluster-management.io
+    kind: PolicySet
