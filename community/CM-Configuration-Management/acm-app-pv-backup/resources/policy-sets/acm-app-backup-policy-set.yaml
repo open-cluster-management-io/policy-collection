@@ -18,18 +18,33 @@ spec:
     - oadp-hdr-app-install
     - oadp-hdr-app-backup
 ---
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
 metadata:
   name: acm-app-backup-placement
 spec:
-  clusterConditions: []
-  clusterSelector:
-    matchExpressions:
-      - key: acm-pv-dr
-        operator: In
-        values:
-          - backup
+  clusterSets:
+    - default
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - key: acm-pv-dr
+              operator: In
+              values:
+                - backup
+  tolerations:
+    - key: cluster.open-cluster-management.io/unreachable
+      operator: Exists
+    - key: cluster.open-cluster-management.io/unavailable
+      operator: Exists
+---
+apiVersion: cluster.open-cluster-management.io/v1beta2
+kind: ManagedClusterSetBinding
+metadata:
+  name: default
+spec:
+  clusterSet: default
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -37,8 +52,8 @@ metadata:
   name: acm-app-backup-placement-binding
 placementRef:
   name: acm-app-backup-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
 subjects:
   - name: acm-app-backup
     apiGroup: policy.open-cluster-management.io
