@@ -21,16 +21,24 @@ spec:
     - oadp-hdr-app-restore
 ---
 # the value for the acm-app-restore label is the name of the backup to restore
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
 metadata:
   name: acm-app-restore-placement
 spec:
-  clusterConditions: []
-  clusterSelector:
-    matchExpressions:
-      - key: acm-app-restore
-        operator: Exists
+  clusterSets:
+    - default
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - key: acm-app-restore
+              operator: Exists
+  tolerations:
+    - key: cluster.open-cluster-management.io/unreachable
+      operator: Exists
+    - key: cluster.open-cluster-management.io/unavailable
+      operator: Exists
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -38,8 +46,8 @@ metadata:
   name: acm-app-restore-placement-binding
 placementRef:
   name: acm-app-restore-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
 subjects:
   - name: acm-app-restore
     apiGroup: policy.open-cluster-management.io
