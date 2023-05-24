@@ -27,7 +27,7 @@ PolicySet   | Description
 
 Policy      | Description 
 -------------------------------------------| ----------- 
-[oadp-hdr-app-install](./resources/policies/oadp-hdr-app-install.yaml)                       | Deploys velero using the OADP operator to all managed clusters matching the [acm-app-backup-placement](./resources/policy-sets/acm-app-backup-policy-set.yaml) placements. Installs the [OADP Operator](https://github.com/openshift/oadp-operator) using the [hdr-app-configmap](./input/restic/hdr-app-configmap.txt) `channel` and `subscriptionName` properties. Creates the cloud credentials secret used by the `DataProtectionApplication.oadp.openshift.io` to connect with the backup storage. The cloud credentials secret is set using the [hdr-app-configmap](./input/restic/hdr-app-configmap.txt) `dpa.aws.backup.cloud.credentials` property. Creates the `DataProtectionApplication.oadp.openshift.io` resource used to configure [Velero](https://velero.io/). Uses hdr-app-configmap `dpaName` for the DataProtectionApplication name and hdr-app-configmap `dpa.spec` for the resource spec settings. Informs on Velero pod not running, or DataProtectionApplication not properly configured.
+[oadp-hdr-app-install](./resources/policies/oadp-hdr-app-install.yaml)                       | Deploys velero using the OADP operator to all managed clusters matching the [acm-app-backup-placement](./resources/policy-sets/acm-app-backup-policy-set.yaml) placements. Installs the [OADP Operator](https://github.com/openshift/oadp-operator) using the [hdr-app-configmap](./input/restic/hdr-app-configmap.txt) `channel` and `subscriptionName` properties. Creates the cloud credentials secret used by the `DataProtectionApplication.oadp.openshift.io` to connect with the backup storage. The cloud credentials secret is set using the [hdr-app-configmap](./input/restic/hdr-app-configmap.txt) `dpaAwsBackupCloudCredentials` property. Creates the `DataProtectionApplication.oadp.openshift.io` resource used to configure [Velero](https://velero.io/). Uses hdr-app-configmap `dpaName` for the DataProtectionApplication name and hdr-app-configmap `dpaSpec` for the resource spec settings. Informs on Velero pod not running, or DataProtectionApplication not properly configured.
 [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml)                         | Creates a velero backup schedule on managed clusters matching the [acm-app-backup-placement](./resources/placements/acm-app-backup-placement.yaml) rules. The schedule is used to backup applications resources and PVs. Informs on backup errors.
 [oadp-hdr-app-restore](./resources/policies/oadp-hdr-app-restore.yaml)                        | Creates a velero restore resource on managed clusters matching the [oadp-hdr-app-restore-placement](./resources/placements/oadp-hdr-app-restore-placement.yaml) rules, which is all managed clusters with `acm-app-restore=<backup-name>` label. The `<backup-name>` from the label is the name of the backup that will be restored on this cluster. 
 
@@ -41,21 +41,21 @@ hdr-app-configmap ConfigMap               | Description
 -------------------------------------------| ----------- 
 backupNS                                   | Used by the [oadp-hdr-app-install](./resources/policies/oadp-hdr-app-install.yaml) policy. Namespace name where Velero/OADP is installed on the target cluster. If the hub is one of the clusters where the policies will be placed, and the `backupNS=open-cluster-management-backup` then first enable cluster-backup on `MultiClusterHub`. The MultiClusterHub resource looks for the cluster-backup option and if set to false, it uninstalls OADP from the `open-cluster-management-backup` and deletes the namespace. 
 channel                                    | Used by the [oadp-hdr-app-install](./resources/policies/oadp-hdr-app-install.yaml) policy. OADP operator install channel; set to stable-1.1 by default
-dpa.aws.backup.cloud.credentials           | Used by the [oadp-hdr-app-install](./resources/policies/oadp-hdr-app-install.yaml) policy. Defines cloud-credential used to connect to the storage location, base64 encoded string. You must update this property with a valid value.
+dpaAwsBackupCloudCredentials           | Used by the [oadp-hdr-app-install](./resources/policies/oadp-hdr-app-install.yaml) policy. Defines cloud-credential used to connect to the storage location, base64 encoded string. You must update this property with a valid value.
 dpaName                                    | Used by the [oadp-hdr-app-install](./resources/policies/oadp-hdr-app-install.yaml) policy and sets the `DataProtectionApplication` resource name.
-dpa.spec                                   | Used by the [oadp-hdr-app-install](./resources/policies/oadp-hdr-app-install.yaml) policy and sets the `DataProtectionApplication` spec content. The config file `dpa.spec` defines a spec configuration for an aws storage. Update this with spec content for the type of storage you are using. 
-backup.prefix                              | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy and sets the name prefix for the backup resource. It defaults to `acm-app` so the backup on `managed-cls-name` will be in this format : `acm-app-<volumeSnapshotLocation>-managed-cls-name-20230309143503`. You can optionally change the prefix if you want to match the name of the application you are backing up, for example to `pacman-app` if you are backing up the pacman application; in this case the backup name becomes `pacman-app-<volumeSnapshotLocation>-managed-cls-name-20230309143503`.
-backup.snapshotVolumes                     | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy. Set to `true` if you want to create backup snapshots instead of restic. This is the value used by the [pv snapshot config](./input/pv-snap/hdr-app-configmap.txt). It is set to `false` by the [restic config](./input/restic/hdr-app-configmap.txt).
-backup.defaultVolumesToRestic               | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy. Set to `false` if you want to create backup snapshots instead of restic. This is the value used by the [pv snapshot config](./input/pv-snap/hdr-app-configmap.txt). It is set to `true` by the [restic config](./input/restic/hdr-app-configmap.txt).
-backup.volumeSnapshotLocation               | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy, when the [pv-snap](./input/pv-snap/hdr-app-configmap.txt) is used.
-backup.schedule                             | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy. Defines the cron schedule for creating backups.
-backup.ttl                                  | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy. Defines the expiration time for the backups.
-backup.nsToBackup                           | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy. Defines the list of namespaces to backup. It backs up all resources from these namespaces, including the PV and PVC used by the applications running in these namespaces.
-backup.excludedResources                    | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy. Defines the list of resources to be excluded from backup. If empty, all resources from the specified namespaces are included.
-restore.nsToExcludeFromRestore                         | Used by the [oadp-hdr-app-restore](./resources/policies/oadp-hdr-app-restore.yaml) policy. Defines the list of namespaces to exclude when restoring the backup file. If empty, all namespaces from the backup will be restored. 
-restore.restorePVs                          | Used by the [oadp-hdr-app-restore](./resources/policies/oadp-hdr-app-restore.yaml) policy. Set to `true` if the bacup to restore had used `backup.snapshotVolumes:true`, should be set to `false` otherwise.
-restore.storage.config.name                 | Used by the [oadp-hdr-app-restore](./resources/policies/oadp-hdr-app-restore.yaml) policy. Restore storage config map resource name [class mapping](https://velero.io/docs/main/restore-reference/#changing-pvpvc-storage-classes), used when the source cluster has a different storage class than the restore cluster. You can optionally change the default value `storage-class-acm-app`. 
-restore.mappings                            | Used by the [oadp-hdr-app-restore](./resources/policies/oadp-hdr-app-restore.yaml) policy and in conjunction with the  `restore.storage.config.name`. Defines the data for the storage config map resource name. 
+dpaSpec                                   | Used by the [oadp-hdr-app-install](./resources/policies/oadp-hdr-app-install.yaml) policy and sets the `DataProtectionApplication` spec content. The config file `dpaSpec` defines a spec configuration for an aws storage. Update this with spec content for the type of storage you are using. 
+backupPrefix                              | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy and sets the name prefix for the backup resource. It defaults to `acm-app` so the backup on `managed-cls-name` will be in this format : `acm-app-<volumeSnapshotLocation>-managed-cls-name-20230309143503`. You can optionally change the prefix if you want to match the name of the application you are backing up, for example to `pacman-app` if you are backing up the pacman application; in this case the backup name becomes `pacman-app-<volumeSnapshotLocation>-managed-cls-name-20230309143503`.
+backupSnapshotVolumes                     | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy. Set to `true` if you want to create backup snapshots instead of restic. This is the value used by the [pv snapshot config](./input/pv-snap/hdr-app-configmap.txt). It is set to `false` by the [restic config](./input/restic/hdr-app-configmap.txt).
+backupDefaultVolumesToRestic               | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy. Set to `false` if you want to create backup snapshots instead of restic. This is the value used by the [pv snapshot config](./input/pv-snap/hdr-app-configmap.txt). It is set to `true` by the [restic config](./input/restic/hdr-app-configmap.txt).
+backupVolumeSnapshotLocation               | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy, when the [pv-snap](./input/pv-snap/hdr-app-configmap.txt) is used.
+backupSchedule                             | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy. Defines the cron schedule for creating backups.
+backupTTL                                  | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy. Defines the expiration time for the backups.
+backupNSToBackup                           | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy. Defines the list of namespaces to backup. It backs up all resources from these namespaces, including the PV and PVC used by the applications running in these namespaces.
+backupExcludedResources                    | Used by the [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policy. Defines the list of resources to be excluded from backup. If empty, all resources from the specified namespaces are included.
+restoreNSToExcludeFromRestore                         | Used by the [oadp-hdr-app-restore](./resources/policies/oadp-hdr-app-restore.yaml) policy. Defines the list of namespaces to exclude when restoring the backup file. If empty, all namespaces from the backup will be restored. 
+restoreRestorePVs                          | Used by the [oadp-hdr-app-restore](./resources/policies/oadp-hdr-app-restore.yaml) policy. Set to `true` if the bacup to restore had used `backupSnapshotVolumes:true`, should be set to `false` otherwise.
+restoreStorageConfigName                 | Used by the [oadp-hdr-app-restore](./resources/policies/oadp-hdr-app-restore.yaml) policy. Restore storage config map resource name [class mapping](https://velero.io/docs/main/restore-reference/#changing-pvpvc-storage-classes), used when the source cluster has a different storage class than the restore cluster. You can optionally change the default value `storage-class-acm-app`. 
+restore.mappings                            | Used by the [oadp-hdr-app-restore](./resources/policies/oadp-hdr-app-restore.yaml) policy and in conjunction with the  `restoreStorageConfigName`. Defines the data for the storage config map resource name. 
 
 
 ## Scenario
@@ -65,7 +65,7 @@ The Policies available here provide backup and restore support for stateful appl
 To backup an application:
 - On the hub, apply the [Backup PolicySet](./resources/policy-sets/acm-app-backup-policy-set.yaml) to install OADP and and create the backup. 
 - Note that the placements use the `acm-pv-dr` label to match the managed clusters. If you plan to have multiple configurations to backup your applications then make sure you update the placement to match the subset of clusters for each configuration types. If you just keep the default placement and define multiple backup configurations, the backup policies will be applied on all managed clusters with the `acm-pv-dr` label and endup in backup policies coliding on those clusters.
-- Apply the [hdr-app-configmap](./input/) and update the `backup.nsToBackup` property with the list of application namespaces to backup.
+- Apply the [hdr-app-configmap](./input/) and update the `backupNSToBackup` property with the list of application namespaces to backup.
 
 To restore an application backup:
 - On the hub, apply the [Restore PolicySet](./resources/policy-sets/acm-app-restore-policy-set.yaml) to install OADP and to restore the backup. 
@@ -115,7 +115,7 @@ For example, if you need to backup `pacman` application running on `managed-1`, 
 
 1. For the `pacman` app:
 
-- update the [hdr-app-configmap](./input/) ConfigMap and set `backup.nsToBackup: "[\"pacman-ns\"]"`
+- update the [hdr-app-configmap](./input/) ConfigMap and set `backupNSToBackup: "[\"pacman-ns\"]"`
 - update the [acm-app-backup-placement](./resources/policy-sets/acm-app-backup-policy-set.yaml) Placement to match just the `managed-1`, `managed-2` clusters.
 - on the hub, create the `pacman-policy-ns` namespace and apply the [backup PolicySet](./resources/policy-sets/acm-app-backup-policy-set.yaml) and updated `hdr-app-configmap` ConfigMap.
 
@@ -125,7 +125,7 @@ For example, if you need to backup `pacman` application running on `managed-1`, 
 
 1. For the `mysql` app:
 
-- update the [hdr-app-configmap](./input/) ConfigMap and set `backup.nsToBackup: "[\"mysql-ns\"]"`
+- update the [hdr-app-configmap](./input/) ConfigMap and set `backupNSToBackup: "[\"mysql-ns\"]"`
 - update the [acm-app-backup-placement](./resources/policy-sets/acm-app-backup-policy-set.yaml) Placement to match just the `managed-3` cluster.
 - on the hub, create the `mysql-policy-ns` namespace and apply the [backup PolicySet](./resources/policy-sets/acm-app-backup-policy-set.yaml) and updated `hdr-app-configmap` ConfigMap.
 
@@ -168,7 +168,7 @@ Use the pacman app to test the policies. (You can use 2 separate hubs for the sa
 
 Backup step:<br>
 
-5. On the hub, set the `backup.nsToBackup: "[\"pacman-ns\"]" ` on the `hdr-app-configmap` resource. This will backup all resources from the `pacman-ns`
+5. On the hub, set the `backupNSToBackup: "[\"pacman-ns\"]" ` on the `hdr-app-configmap` resource. This will backup all resources from the `pacman-ns`
 6. Place the install and backup policies on c1 : create this label on managed cluster c1 `acm-pv-dr=backup` and update the [acm-app-backup-placement](./resources/policy-sets/acm-app-backup-policy-set.yaml) placement to match cluster c1.
 
 

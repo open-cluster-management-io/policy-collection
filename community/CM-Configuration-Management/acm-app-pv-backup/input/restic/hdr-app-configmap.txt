@@ -30,7 +30,7 @@ data:
 # aws_access_key_id=<id>
 # aws_secret_access_key=<key>
 #
-  dpa.aws.backup.cloud.credentials: W2RlZmF1bHRdCmF3c19hY2Nlc3Nfa2V5X2lkPTxpZD4KYXdzX3NlY3JldF9hY2Nlc3Nfa2V5PTxrZXk+
+  dpaAwsBackupCloudCredentials: W2RlZmF1bHRdCmF3c19hY2Nlc3Nfa2V5X2lkPTxpZD4KYXdzX3NlY3JldF9hY2Nlc3Nfa2V5PTxrZXk+
 
 
 ## DPA resource configuration
@@ -39,13 +39,13 @@ data:
   # the BackupStorageLocation resource doesn't have the same name
   # on both backup and restore cluster 
   dpaName: dpa
-  dpa.backup.cloud.credentials.name: cloud-credentials
+  dpaBackupCloudCredentialsName: cloud-credentials
 #######
 # DPA spec
 # below is the spec format for an aws storage
 # update this with the DPA format for the type of storage you are using
 # values specified with brackets <> should be updated before appliying this configmap
-  dpa.spec: "{
+  dpaSpec: "{
   \"backupLocations\": [
     {
       \"velero\": {
@@ -55,7 +55,7 @@ data:
         },
         \"credential\": {
           \"key\": \"cloud\",
-          \"name\": \"<dpa.backup.cloud.credentials.name>\"
+          \"name\": \"<dpaBackupCloudCredentialsName>\"
         },
         \"default\": true,
         \"objectStorage\": {
@@ -97,22 +97,22 @@ data:
 ### Configuration for the oadp-hdr-app-backup policy
 ################################################
   # the name prefix for the resource to backup
-  backup.prefix: acm-restic
+  backupPrefix: acm-restic
 
-  backup.snapshotVolumes: "false"
-  backup.defaultVolumesToRestic: "true"
-  backup.volumeSnapshotLocation: ''
+  backupSnapshotVolumes: "false"
+  backupDefaultVolumesToRestic: "true"
+  backupVolumeSnapshotLocation: ''
 
-  backup.schedule: 0 */1 * * *
-  backup.ttl: 240h0m0s
+  backupSchedule: 0 */1 * * *
+  backupTTL: 240h0m0s
 
   # list here all applications namespaces you want to backup
-  # for example backup.nsToBackup: "[\"pacman-ns\", \"helloworld-pv-ns\"]"
-  backup.nsToBackup: "[\"app1-ns\", \"app2-ns\", \"app3-ns\"]" 
+  # for example backupNSToBackup: "[\"pacman-ns\", \"helloworld-pv-ns\"]"
+  backupNSToBackup: "[\"app1-ns\", \"app2-ns\", \"app3-ns\"]" 
 
   # resources to be excluded from backup; if empty, all resources from the specified namespace are included
-  # for example backup.excludedResources: "[\"secrets\", \"configmaps\"]"
-  backup.excludedResources: "[]"
+  # for example backupExcludedResources: "[\"secrets\", \"configmaps\"]"
+  backupExcludedResources: "[]"
 ###### End Configuration for the oadp-hdr-app-backup policy ###
 ###########################################################
 
@@ -120,12 +120,12 @@ data:
 ####################################
   # list here all apps ns you do not want to restore from the specified backup
   # if empty, all namespaces in this backup are restored
-  # for example restore.nsToExcludeFromRestore: "[\"box-ns\"]"
-  restore.nsToExcludeFromRestore: "[]"
+  # for example restoreNSToExcludeFromRestore: "[\"box-ns\"]"
+  restoreNSToExcludeFromRestore: "[]"
 
 ## restore storage class mapping ##
-  restore.storage.config.name: storage-class-acm-app
-  restore.storage.config.mappings: "{
+  restoreStorageConfigName: storage-class-acm-app
+  restoreStorageConfigMappings: "{
           \"managed-csi\": \"thin\",
     }"
 ###### End Configuration for the oadp-hdr-app-restore policy ###
