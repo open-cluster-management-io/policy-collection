@@ -1,7 +1,7 @@
 #
 # This policy creates a velero schedule to all managed clusters with a label "acm-pv-dr=backup".
 # The schedule is used to backup applications resources and PVs.
-# The schedule uses the `backup.nsToBackup` hdr-app-configmap property to specify the namespaces for the applications to backup. 
+# The schedule uses the `backupNSToBackup` hdr-app-configmap property to specify the namespaces for the applications to backup. 
 # 
 # Create this policy on the hub managing clusters where you want to create stateful applications backups. 
 # This policy depends on the oadp-hdr-app-install policy so the install policy must be successfully placed before the backup policy executes.
@@ -36,21 +36,21 @@ spec:
                 apiVersion: velero.io/v1
                 kind: Schedule
                 metadata:
-                  name: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{ fromClusterClaim "name" }}'
-                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                  name: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupPrefix hub}}-{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupVolumeSnapshotLocation hub}}-{{ fromClusterClaim "name" }}'
+                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
                   labels:
                     cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
                     cluster-name: '{{ fromClusterClaim "name" }}'
                 spec:
-                  schedule: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.schedule" hub}}' 
+                  schedule: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupSchedule hub}}'
                   template:
-                    excludedResources: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.excludedResources" | toLiteral hub}}'
+                    excludedResources: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupExcludedResources | toLiteral hub}}'
                     volumeSnapshotLocations:
-                      - '{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}' 
-                    snapshotVolumes: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.snapshotVolumes" | toBool hub}}'
-                    defaultVolumesToRestic: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.defaultVolumesToRestic" | toBool hub}}'
-                    includedNamespaces: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.nsToBackup" | toLiteral hub}}' 
-                    ttl: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.ttl" hub}}'  
+                      - '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupVolumeSnapshotLocation hub}}' 
+                    snapshotVolumes: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupSnapshotVolumes | toBool hub}}'
+                    defaultVolumesToRestic: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupDefaultVolumesToRestic | toBool hub}}'
+                    includedNamespaces: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNSToBackup | toLiteral hub}}' 
+                    ttl: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupTTL hub}}'  
           pruneObjectBehavior: DeleteIfCreated             
           remediationAction: enforce
           severity: high
@@ -66,7 +66,7 @@ spec:
                 apiVersion: velero.io/v1
                 kind: Schedule
                 metadata:
-                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
                   labels:
                     cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
                     cluster-name: '{{ fromClusterClaim "name" }}'              
@@ -86,14 +86,14 @@ spec:
                 apiVersion: velero.io/v1
                 kind: Backup
                 metadata:
-                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
                   labels:
-                    velero.io/schedule-name: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{ fromClusterClaim "name" }}'
+                    velero.io/schedule-name: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupPrefix hub}}-{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupVolumeSnapshotLocation hub}}-{{ fromClusterClaim "name" }}'
                     cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
                     cluster-name: '{{ fromClusterClaim "name" }}'              
                 status:
                   phase: Completed
-                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}" "{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}' 
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}" "{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupPrefix hub}}-{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupVolumeSnapshotLocation hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}' 
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -108,14 +108,14 @@ spec:
                 apiVersion: velero.io/v1
                 kind: Backup
                 metadata:
-                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
                   labels:
-                    velero.io/schedule-name: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{ fromClusterClaim "name" }}'
+                    velero.io/schedule-name: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupPrefix hub}}-{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupVolumeSnapshotLocation hub}}-{{ fromClusterClaim "name" }}'
                     cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
                     cluster-name: '{{ fromClusterClaim "name" }}'              
                 status:
                   phase: Error
-                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}" "{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}" "{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupPrefix hub}}-{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupVolumeSnapshotLocation hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -130,14 +130,14 @@ spec:
                 apiVersion: velero.io/v1
                 kind: Backup
                 metadata:
-                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
                   labels:
-                    velero.io/schedule-name: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{ fromClusterClaim "name" }}'
+                    velero.io/schedule-name: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupPrefix hub}}-{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupVolumeSnapshotLocation hub}}-{{ fromClusterClaim "name" }}'
                     cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
                     cluster-name: '{{ fromClusterClaim "name" }}'              
                 status:
                   phase: FailedValidation
-                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}" "{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}" "{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupPrefix hub}}-{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupVolumeSnapshotLocation hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -152,14 +152,14 @@ spec:
                 apiVersion: velero.io/v1
                 kind: Backup
                 metadata:
-                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
                   labels:
-                    velero.io/schedule-name: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{ fromClusterClaim "name" }}'
+                    velero.io/schedule-name: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupPrefix hub}}-{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupVolumeSnapshotLocation hub}}-{{ fromClusterClaim "name" }}'
                     cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
                     cluster-name: '{{ fromClusterClaim "name" }}'              
                 status:
                   phase: PartiallyFailed
-                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}" "{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}" "{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupPrefix hub}}-{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupVolumeSnapshotLocation hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -174,13 +174,13 @@ spec:
                 apiVersion: velero.io/v1
                 kind: Backup
                 metadata:
-                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
+                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
                   labels:
-                    velero.io/schedule-name: '{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{ fromClusterClaim "name" }}'
+                    velero.io/schedule-name: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupPrefix hub}}-{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupVolumeSnapshotLocation hub}}-{{ fromClusterClaim "name" }}'
                     cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
                     cluster-name: '{{ fromClusterClaim "name" }}'              
                 status:
                   phase: ''
-                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}" "{{hub fromConfigMap "" "hdr-app-configmap" "backup.prefix" hub}}-{{hub fromConfigMap "" "hdr-app-configmap" "backup.volumeSnapshotLocation" hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}" "{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupPrefix hub}}-{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupVolumeSnapshotLocation hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: low
