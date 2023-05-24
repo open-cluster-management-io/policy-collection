@@ -36,12 +36,14 @@ spec:
           name: create-ns-oadp-operators
         spec:
           object-templates-raw: |
+            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
             - complianceType: musthave
               objectDefinition:
                 apiVersion: v1
                 kind: Namespace
                 metadata:
-                  name: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
+                  name: '{{hub $configMap.data.backupNS hub}}'
+            {{hub end hub}}
           remediationAction: enforce
           pruneObjectBehavior: DeleteIfCreated
           severity: high
@@ -52,16 +54,18 @@ spec:
           name: create-oadp-operator-group
         spec:
           object-templates-raw: |
+            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
             - complianceType: musthave
               objectDefinition:
                 apiVersion: operators.coreos.com/v1
                 kind: OperatorGroup
                 metadata:
                   name: redhat-oadp-operator-group
-                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
+                  namespace: '{{hub $configMap.data.backupNS hub}}'
                 spec:
                   targetNamespaces:
-                    - '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
+                    - '{{hub $configMap.data.backupNS hub}}'
+            {{hub end hub}}
           remediationAction: enforce
           pruneObjectBehavior: DeleteIfCreated
           severity: high
@@ -72,19 +76,21 @@ spec:
           name: create-oadp-operator-subscription
         spec:
           object-templates-raw: |
+            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
             - complianceType: musthave
               objectDefinition:
                 apiVersion: operators.coreos.com/v1alpha1
                 kind: Subscription
                 metadata:
                   name: redhat-oadp-operator-subscription
-                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
+                  namespace: '{{hub $configMap.data.backupNS hub}}'
                 spec:
-                  name: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.subscriptionName hub}}'
-                  channel: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.channel hub}}'
+                  name: '{{hub $configMap.data.subscriptionName hub}}'
+                  channel: '{{hub $configMap.data.channel hub}}'
                   installPlanApproval: Automatic
                   source: redhat-operators
                   sourceNamespace: openshift-marketplace
+            {{hub end hub}}
           remediationAction: enforce
           pruneObjectBehavior: DeleteIfCreated
           severity: high
@@ -94,19 +100,21 @@ spec:
         metadata:
           name: create-backup-storage-credentials-secret
         spec:
-          object-templates:
-          - complianceType: musthave
-            objectDefinition:
-              apiVersion: v1
-              data:
-                cloud: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.dpaAwsBackupCloudCredentials | protect hub}}'
-              kind: Secret
-              metadata:
-                name: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.dpaBackupCloudCredentialsName hub}}'
-                namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
-              type: Opaque
+          object-templates-raw: |
+            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                data:
+                  cloud: '{{hub $configMap.data.dpaAwsBackupCloudCredentials | protect hub}}'
+                kind: Secret
+                metadata:
+                  name: '{{hub $configMap.data.dpaBackupCloudCredentialsName hub}}'
+                  namespace: '{{hub $configMap.data.backupNS hub}}'
+                type: Opaque
+            {{hub end hub}}
           remediationAction: enforce
-          pruneObjectBehavior: DeleteIfCreated 
+          pruneObjectBehavior: DeleteIfCreated
           severity: high
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
@@ -115,14 +123,16 @@ spec:
           name: create-oadp-dpa-resource
         spec:
           object-templates-raw: |
+            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
             - complianceType: musthave
               objectDefinition:
                 apiVersion: oadp.openshift.io/v1alpha1
                 kind: DataProtectionApplication
                 metadata:
-                  name: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.dpaName hub}}'
-                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
-                spec: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.dpaSpec | toLiteral hub}}'
+                  name: '{{hub $configMap.data.dpaName hub}}'
+                  namespace: '{{hub $configMap.data.backupNS hub}}'
+                spec: '{{hub $configMap.data.dpaSpec | toLiteral hub}}'
+            {{hub end hub}}
           pruneObjectBehavior: DeleteIfCreated                
           remediationAction: enforce
           severity: high
@@ -133,6 +143,7 @@ spec:
           name: check-pod-running-app-oadp
         spec:
           object-templates-raw: |
+            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
             - complianceType: musthave
               objectDefinition:
                 apiVersion: v1
@@ -140,9 +151,10 @@ spec:
                 metadata:
                   annotations:
                     repository: https://github.com/openshift/oadp-operator
-                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
+                  namespace: '{{hub $configMap.data.backupNS hub}}'
                 status:
                   phase: Running
+            {{hub end hub}}
           remediationAction: inform
           severity: high 
     - objectDefinition:
@@ -152,6 +164,7 @@ spec:
           name: check-pod-running-app-velero
         spec:
           object-templates-raw: |
+            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
             - complianceType: musthave
               objectDefinition:
                 apiVersion: v1
@@ -159,9 +172,10 @@ spec:
                 metadata:
                   labels:
                     app.kubernetes.io/name: velero
-                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
+                  namespace: '{{hub $configMap.data.backupNS hub}}'
                 status:
                   phase: Running
+            {{hub end hub}}
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -171,17 +185,19 @@ spec:
           name: check-oadp-dpa-complete
         spec:
           object-templates-raw: |
+            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
             - complianceType: musthave
               objectDefinition:
                 apiVersion: oadp.openshift.io/v1alpha1
                 kind: DataProtectionApplication
                 metadata:
-                  name: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.dpaName hub}}'
-                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
+                  name: '{{hub $configMap.data.dpaName hub}}'
+                  namespace: '{{hub $configMap.data.backupNS hub}}'
                 status:
                   conditions:
                     - reason: Complete
                       type: Reconciled
+            {{hub end hub}}
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -190,15 +206,17 @@ spec:
         metadata:
           name: check-backup-storage-location-available
         spec:
-          object-templates:
+          object-templates-raw: |
+            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
             - complianceType: musthave
               objectDefinition:
                 apiVersion: velero.io/v1
                 kind: BackupStorageLocation
                 metadata:
-                  name: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.dpaName hub}}-1'
-                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
+                  name: '{{hub $configMap.data.dpaName hub}}-1'
+                  namespace: '{{hub $configMap.data.backupNS hub}}'
                 status:
-                  phase: Available               
+                  phase: Available
+            {{hub end hub}}
           remediationAction: inform
           severity: high

@@ -30,18 +30,20 @@ spec:
         metadata:
           name: create-storage-class-map
         spec:
-          object-templates:
+          object-templates-raw: |
+            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
             - complianceType: musthave
               objectDefinition:
                 apiVersion: v1
                 kind: ConfigMap
                 metadata:
-                  name: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.restoreStorageConfigName hub}}'
-                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
+                  name: '{{hub $configMap.data.restoreStorageConfigName hub}}'
+                  namespace: '{{hub $configMap.data.backupNS hub}}'
                   labels:
                     velero.io/plugin-config: ""
                     velero.io/change-storage-class: RestoreItemAction
-                data: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.restoreStorageConfigMappings | toLiteral hub}}'
+                data: '{{hub $configMap.data.restoreStorageConfigMappings | toLiteral hub}}'
+            {{hub end hub}}
           remediationAction: enforce
           severity: high
     - objectDefinition:
@@ -50,22 +52,24 @@ spec:
         metadata:
           name: create-restore-resource
         spec:
-          object-templates:
+          object-templates-raw: |
+            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
             - complianceType: musthave
               objectDefinition:
                 apiVersion: velero.io/v1
                 kind: Restore
                 metadata:
                   name: 'restore-{{ fromClusterClaim "acm-app-restore" }}'
-                  namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
+                  namespace: '{{hub $configMap.data.backupNS hub}}'
                   labels:
                     cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
                     cluster-name: '{{ fromClusterClaim "name" }}'
                 spec:
                   existingResourcePolicy: update
                   backupName: '{{ fromClusterClaim "acm-app-restore" }}'
-                  excludedNamespaces: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.restoreNSToExcludeFromRestore | toLiteral hub}}'
-                  restorePVs: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.restoreRestorePVs | toBool hub}}'            
+                  excludedNamespaces: '{{hub $configMap.data.restoreNSToExcludeFromRestore | toLiteral hub}}'
+                  restorePVs: '{{hub $configMap.data.restoreRestorePVs | toBool hub}}'
+            {{hub end hub}}
           remediationAction: enforce
           severity: high
     - objectDefinition:
@@ -74,7 +78,7 @@ spec:
         metadata:
           name: check-restore-failed
         spec:
-          object-templates:
+          object-templates-raw: |
             - complianceType: mustnothave
               objectDefinition:
                 apiVersion: velero.io/v1
@@ -82,9 +86,9 @@ spec:
                 metadata:
                   namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
                 spec:
-                  backupName: '{{ fromClusterClaim "acm-app-restore" }}'  
+                  backupName: '{{ fromClusterClaim "acm-app-restore" }}'
                 status:
-                  phase: Failed                                                            
+                  phase: Failed
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -93,7 +97,7 @@ spec:
         metadata:
           name: check-restore-partially-failed
         spec:
-          object-templates:
+          object-templates-raw: |
             - complianceType: mustnothave
               objectDefinition:
                 apiVersion: velero.io/v1
@@ -101,9 +105,9 @@ spec:
                 metadata:
                   namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
                 spec:
-                  backupName: '{{ fromClusterClaim "acm-app-restore" }}'  
+                  backupName: '{{ fromClusterClaim "acm-app-restore" }}'
                 status:
-                  phase: PartiallyFailed                                                            
+                  phase: PartiallyFailed
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -112,7 +116,7 @@ spec:
         metadata:
           name: check-restore-failed-validation
         spec:
-          object-templates:
+          object-templates-raw: |
             - complianceType: mustnothave
               objectDefinition:
                 apiVersion: velero.io/v1
@@ -120,9 +124,9 @@ spec:
                 metadata:
                   namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
                 spec:
-                  backupName: '{{ fromClusterClaim "acm-app-restore" }}'  
+                  backupName: '{{ fromClusterClaim "acm-app-restore" }}'
                 status:
-                  phase: FailedValidation                                                            
+                  phase: FailedValidation
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -131,7 +135,7 @@ spec:
         metadata:
           name: check-restore-in-progress
         spec:
-          object-templates:
+          object-templates-raw: |
             - complianceType: mustnothave
               objectDefinition:
                 apiVersion: velero.io/v1
@@ -139,9 +143,9 @@ spec:
                 metadata:
                   namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
                 spec:
-                  backupName: '{{ fromClusterClaim "acm-app-restore" }}'  
+                  backupName: '{{ fromClusterClaim "acm-app-restore" }}'
                 status:
-                  phase: InProgress                                                            
+                  phase: InProgress
           remediationAction: inform
           severity: low
     - objectDefinition:
@@ -150,7 +154,7 @@ spec:
         metadata:
           name: check-restore-no-status
         spec:
-          object-templates:
+          object-templates-raw: |
             - complianceType: mustnothave
               objectDefinition:
                 apiVersion: velero.io/v1
@@ -158,9 +162,9 @@ spec:
                 metadata:
                   namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
                 spec:
-                  backupName: '{{ fromClusterClaim "acm-app-restore" }}'  
+                  backupName: '{{ fromClusterClaim "acm-app-restore" }}'
                 status:
-                  phase: ''                                                            
+                  phase: ''
           remediationAction: inform
           severity: low
     - objectDefinition:
@@ -169,7 +173,7 @@ spec:
         metadata:
           name: check-restore-completed
         spec:
-          object-templates:
+          object-templates-raw: |
             - complianceType: musthave
               objectDefinition:
                 apiVersion: velero.io/v1
@@ -177,8 +181,8 @@ spec:
                 metadata:
                   namespace: '{{hub (lookup "v1" "ConfigMap" "" "hdr-app-configmap").data.backupNS hub}}'
                 spec:
-                  backupName: '{{ fromClusterClaim "acm-app-restore" }}'  
+                  backupName: '{{ fromClusterClaim "acm-app-restore" }}'
                 status:
-                  phase: Completed                                                            
+                  phase: Completed
           remediationAction: inform
           severity: low
