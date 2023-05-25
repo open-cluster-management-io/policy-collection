@@ -22,6 +22,32 @@ PolicySet   | Description
 [acm-app-backup](./resources/policy-sets/acm-app-backup-policy-set.yaml)   | This PolicySet is used to place the [oadp-hdr-app-install](./resources/policies/oadp-hdr-app-install.yaml) and [oadp-hdr-app-backup](./resources/policies/oadp-hdr-app-backup.yaml) policies on managed clusters using the [acm-app-backup-placement](./resources/policy-sets/acm-app-backup-policy-set.yaml) rule, which is all managed clusters with a label `"acm-pv-dr=backup"`. Update the placement if you want to customize the target cluster list.
 [acm-app-restore](./resources/policy-sets/acm-app-restore-policy-set.yaml)                            | This PolicySet is used to place the [oadp-hdr-app-install](./resources/policies/oadp-hdr-app-install.yaml) and [oadp-hdr-app-restore](./resources/policies/oadp-hdr-app-restore.yaml) policies on managed clusters using the [acm-app-restore-placement](./resources/policy-sets/acm-app-restore-policy-set.yaml) rule, which is all managed clusters with a label `acm-app-restore=<backup-name>` label. The `<backup-name>` from the label is the name of the backup that will be restored on this cluster. Update the placement if you want to customize the target cluster list.
 
+<b>Note</b>
+
+1. The `clusterSets` list from the `acm-app-backup-placement` and `acm-app-restore-placement` Placement spec is used to dynamically select a set of managedClusters in one or multiple ManagedClusterSet. You can update the Placement clusterSets with the list of ManagedClusterSets to be used in your hub configuration. <br> <u>You need to create a ManagedClusterSetBinding resource</u> for each of the ManagedClusterSet used by your `acm-app-backup-placement` and `acm-app-restore-placement` Placement. For example, if using the `default` clusterSets, which is set by default, then you must create this resource on the hub, in the same namespace with the Placement:
+
+```yaml
+apiVersion: cluster.open-cluster-management.io/v1beta2
+kind: ManagedClusterSetBinding
+metadata:
+  name: default
+spec:
+  clusterSet: default
+```
+
+2. Optionally, update the `requiredClusterSelector` from the `acm-app-backup-placement` and `acm-app-restore-placement` Placement predicates to match only the clusters where you want to backup or to restore a backup. For example, to select the clusters with label `environment=prod` use this matchExpressions:
+
+```yaml
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - key: environment
+              operator: In
+              values:
+                - prod
+```
+
 
 ## List of Policies 
 
@@ -86,6 +112,17 @@ resources:
 - policies/oadp-hdr-app-restore.yaml
 ```
 On the hub run `oc apply -k ./resources` to apply the backup and restore policies and placements. 
+
+<br> <u>You need to create a ManagedClusterSetBinding resource</u> for each of the ManagedClusterSet used by your `acm-app-backup-placement` and `acm-app-restore-placement` Placement. For example, if using the `default` clusterSets, which is set by default, then you must create this resource on the hub, in the same namespace with the Placement:
+
+```yaml
+apiVersion: cluster.open-cluster-management.io/v1beta2
+kind: ManagedClusterSetBinding
+metadata:
+  name: default
+spec:
+  clusterSet: default
+```
 
 The policies use the [configmaps](./input/) to configure the backup setup so you have to create a ConfigMap resource named `hdr-app-configmap` in the same namespace where the policies were applied on the hub.
 

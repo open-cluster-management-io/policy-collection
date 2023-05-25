@@ -98,8 +98,7 @@ spec:
                     cluster-name: '{{ fromClusterClaim "name" }}'
                 status:
                   phase: Completed
-                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
-            {{hub end hub}}
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -122,8 +121,7 @@ spec:
                     cluster-name: '{{ fromClusterClaim "name" }}'
                 status:
                   phase: Error
-                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
-            {{hub end hub}}
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -146,8 +144,7 @@ spec:
                     cluster-name: '{{ fromClusterClaim "name" }}'
                 status:
                   phase: FailedValidation
-                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
-            {{hub end hub}}
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -170,8 +167,7 @@ spec:
                     cluster-name: '{{ fromClusterClaim "name" }}'
                 status:
                   phase: PartiallyFailed
-                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
-            {{hub end hub}}
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
     - objectDefinition:
@@ -194,7 +190,6 @@ spec:
                     cluster-name: '{{ fromClusterClaim "name" }}'
                 status:
                   phase: ''
-                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
-            {{hub end hub}}
+                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: low
