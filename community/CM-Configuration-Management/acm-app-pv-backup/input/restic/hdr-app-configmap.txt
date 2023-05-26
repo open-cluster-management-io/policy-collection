@@ -118,6 +118,8 @@ data:
 
 ###### Configuration for the oadp-hdr-app-restore policy ###
 ####################################
+  restoreRestorePVs: "false"
+
   # list here all apps ns you do not want to restore from the specified backup
   # if empty, all namespaces in this backup are restored
   # for example restoreNSToExcludeFromRestore: "[\"box-ns\"]"
