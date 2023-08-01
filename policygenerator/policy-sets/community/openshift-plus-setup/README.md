@@ -41,3 +41,7 @@ After applying the PolicySet, wait a few minutes for all nodes to be up. Check t
 ```bash
 oc get nodes -l node-role.kubernetes.io/worker -l '!node-role.kubernetes.io/master'
 ```
+
+## Install OpenShift Platform Plus
+
+Now that the setup for OpenShift Plus is completed, install the stable policy for [OpenShift Plus](../../stable/openshift-plus).
