@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: telescope
+spec: {}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: telescope-channel
+spec: {}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: telescopedb-channel
+spec: {}

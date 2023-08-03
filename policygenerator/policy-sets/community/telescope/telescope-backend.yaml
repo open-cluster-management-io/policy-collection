@@ -1,0 +1,58 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: telescope-backend
+  namespace: telescope
+  annotations:
+    apps.open-cluster-management.io/deployables: ''
+    apps.open-cluster-management.io/subscriptions: telescope/telescope-backend-subscription,telescope/telescope-backend-subscription-local
+spec:
+  componentKinds:
+    - group: apps.open-cluster-management.io
+      kind: Subscription
+  descriptor: {}
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - telescope-backend
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  name: telescope-backend-subscription
+  namespace: telescope
+  labels:
+    app: telescope-backend
+    app.kubernetes.io/part-of: telescope-backend
+    apps.open-cluster-management.io/reconcile-rate: medium
+spec:
+  name: telescope-backend
+  channel: telescope-channel/telescope
+  packageOverrides:
+    - packageAlias: telescope-backend
+      packageName: telescope-backend
+      packageOverrides:
+        - path: spec
+          value:
+            image: quay.io/gparvin/telescope-backend:latest
+  placement:
+    placementRef:
+      name: telescope-placement
+      kind: PlacementRule
+posthooks: {}
+prehooks: {}
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: telescope-placement
+  namespace: telescope
+  labels:
+    app: telescope-backend
+spec:
+  clusterSelector:
+    matchLabels:
+      local-cluster: 'true'
+

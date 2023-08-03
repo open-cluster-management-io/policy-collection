@@ -1,0 +1,41 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-rh-telescope
+placementBindingDefaults:
+  name: binding-policy-rh-telescope
+policyDefaults:
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  disabled: false
+  namespace: open-cluster-management-global-set
+  policySets:
+    - rh-telescope
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - NIST SP 800-53
+policies:
+- name: policy-telescope-prereqs
+  manifests:
+    - path: namespace.yaml
+    - path: managedclustersetbinding.yaml
+    - path: channels.yaml
+    - path: storage.yaml
+    - path: rolebinding.yaml
+- name: policy-telescope-db
+  manifests:
+    - path: postgresql.yaml
+- name: policy-telescope-ui
+  manifests:
+    - path: dashboard-react-app.yaml
+- name: policy-telescope-backend
+  manifests:
+    - path: telescope-backend.yaml
+policySets:
+  - name: rh-telescope
+    description: Real-time Security Governance, Compliance, and Risk Automation for Enhanced DevSecOps
+    placement:
+      placementPath: placement.yaml
