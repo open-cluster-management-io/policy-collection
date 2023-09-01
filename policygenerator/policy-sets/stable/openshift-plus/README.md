@@ -18,7 +18,7 @@ Prior to applying the `PolicySet`, perform these steps:
 2. Install the Policy generator Kustomize plugin by following the [installation instructions](https://github.com/stolostron/policy-generator-plugin#installation). It is recommended to use Kustomize v4.5+.
 3. Policies are installed to the `policies` namespace.  Make sure the placement bindings match this namespace for the hub and other managed clusters.
    Example yaml to apply a ManagedClusterSetBinding for the policies namespace.
-    ```apiVersion: cluster.open-cluster-management.io/v1beta1
+    ```apiVersion: cluster.open-cluster-management.io/v1beta2
     kind: ManagedClusterSetBinding
     metadata:
         name: default
