@@ -10,7 +10,7 @@ This `PolicySet` needs to be deployed only to the Advanced Cluster Management hu
 
 **Note**: The `PolicySet` uses cluster `Placement` and not the `PlacementRule` placement mechanism, so the namespace of
 the `Placement` must also be bound to a `ManagedClusterSet` using a `ManagedClusterSetBinding`. See the
-[Placement](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html-single/multicluster_engine/index#placement-overview)
+[Placement](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.8/html/clusters/cluster_mce_overview#placement-overview)
 and
-[ManagedClusterSetBinding](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html-single/multicluster_engine/index#creating-a-managedclustersetbinding)
+[ManagedClusterSetBinding](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.8/html/clusters/cluster_mce_overview#creating-managedclustersetbinding)
 documentation.
