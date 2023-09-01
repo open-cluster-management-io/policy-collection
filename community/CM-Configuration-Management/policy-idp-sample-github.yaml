@@ -33,7 +33,7 @@ spec:
               name: authrealm-sample-github-ns
         - complianceType: musthave
           objectDefinition:
-            apiVersion: cluster.open-cluster-management.io/v1beta1
+            apiVersion: cluster.open-cluster-management.io/v1beta2
             kind: ManagedClusterSet
             metadata:
               name: authrealm-sample-github-clusterset
@@ -53,7 +53,7 @@ spec:
                       authdeployment: sample-github
         - complianceType: musthave
           objectDefinition:
-            apiVersion: cluster.open-cluster-management.io/v1beta1
+            apiVersion: cluster.open-cluster-management.io/v1beta2
             kind: ManagedClusterSetBinding
             metadata:
               name: authrealm-sample-github-clusterset

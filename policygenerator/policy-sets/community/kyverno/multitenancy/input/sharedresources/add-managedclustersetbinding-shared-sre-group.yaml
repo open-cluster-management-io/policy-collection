@@ -35,7 +35,7 @@ spec:
         operator: AnyNotIn
         value: shared*              
     generate:
-      apiVersion: cluster.open-cluster-management.io/v1beta1
+      apiVersion: cluster.open-cluster-management.io/v1beta2
       kind: ManagedClusterSetBinding
       name: blueteam
       namespace: "{{request.object.metadata.name}}"
@@ -65,7 +65,7 @@ spec:
         operator: AnyNotIn
         value: shared*           
     generate:
-      apiVersion: cluster.open-cluster-management.io/v1beta1
+      apiVersion: cluster.open-cluster-management.io/v1beta2
       kind: ManagedClusterSetBinding
       name: redteam
       namespace: "{{request.object.metadata.name}}"
