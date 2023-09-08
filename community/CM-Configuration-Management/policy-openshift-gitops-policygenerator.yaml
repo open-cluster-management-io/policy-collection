@@ -38,7 +38,7 @@ spec:
                         /policy-generator/PolicyGenerator
                       command:
                       - /bin/bash
-                      image: registry.redhat.io/rhacm2/multicluster-operators-subscription-rhel8:v2.7
+                      image: registry.redhat.io/rhacm2/multicluster-operators-subscription-rhel8:v2.8
                       name: policy-generator-install
                       volumeMounts:
                       - mountPath: /policy-generator
@@ -69,6 +69,7 @@ spec:
                       - policy.open-cluster-management.io
                     resources:
                       - policies
+                      - policysets
                       - placementbindings
                   - verbs:
                       - get
