@@ -69,11 +69,11 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 2Ti
-        storageClassName: gp3-csi
+            storage: 100Gi
+        storageClassName: gp2-csi
         volumeMode: Block
       status: {}
-    name: ocs-deviceset-gp3-csi
+    name: ocs-deviceset-gp2-csi
     placement: {}
     portable: true
     preparePlacement: {}
