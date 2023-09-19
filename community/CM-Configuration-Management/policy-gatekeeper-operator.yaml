@@ -43,9 +43,8 @@ spec:
                 namespace: openshift-gatekeeper-operator
               spec:
                 displayName: Gatekeeper Operator Upstream
-                publisher: github.com/font/gatekeeper-operator
                 sourceType: grpc
-                image: 'quay.io/gatekeeper/gatekeeper-operator-bundle-index:v0.2.1'
+                image: 'quay.io/gatekeeper/gatekeeper-operator-bundle-index:v3.11.1'
                 updateStrategy:
                   registryPoll:
                     interval: 45m
@@ -82,7 +81,7 @@ spec:
                 name: gatekeeper-operator-sub
                 namespace: openshift-gatekeeper-operator
               spec:
-                channel: stable
+                channel: "3.11"
                 name: gatekeeper-operator
                 source: gatekeeper-operator
                 sourceNamespace: openshift-gatekeeper-operator
@@ -112,28 +111,3 @@ spec:
                   emitAdmissionEvents: Enabled
                   logLevel: INFO
                   replicas: 2
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-gatekeeper-operator
-placementRef:
-  name: placement-policy-gatekeeper-operator
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-- name: policy-gatekeeper-operator
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-gatekeeper-operator
-spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}
