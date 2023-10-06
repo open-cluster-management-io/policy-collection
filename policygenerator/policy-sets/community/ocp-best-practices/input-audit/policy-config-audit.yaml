@@ -9,4 +9,4 @@ spec:
       profile: WriteRequestBodies
     - group: system:authenticated
       profile: AllRequestBodies
-  profile: Default  
+    profile: Default  
