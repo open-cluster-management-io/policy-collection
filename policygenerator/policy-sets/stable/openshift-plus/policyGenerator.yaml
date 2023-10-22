@@ -12,7 +12,6 @@ policyDefaults:
   namespace: policies
   policySets:
     - openshift-plus-hub
-  remediationAction: enforce
   severity: medium
   standards:
     - NIST SP 800-53
@@ -87,6 +86,7 @@ policies:
     - name: policy-odf
   manifests:
     - path: input-acm-observability/
+  remediationAction: enforce  
 # Observability Policy - end
 # ODF Policies - start
 - name: policy-odf
@@ -96,6 +96,7 @@ policies:
     - SI-7 Software Firmware and Information Integrity
   manifests:
     - path: input-odf/policy-odf.yaml
+  remediationAction: enforce  
 - name: policy-odf-status
   categories:
     - SI System and Information Integrity
@@ -167,6 +168,7 @@ policies:
     - CA-7 Continuous Monitoring
   manifests:
     - path: input-compliance/
+  remediationAction: inform  
   policySets:
     - openshift-plus-clusters
     - openshift-plus-hub
