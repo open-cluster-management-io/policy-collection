@@ -70,10 +70,10 @@ spec:
         resources:
           requests:
             storage: 100Gi
-        storageClassName: gp2-csi
+        storageClassName: gp3-csi
         volumeMode: Block
       status: {}
-    name: ocs-deviceset-gp2-csi
+    name: ocs-deviceset-gp3-csi
     placement: {}
     portable: true
     preparePlacement: {}
