@@ -41,7 +41,7 @@ policies:
   controls:
     - SI-5 Security Alerts Advisories and Directives
   dependencies:
-    - name: policy-acs-operator-central
+    - name: policy-acs-central-status
   manifests:
     - path: input-sensor/policy-acs-central-ca-bundle.yaml
 - name: policy-acs-sync-resources
@@ -51,7 +51,7 @@ policies:
   controls:
     - SI-5 Security Alerts Advisories and Directives
   dependencies:
-    - name: policy-acs-operator-central
+    - name: policy-acs-central-status
   manifests:
     - path: input-sensor/policy-acs-sync-resources.yaml
 - name: policy-advanced-managed-cluster-security
@@ -84,7 +84,7 @@ policies:
   controls: 
     - CA-7 Continuous Monitoring
   dependencies:
-    - name: policy-odf
+    - name: policy-odf-status
   manifests:
     - path: input-acm-observability/
 # Observability Policy - end
@@ -114,7 +114,7 @@ policies:
   controls:
     - SI-7 Software Firmware and Information Integrity
   dependencies:
-    - name: policy-odf
+    - name: policy-odf-status
   manifests:
     - path: input-quay/policy-install-quay.yaml
 - name: policy-config-quay
