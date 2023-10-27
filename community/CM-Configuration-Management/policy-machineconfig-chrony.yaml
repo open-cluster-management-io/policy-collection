@@ -16,7 +16,7 @@ spec:
           name: add-chrony-worker
         spec:
           object-templates:
-            - complianceType: musthave
+            - complianceType: mustonlyhave
               objectDefinition:
                 apiVersion: machineconfiguration.openshift.io/v1
                 kind: MachineConfig
@@ -27,15 +27,16 @@ spec:
                 spec:
                   config:
                     ignition:
-                      version: 2.2.0
+                      version: 3.2.0
                     storage:
                       files:
                       - contents:
-                          filesystem: root
-                          mode: 420
-                          path: /etc/chrony.conf
+                          compression: ""
                           source: >-
                             data:,server%200.fedora.pool.ntp.org%0A%0Aserver%201.fedora.pool.ntp.org%0A%0Aserver%202.fedora.pool.ntp.org%0A%0Adriftfile%20/var/lib/chrony/drift%0A%0Amakestep%201.0%203%0A%0Artcsync%0A%0Akeyfile%20/etc/chrony.keys%0A%0Aleapsectz%20right/UTC%0A%0Alogdir%20/var/log/chrony%0A
+                        overwrite: true
+                        mode: 420
+                        path: /etc/chrony.conf
           remediationAction: enforce
           severity: low
   remediationAction: inform
