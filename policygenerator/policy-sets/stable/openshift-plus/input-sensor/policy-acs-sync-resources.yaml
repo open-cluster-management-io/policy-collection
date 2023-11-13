@@ -29,6 +29,8 @@ data:
   ca.pem: '{{ fromSecret "stackrox" "admission-control-tls" "ca.pem" }}'
 kind: Secret
 metadata:
+  labels:
+    certificate_key_name: admission-control-cert.pem
   name: admission-control-tls
   namespace: policies
 type: Opaque
@@ -40,6 +42,8 @@ data:
   ca.pem: '{{ fromSecret "stackrox" "collector-tls" "ca.pem" }}'
 kind: Secret
 metadata:
+  labels:
+    certificate_key_name: collector-cert.pem
   name: collector-tls
   namespace: policies
 type: Opaque
@@ -52,6 +56,8 @@ data:
   acs-host: '{{ fromSecret "stackrox" "sensor-tls" "acs-host" }}'
 kind: Secret
 metadata:
+  labels:
+    certificate_key_name: sensor-cert.pem
   name: sensor-tls
   namespace: policies
 type: Opaque
