@@ -54,6 +54,15 @@ policies:
     - name: policy-acs-central-status
   manifests:
     - path: input-sensor/policy-acs-sync-resources.yaml
+- name: policy-acs-monitor-certs
+  categories:
+    - SC System and Communications Protection
+  controls:
+    - SC-8 Transmission Confidentiality and Integrity
+  dependencies:
+    - name: policy-acs-sync-resources
+  manifests:
+    - path: input-sensor/acs-check-certificates.yaml
 - name: policy-advanced-managed-cluster-security
   categories:
     - SI System and Information Integrity
