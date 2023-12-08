@@ -1,0 +1,52 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-acs-sensors
+placementBindingDefaults:
+  name: binding-secured-clusters
+policyDefaults:
+  categories:
+    - SI System and Information Integrity
+  controls: 
+    - SI-5 Security Alerts Advisories and Directives
+  namespace: policies
+  policySets:
+    - acs-sensors-hub-info
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - NIST SP 800-53
+policies:
+- name: policy-acs-sync-resources
+  consolidateManifests: false
+  manifests:
+    - path: input-sensor/policy-acs-sync-resources.yaml
+- name: policy-acs-monitor-certs
+  dependencies:
+    - name: policy-acs-sync-resources
+  manifests:
+    - path: input-sensor/acs-check-certificates.yaml
+- name: policy-advanced-managed-cluster-security
+  consolidateManifests: false
+  manifests:
+    - path: input-sensor/policy-advanced-managed-cluster-security.yaml
+    - path: input-sensor/policy-advanced-managed-cluster-status.yaml
+      remediationAction: informOnly
+  policySets:
+    - acs-sensor-clusters
+policySets:
+  - description: The Advanced Cluster Security components to setup the hub for securing
+      each managed cluster.
+    name: acs-sensors-hub-info
+    placement:
+      labelSelector:
+        matchExpressions:
+          - {key: name, operator: In, values: ["local-cluster"]}
+  - description: The Advanced Cluster Security components distributed to all OpenShift
+      managed clusters to secure the clusters.
+    name: acs-sensor-clusters
+    placement:
+      labelSelector:
+        matchExpressions:
+          - {key: vendor, operator: In, values: ["OpenShift"]}
+          - {key: name, operator: NotIn, values: ["local-cluster"]}
