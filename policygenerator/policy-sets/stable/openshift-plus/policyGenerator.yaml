@@ -38,12 +38,16 @@ policies:
 - name: policy-acs-central-ca-bundle
   categories:
     - SI System and Information Integrity
+  consolidateManifests: false
   controls:
     - SI-5 Security Alerts Advisories and Directives
   dependencies:
     - name: policy-acs-central-status
   manifests:
     - path: input-sensor/policy-acs-central-ca-bundle.yaml
+    - path: input-sensor/policy-acs-central-ca-bundle-v2.yaml
+    - path: input-sensor/policy-acs-central-ca-bundle-v1.yaml
+      complianceType: mustnothave
 - name: policy-acs-sync-resources
   categories:
     - SI System and Information Integrity
@@ -51,18 +55,41 @@ policies:
   controls:
     - SI-5 Security Alerts Advisories and Directives
   dependencies:
-    - name: policy-acs-central-status
+    - name: policy-acs-central-ca-bundle
   manifests:
     - path: input-sensor/policy-acs-sync-resources.yaml
 - name: policy-acs-monitor-certs
   categories:
     - SC System and Communications Protection
+  consolidateManifests: false
   controls:
     - SC-8 Transmission Confidentiality and Integrity
   dependencies:
-    - name: policy-acs-sync-resources
+    - name: policy-acs-central-ca-bundle
   manifests:
     - path: input-sensor/acs-check-certificates.yaml
+    - path: input-sensor/policy-acs-central-ca-bundle-expired.yaml
+      remediationAction: inform
+- name: policy-acs-central-ca-bundle-expired
+  categories:
+    - SC System and Communications Protection
+  consolidateManifests: false
+  complianceType: mustnothave
+  controls:
+    - SC-8 Transmission Confidentiality and Integrity
+  dependencies:
+    - name: policy-acs-monitor-certs
+      compliance: "NonCompliant"
+  policyAnnotations:
+    policy.open-cluster-management.io/description: 'Policy will remove expired certificates created by the init-bundle in policy policy-acs-central-ca-bundle so we can create a new init-bundle'
+  evaluationInterval:
+    compliant: 1m
+    noncompliant: 45s
+  ## ignorePending prevents the NotCompliant dependency from causing this policy to always report as pending
+  ignorePending: true
+  manifests:
+    - path: input-sensor/policy-acs-central-ca-bundle-expired.yaml
+    - path: input-sensor/policy-acs-central-ca-bundle-v2.yaml
 - name: policy-advanced-managed-cluster-security
   categories:
     - SI System and Information Integrity

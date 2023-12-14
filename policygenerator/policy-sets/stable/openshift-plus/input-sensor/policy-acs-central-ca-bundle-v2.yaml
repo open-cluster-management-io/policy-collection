@@ -1,0 +1,110 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "2"
+  name: create-cluster-init-bundle-v2
+  namespace: stackrox
+  labels:
+    init-bundle: central
+spec:
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+      labels:
+        init-bundle: central
+    spec:
+      containers:
+      - command:
+        - /bin/bash
+        - -c
+        - |
+          #!/usr/bin/env bash
+          if kubectl get secret/sensor-tls &> /dev/null; then
+            echo "cluster-init bundle has already been configured, doing nothing"
+            exit 0
+          else
+
+            # Wait for central to be ready
+            attempt_counter=0
+            max_attempts=20
+            echo "Waiting for central to be available..."
+            until $(curl -k --output /dev/null --silent --head --fail https://central); do
+                if [ ${attempt_counter} -eq ${max_attempts} ];then
+                  echo "Max attempts reached"
+                  exit 1
+                fi
+
+                printf '.'
+                attempt_counter=$(($attempt_counter+1))
+                echo "Made attempt $attempt_counter, waiting..."
+                sleep 5
+            done
+
+            # attempt to create init-bundle
+            # on failure attempt to delete the bundle
+            attempt_counter=0
+            max_attempts=5
+            echo "Configuring cluster-init bundle"
+            
+            # set the bundle name to include todays date
+            bundle_name=local-cluster-$(date '+%Y%m%d')
+            export DATA={\"name\":\"$bundle_name\"}
+            until (curl -k -o /tmp/bundle.json -X POST -u "admin:$PASSWORD" -H "Content-Type: application/json" --data $DATA --fail https://central/v1/cluster-init/init-bundles); do
+                if [ ${attempt_counter} -eq ${max_attempts} ];then
+                  echo "Max attempts to create bundle reached"
+                  exit 1
+                fi
+
+                echo "Check to see if there is an existing bundle that can be revoked"
+                curl -o /tmp/find_bundle.json  -k -X GET -u "admin:$PASSWORD" -H "Content-Type: application/json" https://central/v1/cluster-init/init-bundles
+                bundle_id=$(cat /tmp/find_bundle.json | python -c "import sys, json; result = [x for x in json.load(sys.stdin)[\"items\"] if x[\"name\"]==\"$bundle_name\"]; print(result[0][\"id\"])")
+
+                echo "-------------------------"
+                echo "bundle name is $bundle_name bundle id $bundle_id"
+                echo "-------------------------"
+
+                if [ "${bundle_id}" != "" ];then
+                echo "executing revoke command"
+                  export REVOKE="{\"ids\":[\"$bundle_id\"],\"confirmImpactedClustersIds\":[]}"
+                  curl -k -X PATCH -u "admin:$PASSWORD" -H "Content-Type: application/json" --data $REVOKE https://central/v1/cluster-init/init-bundles/revoke
+                fi
+
+                printf '.'
+                attempt_counter=$(($attempt_counter+1))
+                echo "Made create bundle attempt $attempt_counter, waiting..."
+                sleep 5
+            done
+
+            echo "Bundle received"
+
+            if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+                BASE='base64 -w 0'
+            elif [[ "$OSTYPE" == "darwin"* ]]; then
+                BASE='base64'
+            fi
+
+            echo "Applying bundle"
+            # No jq in container, python to the rescue
+            cat /tmp/bundle.json | python3 -c "import sys, json; print(json.load(sys.stdin)['kubectlBundle'])" | ${BASE} -d | oc apply -f -
+            ACS_HOST="$(oc get route central -o custom-columns=HOST:.spec.host --no-headers):443"
+            oc patch secret sensor-tls --type='json' -p="[{\"op\" : \"add\", \"path\" : \"/data/acs-host\", \"value\" : \"$(echo $ACS_HOST | ${BASE})\"}]"
+            echo "ACS Cluster init bundle generated and applied"
+          fi
+        env:
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: central-htpasswd
+        image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+        imagePullPolicy: Always
+        name: create-cluster-init-bundle
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      serviceAccount: create-cluster-init
+      serviceAccountName: create-cluster-init
+      terminationGracePeriodSeconds: 30
