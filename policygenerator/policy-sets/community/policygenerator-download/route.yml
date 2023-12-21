@@ -1,0 +1,20 @@
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: policygen-downloader
+  namespace: open-cluster-management-downloader
+  labels:
+    app: policygen-downloader
+spec:
+  host: 'policygen-downloader.{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
+  to:
+    kind: Service
+    name: policygen-downloader
+    weight: 100
+  port:
+    targetPort: 8080-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None

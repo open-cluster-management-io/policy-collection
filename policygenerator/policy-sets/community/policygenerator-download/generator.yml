@@ -1,0 +1,30 @@
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policygenerator-download
+policyDefaults:
+  namespace: policies
+  remediationAction: inform ## Change to enforce to create the downloader objects on the cluster
+  ## set the default compliance annotations
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  standards:
+    - NIST SP 800-53
+  severity: low
+  placement:
+    labelSelector:
+      matchLabels:
+        name: local-cluster
+
+policies:
+  - name: acm-policygenerator-downloader
+    manifests:
+      - path: namespace.yml
+      - path: deployment.yml
+      - path: service.yml
+      - path: route.yml
+      - path: consoleclidownload.yml
+        complianceType: mustonlyhave

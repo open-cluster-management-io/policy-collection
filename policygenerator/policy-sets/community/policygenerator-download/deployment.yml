@@ -1,0 +1,91 @@
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: ConfigurationPolicy
+metadata:
+  name: policygen-downloader
+spec:
+  remediationAction: enforce
+  severity: low
+  object-templates-raw: |
+    {{- $ocmDeployment := (lookup "apps/v1" "Deployment" "open-cluster-management" "multicluster-operators-hub-subscription") }}
+    {{- $ocmContainer := "" }}
+    {{- range $cn := $ocmDeployment.spec.template.spec.containers }}
+      {{- if eq $cn.name "multicluster-operators-hub-subscription" }}
+        {{- $ocmContainer = $cn }}
+        {{- break }}
+      {{- end }}
+    {{- end }}
+
+    - complianceType: musthave
+      objectDefinition:
+        kind: Deployment
+        apiVersion: apps/v1
+        metadata:
+          name: policygen-downloader
+          namespace: open-cluster-management-downloader
+          labels:
+            app: policygen-downloader
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              app: policygen-downloader
+          template:
+            metadata:
+              labels:
+                app: policygen-downloader
+                deployment: policygen-downloader
+            spec:
+            {{- if not (empty $ocmDeployment.spec.template.spec.nodeSelector) }}
+              nodeSelector:
+              {{- range $k, $v := $ocmDeployment.spec.template.spec.nodeSelector }}
+                {{ $k }}: {{ (empty $v) | ternary "''" $v }}
+              {{- end }}
+            {{- end }}
+              initContainers:
+              - args:
+                - -c
+                - cp /etc/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator/PolicyGenerator
+                  /policy-generator/PolicyGenerator
+                command:
+                - /bin/bash
+                image: {{ $ocmContainer.image }}
+                name: policy-generator-install
+                volumeMounts:
+                - mountPath: /policy-generator
+                  name: policy-generator
+              containers:
+                - name: policygen-downloader
+                  image: registry.access.redhat.com/ubi8/httpd-24:latest
+                  ports:
+                    - containerPort: 8080
+                      protocol: TCP
+                  resources: {}
+                  imagePullPolicy: Always
+                  volumeMounts:
+                  - mountPath: /var/www/html/
+                    name: policy-generator
+
+            {{- if not (empty $ocmDeployment.spec.template.spec.tolerations) }}
+              tolerations:
+              {{- range $tol := $ocmDeployment.spec.template.spec.tolerations }}
+                - key: {{ $tol.key }}
+                  operator: {{ $tol.operator }}
+                {{- if not (empty $tol.effect) }}
+                  effect: {{ $tol.effect }}
+                {{- end }}
+                {{- if not (empty $tol.value) }}
+                  value: {{ $tol.val }}
+                {{- end }}
+              {{- end }}
+            {{- end }}
+
+              volumes:
+              - emptyDir: {}
+                name: policy-generator
+          strategy:
+            type: RollingUpdate
+            rollingUpdate:
+              maxUnavailable: 25%
+              maxSurge: 25%
+          revisionHistoryLimit: 10
