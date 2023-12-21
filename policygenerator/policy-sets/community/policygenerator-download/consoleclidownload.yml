@@ -1,0 +1,11 @@
+---
+apiVersion: console.openshift.io/v1
+kind: ConsoleCLIDownload
+metadata:
+  name: policygenerator
+spec:
+  description: The Policy Generator is a part of the Red Hat Advanced Cluster Management for Kubernetes application lifecycle subscription GitOps workflow that generates Red Hat Advanced Cluster Management policies using Kustomize. The Policy Generator builds Red Hat Advanced Cluster Management policies from Kubernetes manifest YAML files, which are provided through a PolicyGenerator manifest YAML file that is used to configure it. The Policy Generator is implemented as a Kustomize generator plug-in.
+  displayName: 'Advanced Cluster Management - v{{ (lookup "operator.open-cluster-management.io/v1" "MultiClusterHub" "open-cluster-management" "multiclusterhub").status.currentVersion }}'
+  links:
+    - href: 'https://policygen-downloader.{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}/PolicyGenerator'
+      text: Download PolicyGenerator for Linux for x86_64
