@@ -80,10 +80,11 @@ GO111MODULE=on go install sigs.k8s.io/kustomize/kustomize/v4@$KUSTOMIZE_VERSION
 export KUSTOMIZE_PLUGIN_HOME=${GOBIN}
 echo "Downloading the generator"
 PLATFORM=`uname | tr '[:upper:]' '[:lower:]'`
-curl -Ls -o generator https://github.com/${GITHUB_REPOSITORY_OWNER}/policy-generator-plugin/releases/latest/download/${PLATFORM}-amd64-PolicyGenerator
-chmod a+x generator
+git clone --depth=1 https://github.com/${GITHUB_REPOSITORY_OWNER}/policy-generator-plugin ${GOBIN}/policy-generator-plugin
+( cd ${GOBIN}/policy-generator-plugin; make build-binary )
+chmod a+x ${GOBIN}/policy-generator-plugin/PolicyGenerator
 mkdir -p ${KUSTOMIZE_PLUGIN_HOME}/${GENERATOR_PATH}
-mv generator ${KUSTOMIZE_PLUGIN_HOME}/${GENERATOR_PATH}/PolicyGenerator
+mv ${GOBIN}/policy-generator-plugin/PolicyGenerator ${KUSTOMIZE_PLUGIN_HOME}/${GENERATOR_PATH}/PolicyGenerator
 
 # Validate the generator projects
 
