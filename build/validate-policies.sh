@@ -1,8 +1,8 @@
 #!/bin/bash
 
 KUBECONFORM=kubeconform
-KC_VERSION=v0.5.0
-KUSTOMIZE_VERSION=v4.5.7
+KC_VERSION=v0.6.4
+KUSTOMIZE_VERSION=v5.3.0
 GENERATOR_PATH=policy.open-cluster-management.io/v1/policygenerator
 
 # Validate the policy resource file under the directory provided
@@ -74,7 +74,7 @@ validatePolicies community
 
 # Install kustomize
 echo "Installing kustomize"
-GO111MODULE=on go install sigs.k8s.io/kustomize/kustomize/v4@$KUSTOMIZE_VERSION
+GO111MODULE=on go install sigs.k8s.io/kustomize/kustomize/v5@$KUSTOMIZE_VERSION
 
 # Install the Policy Generator kustomize plugin
 export KUSTOMIZE_PLUGIN_HOME=${GOBIN}
