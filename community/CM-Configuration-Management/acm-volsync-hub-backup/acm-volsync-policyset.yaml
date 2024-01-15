@@ -1,0 +1,11 @@
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: acm-volsync
+  namespace: open-cluster-management-backup
+spec:
+  description: backup support for PVC with cluster.open-cluster-management.io/volsync label
+  policies:
+    - acm-volsync-config
+    - acm-volsync-source
+    - acm-volsync-destination
