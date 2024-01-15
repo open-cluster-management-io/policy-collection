@@ -1,0 +1,37 @@
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: volsync-placement
+  namespace: open-cluster-management-backup
+spec:
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - key: name
+              operator: In
+              values:
+                - local-cluster
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - key: is-hub
+              operator: In
+              values:
+                - 'true'                
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: volsync-placement
+  namespace: open-cluster-management-backup
+placementRef:
+  name: volsync-placement
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+subjects:
+  - name: acm-volsync
+    apiGroup: policy.open-cluster-management.io
+    kind: PolicySet
+
