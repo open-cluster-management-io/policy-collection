@@ -31,6 +31,8 @@ spec:
                     env:
                     - name: KUSTOMIZE_PLUGIN_HOME
                       value: /etc/kustomize/plugin
+                    - name: POLICY_GEN_ENABLE_HELM
+                      value: "true"
                     initContainers:
                     - args:
                       - -c
@@ -38,8 +40,7 @@ spec:
                         /policy-generator/PolicyGenerator
                       command:
                       - /bin/bash
-                      image: registry.redhat.io/rhacm2/multicluster-operators-subscription-rhel8:v2.8
-                      name: policy-generator-install
+                      image: 'registry.redhat.io/rhacm2/multicluster-operators-subscription-rhel8:v{{ (lookup "operator.open-cluster-management.io/v1" "MultiClusterHub" "open-cluster-management" "multiclusterhub").status.currentVersion }}'
                       volumeMounts:
                       - mountPath: /policy-generator
                         name: policy-generator
