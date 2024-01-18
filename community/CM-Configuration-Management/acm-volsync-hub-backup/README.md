@@ -128,7 +128,7 @@ metadata:
  name: volsync-config
  namespace: open-cluster-management-backup
  labels:
-   cluster.open-cluster-management.io/backup: volsync
+   cluster.open-cluster-management.io/backup: cluster-activation
 data:
  cacheCapacity: 1Gi
  copyMethod: Snapshot
@@ -180,7 +180,7 @@ metadata:
  name: volsync-config-info-mongo-storage
  namespace: pacman-ns
  labels:
-   cluster.open-cluster-management.io/backup: volsync
+   cluster.open-cluster-management.io/backup: cluster-activation
 data:
  resources.accessModes: ReadWriteOnce
  resources.requests.storage: 8Gi
@@ -201,7 +201,7 @@ metadata:
  namespace: open-cluster-management-backup
  labels:
    app: volsync-config-pvcs
-   cluster.open-cluster-management.io/backup: volsync
+   cluster.open-cluster-management.io/backup: cluster-activation
  data:
  pvcs: 'pacman-restore#mongo-storage##pacman-vb#mongo-storage##pacman#mongo-storage'
 ```
@@ -211,14 +211,13 @@ metadata:
 
 ## Scenario
 
-ACM components installed on the hub
-Add the cluster.open-cluster-management.io/volsync  label to the PVC to be backed up
+ACM components installed on the hub.
+User adds the cluster.open-cluster-management.io/volsync  label to the PVC to be backed up.
 
 
 ACM user, on Primary hub:
 1. Enables backup on MultiClusterHub. This installs the hub backup component
 2. The user manually installs the policy from the community project
-  - The above are open to review and decision
 3. Creates a BackupSchedule 
   - The volsync policy informs the user if missing the volsync restic-secret secret and volsync-config ConfigMap 
 3. User creates the restic-secret secret and volsync-config ConfigMap 
@@ -228,9 +227,9 @@ ACM user, on Primary hub:
 ACM user, on Restore hub:
 5. Enables backup on MultiClusterHub. This installs the hub backup component
   - The user manually installs the policy from the community project
-  - The above are open to review and decision
-6. Creates an ACM Restore resource and restores passive data
+6. Creates an ACM Restore resource and restores active data
   - The policy creates the volsync `ReplicationDestination` for all PVCs defined in the restored volsync-config-pvcs ConfigMap
+  - the app using the PVC must be restored after the PVC is created 
 
 ## References
 - [Volsync](https://access.redhat.com/login?redirectTo=https%3A%2F%2Faccess.redhat.com%2Fdocumentation%2Fen-us%2Fred_hat_advanced_cluster_management_for_kubernetes%2F2.8%2Fhtml%2Fbusiness_continuity%2Fbusiness-cont-overview%23restic-backup-volsync)

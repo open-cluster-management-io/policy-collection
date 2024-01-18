@@ -86,6 +86,11 @@ spec:
                       {{ $storageClassPVC = $mappingClass }}
                     {{- end }}
                   {{- end }}
+                {{- $secretName := ( (cat $pvc_name "-"  (fromConfigMap $ns $volsync_map "repository") ) | replace " " "" ) }}
+                {{- /* truncate from the front, the Dest name, if the string is longer than 50 chars ; a job batch starting with volsync-dst- is generated from this name and it must be less than 63 chars */ -}}
+                {{- $rd_name :=  trunc -50 (cat $pvc_name $restore_timestamp_trim | replace " " "") }}
+
+                {{- $common_restic_repo := ( lookup "v1" "Secret" $ns $volsync_secret ).data.RESTIC_REPOSITORY | base64dec }}
 
                   - complianceType: musthave
                     objectDefinition:
@@ -97,6 +102,10 @@ spec:
                         labels:
                           {{ $volsync_label }}: volsync
                       spec:
+                        dataSourceRef:
+                          kind: ReplicationDestination
+                          apiGroup: volsync.backube
+                          name: {{ $rd_name }}
                         storageClassName: {{ $storageClassPVC }}
                         resources:
                           requests:
@@ -109,11 +118,6 @@ spec:
                           - {{ $modes }}
                           {{- end }}
                         {{- end }}  
-                {{- $secretName := ( (cat $pvc_name "-"  (fromConfigMap $ns $volsync_map "repository") ) | replace " " "" ) }}
-                {{- /* truncate from the front, the Dest name, if the string is longer than 50 chars ; a job batch starting with volsync-dst- is generated from this name and it must be less than 63 chars */ -}}
-                {{- $rd_name :=  trunc -50 (cat $pvc_name $restore_timestamp_trim | replace " " "") }}
-
-                {{- $common_restic_repo := ( lookup "v1" "Secret" $ns $volsync_secret ).data.RESTIC_REPOSITORY | base64dec }}
       
                   - complianceType: musthave
                     objectDefinition:
@@ -142,9 +146,16 @@ spec:
                           "backup-name": {{ $backup_name }}
                       spec:
                         restic:
+                          {{ $accessModes := trimAll " " (fromConfigMap $pvc_namespace $pvc_config_info_name "resources.accessModes") }}                  
+                          {{- if not (eq $accessModes "" ) }}
+                          accessModes:
+                            {{- range $modes := split " " $accessModes }} 
+                            - {{ $modes }}
+                            {{- end }}
+                          {{- end }} 
+                          capacity: '{{ fromConfigMap $pvc_namespace $pvc_config_info_name "resources.requests.storage" }}' 
                           repository: {{ $secretName }} 
-                          destinationPVC: {{ $pvc_name }}
-                          copyMethod: Direct
+                          copyMethod: Snapshot
                         trigger:
                           manual: restore-once
                   {{- end }}        
