@@ -76,7 +76,7 @@ spec:
                         name: {{ $pvc_config_info_name }}
                         namespace: {{ $pvc.metadata.namespace }}
                         labels:
-                          cluster.open-cluster-management.io/backup: volsync
+                          cluster.open-cluster-management.io/backup: cluster-activation
                       data:
                         {{- if not ( eq  $pvc.spec.storageClassName "") }}
                         storageClassName: {{ $pvc.spec.storageClassName }}
@@ -149,7 +149,7 @@ spec:
                         name: {{ $volsync_pvcs }}
                         namespace: {{ $ns }}
                         labels:
-                          cluster.open-cluster-management.io/backup: volsync
+                          cluster.open-cluster-management.io/backup: cluster-activation
                           app: {{ $volsync_pvcs }}
                       data:
                         pvcs: {{ trimAll "##" $volsync_pvcs_str }}
