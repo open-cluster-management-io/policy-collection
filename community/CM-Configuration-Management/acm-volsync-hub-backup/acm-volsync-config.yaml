@@ -8,7 +8,7 @@
 #  name: volsync-config
 #  namespace: open-cluster-management-backup
 #  labels:
-#    cluster.open-cluster-management.io/backup: volsync
+#    cluster.open-cluster-management.io/backup: cluster-activation
 #data:
 #  cacheCapacity: 2Gi
 #  copyMethod: Snapshot
@@ -130,7 +130,7 @@ spec:
                   name: {{ $volsync_map }}
                   namespace: {{ $ns }}
                   labels:
-                    cluster.open-cluster-management.io/backup: volsync
+                    cluster.open-cluster-management.io/backup: cluster-activation
             - complianceType: musthave
               objectDefinition:
                 apiVersion: v1
