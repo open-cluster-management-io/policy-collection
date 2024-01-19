@@ -59,11 +59,13 @@ spec:
               
               {{- $acm_restore_name_fixed := split $backup_name_prefix $restore_name }} 
               {{- $acm_restore_name := (cat $acm_restore_name_fixed._0 $backup_name) | replace " " "" }}
+              {{- $acm_restore_name_active := (cat $acm_restore_name "-active") | replace " " "" }}
 
               {{- $acm_restore := lookup $velero_api $kind_restore $ns $acm_restore_name  }}
+              {{- $acm_restore_active := lookup $velero_api $kind_restore $ns $acm_restore_name_active  }}
 
               {{- /* the acm restore should exist, so this is the passive hub */ -}}
-              {{ if and (eq $acm_restore.metadata.name  $acm_restore_name) }}
+              {{ if or (eq $acm_restore.metadata.name  $acm_restore_name) (eq $acm_restore_active.metadata.name  $acm_restore_name_active) }}
                 {{- range $pvc_data := split "##" (fromConfigMap $ns $volsync_pvcs "pvcs") }} 
 
                 {{- $pvc_list := splitn "#" 2 $pvc_data }}
@@ -243,15 +245,6 @@ spec:
                     status:
                       latestMoverStatus:
                         result: Successful
-                - complianceType: musthave
-                  objectDefinition:
-                    apiVersion: v1
-                    kind: PersistentVolumeClaim
-                    metadata:
-                      namespace: {{ $rd.metadata.namespace }}
-                      name: {{ $rd.spec.restic.destinationPVC }}
-                    status:
-                      phase: Bound
               {{- end }}
             {{- end }}
           remediationAction: inform

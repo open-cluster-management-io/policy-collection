@@ -77,6 +77,7 @@ spec:
                         namespace: {{ $pvc.metadata.namespace }}
                         labels:
                           cluster.open-cluster-management.io/backup: cluster-activation
+                          cluster.open-cluster-management.io/volsync-pvc: {{ $pvc.metadata.name }}
                       data:
                         {{- if not ( eq  $pvc.spec.storageClassName "") }}
                         storageClassName: {{ $pvc.spec.storageClassName }}
