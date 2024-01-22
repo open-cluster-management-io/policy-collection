@@ -30,7 +30,7 @@
 #  name: restic-secret
 #  namespace: open-cluster-management-backup
 #  labels:
-#    cluster.open-cluster-management.io/backup: volsync
+#    cluster.open-cluster-management.io/backup: cluster-activation
 #data:
 #  AWS_ACCESS_KEY_ID: a2V5X2lk
 #  AWS_SECRET_ACCESS_KEY: a2V5
@@ -139,7 +139,7 @@ spec:
                   name: {{ $volsync_secret }}
                   namespace: {{ $ns }}
                   labels:
-                    cluster.open-cluster-management.io/backup: volsync
+                    cluster.open-cluster-management.io/backup: cluster-activation
                 type: Opaque
             {{- end }}
           remediationAction: inform
