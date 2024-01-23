@@ -39,7 +39,7 @@ spec:
             {{ if $volsync_backup_cond }}
               {{- range $rs := (lookup "volsync.backube/v1alpha1" "ReplicationSource" "" "" $volsync_label).items }}
                   {{ $pvc_rs := lookup "v1" "PersistentVolumeClaim" $rs.metadata.namespace $rs.metadata.name $volsync_label}}
-                  {{ if or (not (eq $pvc_rs.metadata.name $rs.metadata.name)) (eq (index $pvc_rs.metadata.labels $volsync_label) "<no value>")}}   
+                  {{ if or (not (eq $pvc_rs.metadata.name $rs.metadata.name)) ( not (index $pvc_rs.metadata.labels $volsync_label) )}}  
                     - complianceType: mustnothave
                       objectDefinition:
                         kind: ReplicationSource
@@ -155,6 +155,14 @@ spec:
                           app: {{ $volsync_pvcs }}
                       data:
                         pvcs: {{ trimAll "##" $volsync_pvcs_str }}
+                  {{- else }}
+                  - complianceType: mustnothave
+                    objectDefinition:
+                      apiVersion: v1
+                      kind: ConfigMap
+                      metadata:
+                        name: {{ $volsync_pvcs }}
+                        namespace: {{ $ns }}
                   {{- end }}      
             {{- else }}
               {{- range $pvc := (lookup "v1" "PersistentVolumeClaim" "" "" $volsync_label).items }}  
