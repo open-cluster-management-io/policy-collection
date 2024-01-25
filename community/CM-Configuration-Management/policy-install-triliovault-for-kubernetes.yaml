@@ -1,149 +1,163 @@
-# This policy deploys Triliovault for Kubernetes (TVK) to all OpenShift managed clusters 
-# with a label "protected-by=triliovault". It also deploys a basic (trial) license. 
+# This policy deploys Triliovault for Kubernetes (T4K) to all OpenShift managed clusters 
+# with a label "protected-by=triliovault". 
+# It will also deploy a license that you provide in a ConfigMap
 # Please conact sales@trilio.io for further support.
 #
 # Note that it is set to enforce by default.
 #
 # Please refer product documentation at https://docs.trilio.io/kubernetes/overview/readme 
+#
+# IMPORTANT: Please follow below instructions for the policy to work
+# 1. On the hub cluster, create a configmap trilio-license in the namespace
+#    where this policy is placed. The configmap has Trilio License which is
+#    needed to use Trilio.
+#
+# 2. ConfigMap Example yaml (replace the values)
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: trilio-license
+# Data:
+#   key: <<REPLACE THIS WITH ACTUAL KEY>>
+#
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: install-tvk
+  name: install-trilio
   annotations:
     policy.open-cluster-management.io/categories: CA Security Assessment and Authorization
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/controls: CA-2 Security Assessments, CA-7 Continuous Monitoring
 spec:
   disabled: false
-  remediationAction: inform
   policy-templates:
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: check-ns-openshift-operators
-        spec:
-          remediationAction: inform
-          severity: high
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: v1
-                kind: Namespace
-                metadata:
-                  name: openshift-operators
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: tvk-operator-subscription
-        spec:
-          remediationAction: enforce
-          severity: high
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: operators.coreos.com/v1alpha1
-                kind: Subscription
-                metadata:
-                  name: k8s-triliovault
-                  namespace: openshift-operators
-                spec:
-                  name: k8s-triliovault
-                  channel: stable
-                  installPlanApproval: Automatic
-                  source: certified-operators
-                  sourceNamespace: openshift-marketplace
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: tvk-operator-status
-        spec:
-          remediationAction: enforce
-          severity: high
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: operators.coreos.com/v1alpha1
-                kind: ClusterServiceVersion
-                metadata:
-                  namespace: openshift-operators
-                spec:
-                  displayName: TrilioVault for Kubernetes
-                status:
-                  phase: Succeeded
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: tvk-manager-cr
-        spec:
-          remediationAction: enforce
-          severity: high
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: triliovault.trilio.io/v1
-                kind: TrilioVaultManager
-                metadata:
-                  name: triliovault-manager
-                  namespace: openshift-operators
-                spec:
-                  applicationScope: Cluster
-                  componentConfiguration:
-                    ingress-controller:
-                      enabled: false
-                  dataJobResources:
-                    limits:
-                      cpu: 1500m
-                      memory: 5Gi
-                    requests:
-                      cpu: 100m
-                      memory: 800Mi
-                  logLevel: Info
-                  metadataJobResources:
-                    limits:
-                      cpu: 500m
-                      memory: 1Gi
-                    requests:
-                      cpu: 10m
-                      memory: 10Mi
-                  tvkInstanceName: tvk-instance
-                status:
-                  status: Deployed
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: tvk-license
-        spec:
-          remediationAction: enforce
-          severity: high
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: triliovault.trilio.io/v1
-                kind: License
-                metadata:
-                  name: triliovault-license
-                  namespace: openshift-operators
-                spec:
-                  key: xYsNDgwKD3jajZFPj4IwEMXv/RRN9tyEUlxgEw6KzYbIohFwz0M77DZRJPwx67df1MMaMGbn0ENf573pb14+UdN5/0WpoJy/2fabY1Hbsm0SNgidOVZL6JD+VXARmeUxSxCpzeUFHVWwgNYoAqozJ6QTtWt6JHujsGpxh0177xDY5ANM1WEFlUL5U5vmfBvgkutec10SHg81VOeJc7aN4mjNVvlCbhOZyZTFUSiTVLJ3mbDFPI1CkvSHApt1mbdD9F0v4yTF5oRNtBzblgIKbTsuA1cgc7gHzHN8l5VKixJnjnacoVkm9EEFwz3zZ4V2PB8ZF3w4OGpWCBADQiV0wX3kIEh8IzKOD7LdPI+zm4dvw1OPKzCY7OSe3aZv1De0+GStqTrW+OArat+33UDtImuy6gvMJ7D+SSuEGpTpxisM+KtFw03e/gL3OqHJMC0CFHH459/Qe76ztoGQGLcHHWb1X1zYAhUAj0X1sX2KJDgewP/aaCML+WiMJwE=X02gc
-                status:
-                  status: Active
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: check-ns-trilio-system
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              name: trilio-system
+        remediationAction: inform
+        severity: high
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: trilio-operator-subscription
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1alpha1
+            kind: Subscription
+            metadata:
+              name: k8s-triliovault
+              namespace: trilio-system
+            spec:
+              name: k8s-triliovault
+              channel: 4.0.x
+              installPlanApproval: Automatic
+              source: certified-operators
+              sourceNamespace: openshift-marketplace
+        remediationAction: inform
+        severity: high
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: trilio-operator-status
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1alpha1
+            kind: ClusterServiceVersion
+            metadata:
+              namespace: trilio-system
+            spec:
+              displayName: Trilio for Kubernetes
+            status:
+              phase: Succeeded
+        remediationAction: inform
+        severity: high
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: trilio-manager-configuration
+      spec:
+        remediationAction: enforce
+        severity: high
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: triliovault.trilio.io/v1
+            kind: TrilioVaultManager
+            metadata:
+              name: triliovault-manager
+              namespace: trilio-system
+            spec:
+              applicationScope: Cluster
+              componentConfiguration:
+                ingress-controller:
+                  enabled: false
+              dataJobResources:
+                limits:
+                  cpu: 1500m
+                  memory: 5Gi
+                requests:
+                  cpu: 100m
+                  memory: 800Mi
+              logLevel: Info
+              metadataJobResources:
+                limits:
+                  cpu: 500m
+                  memory: 1Gi
+                requests:
+                  cpu: 10m
+                  memory: 10Mi
+              tvkInstanceName: >
+                {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: trilio-license
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: triliovault.trilio.io/v1
+            kind: License
+            metadata:
+              name: trilio-license
+              namespace: trilio-system
+            spec:
+              key: '{{hub fromConfigMap "" "trilio-license" "key" hub}}'
+            status:
+              status: Active
+        remediationAction: inform
+        severity: high
+  remediationAction: enforce
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: install-tvk-placement
+  name: install-trilio-placement
 spec:
   clusterSelector:
     matchExpressions:
       - key: protected-by
         operator: In
         values:
-          - triliovault
+          - trilio
       - key: vendor
         operator: In
         values:
@@ -152,13 +166,12 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: install-tvk-placement
+  name: install-trilio-placement
 placementRef:
-  name: install-tvk-placement
+  name: install-trilio-placement
   apiGroup: apps.open-cluster-management.io
   kind: PlacementRule
 subjects:
-  - name: install-tvk
+  - name: install-trilio
     apiGroup: policy.open-cluster-management.io
     kind: Policy
-
