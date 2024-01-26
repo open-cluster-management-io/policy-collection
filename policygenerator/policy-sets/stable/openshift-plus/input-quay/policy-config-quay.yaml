@@ -33,64 +33,127 @@ spec:
         - |
           #!/usr/bin/env bash
 
-          # Wait for quay to be ready
-          attempt_counter=0
-          max_attempts=80
-          echo "Waiting for quay to be available..."
-          until $(curl --output /dev/null --silent --head --fail http://registry-quay-app); do
-              if [ ${attempt_counter} -eq ${max_attempts} ];then
-                echo "Max attempts reached"
-                exit 1
+          function quay_cmd() {
+            DATA='{}'
+            if [ ! -z "$4" ]; then
+              DATA=$4
+            fi
+            echo "[$1] $2 $3 --data $DATA" 1>&2
+            AUTH="Fake: dummy"
+            if [ $1 = "Basic" ]; then
+              COUNT=$(oc -n $QUAY_NAMESPACE get --ignore-not-found=true secret $QUAY_USER_SECRET | wc -l)
+              if [ $COUNT -gt 1 ]; then
+                  BASIC=$(oc -n $QUAY_NAMESPACE extract secret/$QUAY_USER_SECRET --keys=basic --to=-)
               fi
+              AUTH="Authorization: Basic $BASIC"
 
-              printf '.'
-              attempt_counter=$(($attempt_counter+1))
-              echo "Made attempt $attempt_counter, waiting..."
-              sleep 30
+            elif [ $1 = "Bearer" ]; then
+              AUTH="Authorization: Bearer $TOKEN"
+            fi
+            curl -X $2 $CURL_OPTS -H 'Content-Type: application/json'  -H "$AUTH" https://$QUAY_HOST$3 --data "$DATA"
+            echo "[INFO] Success" 1>&2
+          }
+          echo -n "Waiting for the Quay Registry CR to be available ."
+          RC=$(oc wait QuayRegistry -n local-quay registry --for=condition=Available=true > /dev/null 2>&1;echo $?)
+
+          while [ $RC -ne 0 ]; do
+            sleep 2
+            echo -n "."
+            RC=$(oc wait QuayRegistry -n local-quay registry --for=condition=Available=true > /dev/null 2>&1;echo $?)
           done
+          echo "done"
 
-          QUAYHOST=$(oc get route -n local-quay registry-quay -o jsonpath='{.spec.host}')
+          CURL_OPTS="-fsk"
+          QUAY_ADMIN=quayadmin
+          QUAY_USER=quaydevel
+          QUAY_USER_SECRET=$QUAY_USER
+          QUAY_NAMESPACE=local-quay
+          QUAY_HOST=$(oc get route -n $QUAY_NAMESPACE registry-quay -o jsonpath='{.spec.host}')
+          QUAY_ORG=devel
+          QUAY_ORG_EMAIL=devel@myorg.com
+          QUAY_REPO=example
           if [ $? -ne 0 ]; then
             echo "Quay route does not exist yet, please wait and try again."
             exit 1
           fi
-          RESULT=$(oc get secret -n local-quay quayadmin)
+          RESULT=$(oc get secret -n $QUAY_NAMESPACE $QUAY_USER_SECRET)
           if [ $? -eq 0 ]; then
-            echo "Quay user configuration secret already exists: quayadmin in namespace local-quay"
+            echo "Quay user configuration secret already exists: $QUAY_USER_SECRET in namespace $QUAY_NAMESPACE"
             exit 1
           fi
 
           ADMINPASS=`head -c 8 /dev/urandom | base64 | sed 's/=//'`
-          
-          RESULT=$(curl -X POST -k -s https://$QUAYHOST/api/v1/user/initialize --header 'Content-Type: application/json' --data "{ \"username\": \"quayadmin\", \"password\":\"${ADMINPASS}\", \"email\": \"quayadmin@example.com\", \"access_token\": true}")
+          BASE64AUTH=`echo -n $QUAY_USER:$QUAY_PASSWORD | base64 -w0`
+          RESULT=$(curl -X POST -k -s https://$QUAY_HOST/api/v1/user/initialize --header 'Content-Type: application/json' --data "{ \"username\": \"quayadmin\", \"password\":\"${ADMINPASS}\", \"email\": \"quayadmin@example.com\", \"access_token\": true}")
           echo "$RESULT" | grep -q "non-empty database"
           if [ $? -eq 0 ]; then
             echo "Quay user configuration failed, the database has been initialized."
             exit 1
           else
-            cat <<EOF | kubectl create -f -
-          apiVersion: v1
-          kind: Secret
-          metadata:
-            name: quayadmin
-            namespace: local-quay
-          type: Opaque
-          data:
-            password: $(echo ${ADMINPASS} | base64)
-          EOF
-            echo "Quay password successfully set for user quayadmin and stored in secret local-quay/quayadmin."
+            echo "[INFO] Destroy any previous secrets ..."
+            oc -n $QUAY_NAMESPACE delete --ignore-not-found=true secret $QUAY_USER_SECRET
+
+            echo "[INFO] Creating quay admin secret quayadmin ..."
             TOKEN=$(echo "$RESULT" | tr ',' '\n' | grep access_token | awk -F: '{print $2}' | sed 's/"//g')
-            cat <<EOF | kubectl create -f -
-          apiVersion: v1
-          kind: Secret
-          metadata:
-            name: quay-api-token
-          type: Opaque
-          data:
-            token: $(echo ${TOKEN} | base64)
-          EOF
-            echo "Quay token successfully obtained and stored in secret quay-api-token."
+            oc -n $QUAY_NAMESPACE create secret generic quayadmin --from-literal=token=$TOKEN --from-literal=password=$ADMINPASS --from-literal=basic="$BASE64AUTH"
+
+            echo "[INFO] Creating $QUAY_USER user ..."
+            RESPONSE=$(quay_cmd Bearer POST /api/v1/superuser/users/ "{ \"username\": \"$QUAY_USER\", \"email\": \"$QUAY_USER_EMAIL\", \"access_token\": true}")
+
+            QUAY_PASSWORD=$(echo $RESPONSE | tr ',' '\n' | grep '"password"' | cut -d \" -f 4)
+            BASE64AUTH=`echo -n $QUAY_USER:$QUAY_PASSWORD | base64 -w0`
+
+            echo "[INFO] Creating $QUAY_USER_SECRET secret ..."
+            oc -n $QUAY_NAMESPACE create secret generic $QUAY_USER_SECRET --from-literal=password="$QUAY_PASSWORD" --from-literal=basic="$BASE64AUTH"
+
+            echo "[INFO] Creating quay-pull-secret ..."
+            echo -e "{ \"auths\": { \"$QUAY_HOST\": { \"auth\": \"$BASE64AUTH\" } }}" | oc -n $QUAY_NAMESPACE create secret generic quay-pull-secret --from-file=.dockerconfigjson=/dev/stdin --type=kubernetes.io/dockerconfigjson
+
+            echo "[INFO] Creating quay integration token secret ..."
+            oc -n $QUAY_NAMESPACE create secret generic quay-integration --from-literal=token=$TOKEN
           fi
+
+          echo "[INFO] Looking for initial organization ..."
+          COUNT=$(quay_cmd Bearer GET /api/v1/organization/$QUAY_ORG | grep -v not_found | wc -l)
+          if [ $COUNT = 0 ]; then
+            echo "[INFO] Creating $QUAY_ORG org ..."
+            # Email cannot be shared with the initial user
+            quay_cmd Bearer POST /api/v1/organization/ "{\"name\": \"$QUAY_ORG\", \"email\": \"$QUAY_ORG_EMAIL\" }"
+            quay_cmd Basic GET /api/v1/organization/$QUAY_ORG
+          fi
+
+          echo "[INFO] Looking for org application ..."
+          # The only way to get another OAuth token is to go to: Organization -> Applications -> {app} -> Generate Token
+          # If there was a programatic way to do it here, we could avoid the problem with the bearer token expiring after 150min
+          APPLICATION=automation
+          COUNT=$(quay_cmd Bearer GET /api/v1/organization/$QUAY_ORG/applications | grep $APPLICATION | wc -l)
+          if [ $COUNT = 0 ]; then
+            echo "[INFO] Creating $APPLICATION application..."
+            quay_cmd Bearer POST /api/v1/organization/$QUAY_ORG/applications "{\"name\": \"$QUAY_ORG-automation\", \"description\": \"automation app\" }"
+          fi
+
+          echo "[INFO] Looking for initial repo ..."
+          COUNT=$(quay_cmd Bearer GET /api/v1/repository/$QUAY_ORG/$QUAY_REPO | grep -v not_found | wc -l)
+          if [ $COUNT = 0 ]; then
+            echo "[INFO] Creating $QUAY_REPO repo..."
+            quay_cmd Bearer POST /api/v1/repository "{\"namespace\":\"$QUAY_ORG\", \"repository\":\"$QUAY_REPO\", \"visibility\":\"public\", \"description\":\"Development Repo\", \"repo_kind\":\"image\"}"
+          fi
+
+          echo "[INFO] Looking for $QUAY_ORG members ..."
+          COUNT=$(quay_cmd Bearer GET /api/v1/organization/$QUAY_ORG/team/owners/members | grep "name\": \"$QUAY_USER\"" | wc -l)
+          if [ $COUNT = 0 ]; then
+            echo "[INFO] Associating $QUAY_USER with $QUAY_ORG ..."
+            quay_cmd Bearer PUT /api/v1/organization/$QUAY_ORG/team/owners/members/$QUAY_USER '{}'
+          fi
+
+          echo "[INFO] Looking for $QUAY_REPO admins ..."
+          COUNT=$(quay_cmd Bearer GET /api/v1/repository/$QUAY_ORG/$QUAY_REPO/permissions/user/$QUAY_USER | grep '"role": "admin"' | wc -l)
+          if [ $COUNT = 0 ]; then
+            echo "[INFO] Give $QUAY_USER admin rights to the repo ..."
+            quay_cmd Bearer PUT /api/v1/repository/$QUAY_ORG/$QUAY_REPO/permissions/user/$QUAY_USER '{ "role": "admin"}'
+          fi
+
+          echo "[INFO] Job finished"
         image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
         imagePullPolicy: Always
         name: create-admin-user
