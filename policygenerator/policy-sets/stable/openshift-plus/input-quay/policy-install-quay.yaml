@@ -27,6 +27,7 @@ rules:
   - create
   - patch
   - update
+  - delete
 - apiGroups:
   - route.openshift.io
   resources:
@@ -34,6 +35,14 @@ rules:
   verbs:
   - get
   - list
+- apiGroups:
+  - quay.redhat.com
+  resources:
+  - quayregistries
+  verbs:
+  - get
+  - list
+  - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -73,7 +82,7 @@ spec:
 ---
 apiVersion: v1
 data:
-  config.yaml: RkVBVFVSRV9VU0VSX0lOSVRJQUxJWkU6IHRydWUKQlJPV1NFUl9BUElfQ0FMTFNfWEhSX09OTFk6IGZhbHNlClNVUEVSX1VTRVJTOgotIHF1YXlhZG1pbgpGRUFUVVJFX1VTRVJfQ1JFQVRJT046IHRydWUK
+  config.yaml: RkVBVFVSRV9VU0VSX0lOSVRJQUxJWkU6IHRydWUKQlJPV1NFUl9BUElfQ0FMTFNfWEhSX09OTFk6IGZhbHNlClNVUEVSX1VTRVJTOgotIHF1YXlhZG1pbgpGRUFUVVJFX1VTRVJfQ1JFQVRJT046IHRydWUKRkVBVFVSRV9TVVBFUlVTRVJTX0ZVTExfQUNDRVNTOiB0cnVlCg==
 kind: Secret
 metadata:
   name: init-config-bundle-secret
