@@ -33,3 +33,29 @@ metadata:
 apiVersion: v1
 data:
   token: '{{hub fromSecret "" "quay-integration" "token" hub}}'
+---
+apiVersion: v1
+data:
+  quay-integration: '{{hub fromSecret "policies" "opp-ingres-ca" "registry-quay-local-quay" hub}}'
+kind: Secret
+metadata:
+  name: opp-ingres-ca
+  namespace: openshift-config
+type: Opaque
+---
+apiVersion: v1
+data:
+  '{{hub fromConfigMap "" "quay-config" "host" hub}}': |
+    {{ ( fromSecret "openshift-config" "opp-ingres-ca" "quay-integration" ) | base64dec | autoindent }}
+kind: ConfigMap
+metadata:
+  name: opp-ingres-ca
+  namespace: openshift-config
+---
+apiVersion: config.openshift.io/v1
+kind: Image
+metadata:
+ name: cluster
+spec:
+  additionalTrustedCA:
+    name: opp-ingres-ca

@@ -172,27 +172,30 @@ policies:
   manifests:
     - path: input-quay/policy-quay-status.yaml
   remediationAction: inform
-# Quay Bridge requires a token that needs to be populated in a secret. Uncomment the following 
-# 2 policies if you need to use the quay bridge.  After quay is running, see the instructions:
+# Quay Bridge is configured with a temporary token that will expire quickly after
+# deployment.  After quay is running, see the instructions:
 # https://hybrid-cloud-patterns.io/devsecops/getting-started/#completing-the-quay-bridge-with-a-bearer-token
-# The command below is needed to place the secret where the policies expect to find it.
-# oc create secret -n openshift-operators generic quay-integration --from-literal=token=<access_token>
-#- name: policy-hub-quay-bridge
-#  categories:
-#    - SI System and Information Integrity
-#  controls:
-#    - SI-7 Software Firmware and Information Integrity
-#  manifests:
-#    - path: input-quay/policy-hub-quay-bridge.yaml
-#- name: policy-quay-bridge
-#  categories:
-#    - SI System and Information Integrity
-#  controls:
-#    - SI-7 Software Firmware and Information Integrity
-#  manifests:
-#    - path: input-quay/policy-quay-bridge.yaml
-#  policySets:
-#    - openshift-plus-clusters
+# Update the token in the quayadmin secret in the local-quay namespace with your
+# bearer token.  It will be propagated to the managed clusters automatically.
+- name: policy-hub-quay-bridge
+  categories:
+    - SI System and Information Integrity
+  controls:
+    - SI-7 Software Firmware and Information Integrity
+  dependencies:
+    - name: policy-quay-status
+  manifests:
+    - path: input-quay/policy-hub-quay-bridge.yaml
+- name: policy-quay-bridge
+  categories:
+    - SI System and Information Integrity
+  controls:
+    - SI-7 Software Firmware and Information Integrity
+  manifests:
+    - path: input-quay/policy-quay-bridge.yaml
+  orderManifests: true
+  policySets:
+    - openshift-plus-clusters
 # Quay Policies - end
 # Compliance Operator Policies - start
 - name: policy-compliance-operator-install

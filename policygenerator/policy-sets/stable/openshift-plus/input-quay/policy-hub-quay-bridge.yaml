@@ -11,6 +11,24 @@ spec:
   source: redhat-operators
   sourceNamespace: openshift-marketplace
 ---
+kind: Secret
+type: Opaque
+metadata:
+  name: quay-integration
+  namespace: openshift-operators
+apiVersion: v1
+data:
+  token: '{{ fromSecret "local-quay" "quay-integration" "token" }}'
+---
+kind: Secret
+type: Opaque
+metadata:
+  name: quay-integration
+  namespace: policies
+apiVersion: v1
+data:
+  token: '{{ fromSecret "local-quay" "quay-integration" "token" }}'
+---
 apiVersion: quay.redhat.com/v1
 kind: QuayIntegration
 metadata:
@@ -25,11 +43,29 @@ spec:
  insecureRegistry: false
  quayHostname: https://{{ fromConfigMap "policies" "quay-config" "host" }}
 ---
-kind: Secret
-type: Opaque
-metadata:
-  name: quay-integration
-  namespace: policies
 apiVersion: v1
 data:
-  token: '{{ fromSecret "openshift-operators" "quay-integration" "token" }}'
+  '{{ (lookup "route.openshift.io/v1" "Route" "local-quay" "registry-quay" ).spec.host }}': |
+    {{ ( fromSecret "openshift-ingress-operator" "router-ca" "tls.crt" ) | base64dec | autoindent }}
+kind: ConfigMap
+metadata:
+  name: opp-ingres-ca
+  namespace: openshift-config
+---
+apiVersion: config.openshift.io/v1
+kind: Image
+metadata:
+ name: cluster
+spec:
+  additionalTrustedCA:
+    name: opp-ingres-ca
+---
+apiVersion: v1
+data:
+  registry-quay-local-quay: |
+    {{ ( fromSecret "openshift-ingress-operator" "router-ca" "tls.crt" ) }}
+kind: Secret
+metadata:
+  name: opp-ingres-ca
+  namespace: policies
+type: Opaque
