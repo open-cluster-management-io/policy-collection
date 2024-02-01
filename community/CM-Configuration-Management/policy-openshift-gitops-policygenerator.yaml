@@ -41,6 +41,7 @@ spec:
                       command:
                       - /bin/bash
                       image: 'registry.redhat.io/rhacm2/multicluster-operators-subscription-rhel8:v{{ (lookup "operator.open-cluster-management.io/v1" "MultiClusterHub" "open-cluster-management" "multiclusterhub").status.currentVersion }}'
+                      name: policy-generator-install
                       volumeMounts:
                       - mountPath: /policy-generator
                         name: policy-generator
