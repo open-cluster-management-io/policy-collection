@@ -1,10 +1,10 @@
-# ACM Hub PV backup and restore using volsync
+# ACM Hub PersistentVolume backup and restore using VolSync
 
-Hub PVC backup and restore using volsync with the restic mover feature. This leverages CSI volume snapshot.
+Hub PersistentVolumeClaim(PVC) backup and restore using VolSync with the Restic-based mover feature. This leverages the Container Storage Interface (CSI) volume snapshot.
 
 Hub PVC with the `cluster.open-cluster-management.io/backup-hub-pvc` label are being backed up and could be restored on another hub using these backup policies. The PVC label's value can be any string.
 
-```
+```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -35,13 +35,13 @@ PolicySet   | Description
 -------------------------------------------| ----------- 
 [acm-hub-pvc-backup-policyset](./acm-hub-pvc-backup-policyset.yaml)   | This PolicySet is used to place the backup policies on the hub, using the placement which matches the `local-cluster` or any managed cluster with the `is-hub=true` label. Using this label the policy can be placed on any managed cluster where the ACM operator is installed.
 
-![Volsync PolisySet](images/policyset.png)
+![VolSync PolisySet](images/policyset.png)
 
 ## List of Policies 
 
 Policy      | Description 
 -------------------------------------------| ----------- 
-[acm-hub-pvc-backup-config](./acm-hub-pvc-backup-config.yaml)                       | Trigerred to run on the hub only if the hub has any PVCs with the `cluster.open-cluster-management.io/backup-hub-pvc` label. It installs the volsync-addon on the hub or any managed cluster matching the `acm-hub-pvc-backup-policyset` PolicySet's placement. It reports on policy missing configuration: reports if the user had not create the `acm-hub-pvc-backup-restic-secret` Secret and `hub-pvc-backup` ConfigMap resources under the PolicySet namespace. The Secret is used by volsync to connect to the storage location where the PVC snapshot is stored. The `hub-pvc-backup` ConfigMap is used to define the ReplicationSource configuration, as defined [here](https://access.redhat.com/login?redirectTo=https%3A%2F%2Faccess.redhat.com%2Fdocumentation%2Fen-us%2Fred_hat_advanced_cluster_management_for_kubernetes%2F2.8%2Fhtml%2Fbusiness_continuity%2Fbusiness-cont-overview%23restic-backup-volsync). You can provide a custom configuration file for a PVC by creating the `hub-pvc-backup-pvcns-pvcname` ConfigMap under the PolicySet namespace; this will overwrite the default `hub-pvc-backup` ConfigMap for the specified volume.
+[acm-hub-pvc-backup-config](./acm-hub-pvc-backup-config.yaml)                       | Triggered to run on the hub only if the hub has any PVCs with the `cluster.open-cluster-management.io/backup-hub-pvc` label. It installs the volsync-addon on the hub or any managed cluster matching the `acm-hub-pvc-backup-policyset` PolicySet's placement. It reports on policy missing configuration: reports if the user had not create the `acm-hub-pvc-backup-restic-secret` Secret and `hub-pvc-backup` ConfigMap resources under the PolicySet namespace. The Secret is used by volsync to connect to the storage location where the PVC snapshot is stored. The `hub-pvc-backup` ConfigMap is used to define the ReplicationSource configuration, as defined in the [RHACM VolSync documentation](https://access.redhat.com/login?redirectTo=https%3A%2F%2Faccess.redhat.com%2Fdocumentation%2Fen-us%2Fred_hat_advanced_cluster_management_for_kubernetes%2F2.8%2Fhtml%2Fbusiness_continuity%2Fbusiness-cont-overview%23restic-backup-volsync). You can provide a custom configuration file for a PVC by creating the `hub-pvc-backup-pvcns-pvcname` ConfigMap under the PolicySet namespace; this will overwrite the default `hub-pvc-backup` ConfigMap for the specified volume.
 [acm-hub-pvc-backup-source](./acm-hub-pvc-backup-source.yaml)                         | Creates a volsync ReplicationSource for all PVCs with the `cluster.open-cluster-management.io/backup-hub-pvc` label. The Policy depends on the `acm-hub-pvc-backup-config` Policy so it only runs if the `acm-hub-pvc-backup-config` Policy is Compliant.
 [acm-hub-pvc-backup-destination](./acm-hub-pvc-backup-destination.yaml)                        | In a restore hub backup operation, when the credentials backup is restored on a new hub, it creates a volsync ReplicationDestination for all PVCs with the `cluster.open-cluster-management.io/backup-hub-pvc` label. This is because the  `acm-hub-pvc-backup-source` creates a set of configuration ConfigMaps defining the PVCs for which a snapshot is stored. These ConfigMaps have the `cluster.open-cluster-management.io/backup` backup label so they are backed up by the hub credentials backup. These ConfigMaps are used to recreate the PVCs on the restore hub. On the restore hub, you can use a restore storage config map [class mapping](https://velero.io/docs/main/restore-reference/#changing-pvpvc-storage-classes), when the backup cluster has a different storage class than the restore hub. The Policy depends on the `acm-hub-pvc-backup-config` Policy so it only runs if the `acm-hub-pvc-backup-config` Policy is Compliant.
 
@@ -70,7 +70,7 @@ Source Policy Templates:
 
 Policy acm-hub-pvc-backup-destination is not running since this is identified as a backup hub :
 
-![Volsync Destination Policy](images/backup_dest_policy.png)
+![VolSync Destination Policy](images/backup_dest_policy.png)
 
 ### Restore Hub Policies
 
@@ -91,7 +91,7 @@ Policy acm-hub-pvc-backup-source is not running since this is identified as a re
 
 volsync label cluster.open-cluster-management.io/backup-hub-pvc set on PVC
 
-```
+```yaml
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -121,7 +121,7 @@ Created by the user on the backup hub.
 Used to define the volsync ReplicationSource configuration, as defined [here](https://access.redhat.com/login?redirectTo=https%3A%2F%2Faccess.redhat.com%2Fdocumentation%2Fen-us%2Fred_hat_advanced_cluster_management_for_kubernetes%2F2.8%2Fhtml%2Fbusiness_continuity%2Fbusiness-cont-overview%23restic-backup-volsync)
 
 
-```
+```yaml
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -145,7 +145,7 @@ properties for a PVC, you should define a ConfigMap using this name convention :
 
 For example, if the PVC `my-pvc` created in namespace `ns-1` should be backed up every 5 hours, create this ConfigMap under the `open-cluster-management-backup` namespace :
 
-```
+```yaml
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -168,10 +168,10 @@ data:
 
 Created by the user
 
-Used to define the volsync ReplicationSource configuration, as defined [here](https://access.redhat.com/login?redirectTo=https%3A%2F%2Faccess.redhat.com%2Fdocumentation%2Fen-us%2Fred_hat_advanced_cluster_management_for_kubernetes%2F2.8%2Fhtml%2Fbusiness_continuity%2Fbusiness-cont-overview%23restic-backup-volsync)
+Used to define the volsync ReplicationSource configuration, as defined in the [RHACM VolSync documentation](https://access.redhat.com/login?redirectTo=https%3A%2F%2Faccess.redhat.com%2Fdocumentation%2Fen-us%2Fred_hat_advanced_cluster_management_for_kubernetes%2F2.8%2Fhtml%2Fbusiness_continuity%2Fbusiness-cont-overview%23restic-backup-volsync)
 
 
-```
+```yaml
 kind: Secret
 apiVersion: v1
 metadata:
@@ -193,10 +193,10 @@ type: Opaque
 
 #### acm-hub-pvc-backup-config-info-<pvc_name>
 
-Created by the volsync policy on the backup hub, for each PVC; uses the PVCs settings
+Created by the volsync policy on the backup hub for each PVC using the PVC's settings
 This resource is backed up and used by the volsync ReplicationDestination to recreate the PV on the restore hub.
 
-```
+```yaml
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -216,7 +216,7 @@ data:
 
 Created by the policy on the backup hub; lists all PVCs that need to be restored. This resource is backed up
 
-```
+```yaml
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -235,7 +235,7 @@ metadata:
 ## Scenario
 
 ACM components installed on the hub.
-User adds the cluster.open-cluster-management.io/backup-hub-pvc  label to the PVC to be backed up.
+User adds the `cluster.open-cluster-management.io/backup-hub-pvc` label to the PVC to be backed up.
 
 
 ACM user, on Primary hub:
@@ -256,5 +256,5 @@ ACM user, on Restore hub:
   - the app using the PVC must be restored after the PVC is created so make sure these resources are restored at cluster activation time.  
 
 ## References
-- [Volsync](https://access.redhat.com/login?redirectTo=https%3A%2F%2Faccess.redhat.com%2Fdocumentation%2Fen-us%2Fred_hat_advanced_cluster_management_for_kubernetes%2F2.8%2Fhtml%2Fbusiness_continuity%2Fbusiness-cont-overview%23restic-backup-volsync)
+- [RHACM Volsync documentation](https://access.redhat.com/login?redirectTo=https%3A%2F%2Faccess.redhat.com%2Fdocumentation%2Fen-us%2Fred_hat_advanced_cluster_management_for_kubernetes%2F2.8%2Fhtml%2Fbusiness_continuity%2Fbusiness-cont-overview%23restic-backup-volsync)
 
