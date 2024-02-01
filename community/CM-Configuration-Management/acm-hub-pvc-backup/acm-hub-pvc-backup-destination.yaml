@@ -1,7 +1,7 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: acm-volsync-destination
+  name: acm-hub-pvc-backup-destination
   namespace: open-cluster-management-backup
   annotations:
     policy.open-cluster-management.io/categories: CA Security Assessment and Authorization
@@ -13,7 +13,7 @@ spec:
   - apiVersion: policy.open-cluster-management.io/v1
     compliance: Compliant
     kind: Policy
-    name: acm-volsync-config
+    name: acm-hub-pvc-backup-config
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
@@ -29,21 +29,21 @@ spec:
             {{- $schedule_label := "cluster.open-cluster-management.io/backup-schedule-type, cluster.open-cluster-management.io/backup-schedule-type in (resources)"}}
             {{- $kind_restore := "Restore" }}
             {{- $ns := "open-cluster-management-backup" }}   
-            {{- $volsync_secret := "restic-secret" }} 
+            {{- $volsync_secret := "acm-hub-pvc-backup-restic-secret" }} 
 
-            {{- /* common volsync config; to define different config for a PVC, create a volsync-config-pvc-ns-pvcname configMap */ -}}
-            {{- $volsync_map := "volsync-config" }} 
-            {{- $volsync_label := "cluster.open-cluster-management.io/volsync" }}
+            {{- /* common volsync config; to define different config for a PVC, create a acm-hub-pvc-backup-config-pvc-ns-pvcname configMap */ -}}
+            {{- $volsync_map := "hub-pvc-backup" }} 
+            {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}
 
             {{- $volsync_backup_cond := gt (len ( lookup $velero_api $kind_schedule $ns "" $schedule_label).items ) 0 }}
             {{- $restore_label :=  "velero.io/backup-name" }}  
             {{- $backup_name_prefix :=  "acm-credentials-schedule-" }}
-            {{- $volsync_pvcs := "volsync-config-pvcs" }}
+            {{- $volsync_pvcs := "hub-pvc-backup-pvcs" }}
 
             {{- /* Create the volsync ReplicationDestination and secret - if Restore exists, PVC is created by a Restore and no Backup is running */ -}}
-            {{- /* Use the volsync-config-pvcns-pvcname config instead of the default volsync-config map, if such map exists under the $ns */ -}}
+            {{- /* Use the hub-pvc-backup-pvcs-pvcns-pvcname config instead of the default acm-hub-pvc-backup-config map, if such map exists under the $ns */ -}}
 
-            {{- /* volsync-config map should exist and have a backup-name label */ -}}
+            {{- /* hub-pvc-backup-pvcs map should exist and have a backup-name label */ -}}
             {{- $volsync_pvcs_map := lookup "v1" "ConfigMap" $ns $volsync_pvcs }}
             {{- $volsync_restore_cond := eq $volsync_pvcs_map.metadata.name $volsync_pvcs }}
 
@@ -77,7 +77,7 @@ spec:
                   {{ $volsync_map = $pvc_config_name }}
                 {{- end }}
                 {{- $secret_name := fromConfigMap $ns $volsync_map "repository" }}
-                {{- $pvc_config_info_name := ( (cat $volsync_map "-info-" $pvc_name ) | replace " " "" ) }}
+                {{- $pvc_config_info_name := ( (cat $volsync_map "-" $pvc_name ) | replace " " "" ) }}
 
                 {{ if eq ( lookup "v1" "ConfigMap" $pvc_namespace  $pvc_config_info_name ).metadata.name  $pvc_config_info_name }}
 
@@ -173,7 +173,7 @@ spec:
           name: check-destination-replication-error 
         spec:
           object-templates-raw: |
-            {{- $volsync_label := "cluster.open-cluster-management.io/volsync" }}
+            {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}
             {{- $api := "cluster.open-cluster-management.io/v1beta1" }}
             {{- $velero_api := "velero.io/v1" }}
             {{- $kind_schedule := "Schedule" }}
@@ -182,8 +182,8 @@ spec:
             {{- $schedule_label := "cluster.open-cluster-management.io/backup-schedule-type, cluster.open-cluster-management.io/backup-schedule-type in (resources)"}}
             {{- $volsync_backup_cond := gt (len ( lookup $velero_api $kind_schedule $ns "" $schedule_label).items ) 0 }}
             
-            {{- /* volsync-config-pvcs map should exist */ -}}
-            {{- $volsync_pvcs := "volsync-config-pvcs" }}
+            {{- /* acm-hub-pvc-backup-config-pvcs map should exist */ -}}
+            {{- $volsync_pvcs := "hub-pvc-backup-pvcs" }}
             {{- $volsync_pvcs_map := lookup "v1" "ConfigMap" $ns $volsync_pvcs }}
             {{- $volsync_restore_cond := eq $volsync_pvcs_map.metadata.name $volsync_pvcs }}
 
@@ -215,7 +215,7 @@ spec:
           name: check-destination-replication-success 
         spec:
           object-templates-raw: |
-            {{- $volsync_label := "cluster.open-cluster-management.io/volsync" }}
+            {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}
             {{- $api := "cluster.open-cluster-management.io/v1beta1" }}
             {{- $velero_api := "velero.io/v1" }}
             {{- $kind_schedule := "Schedule" }}
@@ -224,8 +224,8 @@ spec:
             {{- $schedule_label := "cluster.open-cluster-management.io/backup-schedule-type, cluster.open-cluster-management.io/backup-schedule-type in (resources)"}}
             {{- $volsync_backup_cond := gt (len ( lookup $velero_api $kind_schedule $ns "" $schedule_label).items ) 0 }}
             
-            {{- /* volsync-config-pvcs map should exist */ -}}
-            {{- $volsync_pvcs := "volsync-config-pvcs" }}
+            {{- /* acm-hub-pvc-backup-config-pvcs map should exist */ -}}
+            {{- $volsync_pvcs := "hub-pvc-backup-pvcs" }}
             {{- $volsync_pvcs_map := lookup "v1" "ConfigMap" $ns $volsync_pvcs }}
             {{- $volsync_restore_cond := eq $volsync_pvcs_map.metadata.name $volsync_pvcs }}
 

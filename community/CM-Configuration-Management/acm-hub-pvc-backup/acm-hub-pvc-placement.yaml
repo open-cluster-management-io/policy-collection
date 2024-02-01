@@ -2,7 +2,7 @@
 apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
-  name: volsync-placement
+  name: acm-hub-pvc-placement
   namespace: open-cluster-management-backup
 spec:
   predicates:
@@ -24,14 +24,14 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: volsync-placement
+  name: acm-hub-pvc-placement
   namespace: open-cluster-management-backup
 placementRef:
-  name: volsync-placement
+  name: acm-hub-pvc-placement
   apiGroup: cluster.open-cluster-management.io
   kind: Placement
 subjects:
-  - name: acm-volsync
+  - name: acm-hub-pvc-backup-policyset
     apiGroup: policy.open-cluster-management.io
     kind: PolicySet
 

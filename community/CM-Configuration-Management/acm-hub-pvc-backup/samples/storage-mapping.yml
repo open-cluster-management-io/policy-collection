@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  # any name can be used
+  name: change-storage-class-config
+  # must be in the velero namespace
+  namespace: open-cluster-management-backup
+  # the below labels should be used verbatim in your
+  # ConfigMap.
+  labels:
+    velero.io/change-storage-class: RestoreItemAction
+data:
+  # add 1+ key-value pairs here, where the key is the old
+  # storage class name and the value is the new storage
+  # class name.
+  local-disks: openebs-cstor-r3
