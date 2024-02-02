@@ -53,8 +53,7 @@ Policy      | Description
 
 ### Configuration Policy
 
-The `acm-hub-pvc-backup-config` Policy validates the configuration for both types of hubs ( backup or restore ). If any PVC is found with the cluster.open-cluster-management.io/backup-hub-pvc label, it installs the volsync addon and verifies the user has created the Policy namesoace the `acm-hub-pvc-backup-restic-secret` Secret, used to connect to the storage where the snapshot are saved.It also verifies if the user has created the `hub-pvc-backup` ConfigMap used to define the `ReplicationSource` configuration.
-
+The `acm-hub-pvc-backup-config` Policy validates the configuration for both types of hubs (backup or restore). If any PVC is found with the `cluster.open-cluster-management.io/backup-hub-pvc` label, it installs the volsync addon and verifies the user has created in the Policy namespace the `acm-hub-pvc-backup-restic-secret` Secret, used to connect to the storage where the VolSync snapshots are saved.It also verifies if the user has created the `hub-pvc-backup` ConfigMap used to define the `ReplicationSource` configuration.
 
 ![Configuration Policy](images/config_policy.png)
 
@@ -117,8 +116,9 @@ spec:
 
 #### acm-hub-pvc-backup-config
 
-Created by the user on the backup hub. 
-Used to define the volsync ReplicationSource configuration, as defined [here](https://access.redhat.com/login?redirectTo=https%3A%2F%2Faccess.redhat.com%2Fdocumentation%2Fen-us%2Fred_hat_advanced_cluster_management_for_kubernetes%2F2.8%2Fhtml%2Fbusiness_continuity%2Fbusiness-cont-overview%23restic-backup-volsync)
+
+- Created by the user on the backup hub. 
+- Used to define the volsync ReplicationSource configuration, as defined in the [RHACM VolSync documentation](https://access.redhat.com/login?redirectTo=https%3A%2F%2Faccess.redhat.com%2Fdocumentation%2Fen-us%2Fred_hat_advanced_cluster_management_for_kubernetes%2F2.8%2Fhtml%2Fbusiness_continuity%2Fbusiness-cont-overview%23restic-backup-volsync)
 
 
 ```yaml
