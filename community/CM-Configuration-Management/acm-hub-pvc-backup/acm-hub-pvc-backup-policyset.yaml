@@ -1,0 +1,11 @@
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: acm-hub-pvc-backup-policyset
+  namespace: open-cluster-management-backup
+spec:
+  description: Hub PVC backup and restore using volsync with the restic mover feature. This leverages CSI volume snapshot.
+  policies:
+    - acm-hub-pvc-backup-config
+    - acm-hub-pvc-backup-source
+    - acm-hub-pvc-backup-destination
