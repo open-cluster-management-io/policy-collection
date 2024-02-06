@@ -1,0 +1,253 @@
+
+# ## Introduction
+# This Gatekeeper Policy is intended to match the behavior of the deprecated ACM IAMPolicy Controller.  It will allow an administrator to monitor and alert if `ClusterRoleBindings` with the specified `ClusterRole` exceed the maximum number of users.  In the case where a Group is specified in the `ClusterRoleBinding` the number of users in the group are counted.  ServiceAccounts are ignored.
+#
+# ## Prerequisites
+# The Policy makes use of sync data from the cluster to have knowledge of the existing `ClusterRoleBindings` and `Groups`.  To make this data available create a `Config` in the Gatekeeper Operator namespace, this is `openshift-gatekeeper-system` by default.
+#
+# The config needs to be named "config", there can only be one.  Below is an example of the sync config required for this Policy.  Note you should also enable the `auditFromCache` in the gatekeeper instance.
+#
+# ```
+# apiVersion: config.gatekeeper.sh/v1alpha1
+# kind: Config
+# metadata:
+#   name: config
+#   namespace: "openshift-gatekeeper-system"
+# spec:
+#   sync:
+#     syncOnly:
+#       - group: "rbac.authorization.k8s.io"
+#         version: "v1"
+#         kind: "ClusterRoleBinding"
+#       - group: "user.openshift.io"
+#         version: "v1"
+#         kind: "Group"
+#```
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: AC Access Control
+    policy.open-cluster-management.io/controls: AC-2 Account Management
+  name: gatekeeper-limitclusteradmin
+spec:
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: templates.gatekeeper.sh/v1
+      kind: ConstraintTemplate
+      metadata:
+        name: maxiamclusterbindings
+        annotations:
+          metadata.gatekeeper.sh/title: "Prevent number of users assigned to all ClusterRoleBindings from exceeding limit for the specified role"
+          metadata.gatekeeper.sh/version: 1.0.0
+          metadata.gatekeeper.sh/requires-sync-data: |
+            "[
+              [
+                {
+                  "groups": ["rbac.authorization.k8s.io"],
+                  "versions": ["v1"],
+                  "kinds": ["ClusterRoleBinding"]
+                },
+                {
+                  "groups": ["user.openshift.io"],
+                  "versions": ["v1"],
+                  "kinds": ["Group"]
+                }
+              ]
+            ]"
+          description: |
+            validates the number of users and users in groups assigned the specified cluster role does not exceed the specified count
+      spec:
+        crd:
+          spec:
+            names:
+              kind: MaxIAMClusterBindings
+            validation:
+              openAPIV3Schema:
+                type: object
+                properties:
+                  maxClusterRoleBindingUsers:
+                    type: number
+                    description: Maximum number of users and users within groups allowed to be bound to the specified role
+                    example: 5
+                  clusterRole:
+                    type: string
+                    description: Name of the ClusterRole to validate
+                    example: "cluster-admin"
+                  ignoreClusterRoleBindings: 
+                    type: array
+                    items:
+                      type: string
+                    description: List of ClusterRoleBindings to exclude from the validation count
+                    example: '["myclusteradmins-crb", "system-admins"]'
+                  
+
+        targets:
+          - target: admission.k8s.gatekeeper.sh
+            libs:
+              - |
+                package lib.helpers
+
+                # Types of subjects to count
+                count_kinds := {"User", "Group"}
+                
+                validate_subject(kind, roleRef) {
+                  kind == count_kinds[_]
+                  is_clusterrole_ref(roleRef)
+                }
+
+                is_clusterrole_ref(role) {
+                  role.kind == "ClusterRole"
+                  role.name == input.parameters.clusterRole
+                }
+
+                get_user_names("User", s_name) := names {
+                  names := {nm | nm := s_name}
+                }
+
+                get_user_names("Group", s_name) := names {
+                  names := {nm | nm := data.inventory.cluster["user.openshift.io/v1"].Group[s_name].users[_]}
+                }
+
+                is_excluded(exclusion_list, crd_name) {
+                  exclusions := {e | e := exclusion_list[_]}
+                  crd_name == exclusions[_]
+                }
+
+            rego: |
+              package maxiamclusterbindings
+
+              import data.lib.helpers.validate_subject
+              import data.lib.helpers.is_clusterrole_ref
+              import data.lib.helpers.get_user_names
+              import data.lib.helpers.is_excluded
+
+              max_admins := input.parameters.maxClusterRoleBindingUsers
+              violation[{"msg": msg}] {
+                is_number(max_admins)
+                max_admins < 1
+                msg = sprintf("maxClusterRoleBindingUsers parameter must be greater than 0(zero) maxClusterRoleBindingUsers: %v", [max_admins] )
+              }
+
+              # Make a list of all ClusterRoleBindings that should be excluded from the count
+              # Exclude the binding under review so if the number of subjects decreases we don't have an incorrect count.
+              # The updated subjects will be added back in to the count below.
+              bindings_to_exclude[crd_name] {
+                crd_name := input.review.object.metadata.name
+              }
+              bindings_to_exclude[crd_name] {
+                crd_name := input.parameters.ignoreClusterRoleBindings[_]
+              }
+
+              violation[{"msg": msg}] {
+                # check if the requested role references clusterRole parameter 
+                is_clusterrole_ref(input.review.object.roleRef)
+
+                # check if the requested binding should be excluded
+                not is_excluded(input.parameters.ignoreClusterRoleBindings, input.review.object.metadata.name)
+
+                # Get all ClusterRoleBinding that are not excluded
+                crb_list := {crb | not is_excluded(bindings_to_exclude, data.inventory.cluster["rbac.authorization.k8s.io/v1"].ClusterRoleBinding[i].metadata.name); 
+                              crb := data.inventory.cluster["rbac.authorization.k8s.io/v1"].ClusterRoleBinding[i]}
+                
+                # Get the list of all users in the list
+                current_subjects := {sub | validate_subject(crb_list[i].subjects[s].kind, crb_list[i].roleRef); 
+                                      sub := get_user_names(crb_list[i].subjects[s].kind, crb_list[i].subjects[s].name)[_]}
+
+                new_subjects := {sub | validate_subject(input.review.object.subjects[s].kind, input.review.object.roleRef); 
+                                  sub := get_user_names(input.review.object.subjects[s].kind, input.review.object.subjects[s].name)[_]}
+                total_admins := count(current_subjects | new_subjects)
+                total_admins > max_admins
+
+                msg := sprintf("Total number of bindings to role '%v' exceeded. max-admins allowed: %v - current total: %v", [input.parameters.clusterRole, max_admins, total_admins] )
+              }
+
+  - objectDefinition:
+      apiVersion: constraints.gatekeeper.sh/v1beta1
+      kind: MaxIAMClusterBindings
+      metadata:
+        name: max-cluster-admins
+      spec:
+        match:
+          kinds:
+          - apiGroups:
+            - rbac.authorization.k8s.io
+            kinds:
+            - ClusterRoleBinding
+        parameters:
+          clusterRole: cluster-admin
+          ignoreClusterRoleBindings:
+          - iam-max-groups
+          maxClusterRoleBindingUsers: 5
+
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: inform-gatekeeper-audit-max-cluster-admins
+      spec:
+        namespaceSelector:
+          exclude:
+          - kube-*
+          include:
+          - '*'
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: constraints.gatekeeper.sh/v1beta1
+            kind: MaxIAMClusterBindings
+            metadata:
+              name: max-cluster-admins
+            status:
+              totalViolations: 0
+        remediationAction: inform
+        severity: low
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: inform-gatekeeper-admission-max-cluster-admins
+      spec:
+        namespaceSelector:
+          exclude:
+          - kube-*
+          include:
+          - '*'
+        object-templates:
+        - complianceType: mustnothave
+          objectDefinition:
+            annotations:
+              constraint_action: deny
+              constraint_kind: MaxIAMClusterBindings
+              constraint_name: max-cluster-admins
+              event_type: violation
+            apiVersion: v1
+            kind: Event
+        remediationAction: inform
+        severity: low
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: placement-gatekeeper-limitclusteradmin
+spec:
+  predicates:
+  - requiredClusterSelector:
+      labelSelector:
+        matchExpressions: []
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-gatekeeper-limitclusteradmin
+placementRef:
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+  name: placement-gatekeeper-limitclusteradmin
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: Policy
+  name: gatekeeper-limitclusteradmin
