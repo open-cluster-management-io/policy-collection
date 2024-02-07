@@ -35,12 +35,6 @@ spec:
             {{- $volsync_backup_cond := gt (len ( lookup $velero_api $kind_schedule $ns "" $schedule_label).items ) 0  }}
             {{- $volsync_pvcs := "hub-pvc-backup-pvcs" }}
 
-            {{- /* PVC labels  */ -}}
-            {{- $last_backup_schedule_label := "cluster.open-cluster-management.io/backup-last-schedule" }}
-            {{- $last_sync_name_label := "cluster.open-cluster-management.io/backup-last-sync-name" }}
-            {{- $last_sync_time_label := "cluster.open-cluster-management.io/backup-last-sync-time" }}
-            {{- $last_sync_status_label := "cluster.open-cluster-management.io/backup-last-sync-status" }}
-
             {{- /* Create the volsync ReplicationSource and secret - if BackupSchedule exists ; delete ReplicationSource otherwise */ -}}
             {{ if $volsync_backup_cond }}
 
