@@ -92,6 +92,17 @@ spec:
                 {{- /* truncate from the front, the Dest name, if the string is longer than 50 chars ; a job batch starting with volsync-dst- is generated from this name and it must be less than 63 chars */ -}}
                 {{- $rd_name :=  trunc -50 (cat $pvc_name $restore_timestamp_trim | replace " " "") }}
 
+                {{- /* If a PVC with this identity already exists in Bound state, delete the corresponding ResourceDestination then exit */ -}}
+                {{- $bound_pvc := lookup "v1" "PersistentVolumeClaim" $pvc_namespace $pvc_name }}
+                {{ if and (eq $bound_pvc.metadata.name  $pvc_name) (eq $bound_pvc.status.phase "Bound") }}
+                  - complianceType: mustnothave
+                    objectDefinition:
+                      kind: ReplicationDestination
+                      apiVersion: volsync.backube/v1alpha1
+                      metadata:
+                        name: {{ $rd_name }}
+                        namespace: {{ $pvc_namespace }}
+                {{- else }}
                 {{- $common_restic_repo := ( lookup "v1" "Secret" $ns $volsync_secret ).data.RESTIC_REPOSITORY | base64dec }}
 
                   - complianceType: musthave
@@ -160,7 +171,8 @@ spec:
                           copyMethod: Snapshot
                         trigger:
                           manual: restore-once
-                  {{- end }}        
+                  {{- end }}  
+                {{- end }}      
                 {{- end }}  
               {{- end }}
             {{- end }}  
@@ -212,7 +224,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-destination-replication-success 
+          name: check-pvc-bound 
         spec:
           object-templates-raw: |
             {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}
@@ -223,28 +235,26 @@ spec:
             {{- $kind_restore := "Restore" }} 
             {{- $schedule_label := "cluster.open-cluster-management.io/backup-schedule-type, cluster.open-cluster-management.io/backup-schedule-type in (resources)"}}
             {{- $volsync_backup_cond := gt (len ( lookup $velero_api $kind_schedule $ns "" $schedule_label).items ) 0 }}
-            
+            {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}            
             {{- /* acm-hub-pvc-backup-config-pvcs map should exist */ -}}
             {{- $volsync_pvcs := "hub-pvc-backup-pvcs" }}
             {{- $volsync_pvcs_map := lookup "v1" "ConfigMap" $ns $volsync_pvcs }}
             {{- $volsync_restore_cond := eq $volsync_pvcs_map.metadata.name $volsync_pvcs }}
 
-            {{- /* The volsync destination-source should be successful */ -}}
+            {{- /* The PVC with cluster.open-cluster-management.io/backup-hub-pvc should be Bound eventually */ -}}
             {{ if and ( not $volsync_backup_cond ) ($volsync_restore_cond)}}
               {{- $backup_name := (index $volsync_pvcs_map.metadata.labels "velero.io/backup-name") }}
 
-              {{- range $rd := (lookup "volsync.backube/v1alpha1" "ReplicationDestination" "" "" "backup-name").items }}
-                - complianceType: musthave
-                  objectDefinition:
-                    apiVersion: volsync.backube/v1alpha1
-                    kind: ReplicationDestination
-                    metadata:
-                      namespace: {{ $rd.metadata.namespace }}
-                      labels:
-                        backup-name: {{ $backup_name }}
-                    status:
-                      latestMoverStatus:
-                        result: Successful
+              {{- range $pvc := (lookup "v1" "PersistentVolumeClaim" "" "" $volsync_label).items }}  
+                  - complianceType: musthave
+                    objectDefinition:
+                      kind: PersistentVolumeClaim
+                      apiVersion: v1
+                      metadata:
+                        name: {{ $pvc.metadata.name }}
+                        namespace: {{ $pvc.metadata.namespace }}
+                      status:
+                        phase: Bound
               {{- end }}
             {{- end }}
           remediationAction: inform
