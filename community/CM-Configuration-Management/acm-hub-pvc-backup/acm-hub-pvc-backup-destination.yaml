@@ -31,7 +31,7 @@ spec:
             {{- $ns := "open-cluster-management-backup" }}   
             {{- $volsync_secret := "acm-hub-pvc-backup-restic-secret" }} 
 
-            {{- /* common volsync config; to define different config for a PVC, create a acm-hub-pvc-backup-config-pvc-ns-pvcname configMap */ -}}
+            {{- /* common volsync config; to define different config for a PVC, create a hub-pvc-backup-pvc-ns-pvcname configMap */ -}}
             {{- $volsync_map := "hub-pvc-backup" }} 
             {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}
 
@@ -41,7 +41,7 @@ spec:
             {{- $volsync_pvcs := "hub-pvc-backup-pvcs" }}
 
             {{- /* Create the volsync ReplicationDestination and secret - if Restore exists, PVC is created by a Restore and no Backup is running */ -}}
-            {{- /* Use the hub-pvc-backup-pvcs-pvcns-pvcname config instead of the default acm-hub-pvc-backup-config map, if such map exists under the $ns */ -}}
+            {{- /* Use the hub-pvc-backup-pvcs-pvcns-pvcname config instead of the default hub-pvc-backup-pvcs map, if such map exists under the $ns */ -}}
 
             {{- /* hub-pvc-backup-pvcs map should exist and have a backup-name label */ -}}
             {{- $volsync_pvcs_map := lookup "v1" "ConfigMap" $ns $volsync_pvcs }}
@@ -194,7 +194,7 @@ spec:
             {{- $schedule_label := "cluster.open-cluster-management.io/backup-schedule-type, cluster.open-cluster-management.io/backup-schedule-type in (resources)"}}
             {{- $volsync_backup_cond := gt (len ( lookup $velero_api $kind_schedule $ns "" $schedule_label).items ) 0 }}
             
-            {{- /* acm-hub-pvc-backup-config-pvcs map should exist */ -}}
+            {{- /* hub-pvc-backup-pvcs map should exist */ -}}
             {{- $volsync_pvcs := "hub-pvc-backup-pvcs" }}
             {{- $volsync_pvcs_map := lookup "v1" "ConfigMap" $ns $volsync_pvcs }}
             {{- $volsync_restore_cond := eq $volsync_pvcs_map.metadata.name $volsync_pvcs }}
@@ -236,7 +236,7 @@ spec:
             {{- $schedule_label := "cluster.open-cluster-management.io/backup-schedule-type, cluster.open-cluster-management.io/backup-schedule-type in (resources)"}}
             {{- $volsync_backup_cond := gt (len ( lookup $velero_api $kind_schedule $ns "" $schedule_label).items ) 0 }}
             {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}            
-            {{- /* acm-hub-pvc-backup-config-pvcs map should exist */ -}}
+            {{- /* hub-pvc-backup-pvcs map should exist */ -}}
             {{- $volsync_pvcs := "hub-pvc-backup-pvcs" }}
             {{- $volsync_pvcs_map := lookup "v1" "ConfigMap" $ns $volsync_pvcs }}
             {{- $volsync_restore_cond := eq $volsync_pvcs_map.metadata.name $volsync_pvcs }}
