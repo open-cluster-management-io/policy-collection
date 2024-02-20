@@ -65,7 +65,7 @@ spec:
               {{- range $pvc := (lookup "v1" "PersistentVolumeClaim" "" "" $volsync_label).items }}
 
                 {{- if eq $pvc.status.phase "Bound" }}
-                  {{- /* Use the hub-pvc-backup-pvcns-pvcname config instead of the default acm-hub-pvc-backup-config map, if such map exists under the $ns */ -}}
+                  {{- /* Use the hub-pvc-backup-pvcns-pvcname config instead of the default hub-pvc-backup map, if such map exists under the $ns */ -}}
                   {{- $pvc_config_name := ( (cat $volsync_map "-" $pvc.metadata.namespace "-" $pvc.metadata.name ) | replace " " "" ) }}
 
                   {{- $pvc_config_info_name := ( (cat $volsync_map "-" $pvc.metadata.name ) | replace " " "" ) }}

@@ -1,5 +1,5 @@
-# The acm-hub-pvc-backup-config ConfigMap and secret must be defined under the open-cluster-management-backup ns,  
-# if a BackupSchedule is running and there are PVCs with the volsync label.
+# The hub-pvc-backup ConfigMap and acm-hub-pvc-backup-restic-secret Secret must be defined under the open-cluster-management-backup ns,  
+# when a BackupSchedule is running and there are PVCs with the cluster.open-cluster-management.io/backup-hub-pvc label.
 # The volsync ConfigMap is in this format: 
 ##
 #kind: ConfigMap
