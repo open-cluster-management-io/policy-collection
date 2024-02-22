@@ -186,6 +186,7 @@ spec:
                     status:
                       conditions:
                         - status: 'True'
+                          type: Available  
                   {{- end }}      
                 {{- end }}
                 {{ if $has_local_cluster_ns }}
@@ -203,6 +204,7 @@ spec:
                     status:
                       conditions:
                         - status: 'True'
+                          type: Available     
                 {{- end }}        
             {{- end }}
           remediationAction: enforce
