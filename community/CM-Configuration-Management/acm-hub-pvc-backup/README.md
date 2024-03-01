@@ -69,7 +69,7 @@ Source Policy Templates:
 
 Policy acm-hub-pvc-backup-destination is not running since this is identified as a backup hub :
 
-![VolSync Destination Policy](images/backup_dest_policy.png)
+![VolSync Destination Policy](images/backup_dest_policy_1.png)
 
 ### Restore Hub Policies
 
@@ -79,7 +79,9 @@ Backup Destination Policy:
 
 Backup Destination Policy Templates:
 
-![Backup Destination Policy Templates](images/restore_dest_policy_1.png)
+![Backup Destination Policy Templates PVC](images/restore_dest_pvc.png)
+
+![Backup Destination Policy Templates ReplicationDestination](images/restore_dest_rd.png)
 
 Policy acm-hub-pvc-backup-source is not running since this is identified as a restore hub : 
 
@@ -178,7 +180,7 @@ metadata:
  name: acm-hub-pvc-backup-restic-secret
  namespace: open-cluster-management-backup
  labels:
-   cluster.open-cluster-management.io/backup: volsync
+   cluster.open-cluster-management.io/backup: cluster-activation
 data:
  AWS_ACCESS_KEY_ID: a2V5
  AWS_SECRET_ACCESS_KEY: a2V5
