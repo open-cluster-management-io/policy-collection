@@ -1,6 +1,6 @@
 # Deploy policies to Open Cluster Management
 
-Deploy policies to Open Cluster Management with the `deploy.sh` script.
+Deploy policies to Open Cluster Management with the `deploy.sh` script. The `deploy.sh` script uses Application Lifecycle subscriptions for deployment.  To use ArgoCD use the [argoDeploy.sh](argoDeploy.sh) script instead.
 
 ## Deploying policies with GitOps
 
@@ -38,6 +38,8 @@ Usage:
   --dry-run                   Print the YAML to stdout without applying them to the cluster
 ```
 
+**Note**: The `argoDeploy.sh` uses similar options to `deploy.sh` but does not provide the sync rate or the deploy app options.
+
 For more details on the `sync` parameter values, see the git subscription chapter
 [Resource reconciliation rate settings](https://github.com/stolostron/multicloud-operators-subscription/blob/main/docs/gitrepo_subscription.md#resource-reconciliation-rate-settings).
 
@@ -66,3 +68,6 @@ Usage:
   -n|--namespace <namespace>  Namespace on the cluster that resources are located
   -a|--name <resource-name>   Prefix for the Channel and Subscription resources
 ```
+
+**Note**: Use the ArgoCD console interface to remove the application deployed using the `argoDeploy.sh` script.
+
