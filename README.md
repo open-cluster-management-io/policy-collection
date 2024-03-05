@@ -46,6 +46,8 @@ command can be viewed in its [README](deploy/README.md).) This script assumes yo
 Application lifecycle management as an addon in your Open Cluster Management installation. See
 [Application lifecycle management](https://open-cluster-management.io/getting-started/integration/app-lifecycle/) 
 for details on installing the Application addon.
+**Note**: If you are using ArgoCD for gitops, a similar script [argoDeploy.sh](deploy/argoDeploy.sh) is provided that does
+not require the Application Lifecycle addon.
 
 The policies are applied to all managed clusters that are available, and have the `environment` set
 to `dev`. Specifically, an available managed cluster has the `status` parameter set to `true` by the
