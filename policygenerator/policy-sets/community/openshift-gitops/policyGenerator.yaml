@@ -1,0 +1,33 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-opp-prereqs
+placementBindingDefaults:
+  name: binding-policy-openshift-gitops
+policyDefaults:
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: open-cluster-management-global-set
+  policySets:
+    - openshift-gitops
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - NIST SP 800-53
+policies:
+- name: openshift-gitops
+  manifests:
+    - path: policy-openshift-gitops.yaml
+- name: openshift-gitops-grc
+  dependencies:
+    - name: openshift-gitops
+  manifests:
+    - path: policy-openshift-gitops-grc.yaml
+policySets:
+  - description: Applies the OpenShift Gitops subscription and configures
+      OpenShift Gitops to work with the Governance APIs
+    name: openshift-gitops
+    placement:
+      placementPath: placement.yaml

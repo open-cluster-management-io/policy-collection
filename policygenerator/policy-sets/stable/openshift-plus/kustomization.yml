@@ -2,3 +2,5 @@ generators:
 - ./policyGenerator.yaml
 commonLabels:
   open-cluster-management.io/policy-set: openshift-plus
+commonAnnotations:
+  argocd.argoproj.io/compare-options: IgnoreExtraneous
