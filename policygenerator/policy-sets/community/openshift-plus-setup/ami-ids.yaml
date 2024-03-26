@@ -1,5 +1,7 @@
 apiVersion: v1
 data:
+  us-east-1-4.16: ami-057df4d0cb8cbae0d
+  us-east-2-4.16: ami-0f736c64d5751d7d3
   us-east-1-4.15: ami-0b56cb92505dea7ed
   us-east-2-4.15: ami-0b577c67f5371f6d1
   us-east-1-4.14: ami-0b56cb92505dea7ed
