@@ -1,0 +1,10 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: CertificatePolicy
+metadata:
+  name: acs-bundle-certificates
+spec:
+  namespaceSelector:
+    include: ["policies"]
+  remediationAction: inform
+  severity: high
+  minimumDuration: 720h
