@@ -36,15 +36,14 @@ spec:
                     initContainers:
                     - args:
                       - -c
-                      - cp /etc/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator/PolicyGenerator
-                        /policy-generator/PolicyGenerator
+                      - cp /policy-generator/PolicyGenerator-not-fips-compliant /policy-generator-tmp/PolicyGenerator
                       command:
                       - /bin/bash
-                      image: 'registry.redhat.io/rhacm2/multicluster-operators-subscription-rhel8:v{{ (lookup "operator.open-cluster-management.io/v1" "MultiClusterHub" "open-cluster-management" "multiclusterhub").status.currentVersion }}'
+                      image: '{{ (index (lookup "apps/v1" "Deployment" "open-cluster-management" "multicluster-operators-hub-subscription").spec.template.spec.containers 0).image }}'
                       name: policy-generator-install
                       volumeMounts:
                       - mountPath: /policy-generator
-                        name: policy-generator
+                        name: policy-generator-tmp
                     volumeMounts:
                     - mountPath: /etc/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator
                       name: policy-generator
