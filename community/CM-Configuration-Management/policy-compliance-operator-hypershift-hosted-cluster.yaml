@@ -33,9 +33,9 @@ spec:
                   name: hypershift-cis-scan
                   namespace: openshift-compliance
                 profiles:
-                - apiGroup: compliance.openshift.io/v1alpha1
-                  kind: Profile
-                  name: hypershift-tailored-profile
+                  - apiGroup: compliance.openshift.io/v1alpha1
+                    kind: Profile
+                    name: hypershift-tailored-profile
                 settingsRef:
                   apiGroup: compliance.openshift.io/v1alpha1
                   kind: ScanSetting
@@ -155,7 +155,7 @@ spec:
                       rationale: NetworkPolicy for each namespace must be configured manually
                     - name: ocp4-kubeadmin-removed
                       rationale: kubeadmin password needs to be stored in secrets
-    - objectDefinition: 
+    - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
@@ -202,21 +202,18 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-hypershift-scan
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-hypershift-scan
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: hypershift-cis-scan-placement
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-    - key: name
-      operator: In
-      values:
-      - local-cluster
+      - key: name
+        operator: In
+        values:
+          - local-cluster

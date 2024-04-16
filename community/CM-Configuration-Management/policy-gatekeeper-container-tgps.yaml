@@ -27,14 +27,14 @@ spec:
                   name: policy-gatekeeper-container-tgps
                 spec:
                   applyTo:
-                  - groups: [""]
-                    kinds: ["Pod"]
-                    versions: ["v1"]
+                    - groups: [""]
+                      kinds: ["Pod"]
+                      versions: ["v1"]
                   match:
                     scope: Namespaced
                     kinds:
-                    - apiGroups: ["*"]
-                      kinds: ["Pod"]
+                      - apiGroups: ["*"]
+                        kinds: ["Pod"]
                   location: "spec.terminationGracePeriodSeconds"
                   parameters:
                     assign:
@@ -58,9 +58,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-gatekeeper-container-tgps
 spec:
-  clusterConditions:
-    - status: "True"
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - { key: environment, operator: In, values: ["dev"] }
+      - {key: environment, operator: In, values: ["dev"]}

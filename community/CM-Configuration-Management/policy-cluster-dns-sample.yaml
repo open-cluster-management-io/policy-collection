@@ -24,7 +24,7 @@ spec:
                 apiVersion: config.openshift.io/v1
                 kind: DNS
                 metadata:
-                 name: cluster
+                  name: cluster
                 spec:
                   baseDomain: <base_domain>
                   privateZone:
@@ -41,18 +41,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-config-dns
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-config-dns
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-config-dns
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

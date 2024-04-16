@@ -28,7 +28,7 @@ spec:
                 spec:
                   identityProviders:
                     - github:
-                        clientID: ID 
+                        clientID: ID
                         clientSecret:
                           name: github
                         organizations:
@@ -65,19 +65,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-github-oauth
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-github-oauth
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-github-oauth
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}
-

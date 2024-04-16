@@ -4,7 +4,7 @@ metadata:
   name: policy-etcd-backup
   annotations:
     policy.open-cluster-management.io/categories: NIST SP 800-53
-    policy.open-cluster-management.io/controls: CM Configuration Management 
+    policy.open-cluster-management.io/controls: CM Configuration Management
     policy.open-cluster-management.io/standards: CM-2 Baseline Configuration
 spec:
   disabled: false
@@ -55,23 +55,23 @@ spec:
                 apiVersion: v1
                 data:
                   etcd-backup.sh: |+
-                    
+
                     DATE=$(date +%Y%m%dT%H%M%S)
 
                     /usr/local/bin/etcd-snapshot-backup-disconnected.sh /assets/backup
- 
+
                     if [ $? -eq 0 ]; then
                         mkdir /etcd-backup/${DATE}
                         cp -r /assets/backup/*  /etcd-backup/${DATE}/
                         echo 'Copied backup files to PVC mount point.'
                         exit 0
                     fi
- 
+
                     echo "Backup attempts failed. Please FIX !!!"
                     exit 1
 
                   etcd-snapshot-backup-disconnected.sh: |+
-                    
+
                     set -o errexit
                     set -o pipefail
                     set -o errtrace
@@ -90,13 +90,13 @@ spec:
                     if [ -z "$1" ] || [ -f "$1" ]; then
                       usage
                     fi
-                    
+
                     if [ ! -d "$1" ]; then
                       mkdir -p $1
                     fi
 
                     function backup_latest_kube_static_resources {
-                      
+
                       RESOURCES=("$@")
 
                       LATEST_RESOURCE_DIRS=()
@@ -115,19 +115,19 @@ spec:
                      }
 
                       BACKUP_DIR="$1"
-                      
+
                       DATESTRING=$(date "+%F_%H%M%S")
-                      
+
                       BACKUP_TAR_FILE=${BACKUP_DIR}/static_kuberesources_${DATESTRING}.tar.gz
-                      
+
                       SNAPSHOT_FILE="${BACKUP_DIR}/snapshot_${DATESTRING}.db"
-                      
+
                       BACKUP_RESOURCE_LIST=("kube-apiserver-pod" "kube-controller-manager-pod" "kube-scheduler-pod" "etcd-pod")
 
                       trap "rm -f ${BACKUP_TAR_FILE} ${SNAPSHOT_FILE}" ERR
 
                       source /etc/kubernetes/static-pod-resources/etcd-certs/configmaps/etcd-scripts/etcd.env
-                      
+
                       source /etc/kubernetes/static-pod-resources/etcd-certs/configmaps/etcd-scripts/etcd-common-tools
 
                       if [ ! -f "$ETCDCTL_CACERT" ] && [ ! -d "${CONFIG_FILE_DIR}/static-pod-certs" ]; then
@@ -135,9 +135,9 @@ spec:
                       fi
 
                       backup_latest_kube_static_resources "${BACKUP_RESOURCE_LIST[@]}"
-                      
+
                       etcdctl snapshot save ${SNAPSHOT_FILE}
-                      
+
                       echo "snapshot db and kube resources are successfully saved to ${BACKUP_DIR}"
 
                 kind: ConfigMap
@@ -163,7 +163,7 @@ spec:
                             - name: etcd-backup
                               command:
                                 - /bin/sh
-                                - '-c'
+                                - "-c"
                                 - >-
                                   /usr/local/bin/etcd-backup.sh && ls -1
                                   /etcd-backup/* | sort -r | tail -n +6 | xargs
@@ -200,7 +200,7 @@ spec:
                                   mountPath: /usr/local/bin
                           hostNetwork: true
                           nodeSelector:
-                            node-role.kubernetes.io/master: ''
+                            node-role.kubernetes.io/master: ""
                           restartPolicy: Never
                           serviceAccount: approver
                           serviceAccountName: approver
@@ -214,19 +214,19 @@ spec:
                               hostPath:
                                 path: >-
                                   /etc/kubernetes/static-pod-resources/etcd-member
-                                type: ''
+                                type: ""
                             - name: conf
                               hostPath:
                                 path: /etc/etcd
-                                type: ''
+                                type: ""
                             - name: kubeconfig
                               hostPath:
                                 path: /etc/kubernetes
-                                type: ''
+                                type: ""
                             - name: scripts
                               hostPath:
                                 path: /usr/local/bin
-                                type: ''
+                                type: ""
                             - name: etcd-backup
                               persistentVolumeClaim:
                                 claimName: etcd-backup
@@ -234,7 +234,7 @@ spec:
                               configMap:
                                 name: etcd-backup-script
                                 defaultMode: 493
-                  schedule: '0 */6 * * *'
+                  schedule: "0 */6 * * *"
                   startingDeadlineSeconds: 200
                   suspend: false
           remediationAction: inform
@@ -250,18 +250,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-etcd-backup
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-etcd-backup
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-etcd-backup
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

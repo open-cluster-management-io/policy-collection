@@ -16,84 +16,83 @@ metadata:
 spec:
   disabled: false
   policy-templates:
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: policy-idp-sample-github
-      spec:
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: v1
-            kind: Namespace
-            metadata:
-              labels:
-                control-plane: controller-manager
-              name: authrealm-sample-github-ns
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: cluster.open-cluster-management.io/v1beta2
-            kind: ManagedClusterSet
-            metadata:
-              name: authrealm-sample-github-clusterset
-              namespace: authrealm-sample-github-ns
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: cluster.open-cluster-management.io/v1alpha1
-            kind: Placement
-            metadata:
-              name: authrealm-sample-github-placement
-              namespace: authrealm-sample-github-ns
-            spec:
-              predicates:
-              - requiredClusterSelector:
-                  labelSelector:
-                    matchLabels:
-                      authdeployment: sample-github
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: cluster.open-cluster-management.io/v1beta2
-            kind: ManagedClusterSetBinding
-            metadata:
-              name: authrealm-sample-github-clusterset
-              namespace: authrealm-sample-github-ns
-            spec:
-              clusterSet: authrealm-sample-github-clusterset
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: v1
-            data:
-              clientSecret: CLIENTSECRET # # Replace with Github OAuth App Client Secret
-            kind: Secret
-            metadata:
-              name: authrealm-sample-github-client-secret
-              namespace: authrealm-sample-github-ns
-            type: Opaque
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: identityconfig.identitatem.io/v1alpha1
-            kind: AuthRealm
-            metadata:
-              name: authrealm-sample-github
-              namespace: authrealm-sample-github-ns
-            spec:
-              identityProviders:
-              - github:
-                  clientID: CLIENTID # Replace with Github OAuth App Client Id
-                  clientSecret:
-                    name: authrealm-sample-github-client-secret
-                mappingMethod: add
-                name: sample-github-idp
-                type: GitHub
-              placementRef:
-                name: authrealm-sample-github-placement
-              routeSubDomain: sample-github-idp
-              type: dex
-        remediationAction: inform
-        severity: medium
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-idp-sample-github
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  labels:
+                    control-plane: controller-manager
+                  name: authrealm-sample-github-ns
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: cluster.open-cluster-management.io/v1beta2
+                kind: ManagedClusterSet
+                metadata:
+                  name: authrealm-sample-github-clusterset
+                  namespace: authrealm-sample-github-ns
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: cluster.open-cluster-management.io/v1alpha1
+                kind: Placement
+                metadata:
+                  name: authrealm-sample-github-placement
+                  namespace: authrealm-sample-github-ns
+                spec:
+                  predicates:
+                    - requiredClusterSelector:
+                        labelSelector:
+                          matchLabels:
+                            authdeployment: sample-github
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: cluster.open-cluster-management.io/v1beta2
+                kind: ManagedClusterSetBinding
+                metadata:
+                  name: authrealm-sample-github-clusterset
+                  namespace: authrealm-sample-github-ns
+                spec:
+                  clusterSet: authrealm-sample-github-clusterset
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                data:
+                  clientSecret: CLIENTSECRET # # Replace with Github OAuth App Client Secret
+                kind: Secret
+                metadata:
+                  name: authrealm-sample-github-client-secret
+                  namespace: authrealm-sample-github-ns
+                type: Opaque
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: identityconfig.identitatem.io/v1alpha1
+                kind: AuthRealm
+                metadata:
+                  name: authrealm-sample-github
+                  namespace: authrealm-sample-github-ns
+                spec:
+                  identityProviders:
+                    - github:
+                        clientID: CLIENTID # Replace with Github OAuth App Client Id
+                        clientSecret:
+                          name: authrealm-sample-github-client-secret
+                      mappingMethod: add
+                      name: sample-github-idp
+                      type: GitHub
+                  placementRef:
+                    name: authrealm-sample-github-placement
+                  routeSubDomain: sample-github-idp
+                  type: dex
+          remediationAction: inform
+          severity: medium
   remediationAction: enforce
-
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -113,9 +112,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-idp-sample-github
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: local-cluster

@@ -24,7 +24,7 @@ spec:
                 apiVersion: mutations.gatekeeper.sh/v1alpha1
                 kind: AssignMetadata
                 metadata:
-                  name: pod-annotation-owner 
+                  name: pod-annotation-owner
                 spec:
                   match:
                     scope: Namespaced
@@ -32,8 +32,8 @@ spec:
                       - apiGroups: ["*"]
                         kinds: ["Pod"]
                   location: "metadata.annotations.owner"
-                  parameters: 
-                    assign: 
+                  parameters:
+                    assign:
                       value: "admin"
 ---
 apiVersion: policy.open-cluster-management.io/v1
@@ -54,9 +54,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-gatekeeper-annotation-owner
 spec:
-  clusterConditions:
-    - status: "True"
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - { key: environment, operator: In, values: ["dev"] }
+      - {key: environment, operator: In, values: ["dev"]}

@@ -39,10 +39,10 @@ spec:
                   type: MustRunAs
                 readOnlyRootFilesystem: false
                 requiredDropCapabilities:
-                - KILL
-                - MKNOD
-                - SETUID
-                - SETGID
+                  - KILL
+                  - MKNOD
+                  - SETUID
+                  - SETGID
                 runAsUser:
                   type: MustRunAsRange
                 seLinuxContext:
@@ -51,12 +51,12 @@ spec:
                   type: RunAsAny
                 users: []
                 volumes:
-                - configMap
-                - downwardAPI
-                - emptyDir
-                - persistentVolumeClaim
-                - projected
-                - secret
+                  - configMap
+                  - downwardAPI
+                  - emptyDir
+                  - persistentVolumeClaim
+                  - projected
+                  - secret
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -67,18 +67,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-securitycontextconstraints
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-securitycontextconstraints
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-securitycontextconstraints
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

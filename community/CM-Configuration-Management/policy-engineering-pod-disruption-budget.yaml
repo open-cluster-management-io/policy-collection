@@ -28,8 +28,8 @@ spec:
                 metadata:
                   name: my-pdb
                 spec:
-                  minAvailable: 2  
-                  selector:  
+                  minAvailable: 2
+                  selector:
                     matchLabels:
                       foo: bar
     - objectDefinition:
@@ -50,11 +50,10 @@ spec:
                 metadata:
                   name: my-pdb2
                 spec:
-                  maxUnavailable: 25% 
-                  selector: 
+                  maxUnavailable: 25%
+                  selector:
                     matchLabels:
                       foo: bar
-
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -65,19 +64,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-example-pod-disruption-budget
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
-
----  
+  - name: policy-example-pod-disruption-budget
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-example-pod-disruption-budget
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}  
+      - {key: environment, operator: In, values: ["dev"]}

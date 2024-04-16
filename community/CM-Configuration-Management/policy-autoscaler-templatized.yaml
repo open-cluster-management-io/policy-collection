@@ -42,28 +42,28 @@ spec:
                 metadata:
                   name: default #clusterscoped , no namespace needed
                 spec:
-                  podPriorityThreshold: -10 
+                  podPriorityThreshold: -10
                   resourceLimits:
                     maxNodesTotal: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-maxnodes" .ManagedClusterName) | toInt hub}}'
                     cores:
-                      min: 8 
-                      max: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-cores-max" .ManagedClusterName) | toInt hub}}' 
+                      min: 8
+                      max: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-cores-max" .ManagedClusterName) | toInt hub}}'
                     memory:
-                      min: 4 
-                      max: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-memory-max" .ManagedClusterName) | toInt hub}}' 
+                      min: 4
+                      max: '{{hub fromConfigMap "" "autoscaler-config"  (printf "%s-memory-max" .ManagedClusterName) | toInt hub}}'
                     gpus:
-                      - type: nvidia.com/gpu 
-                        min: 0 
-                        max: 16 
-                      - type: amd.com/gpu 
-                        min: 0 
-                        max: 4 
-                  scaleDown: 
-                    enabled: true 
-                    delayAfterAdd: 10m 
-                    delayAfterDelete: 5m 
+                      - type: nvidia.com/gpu
+                        min: 0
+                        max: 16
+                      - type: amd.com/gpu
+                        min: 0
+                        max: 4
+                  scaleDown:
+                    enabled: true
+                    delayAfterAdd: 10m
+                    delayAfterDelete: 5m
                     delayAfterFailure: '{{hub- fromConfigMap "" "autoscaler-config"  (printf "%s-failuredelay" .ManagedClusterName) -hub}}'
-                    unneededTime: 5m 
+                    unneededTime: 5m
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
@@ -96,7 +96,7 @@ spec:
                 data:
                   # Configuration values can be set as key-value properties
                   cluster1-maxnodes: '24'
-                  cluster1-cores-max: '128' 
+                  cluster1-cores-max: '128'
                   cluster1-memory-max: "256"
                   cluster1-failuredelay: 30s
                   cluster2-maxnodes: "36"
@@ -163,13 +163,9 @@ kind: PlacementRule
 metadata:
   name: placement-policy-autoscaler-templatized-common
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: local-cluster
         operator: In
         values:
           - 'true'
-

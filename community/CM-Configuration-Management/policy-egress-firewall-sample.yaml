@@ -34,13 +34,13 @@ spec:
                       to:
                         cidrSelector: 192.168.12.0/24
                     - type: Allow
-                      to: 
+                      to:
                         dnsName: db-srv.example.com
                     - type: Allow
-                      to: 
+                      to:
                         dnsName: analytics.example.com
                     - type: Deny
-                      to: 
+                      to:
                         cidrSelector: 0.0.0.0/0
 ---
 apiVersion: policy.open-cluster-management.io/v1
@@ -52,18 +52,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: egress-example
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: egress-example
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-egress-example
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

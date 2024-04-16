@@ -53,10 +53,10 @@ spec:
                           ports:
                             - containerPort: 80
                           env: # tls key and crt to communicate to hub are dynamically set
-                          - name: hub.tls.crt
-                            value: '{{- fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "tls.crt" | base64dec -}}'
-                          - name: hub.tls.key
-                            value: '{{- fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "tls.key" | base64dec -}}'
+                            - name: hub.tls.crt
+                              value: '{{- fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "tls.crt" | base64dec -}}'
+                            - name: hub.tls.key
+                              value: '{{- fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "tls.key" | base64dec -}}'
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -67,19 +67,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-nginx-deployment-templatized
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-nginx-deployment-templatized
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-nginx-deployment-templatized
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: vendor, operator: In, values: ["OpenShift"]}
-

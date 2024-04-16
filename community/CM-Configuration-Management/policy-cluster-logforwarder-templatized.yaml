@@ -57,9 +57,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-enableclusterlogforwarder-templated
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: environment
