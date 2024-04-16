@@ -17,79 +17,25 @@ spec:
   disabled: false
   policy-templates:
     - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
+        apiVersion: policy.open-cluster-management.io/v1beta1
+        kind: OperatorPolicy
         metadata:
-          name: comp-operator-ns
+          name: operatorpolicy-comp-operator
         spec:
-          remediationAction: inform # will be overridden by remediationAction in parent policy
+          remediationAction: inform
           severity: high
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: v1
-                kind: Namespace
-                metadata:
-                  name: openshift-compliance
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: comp-operator-operator-group
-        spec:
-          remediationAction: inform # will be overridden by remediationAction in parent policy
-          severity: high
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: operators.coreos.com/v1
-                kind: OperatorGroup
-                metadata:
-                  name: compliance-operator
-                  namespace: openshift-compliance
-                spec:
-                  targetNamespaces:
-                    - openshift-compliance
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: comp-operator-subscription
-        spec:
-          remediationAction: inform  # will be overridden by remediationAction in parent policy
-          severity: high
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: operators.coreos.com/v1alpha1
-                kind: Subscription
-                metadata:
-                  name: compliance-operator
-                  namespace: openshift-compliance
-                spec:
-                  installPlanApproval: Automatic
-                  name: compliance-operator
-                  source: redhat-operators
-                  sourceNamespace: openshift-marketplace
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: comp-operator-status
-        spec:
-          remediationAction: inform  # will be overridden by remediationAction in parent policy
-          severity: high
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: operators.coreos.com/v1alpha1
-                kind: ClusterServiceVersion
-                metadata:
-                  namespace: openshift-compliance
-                spec:
-                  displayName: Compliance Operator
-                status:
-                  phase: Succeeded   # check the csv status to determine if operator is running or not
+          complianceType: musthave
+          operatorGroup:
+            name: compliance-operator
+            namespace: openshift-compliance
+            targetNamespaces:
+              - openshift-compliance
+          subscription:
+            name: compliance-operator
+            namespace: openshift-compliance
+            installPlanApproval: Automatic
+            source: redhat-operators
+            sourceNamespace: openshift-marketplace
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -110,8 +56,8 @@ metadata:
   name: placement-policy-comp-operator
 spec:
   clusterConditions:
-    - status: "True"
+    - status: 'True'
       type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - {key: vendor, operator: In, values: ["OpenShift"]}
+      - { key: vendor, operator: In, values: ['OpenShift'] }
