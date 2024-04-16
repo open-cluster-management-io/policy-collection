@@ -13,46 +13,43 @@ metadata:
 spec:
   disabled: false
   remediationAction: inform
-  policy-templates:      
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: policy-managed-clusterset-binding
-      spec:
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: v1
-            kind: Namespace
-            metadata:
-              name: policies
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: cluster.open-cluster-management.io/v1beta2
-            kind: ManagedClusterSetBinding
-            metadata:
-              namespace: policies
-              name: default
-            spec:
-              clusterSet: default
-        remediationAction: enforce
-        severity: low
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-managed-clusterset-binding
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: policies
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: cluster.open-cluster-management.io/v1beta2
+                kind: ManagedClusterSetBinding
+                metadata:
+                  namespace: policies
+                  name: default
+                spec:
+                  clusterSet: default
+          remediationAction: enforce
+          severity: low
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-managed-clusterset-binding
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-    - key: name
-      operator: In
-      values:
-      - local-cluster
+      - key: name
+        operator: In
+        values:
+          - local-cluster
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -63,6 +60,6 @@ placementRef:
   kind: PlacementRule
   name: placement-policy-managed-clusterset-binding
 subjects:
-- apiGroup: policy.open-cluster-management.io
-  kind: Policy
-  name: policy-managed-clusterset-binding
+  - apiGroup: policy.open-cluster-management.io
+    kind: Policy
+    name: policy-managed-clusterset-binding

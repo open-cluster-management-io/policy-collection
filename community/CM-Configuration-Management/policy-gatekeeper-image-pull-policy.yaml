@@ -26,19 +26,19 @@ spec:
                 metadata:
                   name: policy-gatekeeper-image-pull-policy
                 spec:
-                    applyTo:
-                      - groups: [""]
+                  applyTo:
+                    - groups: [""]
+                      kinds: ["Pod"]
+                      versions: ["v1"]
+                  match:
+                    scope: Namespaced
+                    kinds:
+                      - apiGroups: ["*"]
                         kinds: ["Pod"]
-                        versions: ["v1"]
-                    match:
-                      scope: Namespaced
-                      kinds:
-                        - apiGroups: ["*"]
-                          kinds: ["Pod"]
-                    location: "spec.containers[name:*].imagePullPolicy"
-                    parameters: 
-                      assign: 
-                        value: Always
+                  location: "spec.containers[name:*].imagePullPolicy"
+                  parameters:
+                    assign:
+                      value: Always
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -58,9 +58,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-gatekeeper-image-pull-policy
 spec:
-  clusterConditions:
-    - status: "True"
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - { key: environment, operator: In, values: ["dev"] }
+      - {key: environment, operator: In, values: ["dev"]}

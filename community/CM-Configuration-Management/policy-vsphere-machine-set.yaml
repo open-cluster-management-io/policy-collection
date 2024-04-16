@@ -110,6 +110,3 @@ spec:
         operator: In
         values:
           - dev
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable

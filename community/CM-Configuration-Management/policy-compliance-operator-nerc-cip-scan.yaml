@@ -30,17 +30,17 @@ spec:
                   name: nerc-cip
                   namespace: openshift-compliance
                 profiles:
-                - apiGroup: compliance.openshift.io/v1alpha1
-                  kind: Profile
-                  name: ocp4-nerc-cip
-                - apiGroup: compliance.openshift.io/v1alpha1
-                  kind: Profile
-                  name: ocp4-nerc-cip-node
+                  - apiGroup: compliance.openshift.io/v1alpha1
+                    kind: Profile
+                    name: ocp4-nerc-cip
+                  - apiGroup: compliance.openshift.io/v1alpha1
+                    kind: Profile
+                    name: ocp4-nerc-cip-node
                 settingsRef:
                   apiGroup: compliance.openshift.io/v1alpha1
                   kind: ScanSetting
                   name: default
-    - objectDefinition: 
+    - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
@@ -86,18 +86,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-nerc-cip-scan
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-nerc-cip-scan
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-nerc-cip-scan
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: vendor, operator: In, values: ["OpenShift"]}

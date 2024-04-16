@@ -14,7 +14,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name:  policy-acm-catalogsource
+          name: policy-acm-catalogsource
         spec:
           remediationAction: inform
           severity: medium
@@ -48,9 +48,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-acm-catalogsource
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: environment

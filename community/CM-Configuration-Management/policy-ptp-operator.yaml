@@ -4,7 +4,7 @@ metadata:
   name: policy-ptp-operator
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
-    policy.open-cluster-management.io/categories: CM Configuration Management 
+    policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
   remediationAction: enforce
@@ -47,7 +47,7 @@ spec:
                   namespace: openshift-ptp
                 spec:
                   targetNamespaces:
-                  - openshift-ptp
+                    - openshift-ptp
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -88,7 +88,7 @@ spec:
                   namespace: openshift-ptp
                 spec:
                   daemonNodeSelector:
-                    node-role.kubernetes.io/worker-cnf: ""             
+                    node-role.kubernetes.io/worker-cnf: ""
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -112,7 +112,7 @@ spec:
                     matchExpressions:
                       - key: machineconfiguration.openshift.io/role
                         operator: In
-                        values: [worker,worker-cnf]
+                        values: [worker, worker-cnf]
                   nodeSelector:
                     matchLabels:
                       node-role.kubernetes.io/worker-cnf: ""
@@ -126,18 +126,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-ptp-operator
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-ptp-operator
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-ptp
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: ptp, operator: In, values: ["true"]}

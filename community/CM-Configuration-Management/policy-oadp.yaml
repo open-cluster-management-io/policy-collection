@@ -96,27 +96,24 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
- name: binding-policy-oadp-operator
+  name: binding-policy-oadp-operator
 placementRef:
- apiGroup: apps.open-cluster-management.io
- kind: PlacementRule
- name: placement-policy-oadp-operator
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-policy-oadp-operator
 subjects:
- - apiGroup: policy.open-cluster-management.io
-   kind: Policy
-   name: policy-oadp-operator
+  - apiGroup: policy.open-cluster-management.io
+    kind: Policy
+    name: policy-oadp-operator
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
- name: placement-policy-oadp-operator
+  name: placement-policy-oadp-operator
 spec:
- clusterConditions:
-   - status: 'True'
-     type: ManagedClusterConditionAvailable
- clusterSelector:
-   matchExpressions:
-     - key: environment
-       operator: In
-       values:
-         - dev
+  clusterSelector:
+    matchExpressions:
+      - key: environment
+        operator: In
+        values:
+          - dev

@@ -43,25 +43,25 @@ spec:
                       named `default-deny` which will deny all traffic anytime a new Namespace is created.      
                 spec:
                   rules:
-                  - name: default-deny
-                    match:
-                      resources:
-                        kinds:
-                        - Namespace
-                    generate:
-                      apiVersion: networking.k8s.io/v1
-                      kind: NetworkPolicy
-                      name: default-deny
-                      namespace: "{{ `{{request.object.metadata.name}}` }}"
-                      synchronize: true
-                      data:
-                        spec:
-                          # select all pods in the namespace
-                          podSelector: {}
-                          # deny all traffic
-                          policyTypes:
-                          - Ingress
-                          - Egress
+                    - name: default-deny
+                      match:
+                        resources:
+                          kinds:
+                            - Namespace
+                      generate:
+                        apiVersion: networking.k8s.io/v1
+                        kind: NetworkPolicy
+                        name: default-deny
+                        namespace: "{{ `{{request.object.metadata.name}}` }}"
+                        synchronize: true
+                        data:
+                          spec:
+                            # select all pods in the namespace
+                            podSelector: {}
+                            # deny all traffic
+                            policyTypes:
+                              - Ingress
+                              - Egress
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -81,9 +81,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-kyverno-add-network-policy
 spec:
-  clusterConditions:
-    - status: "True"
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

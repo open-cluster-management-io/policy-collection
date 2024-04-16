@@ -22,7 +22,7 @@ spec:
             - complianceType: musthave
               objectDefinition:
                 apiVersion: v1
-                kind: Namespace 
+                kind: Namespace
                 metadata:
                   name: openshift-sriov-network-operator
     - objectDefinition:
@@ -43,7 +43,7 @@ spec:
                   namespace: openshift-sriov-network-operator
                 spec:
                   targetNamespaces:
-                  - openshift-sriov-network-operator
+                    - openshift-sriov-network-operator
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -104,14 +104,14 @@ spec:
                   name: cluster
                 spec:
                   additionalNetworks:
-                  - name: dummy-dhcp-network
-                    simpleMacvlanConfig:
-                      ipamConfig:
-                        type: dhcp
-                      master: eth0
-                      mode: bridge
-                      mtu: 1500
-                    type: SimpleMacvlan
+                    - name: dummy-dhcp-network
+                      simpleMacvlanConfig:
+                        ipamConfig:
+                          type: dhcp
+                        master: eth0
+                        mode: bridge
+                        mtu: 1500
+                      type: SimpleMacvlan
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -135,7 +135,7 @@ spec:
                     matchExpressions:
                       - key: machineconfiguration.openshift.io/role
                         operator: In
-                        values: [worker,worker-cnf]
+                        values: [worker, worker-cnf]
                   nodeSelector:
                     matchLabels:
                       node-role.kubernetes.io/worker-cnf: ""
@@ -149,18 +149,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-sriov-operator
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-sriov-operator
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-sriov
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: sriov, operator: In, values: ["true"]}

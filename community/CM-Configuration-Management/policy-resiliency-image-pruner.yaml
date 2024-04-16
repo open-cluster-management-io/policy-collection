@@ -56,13 +56,9 @@ kind: PlacementRule
 metadata:
   name: placement-policy-resiliency-image-pruner
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: environment
         operator: In
         values:
           - dev
-

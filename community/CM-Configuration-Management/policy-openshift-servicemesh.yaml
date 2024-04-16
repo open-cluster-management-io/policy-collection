@@ -191,35 +191,35 @@ spec:
                       enabled: true
                       service:
                         ports:
-                        - name: http
-                          port: 80
-                          targetPort: 8080
-                        - name: https
-                          port: 443
-                          targetPort: 8443
-                        - name: http2-secure
-                          port: 9443
-                          targetPort: 9443
-                        - name: status-port
-                          port: 15020
-                          targetPort: 15020
+                          - name: http
+                            port: 80
+                            targetPort: 8080
+                          - name: https
+                            port: 443
+                            targetPort: 8443
+                          - name: http2-secure
+                            port: 9443
+                            targetPort: 9443
+                          - name: status-port
+                            port: 15020
+                            targetPort: 15020
                     ingress:
                       enabled: true
                       namespace: istio-system
                       service:
                         ports:
-                        - name: http
-                          port: 80
-                          targetPort: 8080
-                        - name: https
-                          port: 443
-                          targetPort: 8443
-                        - name: tls
-                          port: 15443
-                          targetPort: 15443
-                        - name: status-port
-                          port: 15020
-                          targetPort: 15020
+                          - name: http
+                            port: 80
+                            targetPort: 8080
+                          - name: https
+                            port: 443
+                            targetPort: 8443
+                          - name: tls
+                            port: 15443
+                            targetPort: 15443
+                          - name: status-port
+                            port: 15020
+                            targetPort: 15020
                         type: ClusterIP
                     openshiftRoute:
                       enabled: true
@@ -251,7 +251,7 @@ spec:
           pruneObjectBehavior: None
           remediationAction: inform
           severity: high
-      # Create a Service Mesh Member Roll resource which defines the projects that belong to the Service Mesh.
+          # Create a Service Mesh Member Roll resource which defines the projects that belong to the Service Mesh.
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -296,6 +296,3 @@ spec:
         operator: In
         values:
           - dev
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable

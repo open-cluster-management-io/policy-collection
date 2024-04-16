@@ -33,13 +33,13 @@ spec:
                   privileged: false # no privileged pods
                   allowPrivilegeEscalation: false
                   allowedCapabilities:
-                  - '*'
+                    - '*'
                   volumes:
-                  - '*'
+                    - '*'
                   hostNetwork: true
                   hostPorts:
-                  - min: 1000 # ports < 1000 are reserved
-                    max: 65535
+                    - min: 1000 # ports < 1000 are reserved
+                      max: 65535
                   hostIPC: false
                   hostPID: false
                   runAsUser:
@@ -60,18 +60,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-podsecuritypolicy
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-podsecuritypolicy
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-podsecuritypolicy
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

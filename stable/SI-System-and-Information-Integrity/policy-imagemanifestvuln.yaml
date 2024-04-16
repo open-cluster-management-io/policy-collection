@@ -38,7 +38,7 @@ spec:
         metadata:
           name: policy-imagemanifestvuln-status
         spec:
-          remediationAction: inform  # will be overridden by remediationAction in parent policy
+          remediationAction: inform # will be overridden by remediationAction in parent policy
           severity: high
           object-templates:
             - complianceType: musthave
@@ -50,7 +50,7 @@ spec:
                 spec:
                   displayName: Red Hat Quay Container Security Operator
                 status:
-                  phase: Succeeded   # check the csv status to determine if operator is running or not
+                  phase: Succeeded # check the csv status to determine if operator is running or not
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -77,18 +77,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-imagemanifestvuln
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-imagemanifestvuln
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-imagemanifestvuln
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

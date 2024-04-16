@@ -55,18 +55,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-clustercnf10-tag-workers
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-clustercnf10-tag-workers
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: cluster-cnf10
 spec:
-  clusterConditions:
-  - type: ManagedClusterConditionAvailable
-    status: "True"
   clusterSelector:
     matchLabels:
       name: cnf10

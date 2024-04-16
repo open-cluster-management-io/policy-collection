@@ -69,7 +69,7 @@ spec:
                     matchExpressions:
                       - key: machineconfiguration.openshift.io/role
                         operator: In
-                        values: [worker,worker-cnf]
+                        values: [worker, worker-cnf]
                   nodeSelector:
                     matchLabels:
                       node-role.kubernetes.io/worker-cnf: ""
@@ -83,18 +83,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-pao-operator
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-pao-operator
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-pao
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: pao, operator: In, values: ["true"]}

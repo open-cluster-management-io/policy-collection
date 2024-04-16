@@ -34,7 +34,7 @@ spec:
                   namespace: awx-resource-operator
                 spec:
                   targetNamespaces:
-                  - awx-resource-operator
+                    - awx-resource-operator
             - complianceType: musthave
               objectDefinition:
                 apiVersion: operators.coreos.com/v1alpha1
@@ -68,13 +68,9 @@ kind: PlacementRule
 metadata:
   name: placement-policy-awx-resource-operator
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: environment
         operator: In
         values:
           - dev
-

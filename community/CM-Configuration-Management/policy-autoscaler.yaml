@@ -26,28 +26,28 @@ spec:
                 metadata:
                   name: "default"
                 spec:
-                  podPriorityThreshold: -10 
+                  podPriorityThreshold: -10
                   resourceLimits:
-                    maxNodesTotal: 24 
+                    maxNodesTotal: 24
                     cores:
-                      min: 8 
-                      max: 128 
+                      min: 8
+                      max: 128
                     memory:
-                      min: 4 
-                      max: 256 
+                      min: 4
+                      max: 256
                     gpus:
-                      - type: nvidia.com/gpu 
-                        min: 0 
-                        max: 16 
-                      - type: amd.com/gpu 
-                        min: 0 
-                        max: 4 
-                  scaleDown: 
-                    enabled: true 
-                    delayAfterAdd: 10m 
-                    delayAfterDelete: 5m 
-                    delayAfterFailure: 30s 
-                    unneededTime: 5m 
+                      - type: nvidia.com/gpu
+                        min: 0
+                        max: 16
+                      - type: amd.com/gpu
+                        min: 0
+                        max: 4
+                  scaleDown:
+                    enabled: true
+                    delayAfterAdd: 10m
+                    delayAfterDelete: 5m
+                    delayAfterFailure: 30s
+                    unneededTime: 5m
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -67,13 +67,9 @@ kind: PlacementRule
 metadata:
   name: placement-policy-autoscaler
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: environment
         operator: In
         values:
           - 'dev'
-

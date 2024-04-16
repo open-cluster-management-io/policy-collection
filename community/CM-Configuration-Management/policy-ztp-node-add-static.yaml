@@ -67,8 +67,8 @@ spec:
                         type: ethernet
                         ipv4:
                           address:
-                          - ip: 10.0.0.10
-                            prefix-length: 24
+                            - ip: 10.0.0.10
+                              prefix-length: 24
                           dhcp: false
                           enabled: true
                         ipv6:
@@ -95,9 +95,6 @@ kind: PlacementRule
 metadata:
   name: policy-ztp-node-add-static-placement
 spec:
-  clusterConditions:
-    - status: "True"
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: local-cluster

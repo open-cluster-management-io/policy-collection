@@ -84,13 +84,9 @@ kind: PlacementRule
 metadata:
   name: placement-upgrade-cluster
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: environment
         operator: In
         values:
           - dev
-
