@@ -20,29 +20,28 @@ spec:
   disabled: false
   remediationAction: enforce
   policy-templates:
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: policy-build-clusterinfo
-      spec:
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: v1
-            data:
-              clusterid: '{{ fromClusterClaim "id.openshift.io" }} '
-              clustername: '{{ fromClusterClaim "name" }}'
-              ocpversion: '{{ fromClusterClaim "version.openshift.io" }}'
-              platform: '{{ fromClusterClaim "platform.open-cluster-management.io"
-                }}'
-              product: '{{ fromClusterClaim "product.open-cluster-management.io" }}'
-            kind: ConfigMap
-            metadata:
-              name: clusterinfo
-              namespace: default
-        remediationAction: inform
-        severity: low
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-build-clusterinfo
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                data:
+                  clusterid: '{{ fromClusterClaim "id.openshift.io" }} '
+                  clustername: '{{ fromClusterClaim "name" }}'
+                  ocpversion: '{{ fromClusterClaim "version.openshift.io" }}'
+                  platform: '{{ fromClusterClaim "platform.open-cluster-management.io" }}'
+                  product: '{{ fromClusterClaim "product.open-cluster-management.io" }}'
+                kind: ConfigMap
+                metadata:
+                  name: clusterinfo
+                  namespace: default
+          remediationAction: inform
+          severity: low
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -53,18 +52,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-managedclusterinfo-templatized
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-managedclusterinfo-templatized
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-managedclusterinfo-templatized
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: vendor, operator: In, values: ["OpenShift"]}

@@ -27,13 +27,12 @@ spec:
                   name: cluster
                 spec:
                   audit:
-                    customRules:                        
-                    - group: system:authenticated:oauth
-                      profile: WriteRequestBodies
-                    - group: system:authenticated
-                      profile: AllRequestBodies
-                  profile: Default  
-
+                    customRules:
+                      - group: system:authenticated:oauth
+                        profile: WriteRequestBodies
+                      - group: system:authenticated
+                        profile: AllRequestBodies
+                  profile: Default
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -53,13 +52,9 @@ kind: PlacementRule
 metadata:
   name: placement-config-audit
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: environment
         operator: In
         values:
           - dev
-

@@ -27,20 +27,20 @@ spec:
                 apiVersion: compliance.openshift.io/v1alpha1
                 kind: ScanSettingBinding
                 metadata:
-                  name: e8 
+                  name: e8
                   namespace: openshift-compliance
                 profiles:
-                - apiGroup: compliance.openshift.io/v1alpha1
-                  kind: Profile
-                  name: ocp4-e8
-                - apiGroup: compliance.openshift.io/v1alpha1
-                  kind: Profile
-                  name: rhcos4-e8
+                  - apiGroup: compliance.openshift.io/v1alpha1
+                    kind: Profile
+                    name: ocp4-e8
+                  - apiGroup: compliance.openshift.io/v1alpha1
+                    kind: Profile
+                    name: rhcos4-e8
                 settingsRef:
                   apiGroup: compliance.openshift.io/v1alpha1
                   kind: ScanSetting
                   name: default
-    - objectDefinition: 
+    - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
@@ -86,18 +86,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-e8-scan
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-e8-scan
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-e8-scan
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: vendor, operator: In, values: ["OpenShift"]}

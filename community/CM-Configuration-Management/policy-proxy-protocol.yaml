@@ -9,38 +9,35 @@ metadata:
 spec:
   disabled: false
   policy-templates:
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: policy-proxy-protocol
-      spec:
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: operator.openshift.io/v1
-            kind: IngressController
-            metadata:
-              finalizers:
-              - ingresscontroller.operator.openshift.io/finalizer-ingresscontroller
-              name: default
-              namespace: openshift-ingress-operator
-            spec:
-              endpointPublishingStrategy:
-                hostNetwork:
-                  protocol: PROXY
-                type: HostNetwork
-        remediationAction: inform
-        severity: low
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-proxy-protocol
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operator.openshift.io/v1
+                kind: IngressController
+                metadata:
+                  finalizers:
+                    - ingresscontroller.operator.openshift.io/finalizer-ingresscontroller
+                  name: default
+                  namespace: openshift-ingress-operator
+                spec:
+                  endpointPublishingStrategy:
+                    hostNetwork:
+                      protocol: PROXY
+                    type: HostNetwork
+          remediationAction: inform
+          severity: low
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: policy-proxy-protocol-placement
 spec:
-  clusterConditions:
-    - status: "True"
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: local-cluster

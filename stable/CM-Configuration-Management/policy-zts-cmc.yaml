@@ -53,11 +53,11 @@ spec:
         metadata:
           name: policy-zts-cmc
         spec:
-          remediationAction: inform 
+          remediationAction: inform
           severity: low
           namespaceSelector:
             include:
-              - default 
+              - default
           object-templates:
             - complianceType: musthave
               objectDefinition:
@@ -84,11 +84,11 @@ spec:
                           imagePullPolicy: Always
                           image: zettasetimg/test:zts-acm-web-application-0.0.2_commitid-a1b5f9
                           env:
-                           - name: IP_ADDRESS_CMC
-                             valueFrom:
-                               configMapKeyRef:
-                                 name: zts-cmc-configmap
-                                 key: application.properties
+                            - name: IP_ADDRESS_CMC
+                              valueFrom:
+                                configMapKeyRef:
+                                  name: zts-cmc-configmap
+                                  key: application.properties
                           ports:
                             - containerPort: 8080
                       imagePullSecrets:
@@ -103,19 +103,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-zts-cmc
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-zts-cmc
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-zts-cmc
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}
-

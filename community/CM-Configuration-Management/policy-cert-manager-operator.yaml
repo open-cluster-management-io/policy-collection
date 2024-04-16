@@ -13,27 +13,27 @@ spec:
   remediationAction: enforce
   disabled: false
   policy-templates:
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: cert-manager-operator-subscription
-      spec:
-        remediationAction: inform
-        severity: high
-        object-templates:
-          - complianceType: musthave
-            objectDefinition:
-              apiVersion: operators.coreos.com/v1alpha1
-              kind: Subscription
-              metadata:
-                name: cert-manager
-                namespace: openshift-operators
-              spec:
-                channel: stable
-                name: cert-manager
-                source: community-operators
-                sourceNamespace: openshift-marketplace
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: cert-manager-operator-subscription
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  name: cert-manager
+                  namespace: openshift-operators
+                spec:
+                  channel: stable
+                  name: cert-manager
+                  source: community-operators
+                  sourceNamespace: openshift-marketplace
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -44,18 +44,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-cert-manager-operator
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-cert-manager-operator
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-cert-manager-operator
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

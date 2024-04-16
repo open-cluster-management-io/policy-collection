@@ -98,16 +98,16 @@ spec:
                     - packageAlias: volsync
                       packageName: volsync
                       packageOverrides:
-                      - path: spec
-                        value:
-                          image:
-                            image: registry.redhat.io/rhacm2/volsync-rhel8:v0.4
-                          rclone:
-                            image: registry.redhat.io/rhacm2/volsync-mover-rclone-rhel8:v0.4
-                          restic:
-                            image: registry.redhat.io/rhacm2/volsync-mover-restic-rhel8:v0.4
-                          rsync:
-                            image: registry.redhat.io/rhacm2/volsync-mover-rsync-rhel8:v0.4
+                        - path: spec
+                          value:
+                            image:
+                              image: registry.redhat.io/rhacm2/volsync-rhel8:v0.4
+                            rclone:
+                              image: registry.redhat.io/rhacm2/volsync-mover-rclone-rhel8:v0.4
+                            restic:
+                              image: registry.redhat.io/rhacm2/volsync-mover-restic-rhel8:v0.4
+                            rsync:
+                              image: registry.redhat.io/rhacm2/volsync-mover-rsync-rhel8:v0.4
                   placement:
                     placementRef:
                       name: volsync-placement
@@ -155,9 +155,6 @@ kind: PlacementRule
 metadata:
   name: placement-volsync-policy-app
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchLabels:
       name: local-cluster

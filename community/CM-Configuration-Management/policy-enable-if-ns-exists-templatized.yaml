@@ -69,7 +69,7 @@ spec:
                 metadata:
                   name: policy-conditionalconfigmap #name should match the name of the root policy that is being enabled
                   namespace: <POLICIESNS> #namespace should match the ns of the root policy that is being enabled
-                spec: 
+                spec:
                   # disable is set to true if namespace does not exist else it is set to false , 
                   disabled: '{{ ne (lookup "v1" "Namespace" "" "test").metadata.name "test" |  print | toBool }}'
 ---
@@ -94,9 +94,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-conditionalconfigmap-common
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: local-cluster

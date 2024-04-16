@@ -7,7 +7,7 @@ metadata:
     policy.open-cluster-management.io/categories: AC Access Control
     policy.open-cluster-management.io/controls: AC-2 Account Management
 spec:
-  remediationAction: enforce 
+  remediationAction: enforce
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -18,7 +18,7 @@ spec:
         spec:
           remediationAction: enforce
           severity: low
-          object-templates: 
+          object-templates:
             - complianceType: musthave
               objectDefinition:
                 apiVersion: templates.gatekeeper.sh/v1beta1
@@ -47,7 +47,7 @@ spec:
 
                         review(subject) = true {
                           subject.name == "system:anonymous"
-                        }                
+                        }
             - complianceType: musthave
               objectDefinition:
                 apiVersion: constraints.gatekeeper.sh/v1beta1
@@ -98,7 +98,7 @@ spec:
                     constraint_action: deny
                     constraint_kind: K8sDisallowAnonymous
                     constraint_name: no-anonymous
-                    event_type: violation       
+                    event_type: violation
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -118,9 +118,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-gatekeeper-disallow-anonymous
 spec:
-  clusterConditions:
-    - status: "True"
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - { key: environment, operator: In, values: ["dev"] }
+      - {key: environment, operator: In, values: ["dev"]}

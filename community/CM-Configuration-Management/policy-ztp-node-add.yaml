@@ -56,9 +56,6 @@ kind: PlacementRule
 metadata:
   name: policy-ztp-node-add-placement
 spec:
-  clusterConditions:
-    - status: "True"
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: local-cluster

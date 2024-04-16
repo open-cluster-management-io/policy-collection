@@ -70,7 +70,7 @@ spec:
                 metadata:
                   name: policy-conditionalsecret #name should match the name of the root policy that is being enabled
                   namespace: <POLICIESNS> #namespace should match the ns of the root policy that is being enabled
-                spec: 
+                spec:
                   # disable is set to true if encryption.type != aescbc else it is set to false , 
                   disabled: '{{ ne (lookup "config.openshift.io/v1" "APIServer" "" "cluster").spec.encryption.type "aescbc" |  print | toBool }}'
 ---
@@ -95,9 +95,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-conditionalsecret-common
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: local-cluster

@@ -7,35 +7,35 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-    name: policy-site-nw-templatized
-    annotations:
-        policy.open-cluster-management.io/categories: CM Configuration Management
-        policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
-        policy.open-cluster-management.io/standards: NIST SP 800-53
+  name: policy-site-nw-templatized
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
 spec:
-    remediationAction: inform
-    disabled: false
-    policy-templates:
-        - objectDefinition:
-            apiVersion: policy.open-cluster-management.io/v1
-            kind: ConfigurationPolicy
-            metadata:
-                name: policy-site-nw-templatized
-            spec:
-                remediationAction: inform
-                severity: low
-                object-templates:
-                    - complianceType: musthave
-                      objectDefinition:
-                        apiVersion: sriovnetwork.openshift.io/v1
-                        kind: SriovNetwork
-                        metadata:
-                            name: sriov-nw
-                            namespace: openshift-sriov-network-operator
-                        spec:
-                            networkNamespace: openshift-sriov-network-operator
-                            resourceName: '{{hub fromConfigMap "" "site-config"  (printf "%s-resourceName" .ManagedClusterName) hub}}'
-                            vlan: '{{hub fromConfigMap "" "site-config"  (printf "%s-vlan" .ManagedClusterName) | toInt hub}}'
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-site-nw-templatized
+        spec:
+          remediationAction: inform
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: sriovnetwork.openshift.io/v1
+                kind: SriovNetwork
+                metadata:
+                  name: sriov-nw
+                  namespace: openshift-sriov-network-operator
+                spec:
+                  networkNamespace: openshift-sriov-network-operator
+                  resourceName: '{{hub fromConfigMap "" "site-config"  (printf "%s-resourceName" .ManagedClusterName) hub}}'
+                  vlan: '{{hub fromConfigMap "" "site-config"  (printf "%s-vlan" .ManagedClusterName) | toInt hub}}'
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -55,9 +55,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-site-nw-templatized-common
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: local-cluster
@@ -98,7 +95,6 @@ spec:
                   cluster0001-phc2sysOpts: "-a -r -n 24"
                   cluster0001-resourceName: "du_fh"
                   cluster0001-vlan: "3620"
-
                   cluster0002-interface: "ens5f0"
                   cluster0002-phc2sysOpts: "-a -r -n 24"
                   cluster0002-resourceName: "du_mh"
@@ -122,9 +118,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-site-nw-templatized-config
 spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - key: local-cluster
@@ -132,3 +125,4 @@ spec:
         values:
           - 'true'
 ---
+

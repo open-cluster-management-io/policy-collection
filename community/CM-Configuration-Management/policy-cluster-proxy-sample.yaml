@@ -5,7 +5,7 @@ metadata:
   annotations:
     policy.open-cluster-management.io/standards: NIST 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
-    policy.open-cluster-management.io/controls: CM-2 Baseline 
+    policy.open-cluster-management.io/controls: CM-2 Baseline
 spec:
   remediationAction: inform
   disabled: false
@@ -44,16 +44,15 @@ spec:
           severity: low
           object-templates:
             - complianceType: musthave
-              objectDefinition: 
+              objectDefinition:
                 kind: ConfigMap
                 apiVersion: v1
                 metadata:
                   name: user-ca-bundle
                   namespace: openshift-config
-                data: 
+                data:
                   ca-bundle.crt: |-
                     'CONTENT'
-                 
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -64,18 +63,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-config-proxy
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-config-proxy
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-config-pod
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

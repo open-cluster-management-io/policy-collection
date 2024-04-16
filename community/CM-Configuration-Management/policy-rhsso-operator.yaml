@@ -5,7 +5,7 @@ metadata:
   annotations:
     policy.open-cluster-management.io/standards: NIST-CSF
     policy.open-cluster-management.io/categories: CM Configuration Management
-    policy.open-cluster-management.io/controls: CM-2 Baseline 
+    policy.open-cluster-management.io/controls: CM-2 Baseline
 spec:
   remediationAction: enforce
   disabled: false
@@ -44,7 +44,7 @@ spec:
                   namespace: keycloak
                 spec:
                   targetNamespaces:
-                  - keycloak
+                    - keycloak
             - complianceType: musthave
               objectDefinition:
                 apiVersion: operators.coreos.com/v1alpha1
@@ -79,9 +79,9 @@ spec:
                   kind: ClusterRole
                   name: route-editor
                 subjects:
-                - kind: ServiceAccount
-                  name: rhsso-operator
-                  namespace: keycloak
+                  - kind: ServiceAccount
+                    name: rhsso-operator
+                    namespace: keycloak
             - complianceType: musthave
               objectDefinition:
                 apiVersion: rbac.authorization.k8s.io/v1
@@ -89,16 +89,16 @@ spec:
                 metadata:
                   name: route-editor
                 rules:
-                - apiGroups:
-                  - route.openshift.io
-                  resources:
-                  - routes/custom-host
-                  verbs:
-                  - create
-                  - update
-                  - list
-                  - get
-                  - patch
+                  - apiGroups:
+                      - route.openshift.io
+                    resources:
+                      - routes/custom-host
+                    verbs:
+                      - create
+                      - update
+                      - list
+                      - get
+                      - patch
             - complianceType: musthave
               objectDefinition:
                 apiVersion: keycloak.org/v1alpha1
@@ -124,20 +124,16 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-rhsso-operator
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-rhsso-operator
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-rhsso-operator
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
-    matchExpressions:
-      []  # selects all clusters if not specified
+    matchExpressions: [] # selects all clusters if not specified
     matchLabels:
       name: local-cluster

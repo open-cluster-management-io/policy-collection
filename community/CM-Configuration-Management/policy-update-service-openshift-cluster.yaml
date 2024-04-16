@@ -10,51 +10,51 @@ spec:
   remediationAction: inform
   disabled: false
   policy-templates:
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: policy-update-service-subscription
-      spec:
-        remediationAction: enforce
-        severity: medium
-        object-templates:
-          - complianceType: musthave
-            objectDefinition:
-              apiVersion: operators.coreos.com/v1alpha1
-              kind: Subscription
-              metadata:
-                name: cincinnati-operator
-                namespace: openshift-update-service
-                labels:
-                  operators.coreos.com/cincinnati-operator.openshift-update-service: ''
-              spec:
-                channel: v1
-                installPlanApproval: Automatic
-                name: cincinnati-operator
-                source: redhat-operators
-                sourceNamespace: openshift-marketplace
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: policy-update-service
-      spec:
-        remediationAction: enforce
-        severity: medium
-        object-templates:
-          - complianceType: musthave
-            objectDefinition:
-              apiVersion: updateservice.operator.openshift.io/v1
-              kind: UpdateService
-              metadata:
-                name: sample
-                namespace: openshift-update-service
-              spec:
-                foo: bar
-                graphDataImage: 'quay.io/openshifttest/cincinnati-graph-data-container:4.6'
-                releases: quay.io/openshift-release-dev/ocp-release
-                replicas: 2
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-update-service-subscription
+        spec:
+          remediationAction: enforce
+          severity: medium
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  name: cincinnati-operator
+                  namespace: openshift-update-service
+                  labels:
+                    operators.coreos.com/cincinnati-operator.openshift-update-service: ''
+                spec:
+                  channel: v1
+                  installPlanApproval: Automatic
+                  name: cincinnati-operator
+                  source: redhat-operators
+                  sourceNamespace: openshift-marketplace
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-update-service
+        spec:
+          remediationAction: enforce
+          severity: medium
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: updateservice.operator.openshift.io/v1
+                kind: UpdateService
+                metadata:
+                  name: sample
+                  namespace: openshift-update-service
+                spec:
+                  foo: bar
+                  graphDataImage: 'quay.io/openshifttest/cincinnati-graph-data-container:4.6'
+                  releases: quay.io/openshift-release-dev/ocp-release
+                  replicas: 2
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -65,18 +65,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-update-service
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-update-service
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-update-service
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

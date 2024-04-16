@@ -41,12 +41,10 @@ spec:
                   name: nginx-pdb
                 spec:
                   #if the environment label on the managedcluster == prod then set maxUnavailable value to 25% then set to 50%
-                  maxUnavailable: '{{- if eq  (lookup "cluster.open-cluster-management.io/v1alpha1" "ClusterClaim" "" "environment").spec.value "prod" -}}
-                    25% {{- else -}} 50% {{- end -}}' 
-                  selector: 
+                  maxUnavailable: '{{- if eq  (lookup "cluster.open-cluster-management.io/v1alpha1" "ClusterClaim" "" "environment").spec.value "prod" -}} 25% {{- else -}} 50% {{- end -}}'
+                  selector:
                     matchLabels:
                       app: nginx
-
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -57,19 +55,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-pod-disruption-budget-templatized
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
-
----  
+  - name: policy-pod-disruption-budget-templatized
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-pod-disruption-budget-templatized
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: vendor, operator: In, values: ["OpenShift"]}

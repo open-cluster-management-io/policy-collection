@@ -1,5 +1,5 @@
 # This policy verifies the installation of Integrity Shield on the managed clusters.
-# 
+#
 # "enforce", it will install Integirty Shield operator
 
 apiVersion: policy.open-cluster-management.io/v1
@@ -129,7 +129,7 @@ spec:
                   requestHandlerConfig: |
                     defaultConstraintAction:
                       mode: inform
-                    sideEffect: 
+                    sideEffect:
                       createDenyEvent: true
                     log:
                       level: info
@@ -137,7 +137,7 @@ spec:
                       format: json
                     decisionReporterConfig:
                       enabled: true
-                    requestFilterProfile: 
+                    requestFilterProfile:
                       skipObjects:
                       - kind: ConfigMap
                         name: kube-root-ca.crt
@@ -194,7 +194,7 @@ spec:
                         objects:
                         - kind: ClusterServiceVersion
                       skipUsers:
-                      - users: 
+                      - users:
                         - system:admin
                         - system:apiserver
                         - system:kube-scheduler
@@ -221,41 +221,41 @@ spec:
                         - system:serviceaccount:kube-system:resourcequota-controller
                         - system:serviceaccount:kube-system:service-account-controller
                         - system:serviceaccount:kube-system:statefulset-controller
-                      - objects: 
+                      - objects:
                         - kind: ControllerRevision
                         - kind: Pod
-                        users: 
+                        users:
                         - system:serviceaccount:kube-system:daemon-set-controller
-                      - objects: 
+                      - objects:
                         - kind: Pod
                         - kind: PersistentVolumeClaim
-                        users: 
+                        users:
                         - system:serviceaccount:kube-system:persistent-volume-binder
-                      - objects: 
+                      - objects:
                         - kind: ReplicaSet
-                        users: 
+                        users:
                         - system:serviceaccount:kube-system:deployment-controller
-                      - objects: 
+                      - objects:
                         - kind: Pod
-                        users:  
+                        users:
                         - system:serviceaccount:kube-system:replicaset-controller
-                      - objects: 
+                      - objects:
                         - kind: PersistentVolumeClaim
-                        users: 
+                        users:
                         - system:serviceaccount:kube-system:statefulset-controller
-                      - objects: 
+                      - objects:
                         - kind: ServiceAccount
-                        users: 
+                        users:
                         - system:kube-controller-manager
-                      - objects: 
+                      - objects:
                         - kind: EndpointSlice
-                        users: 
+                        users:
                         - system:serviceaccount:kube-system:endpointslice-controller
-                      - objects: 
+                      - objects:
                         - kind: Secret
-                        users: 
+                        users:
                         - system:kube-controller-manager
-                      - users: 
+                      - users:
                         - system:serviceaccount:openshift-marketplace:marketplace-operator
                         - system:serviceaccount:openshift-monitoring:cluster-monitoring-operator
                         - system:serviceaccount:openshift-network-operator:default
@@ -287,74 +287,74 @@ spec:
                       - objects:
                         - namespace: openshift-service-ca, openshift-network-operator
                           kind: ConfigMap
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-service-ca:configmap-cabundle-injector-sa
-                      - objects: 
+                      - objects:
                         - namespace: openshift-service-ca-operator
                           kind: ConfigMap
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-service-ca-operator:service-ca-operator
-                      - objects: 
+                      - objects:
                         - namespace: openshift-service-catalog-controller-manager-operator
                           kind: ConfigMap
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-service-catalog-controller-manager-operator:openshift-service-catalog-controller-manager-operator
-                      - objects: 
+                      - objects:
                         - namespace: openshift-console-operator, openshift-console
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-console-operator:console-operator
-                      - objects: 
+                      - objects:
                         - namespace: openshift-service-ca
                           kind: ConfigMap
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-service-ca:apiservice-cabundle-injector-sa
                         - namespace: openshift-service-ca
                           kind: ConfigMap
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-service-ca:service-serving-cert-signer-sa
-                      - objects: 
+                      - objects:
                         - namespace: openshift-service-catalog-apiserver-operator
                           kind: ConfigMap
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-service-catalog-apiserver-operator:openshift-service-catalog-apiserver-operator
-                      - objects: 
+                      - objects:
                         - namespace: openshift-operator-lifecycle-manager
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-operator-lifecycle-manager:olm-operator-serviceaccount
-                      - objects: 
+                      - objects:
                         - namespace: openshift-cluster-node-tuning-operator
                           kind: ConfigMap,DaemonSet
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-cluster-node-tuning-operator:cluster-node-tuning-operator
-                      - objects: 
+                      - objects:
                         - namespace: openshift
                           kind: Secret
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-cluster-samples-operator:cluster-samples-operator
-                      - objects: 
+                      - objects:
                         - namespace: openshift-ingress
                           kind: Deployment
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-ingress-operator:ingress-operator
-                      - objects: 
+                      - objects:
                         - kind: ServiceAccount, Secret
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-infra:serviceaccount-pull-secrets-controller
-                      - objects: 
+                      - objects:
                         - namespace: openshift-marketplace
                           kind: Pod
-                        users: 
+                        users:
                         - system:node:*
-                      - objects: 
+                      - objects:
                         - kind: ServiceAccount, InstallPlan, OperatorGroup, Role, RoleBinding, Deployment
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-operator-lifecycle-manager:olm-operator-serviceaccount
-                      - objects: 
+                      - objects:
                         - kind: InstallPlan, Role, RoleBinding, Deployment
-                        users: 
+                        users:
                         - system:serviceaccount:openshift-operator-lifecycle-manager:olm-operator-serviceaccount
                   useGatekeeper: true
-                  rego: | 
+                  rego: |
                     package integrityshieldcheck
                     violation[{"msg": msg}] {
                       not is_allowed_kind
@@ -417,7 +417,7 @@ spec:
                       allow := object.get(result, "allow", false)
                       allow == false
                     }
-                    
+
                     # request check
                     is_create_or_update { is_create }
                     is_create_or_update { is_update }
@@ -432,7 +432,7 @@ spec:
                     # detect mode
                     is_detect_mode { enforce_mode == "detect" }
 
-                    ################### 
+                    ###################
                     # Default setting #
                     ###################
 
@@ -547,7 +547,6 @@ spec:
                     logLevel: info
                     interval: "5"
                     exportDetailResult: false
-
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -680,9 +679,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-integrity-shield
 spec:
-  clusterConditions:
-    - status: "True"
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

@@ -20,7 +20,7 @@ spec:
           severity: high
           object-templates:
             - complianceType: musthave
-              objectDefinition:   
+              objectDefinition:
                 apiVersion: v1
                 kind: Namespace
                 metadata:
@@ -28,7 +28,7 @@ spec:
                     openshift.io/cluster-monitoring: "true"
                   name: openshift-serverless
             - complianceType: musthave
-              objectDefinition:   
+              objectDefinition:
                 apiVersion: v1
                 kind: Namespace
                 metadata:
@@ -36,7 +36,7 @@ spec:
                     kubernetes.io/metadata.name: knative-serving
                   name: knative-serving
             - complianceType: musthave
-              objectDefinition:   
+              objectDefinition:
                 apiVersion: v1
                 kind: Namespace
                 metadata:
@@ -89,8 +89,8 @@ spec:
                 apiVersion: operator.knative.dev/v1alpha1
                 kind: KnativeServing
                 metadata:
-                    name: knative-serving
-                    namespace: knative-serving
+                  name: knative-serving
+                  namespace: knative-serving
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -110,9 +110,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-openshift-serverless
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

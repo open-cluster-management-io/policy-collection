@@ -29,11 +29,11 @@ spec:
                   name: mem-limit-range
                 spec:
                   limits:
-                  - default:
-                      memory: 512Mi
-                    defaultRequest:
-                      memory: 256Mi
-                    type: Container
+                    - default:
+                        memory: 512Mi
+                      defaultRequest:
+                        memory: 256Mi
+                      type: Container
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -44,18 +44,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-limitmemory
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-limitmemory
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-limitmemory
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

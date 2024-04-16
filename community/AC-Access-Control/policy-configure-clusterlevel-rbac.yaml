@@ -88,7 +88,7 @@ spec:
                 roleRef:
                   apiGroup: rbac.authorization.k8s.io
                   kind: ClusterRole
-                  name: admin   
+                  name: admin
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -108,9 +108,6 @@ kind: PlacementRule
 metadata:
   name: placement-policy-configure-clusterlevel-rbac
 spec:
-  clusterConditions:
-    - status: "True"
-      type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: local-cluster, operator: In, values: ['true']}

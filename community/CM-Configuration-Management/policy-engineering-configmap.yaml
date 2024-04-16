@@ -27,7 +27,7 @@ spec:
                 kind: ConfigMap
                 apiVersion: v1
                 metadata:
-                 name: example-configmap
+                  name: example-configmap
                 data:
                   application.properties: |-
                     globalkey = global key value
@@ -59,18 +59,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-configmap-example
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-configmap-example
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-configmap-example
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

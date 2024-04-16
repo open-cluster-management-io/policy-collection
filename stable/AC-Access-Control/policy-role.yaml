@@ -30,7 +30,7 @@ spec:
                 rules:
                   - apiGroups: ["extensions", "apps"]
                     resources: ["deployments"]
-                    verbs: ["get", "list", "watch", "delete","patch"]
+                    verbs: ["get", "list", "watch", "delete", "patch"]
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -41,18 +41,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-role
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-role
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-role
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}

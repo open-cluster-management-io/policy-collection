@@ -28,17 +28,17 @@ spec:
                 spec:
                   validationFailureAction: enforce
                   rules:
-                  - name: check-for-labels
-                    match:
-                      resources:
-                        kinds:
-                        - Pod
-                    validate:
-                      message: "label `app.kubernetes.io/name` is required"
-                      pattern:
-                        metadata:
-                          labels:
-                            app.kubernetes.io/name: "?*"
+                    - name: check-for-labels
+                      match:
+                        resources:
+                          kinds:
+                            - Pod
+                      validate:
+                        message: "label `app.kubernetes.io/name` is required"
+                        pattern:
+                          metadata:
+                            labels:
+                              app.kubernetes.io/name: "?*"
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -49,18 +49,15 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-kyverno-sample
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-kyverno-sample
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-kyverno-sample
 spec:
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
       - {key: environment, operator: In, values: ["dev"]}
