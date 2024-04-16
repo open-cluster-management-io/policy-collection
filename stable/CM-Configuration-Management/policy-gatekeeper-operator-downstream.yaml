@@ -15,46 +15,21 @@ spec:
   disabled: false
   policy-templates:
     - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
+        apiVersion: policy.open-cluster-management.io/v1beta1
+        kind: OperatorPolicy
         metadata:
-          name: gatekeeper-operator-product-sub
+          name: operatorpolicy-gatekeeper-operator
         spec:
           remediationAction: inform
           severity: high
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: operators.coreos.com/v1alpha1
-                kind: Subscription
-                metadata:
-                  name: gatekeeper-operator-product
-                  namespace: openshift-operators
-                spec:
-                  channel: stable
-                  installPlanApproval: Automatic
-                  name: gatekeeper-operator-product
-                  source: redhat-operators
-                  sourceNamespace: openshift-marketplace
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: gatekeeper-operator-status
-        spec:
-          remediationAction: inform
-          severity: high
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: operators.coreos.com/v1alpha1
-                kind: ClusterServiceVersion
-                metadata:
-                  namespace: openshift-gatekeeper-system
-                spec:
-                  displayName: Gatekeeper Operator
-                status:
-                  phase: Succeeded # check the csv status to determine if operator is running or not
+          complianceType: musthave
+          upgradeApproval: Automatic
+          subscription:
+            channel: stable
+            name: gatekeeper-operator-product
+            namespace: openshift-operators
+            source: redhat-operators
+            sourceNamespace: openshift-marketplace
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
