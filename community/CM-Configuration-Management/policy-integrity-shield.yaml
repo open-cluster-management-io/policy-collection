@@ -627,7 +627,6 @@ spec:
                         kinds:
                           - ConfigurationPolicy
                           - CertificatePolicy
-                          - IamPolicy
                     namespaceSelector:
                       matchExpressions:
                         - key: policy.open-cluster-management.io/isClusterNamespace
