@@ -17,9 +17,6 @@ policyDefaults:
   standards:
     - NIST SP 800-53
 policies:
-#- name: policy-limitclusteradmin # iam policy not supported by the generator
-#  manifests:
-#    - path: input-admin/policy-limitclusteradmin.yaml
 - name: policy-remove-kubeadmin
   categories:
     - SC System and Communications Protection

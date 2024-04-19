@@ -25,7 +25,6 @@ Policies in this folder are organized by [NIST Special Publication 800-53](https
 ### Access Control
 Policy  | Description | Prerequisites
 ------- | ----------- | -------------
-[policy-limitclusteradmin](./AC-Access-Control/policy-limitclusteradmin.yaml) | Limits the number of cluster administrator Openshift users. |
 [policy-role](./AC-Access-Control/policy-role.yaml) | Ensures that a role exists with permissions as specified. |
 [policy-rolebinding](./AC-Access-Control/policy-rolebinding.yaml) | Ensures that an entity is bound to a particular role. |
 
