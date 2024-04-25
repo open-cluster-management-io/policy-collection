@@ -1,0 +1,101 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-rosa-autoimport
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/description: Discovered clusters that are of
+      type ROSA can be automatically imported into ACM as managed clusters.  This
+      policy helps you select those managed clusters and configure them so the import
+      will happen.  If you do not want all of your ROSA clusters to be automatically
+      imported, you can configure filters or add an annotation.
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-rosa-autoimport
+        spec:
+          remediationAction: inform
+          severity: low
+          object-templates-raw: |
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: ConfigMap
+                metadata:
+                  name: discovery-config
+                  namespace: open-cluster-management-global-set
+                data:
+                  rosa-filter: ""
+            {{- /* find the ROSA DiscoveredClusters */ -}}
+            {{- range $dc := (lookup "discovery.open-cluster-management.io/v1" "DiscoveredCluster" "" "").items }}
+              {{- /* Check for the flag that indicates the import should be skipped */ -}}
+              {{- $skip := "false" -}}
+              {{- range $key, $value := $dc.metadata.annotations }}
+                {{- if and (eq $key "discovery.open-cluster-management.io/previously-auto-imported")
+                           (eq $value "true") }}
+                  {{- $skip = "true" }}
+                {{- end }}
+              {{- end }}
+              {{- /* if the type is ROSA and the status is Active */ -}}
+              {{- if and (eq $dc.spec.status "Active") 
+                         (contains (fromConfigMap "open-cluster-management-global-set" "discovery-config" "rosa-filter") $dc.spec.displayName)
+                         (eq $dc.spec.type "ROSA")
+                         (eq $skip "false") }}
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: discovery.open-cluster-management.io/v1
+                kind: DiscoveredCluster
+                metadata:
+                  name: {{ $dc.metadata.name }}
+                  namespace: {{ $dc.metadata.namespace }}
+                spec:
+                  importAsManagedCluster: true
+              {{- end }}
+            {{- end }}
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-rosa-managedcluster-status
+        spec:
+          remediationAction: inform
+          severity: low
+          object-templates-raw: |
+            {{- /* Use the same DiscoveredCluster list to check ManagedCluster status */ -}}
+            {{- range $dc := (lookup "discovery.open-cluster-management.io/v1" "DiscoveredCluster" "" "").items }}
+              {{- /* Check for the flag that indicates the import should be skipped */ -}}
+              {{- $skip := "false" -}}
+              {{- range $key, $value := $dc.metadata.annotations }}
+                {{- if and (eq $key "discovery.open-cluster-management.io/previously-auto-imported")
+                           (eq $value "true") }}
+                  {{- $skip = "true" }}
+                {{- end }}
+              {{- end }}
+              {{- /* if the type is ROSA and the status is Active */ -}}
+              {{- if and (eq $dc.spec.status "Active")
+                         (contains (fromConfigMap "open-cluster-management-global-set" "discovery-config" "rosa-filter") $dc.spec.displayName)
+                         (eq $dc.spec.type "ROSA")
+                         (eq $skip "false") }}
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: cluster.open-cluster-management.io/v1
+                kind: ManagedCluster
+                metadata:
+                  name: {{ $dc.spec.displayName }}
+                  namespace: {{ $dc.spec.displayName }}
+                  annotations:
+                    cluster.open-cluster-management.io/clusterset: default
+                status:
+                  conditions:
+                    - type: ManagedClusterAvailable
+                      status: "True"
+              {{- end }}
+            {{- end }}
+
