@@ -1,0 +1,167 @@
+# This manifest creates 3 OpenShift MachineSets that are intended for installing OpenShift Cluster Storage on AWS.
+#
+# More details on installing OCS including the creation of the MachineSets is located here:
+# https://red-hat-storage.github.io/ocs-training/training/ocs4/ocs.html#_scale_ocp_cluster_and_add_new_worker_nodes
+#
+# This policy contains an Amazon Machine Identifier which must be updated in the policy.  Obtain the AMI id from: 
+# https://access.redhat.com/documentation/en-us/openshift_container_platform/4.12/html/installing/installing-on-aws#installation-aws-user-infra-rhcos-ami_installing-aws-user-infra
+#
+apiVersion: policy.open-cluster-management.io/v1
+kind: ConfigurationPolicy
+metadata:
+  name: opp-storage-machinesets
+spec:
+  remediationAction: enforce
+  severity: low
+  object-templates-raw: |
+    {{- if (eq (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type "AWS") }}
+    - complianceType: musthave
+      objectDefinition:
+        apiVersion: v1
+        data:
+          us-east-1-4.16: ami-057df4d0cb8cbae0d
+          us-east-2-4.16: ami-0f736c64d5751d7d3
+          us-east-1-4.15: ami-0b56cb92505dea7ed
+          us-east-2-4.15: ami-0b577c67f5371f6d1
+          us-east-1-4.14: ami-0b56cb92505dea7ed
+          us-east-2-4.14: ami-0dc6c4d1bd5161f13
+          us-east-1-4.13: ami-0624891c612b5eaa0
+          us-east-2-4.13: ami-0dc6c4d1bd5161f13
+          us-east-1-4.12: ami-0fe05b1aa8dacfa90
+          us-east-2-4.12: ami-0ff64f495c7e977cf
+          us-east-1-4.11: ami-0722eb0819717090f
+          us-east-2-4.11: ami-026e5701f495c94a2
+          us-east-1-4.10: ami-0c72f473496a7b1c2
+          us-east-2-4.10: ami-09e637fc5885c13cc
+          replicas: "2"
+          instanceType: m6a.2xlarge
+        kind: ConfigMap
+        metadata:
+          name: aws-ocp-ami-ids
+          namespace: policies
+      {{- range $i, $zone := list "a" "b" "c" }}
+    - complianceType: musthave
+      objectDefinition:
+        apiVersion: machine.openshift.io/v1beta1
+        kind: MachineSet
+        metadata:
+          labels:
+            machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+            machine.openshift.io/cluster-api-machine-role: workerocs
+            machine.openshift.io/cluster-api-machine-type: workerocs
+          name: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-workerocs-{{ list (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region $zone | join "" }}
+          namespace: openshift-machine-api
+        spec:
+          replicas: '{{ fromConfigMap "policies" "aws-ocp-ami-ids" "replicas" | toInt }}'
+          selector:
+            matchLabels:
+              machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+              machine.openshift.io/cluster-api-machineset: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-workerocs-{{ list (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region $zone | join "" }}
+          template:
+            metadata:
+              labels:
+                machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                machine.openshift.io/cluster-api-machine-role: workerocs
+                machine.openshift.io/cluster-api-machine-type: workerocs
+                machine.openshift.io/cluster-api-machineset: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-workerocs-{{ list (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region $zone | join "" }}
+            spec:
+              metadata:
+                labels:
+                  cluster.ocs.openshift.io/openshift-storage: ""
+                  node-role.kubernetes.io/worker: ""
+              providerSpec:
+                value:
+                  ami:
+                    id: '{{ fromConfigMap "policies" "aws-ocp-ami-ids" (printf "%s-%s" (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region (fromClusterClaim "openshiftversion-major-minor")) }}'
+                  apiVersion: awsproviderconfig.openshift.io/v1beta1
+                  blockDevices:
+                  - ebs:
+                      iops: 0
+                      volumeSize: 120
+                      volumeType: gp3
+                  credentialsSecret:
+                    name: aws-cloud-credentials
+                  deviceIndex: 0
+                  iamInstanceProfile:
+                    id: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-worker-profile'
+                  instanceType: '{{ fromConfigMap "policies" "aws-ocp-ami-ids" "instanceType" }}'
+                  kind: AWSMachineProviderConfig
+                  metadata:
+                    creationTimestamp: null
+                  placement:
+                    availabilityZone: {{ list (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region $zone | join "" }}
+                    region: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}'
+                  publicIp: null
+                  securityGroups:
+                  - filters:
+                    - name: tag:Name
+                      values:
+                      - '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-worker-sg'
+                  subnet:
+                    filters:
+                    - name: tag:Name
+                      values:
+                      - {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-private-{{ list (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region $zone | join "" }}
+                  tags:
+                  - name: 'kubernetes.io/cluster/{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
+                    value: owned
+                  userDataSecret:
+                    name: worker-user-data
+      {{- end }}
+    {{- else }}
+    - complianceType: musthave
+      objectDefinition:
+        apiVersion: machine.openshift.io/v1beta1
+        kind: MachineSet
+        metadata:
+          annotations:
+            machine.openshift.io/memoryMb: "16384"
+            machine.openshift.io/vCPU: "4"
+          labels:
+            machine.openshift.io/cluster-api-cluster: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}
+          name: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-storage
+          namespace: openshift-machine-api
+        spec:
+          replicas: 6
+          selector:
+            matchLabels:
+              machine.openshift.io/cluster-api-cluster: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}
+              machine.openshift.io/cluster-api-machineset: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-storage
+          template:
+            metadata:
+              labels:
+                machine.openshift.io/cluster-api-cluster: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}
+                machine.openshift.io/cluster-api-machine-role: storage
+                machine.openshift.io/cluster-api-machine-type: storage
+                machine.openshift.io/cluster-api-machineset: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-storage
+            spec:
+              lifecycleHooks: {}
+              metadata:
+                labels:
+                  cluster.ocs.openshift.io/openshift-storage: ""
+              providerSpec:
+                value:
+                  apiVersion: machine.openshift.io/v1beta1
+                  credentialsSecret:
+                    name: vsphere-cloud-credentials
+                  diskGiB: 120
+                  kind: VSphereMachineProviderSpec
+                  memoryMiB: 16384
+                  metadata:
+                    creationTimestamp: null
+                  network:
+                    devices:
+                    - networkName: {{ (index (index (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.vsphere.failureDomains 0).topology.networks 0) }}
+                  numCPUs: 4
+                  numCoresPerSocket: 4
+                  snapshot: ""
+                  template: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-rhcos-generated-region-generated-zone
+                  userDataSecret:
+                    name: worker-user-data
+                  workspace:
+                    datacenter: {{ (index (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.vsphere.failureDomains 0).topology.datacenter }}
+                    datastore: {{ (index (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.vsphere.failureDomains 0).topology.datastore }}
+                    folder: /{{ (index (index (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.vsphere.vcenters 0).datacenters 0) }}/vm/{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}
+                    resourcePool: {{ (index (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.vsphere.failureDomains 0).topology.resourcePool }}
+                    server: {{ (index (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.vsphere.vcenters 0).server }}
+    {{- end }}
