@@ -20,14 +20,21 @@ policies:
 - name: policy-opp-prereq-ns
   manifests:
     - path: namespace.yaml
-- name: policy-opp-prereq-machines
-  manifests:
-    - path: machine-sets.yaml
 - name: policy-opp-prereq-binding
   dependencies:
     - name: policy-opp-prereq-ns
   manifests:
     - path: managedclustersetbinding.yaml
+- name: policy-opp-settings
+  dependencies:
+    - name: policy-opp-prereq-ns
+  manifests:
+    - path: opp-settings.yaml
+- name: policy-opp-prereq-machines
+  dependencies:
+    - name: policy-opp-settings
+  manifests:
+    - path: machine-sets.yaml
 policySets:
   - description: Applies the OpenShift Plus prerequisites to the ACM hub cluster
     name: openshift-plus-prereqs
