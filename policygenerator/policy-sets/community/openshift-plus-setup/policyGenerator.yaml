@@ -17,19 +17,12 @@ policyDefaults:
   standards:
     - NIST SP 800-53
 policies:
-- name: policy-aws-config
-  manifests:
-    - path: ami-ids.yaml
 - name: policy-opp-prereq-ns
   manifests:
     - path: namespace.yaml
 - name: policy-opp-prereq-machines
-  dependencies:
-    - name: policy-aws-config
   manifests:
-    - path: aws-machine-sets.yaml
-    #- path: machineset-1c.yaml
-    #- path: machineset-2c.yaml
+    - path: machine-sets.yaml
 - name: policy-opp-prereq-binding
   dependencies:
     - name: policy-opp-prereq-ns
