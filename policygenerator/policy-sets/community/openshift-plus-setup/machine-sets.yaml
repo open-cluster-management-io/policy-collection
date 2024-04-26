@@ -1,10 +1,14 @@
-# This manifest creates 3 OpenShift MachineSets that are intended for installing OpenShift Cluster Storage on AWS.
+# This manifest creates storage nodes necessary for installing OPP on an AWS or VMWare OpenShift cluster.
+# - AWS creates 2 replicas in each of 3 zones.
+# - VMWare creates 6 replicas
+# Review the content of the machine sets to determine if you need to make customizations.
 #
 # More details on installing OCS including the creation of the MachineSets is located here:
 # https://red-hat-storage.github.io/ocs-training/training/ocs4/ocs.html#_scale_ocp_cluster_and_add_new_worker_nodes
 #
 # This policy contains an Amazon Machine Identifier which must be updated in the policy.  Obtain the AMI id from: 
 # https://access.redhat.com/documentation/en-us/openshift_container_platform/4.12/html/installing/installing-on-aws#installation-aws-user-infra-rhcos-ami_installing-aws-user-infra
+# AMI IDs are provided in a settings configmap which can be adjusted as desired.
 #
 apiVersion: policy.open-cluster-management.io/v1
 kind: ConfigurationPolicy
@@ -15,30 +19,6 @@ spec:
   severity: low
   object-templates-raw: |
     {{- if (eq (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type "AWS") }}
-    - complianceType: musthave
-      objectDefinition:
-        apiVersion: v1
-        data:
-          us-east-1-4.16: ami-057df4d0cb8cbae0d
-          us-east-2-4.16: ami-0f736c64d5751d7d3
-          us-east-1-4.15: ami-0b56cb92505dea7ed
-          us-east-2-4.15: ami-0b577c67f5371f6d1
-          us-east-1-4.14: ami-0b56cb92505dea7ed
-          us-east-2-4.14: ami-0dc6c4d1bd5161f13
-          us-east-1-4.13: ami-0624891c612b5eaa0
-          us-east-2-4.13: ami-0dc6c4d1bd5161f13
-          us-east-1-4.12: ami-0fe05b1aa8dacfa90
-          us-east-2-4.12: ami-0ff64f495c7e977cf
-          us-east-1-4.11: ami-0722eb0819717090f
-          us-east-2-4.11: ami-026e5701f495c94a2
-          us-east-1-4.10: ami-0c72f473496a7b1c2
-          us-east-2-4.10: ami-09e637fc5885c13cc
-          replicas: "2"
-          instanceType: m6a.2xlarge
-        kind: ConfigMap
-        metadata:
-          name: aws-ocp-ami-ids
-          namespace: policies
       {{- range $i, $zone := list "a" "b" "c" }}
     - complianceType: musthave
       objectDefinition:
@@ -52,7 +32,7 @@ spec:
           name: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-workerocs-{{ list (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region $zone | join "" }}
           namespace: openshift-machine-api
         spec:
-          replicas: '{{ fromConfigMap "policies" "aws-ocp-ami-ids" "replicas" | toInt }}'
+          replicas: '{{ fromConfigMap "policies" "opp-settings" "awsReplicas" | toInt }}'
           selector:
             matchLabels:
               machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
@@ -72,7 +52,7 @@ spec:
               providerSpec:
                 value:
                   ami:
-                    id: '{{ fromConfigMap "policies" "aws-ocp-ami-ids" (printf "%s-%s" (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region (fromClusterClaim "openshiftversion-major-minor")) }}'
+                    id: '{{ fromConfigMap "policies" "opp-settings" (printf "%s-%s" (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region (fromClusterClaim "openshiftversion-major-minor")) }}'
                   apiVersion: awsproviderconfig.openshift.io/v1beta1
                   blockDevices:
                   - ebs:
@@ -84,7 +64,7 @@ spec:
                   deviceIndex: 0
                   iamInstanceProfile:
                     id: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-worker-profile'
-                  instanceType: '{{ fromConfigMap "policies" "aws-ocp-ami-ids" "instanceType" }}'
+                  instanceType: '{{ fromConfigMap "policies" "opp-settings" "awsInstanceType" }}'
                   kind: AWSMachineProviderConfig
                   metadata:
                     creationTimestamp: null
@@ -115,14 +95,14 @@ spec:
         kind: MachineSet
         metadata:
           annotations:
-            machine.openshift.io/memoryMb: "16384"
-            machine.openshift.io/vCPU: "4"
+            machine.openshift.io/memoryMb: '{{ fromConfigMap "policies" "opp-settings" "vmwareMemory" }}'
+            machine.openshift.io/vCPU: '{{ fromConfigMap "policies" "opp-settings" "vmwareCPU" }}'
           labels:
             machine.openshift.io/cluster-api-cluster: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}
           name: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-storage
           namespace: openshift-machine-api
         spec:
-          replicas: 6
+          replicas: '{{ fromConfigMap "policies" "opp-settings" "vmwareReplicas" | toInt }}'
           selector:
             matchLabels:
               machine.openshift.io/cluster-api-cluster: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}
@@ -146,13 +126,13 @@ spec:
                     name: vsphere-cloud-credentials
                   diskGiB: 120
                   kind: VSphereMachineProviderSpec
-                  memoryMiB: 16384
+                  memoryMiB: '{{ fromConfigMap "policies" "opp-settings" "vmwareMemory" | toInt }}'
                   metadata:
                     creationTimestamp: null
                   network:
                     devices:
                     - networkName: {{ (index (index (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.vsphere.failureDomains 0).topology.networks 0) }}
-                  numCPUs: 4
+                  numCPUs: '{{ fromConfigMap "policies" "opp-settings" "vmwareCPU" | toInt }}'
                   numCoresPerSocket: 4
                   snapshot: ""
                   template: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-rhcos-generated-region-generated-zone
