@@ -6,6 +6,7 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-oauth-openid
+  namespace: <policy-oauth-openid-namespace>
   annotations:
     policy.open-cluster-management.io/categories: CM Configuration Management, AC Access Control
     policy.open-cluster-management.io/controls: AC-3 Access Enforcement
@@ -31,7 +32,7 @@ spec:
                   namespace: openshift-config
                 type: Opaque
                 data:
-                  clientSecret: <base64_encoded_client_secret>
+                  clientSecret: '{{hub (fromSecret "<policy-oauth-openid-namespace>" "<policy-oauth-openid-secret-name>" "clientSecret") hub}}'
           pruneObjectBehavior: DeleteIfCreated
           remediationAction: inform
           severity: high
