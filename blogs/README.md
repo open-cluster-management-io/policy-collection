@@ -34,6 +34,8 @@ Read our blogs for more information and best practices for Red Hat Advanced Clus
 
 ## Red Hat Supported Integrations
 
+* [Simplify Gatekeeper installation and constraint management](https://developers.redhat.com/articles/2024/05/03/simplify-gatekeeper-installation-and-constraint-management)
+
 * [Initiating Ansible Automation on Policy Violations](https://cloud.redhat.com/blog/initiating-ansible-automation-on-policy-violations)
 
 * [How to Integrate Open Policy Agent with Red Hat Advanced Cluster Management for Kubernetes policy framework](https://www.openshift.com/blog/how-to-integrate-open-policy-agent-with-red-hat-advanced-cluster-management-for-kubernetes-policy-framework)
