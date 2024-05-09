@@ -2,9 +2,6 @@
 # the OpenShift Data Foundation on the managed clusters.
 #
 # If set to "enforce" it'll install the operator.
-# Used APIs: OLM, OCS, ODF #https://github.com/operator-framework/operator-lifecycle-manager
-# https://github.com/openshift/ocs-operator
-# https://github.com/red-hat-storage/odf-operator
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
@@ -20,7 +17,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-odf-namespace
+          name: odf-namespace
         spec:
           object-templates:
             - complianceType: musthave
@@ -32,73 +29,30 @@ spec:
           remediationAction: inform
           severity: high
     - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
+        apiVersion: policy.open-cluster-management.io/v1beta1
+        kind: OperatorPolicy
         metadata:
-          name: policy-odf-operator-operatorgroup
+          name: odf-operator
         spec:
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: operators.coreos.com/v1alpha2
-                kind: OperatorGroup
-                metadata:
-                  name: openshift-storage-operatorgroup
-                  namespace: openshift-storage
-                spec:
-                  targetNamespaces:
-                    - openshift-storage
           remediationAction: inform
           severity: high
+          complianceType: musthave
+          operatorGroup:
+            name: openshift-storage
+            namespace: openshift-storage
+            targetNamespaces:
+              - openshift-storage
+          subscription:
+            name: odf-operator
+            namespace: openshift-storage
+            installPlanApproval: Automatic
+            source: redhat-operators
+            sourceNamespace: openshift-marketplace
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-odf-operator-catalog-source
-        spec:
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: operators.coreos.com/v1alpha1
-                kind: CatalogSource
-                metadata:
-                  name: odf-catalogsource
-                  namespace: openshift-marketplace
-                spec:
-                  displayName: OpenShift Data Foundation
-                  image: quay.io/ocs-dev/odf-operator-catalog:main
-                  publisher: Red Hat
-                  sourceType: grpc
-          remediationAction: inform
-          severity: high
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: policy-odf-operator-subscription
-        spec:
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: operators.coreos.com/v1alpha1
-                kind: Subscription
-                metadata:
-                  name: odf-operator
-                  namespace: openshift-storage
-                spec:
-                  channel: alpha
-                  installPlanApproval: Automatic
-                  name: odf-operator
-                  source: odf-catalogsource
-                  sourceNamespace: openshift-marketplace
-                  startingCSV: odf-operator.v0.0.1
-          remediationAction: inform
-          severity: high
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: policy-storagesystem
+          name: odf-storagecluster
         spec:
           object-templates:
             - complianceType: musthave
@@ -106,21 +60,12 @@ spec:
                 apiVersion: odf.openshift.io/v1alpha1
                 kind: StorageSystem
                 metadata:
-                  name: odf-storagecluster-storagesystem
+                  name: ocs-storagecluster-storagesystem
                   namespace: openshift-storage
                 spec:
                   kind: storagecluster.ocs.openshift.io/v1
                   name: ocs-storagecluster
                   namespace: openshift-storage
-          remediationAction: inform
-          severity: low
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: policy-storagecluster
-        spec:
-          object-templates:
             - complianceType: musthave
               objectDefinition:
                 apiVersion: ocs.openshift.io/v1
@@ -132,23 +77,44 @@ spec:
                   name: ocs-storagecluster
                   namespace: openshift-storage
                 spec:
+                  arbiter: {}
+                  encryption:
+                    kms: {}
+                  externalStorage: {}
+                  managedResources:
+                    cephBlockPools: {}
+                    cephCluster: {}
+                    cephConfig: {}
+                    cephDashboard: {}
+                    cephFilesystems: {}
+                    cephObjectStoreUsers: {}
+                    cephObjectStores: {}
+                    cephToolbox: {}
+                  mirroring: {}
+                  nodeTopologies: {}
                   storageDeviceSets:
-                    - count: 1
-                      dataPVCTemplate:
-                        spec:
-                          accessModes:
-                            - ReadWriteOnce
-                          resources:
-                            requests:
-                              storage: 512Gi
-                          storageClassName: gp2
-                          volumeMode: Block
-                      name: ocs-deviceset-gp2
-                      portable: true
-                      replica: 3
+                  - config: {}
+                    count: 1
+                    dataPVCTemplate:
+                      metadata: {}
+                      spec:
+                        accessModes:
+                        - ReadWriteOnce
+                        resources:
+                          requests:
+                            storage: 100Gi
+                        storageClassName: gp3-csi
+                        volumeMode: Block
+                      status: {}
+                    name: ocs-deviceset-gp3-csi
+                    placement: {}
+                    portable: true
+                    preparePlacement: {}
+                    replica: 3
+                    resources: {}
           remediationAction: inform
           severity: low
-  remediationAction: enforce
+  remediationAction: inform
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
