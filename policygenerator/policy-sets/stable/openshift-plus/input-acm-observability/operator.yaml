@@ -35,3 +35,35 @@ spec:
                                                 ($awsAccess.data.AWS_ACCESS_KEY_ID | base64dec) 
                                                 ($awsAccess.data.AWS_SECRET_ACCESS_KEY | base64dec)
                           ) | base64enc }}
+---
+apiVersion: v1
+data:
+  .dockerconfigjson: '{{- if eq (lookup "v1" "Secret" "open-cluster-management" "multiclusterhub-operator-pull-secret").kind "Secret" -}} {{- fromSecret "open-cluster-management" "multiclusterhub-operator-pull-secret" ".dockerconfigjson" -}} {{- else -}} {{- fromSecret "openshift-config" "pull-secret" ".dockerconfigjson" -}} {{- end -}}'
+kind: Secret
+metadata:
+  name: multiclusterhub-operator-pull-secret
+  namespace: open-cluster-management-observability
+type: kubernetes.io/dockerconfigjson
+---
+apiVersion: observability.open-cluster-management.io/v1beta2
+kind: MultiClusterObservability
+metadata:
+  name: observability
+spec:
+  observabilityAddonSpec: {}
+  storageConfig:
+    metricObjectStorage:
+      name: thanos-object-storage
+      key: thanos.yaml
+---
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: observability
+spec:
+  applicationMenu:
+    section: Red Hat applications
+    imageURL: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenShift-LogoType.svg'
+  href: https://{{ (lookup "route.openshift.io/v1" "Route" "open-cluster-management-observability" "grafana").spec.host }}
+  location: ApplicationMenu
+  text: 'Red Hat Advanced Cluster Management Observability'

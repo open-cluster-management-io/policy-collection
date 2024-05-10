@@ -59,11 +59,3 @@ metadata:
   namespace: openshift-storage
 status:
   phase: Ready
----
-apiVersion: objectbucket.io/v1alpha1
-kind: ObjectBucketClaim
-metadata:
-  name: obc-observability
-  namespace: openshift-storage
-status:
-  phase: Bound
