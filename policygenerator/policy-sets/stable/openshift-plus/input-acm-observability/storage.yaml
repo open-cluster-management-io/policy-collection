@@ -1,0 +1,10 @@
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: obc-observability
+  namespace: openshift-storage
+spec:
+  generateBucketName: obc-observability-bucket
+  storageClassName: openshift-storage.noobaa.io
+status:
+  phase: Bound

@@ -1,0 +1,89 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: ConfigurationPolicy
+metadata:
+  name: policy-odf-cluster
+spec:
+  remediationAction: enforce
+  severity: high
+  object-templates-raw: |
+    {{- /* create the StorageClass if on VMware */ -}}
+    {{- if (eq (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type "VSphere") }}
+    - complianceType: musthave
+      objectDefinition:
+        apiVersion: storage.k8s.io/v1
+        kind: StorageClass
+        metadata:
+          annotations:
+            storageclass.kubernetes.io/is-default-class: "false"
+          name: thin-csi-odf
+        parameters:
+          StoragePolicyName: "vSAN Default Storage Policy"
+        provisioner: csi.vsphere.vmware.com
+        allowVolumeExpansion: true
+        reclaimPolicy: Delete
+        volumeBindingMode: WaitForFirstConsumer
+    {{- end }}
+    - complianceType: musthave
+      objectDefinition:
+        apiVersion: ocs.openshift.io/v1
+        kind: StorageCluster
+        metadata:
+          annotations:
+            uninstall.ocs.openshift.io/cleanup-policy: delete
+            uninstall.ocs.openshift.io/mode: graceful
+          name: ocs-storagecluster
+          namespace: openshift-storage
+        spec:
+          arbiter: {}
+          encryption:
+            kms: {}
+          externalStorage: {}
+          managedResources:
+            cephBlockPools: {}
+            cephCluster: {}
+            cephConfig: {}
+            cephDashboard: {}
+            cephFilesystems: {}
+            cephObjectStoreUsers: {}
+            cephObjectStores: {}
+            cephToolbox: {}
+          mirroring: {}
+          nodeTopologies: {}
+          resources:
+            mds: {}
+            mgr: {}
+            mon: {}
+            noobaa-core: {}
+            noobaa-db: {}
+            noobaa-endpoint:
+              limits:
+                cpu: 1
+                memory: 500Mi
+              requests:
+                cpu: 1
+                memory: 500Mi
+            rgw: {}
+          storageDeviceSets:
+          - config: {}
+            count: 1
+            dataPVCTemplate:
+              metadata: {}
+              spec:
+                accessModes:
+                - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 100Gi
+    {{- if (eq (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type "VSphere") }}
+                storageClassName: thin-csi-odf
+    {{- else }}
+                storageClassName: gp3-csi
+    {{- end }}
+                volumeMode: Block
+              status: {}
+            name: ocs-deviceset
+            placement: {}
+            portable: true
+            preparePlacement: {}
+            replica: 3
+            resources: {}

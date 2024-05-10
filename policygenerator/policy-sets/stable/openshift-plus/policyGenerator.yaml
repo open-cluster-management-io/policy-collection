@@ -113,7 +113,7 @@ policies:
   remediationAction: inform
 # ACS Policies - end
 # Observability Policy - start
-- name: policy-ocm-observability
+- name: policy-observability-storage
   consolidateManifests: false
   categories:
     - CA Assessment Authorization and Monitoring
@@ -122,7 +122,17 @@ policies:
   dependencies:
     - name: policy-odf-status
   manifests:
-    - path: input-acm-observability/
+    - path: input-acm-observability/storage.yaml
+- name: policy-observability-operator
+  consolidateManifests: false
+  categories:
+    - CA Assessment Authorization and Monitoring
+  controls: 
+    - CA-7 Continuous Monitoring
+  dependencies:
+    - name: policy-observability-storage
+  manifests:
+    - path: input-acm-observability/operator.yaml
 # Observability Policy - end
 # ODF Policies - start
 - name: policy-odf
@@ -132,6 +142,15 @@ policies:
     - SI-7 Software Firmware and Information Integrity
   manifests:
     - path: input-odf/policy-odf.yaml
+- name: policy-odf-cluster
+  categories:
+    - SI System and Information Integrity
+  controls: 
+    - SI-7 Software Firmware and Information Integrity
+  dependencies:
+    - name: policy-odf
+  manifests:
+    - path: input-odf/policy-odf-cluster.yaml
 - name: policy-odf-status
   categories:
     - SI System and Information Integrity
