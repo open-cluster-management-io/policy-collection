@@ -1,16 +1,17 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-rosa-autoimport
+  name: policy-mce-hcp-autoimport
+  namespace: open-cluster-management-global-set
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
     policy.open-cluster-management.io/description: Discovered clusters that are of
-      type ROSA can be automatically imported into ACM as managed clusters.  This
-      policy helps you select those managed clusters and configure them so the import
-      will happen.  If you do not want all of your ROSA clusters to be automatically
-      imported, you can configure filters or add an annotation.
+      type MultiClusterEngineHCP can be automatically imported into ACM as managed clusters.
+      This policy helps you select those managed clusters and configure them so the import
+      will happen. Fine tuning MultiClusterEngineHCP clusters to be automatically imported
+      can be done by configure filters at the configMap or add annotation to the discoverd cluster.
 spec:
   # Remove the default remediation below to enforce the policies.
   remediationAction: inform
@@ -20,7 +21,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: rosa-autoimport-config
+          name: mce-hcp-autoimport-config
         spec:
           object-templates:
             - complianceType: musthave
@@ -38,12 +39,12 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-rosa-autoimport
+          name: policy-mce-hcp-autoimport
         spec:
           remediationAction: enforce
           severity: low
           object-templates-raw: |
-            {{- /* find the ROSA DiscoveredClusters */ -}}
+            {{- /* find the MultiClusterEngineHCP DiscoveredClusters */ -}}
             {{- range $dc := (lookup "discovery.open-cluster-management.io/v1" "DiscoveredCluster" "" "").items }}
               {{- /* Check for the flag that indicates the import should be skipped */ -}}
               {{- $skip := "false" -}}
@@ -53,10 +54,10 @@ spec:
                   {{- $skip = "true" }}
                 {{- end }}
               {{- end }}
-              {{- /* if the type is ROSA and the status is Active */ -}}
+              {{- /* if the type is MultiClusterEngineHCP and the status is Active */ -}}
               {{- if and (eq $dc.spec.status "Active") 
-                         (contains (fromConfigMap "open-cluster-management-global-set" "discovery-config" "rosa-filter") $dc.spec.displayName)
-                         (eq $dc.spec.type "ROSA")
+                         (contains (fromConfigMap "open-cluster-management-global-set" "discovery-config" "mce-hcp-filter") $dc.spec.displayName)
+                         (eq $dc.spec.type "MultiClusterEngineHCP")
                          (eq $skip "false") }}
             - complianceType: musthave
               objectDefinition:
@@ -73,9 +74,9 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-rosa-managedcluster-status
+          name: policy-mce-hcp-managedcluster-status
         spec:
-          remediationAction: enforce
+          remediationAction: inform
           severity: low
           object-templates-raw: |
             {{- /* Use the same DiscoveredCluster list to check ManagedCluster status */ -}}
@@ -88,10 +89,10 @@ spec:
                   {{- $skip = "true" }}
                 {{- end }}
               {{- end }}
-              {{- /* if the type is ROSA and the status is Active */ -}}
+              {{- /* if the type is MultiClusterEngineHCP and the status is Active */ -}}
               {{- if and (eq $dc.spec.status "Active")
-                         (contains (fromConfigMap "open-cluster-management-global-set" "discovery-config" "rosa-filter") $dc.spec.displayName)
-                         (eq $dc.spec.type "ROSA")
+                         (contains (fromConfigMap "open-cluster-management-global-set" "discovery-config" "mce-hcp-filter") $dc.spec.displayName)
+                         (eq $dc.spec.type "MultiClusterEngineHCP")
                          (eq $skip "false") }}
             - complianceType: musthave
               objectDefinition:
