@@ -19,11 +19,9 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-rosa-autoimport
+          name: rosa-autoimport-config
         spec:
-          remediationAction: inform
-          severity: low
-          object-templates-raw: |
+          object-templates:
             - complianceType: musthave
               objectDefinition:
                 apiVersion: v1
@@ -33,6 +31,17 @@ spec:
                   namespace: open-cluster-management-global-set
                 data:
                   rosa-filter: ""
+          remediationAction: enforce
+          severity: low
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-rosa-autoimport
+        spec:
+          remediationAction: enforce
+          severity: low
+          object-templates-raw: |
             {{- /* find the ROSA DiscoveredClusters */ -}}
             {{- range $dc := (lookup "discovery.open-cluster-management.io/v1" "DiscoveredCluster" "" "").items }}
               {{- /* Check for the flag that indicates the import should be skipped */ -}}
@@ -65,7 +74,7 @@ spec:
         metadata:
           name: policy-rosa-managedcluster-status
         spec:
-          remediationAction: inform
+          remediationAction: enforce
           severity: low
           object-templates-raw: |
             {{- /* Use the same DiscoveredCluster list to check ManagedCluster status */ -}}
