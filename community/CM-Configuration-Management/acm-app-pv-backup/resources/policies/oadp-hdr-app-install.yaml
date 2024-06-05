@@ -45,7 +45,6 @@ spec:
                   name: '{{hub $configMap.data.backupNS hub}}'
             {{hub end hub}}
           remediationAction: enforce
-          pruneObjectBehavior: DeleteIfCreated
           severity: high
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
