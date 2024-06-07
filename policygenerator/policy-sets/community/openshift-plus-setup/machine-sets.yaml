@@ -77,6 +77,17 @@ spec:
                     - name: tag:Name
                       values:
                       - '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-worker-sg'
+                  {{- $ocpversion := semver (fromClusterClaim "version.openshift.io") }}
+                  {{- if gt $ocpversion.Minor 15 }}
+                  - filters:
+                    - name: tag:Name
+                      values:
+                      - '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-node'
+                  - filters:
+                    - name: tag:Name
+                      values:
+                      - '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-lb'
+                  {{- end }}
                   subnet:
                     filters:
                     - name: tag:Name
