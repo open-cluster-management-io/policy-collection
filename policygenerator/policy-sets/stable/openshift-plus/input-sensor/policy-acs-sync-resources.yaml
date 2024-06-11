@@ -18,7 +18,7 @@ spec:
     scannerComponent: Disabled
   perNode:
     collector:
-      collection: EBPF
+      collection: CORE_BPF
       imageFlavor: Regular
     taintToleration: TolerateTaints
 ---
