@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,3 +16,13 @@ metadata:
   namespace: stackrox
 status:
   numberMisscheduled: 0
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admission-control
+  namespace: stackrox
+status:
+  conditions:
+    - status: "True"
+      type: Available
