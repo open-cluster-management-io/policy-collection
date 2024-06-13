@@ -92,7 +92,10 @@ spec:
                     filters:
                     - name: tag:Name
                       values:
-                      - {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-private-{{ list (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region $zone | join "" }}
+                      - '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-private-{{ list (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region $zone | join "" }}'
+                  {{- if gt $ocpversion.Minor 15 }}
+                      - '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-subnet-private-{{ list (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region $zone | join "" }}'
+                  {{- end }}
                   tags:
                   - name: 'kubernetes.io/cluster/{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
                     value: owned
