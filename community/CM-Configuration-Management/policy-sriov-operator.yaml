@@ -139,25 +139,3 @@ spec:
                   nodeSelector:
                     matchLabels:
                       node-role.kubernetes.io/worker-cnf: ""
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-sriov
-placementRef:
-  name: placement-policy-sriov
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-sriov-operator
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-sriov
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: sriov, operator: In, values: ["true"]}

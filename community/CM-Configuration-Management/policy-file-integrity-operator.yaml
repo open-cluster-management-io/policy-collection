@@ -109,25 +109,3 @@ spec:
                   namespace: openshift-file-integrity
                 results:
                   - condition: Failed
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-file-integrity-operator
-placementRef:
-  name: placement-policy-file-integrity-operator
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-file-integrity-operator
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-file-integrity-operator
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

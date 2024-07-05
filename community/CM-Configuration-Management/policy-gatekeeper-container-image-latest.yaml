@@ -432,25 +432,3 @@ spec:
                     constraint_kind: ContainerImageLatest
                     constraint_name: containerimagelatest
                     event_type: violation
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-gatekeeper-containerimagelatest
-placementRef:
-  name: placement-policy-gatekeeper-containerimagelatest
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-gatekeeper-containerimagelatest
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-gatekeeper-containerimagelatest
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

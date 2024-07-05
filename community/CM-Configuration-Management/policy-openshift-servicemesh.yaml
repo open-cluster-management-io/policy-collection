@@ -271,28 +271,3 @@ spec:
           remediationAction: inform
           severity: high
   remediationAction: inform
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: policy-openshift-servicemesh-placement
-placementRef:
-  name: policy-openshift-servicemesh-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: policy-openshift-servicemesh
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: policy-openshift-servicemesh-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: environment
-        operator: In
-        values:
-          - dev

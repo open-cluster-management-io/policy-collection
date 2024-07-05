@@ -108,53 +108,5 @@ spec:
                               image: registry.redhat.io/rhacm2/volsync-mover-restic-rhel8:v0.4
                             rsync:
                               image: registry.redhat.io/rhacm2/volsync-mover-rsync-rhel8:v0.4
-                  placement:
-                    placementRef:
-                      name: volsync-placement
-                      kind: PlacementRule
           remediationAction: enforce
           severity: low
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: volsync-replication-placement
-        spec:
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: apps.open-cluster-management.io/v1
-                kind: PlacementRule
-                metadata:
-                  name: volsync-placement
-                  namespace: volsync-system
-                  labels:
-                    app: volsync
-                spec:
-                  clusterSelector:
-                    matchLabels:
-                      vendor: OpenShift
-          remediationAction: enforce
-          severity: low
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-volsync-policy-app
-placementRef:
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-  name: placement-volsync-policy-app
-subjects:
-  - apiGroup: policy.open-cluster-management.io
-    kind: Policy
-    name: volsync-policy
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-volsync-policy-app
-spec:
-  clusterSelector:
-    matchLabels:
-      name: local-cluster

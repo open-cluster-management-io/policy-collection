@@ -222,33 +222,4 @@ spec:
                             backupPlan:
                               name: tvk-{{ `{{request.object.metadata.name}}` }}-backupplan
                               namespace: "{{ `{{request.object.metadata.name}}` }}"
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: policy-kyverno-tvk-create-ns-backup-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: protected-by
-        operator: In
-        values:
-          - triliovault
-      - key: vendor
-        operator: In
-        values:
-          - OpenShift
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: policy-kyverno-tvk-create-ns-backup-placement
-placementRef:
-  name: policy-kyverno-tvk-create-ns-backup-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: policy-kyverno-tvk-create-ns-backup
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy
 

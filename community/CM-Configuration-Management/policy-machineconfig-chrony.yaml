@@ -39,25 +39,3 @@ spec:
           remediationAction: enforce
           severity: low
   remediationAction: inform
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-add-chrony
-placementRef:
-  name: placement-add-chrony
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: add-chrony
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-add-chrony
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

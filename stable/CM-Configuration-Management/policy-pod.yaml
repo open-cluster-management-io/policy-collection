@@ -33,25 +33,3 @@ spec:
                       name: nginx
                       ports:
                         - containerPort: 80
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-pod
-placementRef:
-  name: placement-policy-pod
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-pod
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-pod
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

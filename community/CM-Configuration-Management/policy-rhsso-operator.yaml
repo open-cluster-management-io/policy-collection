@@ -114,26 +114,3 @@ spec:
                   external:
                     enabled: true
                   instances: 1
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-rhsso-operator
-placementRef:
-  name: placement-policy-rhsso-operator
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-rhsso-operator
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-rhsso-operator
-spec:
-  clusterSelector:
-    matchExpressions: [] # selects all clusters if not specified
-    matchLabels:
-      name: local-cluster

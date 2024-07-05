@@ -129,28 +129,3 @@ spec:
                   displayName: Ansible Automation Platform
                 status:
                   phase: Succeeded # check the csv status to determine if operator is running or not
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-ansible-automation-operator
-placementRef:
-  name: placement-policy-ansible-automation-operator
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-ansible-automation-operator
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-ansible-automation-operator
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: environment
-        operator: In
-        values:
-          - dev

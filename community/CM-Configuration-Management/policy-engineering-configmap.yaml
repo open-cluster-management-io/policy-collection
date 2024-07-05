@@ -49,25 +49,3 @@ spec:
                     Company = company prod value
                     Place = Place prod value
                     Country = Country prod value
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-configmap-example
-placementRef:
-  name: placement-configmap-example
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-configmap-example
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-configmap-example
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

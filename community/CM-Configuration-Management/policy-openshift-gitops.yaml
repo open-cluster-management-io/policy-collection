@@ -34,25 +34,3 @@ spec:
                   name: openshift-gitops-operator
                   source: redhat-operators
                   sourceNamespace: openshift-marketplace
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-openshift-gitops-installed
-placementRef:
-  name: placement-openshift-gitops-installed
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: openshift-gitops-installed
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-openshift-gitops-installed
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

@@ -32,25 +32,3 @@ spec:
                   tokenConfig:
                     accessTokenInactivityTimeout: 10m0s
                     accessTokenMaxAgeSeconds: 28800
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-oauth-config
-placementRef:
-  name: placement-policy-oauth-config
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-oauth-config
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-oauth-config
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

@@ -115,28 +115,3 @@ spec:
           remediationAction: inform
           severity: low
   remediationAction: inform
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-odf-operator
-placementRef:
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-  name: placement-policy-odf-operator
-subjects:
-  - apiGroup: policy.open-cluster-management.io
-    kind: Policy
-    name: policy-odf-operator
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-odf-operator
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: environment
-        operator: In
-        values:
-          - dev

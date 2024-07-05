@@ -35,25 +35,3 @@ spec:
                   kind: Role #this must be Role or ClusterRole
                   name: operator # this must match the name of the Role or ClusterRole you wish to bind to
                   apiGroup: rbac.authorization.k8s.io
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-rolebinding
-placementRef:
-  name: placement-policy-rolebinding
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-rolebinding
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-rolebinding
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

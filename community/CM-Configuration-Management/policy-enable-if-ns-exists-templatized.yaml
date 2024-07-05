@@ -72,31 +72,3 @@ spec:
                 spec:
                   # disable is set to true if namespace does not exist else it is set to false , 
                   disabled: '{{ ne (lookup "v1" "Namespace" "" "test").metadata.name "test" |  print | toBool }}'
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-conditionalconfigmap-common
-placementRef:
-  name: placement-policy-conditionalconfigmap-common
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-conditionalconfigmap
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
-  - name: policy-conditionalconfigmap-enabler
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-conditionalconfigmap-common
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: local-cluster
-        operator: In
-        values:
-          - 'true'

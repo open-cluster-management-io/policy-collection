@@ -38,28 +38,3 @@ spec:
                   clusterSet: default
           remediationAction: enforce
           severity: low
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-managed-clusterset-binding
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: name
-        operator: In
-        values:
-          - local-cluster
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-managed-clusterset-binding
-placementRef:
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-  name: placement-policy-managed-clusterset-binding
-subjects:
-  - apiGroup: policy.open-cluster-management.io
-    kind: Policy
-    name: policy-managed-clusterset-binding

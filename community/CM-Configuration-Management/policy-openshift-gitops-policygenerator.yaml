@@ -113,25 +113,3 @@ spec:
                   apiGroup: rbac.authorization.k8s.io
                   kind: ClusterRole
                   name: openshift-gitops-policy-admin
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-openshift-gitops-policygenerator
-placementRef:
-  name: placement-openshift-gitops-policygenerator
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: openshift-gitops-policygenerator
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-openshift-gitops-policygenerator
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: name, operator: In, values: ["local-cluster"]}
