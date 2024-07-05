@@ -2,6 +2,13 @@
 
 A collection of policy examples for Open Cluster Management.
 
+> **Important**: The `PlacementRule` resource has been deprecated so policy users must begin moving to
+the Placement API instead. See the
+[Transitioning from `PlacementRule`(deprecated) to `Placement`](#transitioning-from-placementruledeprecated-to-placement)
+that provides details below to learn how to begin using Placement. Policies will no longer include
+placement details as part of contributions since placement resources can be shared to avoid
+duplication and to allow users to choose different ways of including placement with gitops.
+
 ## Repository structure
 
 This repository hosts policies for Open Cluster Management. You can find policies from the following
@@ -34,13 +41,6 @@ Application lifecycle management as an addon in your Open Cluster Management ins
 for details on installing the Application addon. **Note**: If you are using ArgoCD for gitops, a
 similar script [argoDeploy.sh](deploy/argoDeploy.sh) is provided that does not require the
 Application Lifecycle addon.
-
-The policies are applied to all managed clusters that are available, and have the `environment` set
-to `dev`. If policies need to be applied to another set of clusters, update the 
-`Placement.spec.predicates.requiredClusterSelector.labelSelector.matchExpressions` section in the policies.
-
-**Note**: As new clusters are added that fit the criteria previously mentioned, the policies are
-applied automatically.
 
 ### Subscription Administrator
 
@@ -185,8 +185,8 @@ following steps on migrating from `PlacementRule` to `Placement`:
            - {key: environment, operator: In, values: ["dev"]}
    ```
 
-  See the [Placement documentation](https://open-cluster-management.io/concepts/placement/) for
-  additional details on selecting managed clusters using `Placement`.
+See the [Placement documentation](https://open-cluster-management.io/concepts/placement/) for
+additional details on selecting managed clusters using `Placement`.
 
 4. Identify any `PlacementBinding` resources that reference a `PlacementRule`. Update the
    `PlacementBinding` to reference the new `Placement`:
