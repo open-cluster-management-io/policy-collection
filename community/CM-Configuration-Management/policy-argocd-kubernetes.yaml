@@ -57,23 +57,6 @@ spec:
                   packageOverrides:
                     - packageAlias: argo-cd
                       packageName: argo-cd
-                  placement:
-                    placementRef:
-                      name: helmchartargo-placement-1
-                      kind: PlacementRule
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: apps.open-cluster-management.io/v1
-                kind: PlacementRule
-                metadata:
-                  name: helmchartargo-placement-1
-                  namespace: argocd
-                  labels:
-                    app: helmchartargo
-                spec:
-                  clusterSelector:
-                    matchLabels:
-                      environment: dev
             - complianceType: musthave
               objectDefinition:
                 apiVersion: apps.open-cluster-management.io/v1
@@ -86,28 +69,3 @@ spec:
                 spec:
                   pathname: https://charts.wener.tech
                   type: HelmRepo
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-argocd-kubernetes
-placementRef:
-  name: placement-argocd-kubernetes
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-argocd-kubernetes
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-argocd-kubernetes
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: local-cluster
-        operator: In
-        values:
-          - 'true'

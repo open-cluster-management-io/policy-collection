@@ -4,10 +4,6 @@
 # ./CM-Configuration-Management/policy-create-license-triliovault-for-kubernetes-upstream.yaml.  
 # Please conact sales@trilio.io for further support.
 #
-# You must make sure the PlacementRule for the Policy installs the policy on the
-# Open Cluster Management hub. The PlacementRule inside the Policy is what determines which clusters
-# TVK will be installed on.
-#
 # Note that it is set to enforce by default.
 #
 # Please refer product documentation at https://docs.trilio.io/kubernetes/overview/readme 
@@ -127,61 +123,4 @@ spec:
                   packageOverrides:
                   - packageName: k8s-triliovault-operator
                     packageAlias: k8s-triliovault-operator
-                  placement:
-                    placementRef:
-                      name: placement-policy-tvk-1
-                      kind: PlacementRule
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: policy-tvk-placement
-        spec:
-          remediationAction: enforce
-          severity: high
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: apps.open-cluster-management.io/v1
-                kind: PlacementRule
-                metadata:
-                  name: placement-policy-tvk-1
-                  namespace: trilio-system
-                  labels:
-                    app: tvk
-                spec:
-                  clusterSelector:
-                    matchExpressions:
-                      - key: vendor
-                        operator: NotIn
-                        values:
-                          - OpenShift
-                      - key: protected-by
-                        operator: In
-                        values:
-                          - triliovault
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: install-tvk-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: name
-        operator: In
-        values:
-          - local-cluster
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: install-tvk-placement
-placementRef:
-  name: install-tvk-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: install-tvk-helm
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy
+       
