@@ -73,31 +73,3 @@ spec:
                 spec:
                   # disable is set to true if encryption.type != aescbc else it is set to false , 
                   disabled: '{{ ne (lookup "config.openshift.io/v1" "APIServer" "" "cluster").spec.encryption.type "aescbc" |  print | toBool }}'
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-conditionalsecret-common
-placementRef:
-  name: placement-policy-conditionalsecret-common
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-conditionalsecret
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
-  - name: policy-conditionalsecret-enabler
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-conditionalsecret-common
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: local-cluster
-        operator: In
-        values:
-          - 'true'

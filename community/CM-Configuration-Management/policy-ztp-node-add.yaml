@@ -50,28 +50,3 @@ spec:
           remediationAction: inform
           severity: medium
   remediationAction: inform
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: policy-ztp-node-add-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: local-cluster
-        operator: In
-        values:
-          - "true"
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: policy-ztp-node-add-placement
-placementRef:
-  name: policy-ztp-node-add-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: policy-ztp-node-add
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy

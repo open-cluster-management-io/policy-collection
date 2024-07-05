@@ -78,25 +78,3 @@ spec:
                     apiServerArguments:
                       audit-webhook-config-file:
                         - /var/log/kube-apiserver/webhook-config.yaml
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-falco-auditing
-placementRef:
-  name: placement-policy-falco-auditing
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-falco-auditing
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-falco-auditing
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

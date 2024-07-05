@@ -35,25 +35,3 @@ spec:
                   annotations:
                     integrityshield.io/eventType: verify-result
                     integrityshield.io/eventResult: deny
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-integrity-shield-events
-placementRef:
-  name: placement-policy-integrity-shield-events
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-integrity-shield-events
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-integrity-shield-events
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

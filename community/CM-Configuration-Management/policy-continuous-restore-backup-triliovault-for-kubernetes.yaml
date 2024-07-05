@@ -188,33 +188,3 @@ spec:
                     namespace: '{{hub fromConfigMap "" "tvk-cr-backup-configmap" "backupNS" hub}}'
                 status: 
                   status: Available
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: tvk-cr-backup-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: protected-by
-        operator: In
-        values:
-          - triliovault
-      - key: tvk-continuous-restore-cluster
-        operator: In
-        values:
-          - source
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: tvk-cr-backup-placement
-placementRef:
-  name: tvk-cr-backup-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: tvk-continuous-restore-backup
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy
-

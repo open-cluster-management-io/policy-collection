@@ -228,29 +228,3 @@ spec:
                     namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
                 status: 
                   status: Available
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: tvk-operator-backup-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: protected-by
-        operator: In
-        values:
-          - triliovault
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: tvk-operator-backup-placement
-placementRef:
-  name: tvk-operator-backup-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: create-tvk-operator-backup
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy
-

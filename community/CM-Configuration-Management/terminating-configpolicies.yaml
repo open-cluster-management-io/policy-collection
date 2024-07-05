@@ -28,31 +28,3 @@ spec:
                 kind: ConfigurationPolicy
                 status:
                   compliant: Terminating
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: terminating-configpolicies-placement
-  namespace: default
-placementRef:
-  name: terminating-configpolicies-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: terminating-configpolicies
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: terminating-configpolicies-placement
-  namespace: default
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: environment
-        operator: In
-        values:
-          - dev
-  clusterConditions: []
