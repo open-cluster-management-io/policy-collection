@@ -142,25 +142,3 @@ spec:
                   namespace: zts-xcrypt
                 spec:
                   replicas: 1
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-zts-xcrypt-deployment
-placementRef:
-  name: placement-policy-zts-xcrypt-deployment
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-zts-xcrypt-deployment
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-zts-xcrypt-deployment
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

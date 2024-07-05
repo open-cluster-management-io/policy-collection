@@ -291,25 +291,3 @@ spec:
                 webhooksCleanup:
                   enable: false
                   image: 'bitnami/kubectl:latest'
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-kyverno-operator
-placementRef:
-  name: placement-policy-kyverno-operator
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-- name: policy-kyverno-operator
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-kyverno-operator
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

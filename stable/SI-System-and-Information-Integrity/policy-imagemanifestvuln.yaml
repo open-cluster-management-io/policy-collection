@@ -67,25 +67,3 @@ spec:
               objectDefinition:
                 apiVersion: secscan.quay.redhat.com/v1alpha1
                 kind: ImageManifestVuln # checking for a kind
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-imagemanifestvuln
-placementRef:
-  name: placement-policy-imagemanifestvuln
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-imagemanifestvuln
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-imagemanifestvuln
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

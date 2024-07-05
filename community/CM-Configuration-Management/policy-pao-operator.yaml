@@ -73,25 +73,3 @@ spec:
                   nodeSelector:
                     matchLabels:
                       node-role.kubernetes.io/worker-cnf: ""
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-pao
-placementRef:
-  name: placement-policy-pao
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-pao-operator
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-pao
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: pao, operator: In, values: ["true"]}

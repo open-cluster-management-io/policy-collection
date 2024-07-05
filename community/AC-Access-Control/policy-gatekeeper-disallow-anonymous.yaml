@@ -99,25 +99,3 @@ spec:
                     constraint_kind: K8sDisallowAnonymous
                     constraint_name: no-anonymous
                     event_type: violation
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-gatekeeper-disallow-anonymous
-placementRef:
-  name: placement-policy-gatekeeper-disallow-anonymous
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-gatekeeper-disallow-anonymous
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-gatekeeper-disallow-anonymous
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

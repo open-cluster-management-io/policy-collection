@@ -102,25 +102,3 @@ spec:
                         minReplicas: 2
                         replicas: 3
                     scannerComponent: Enabled
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-advanced-cluster-security-central
-placementRef:
-  name: placement-policy-advanced-cluster-security-central
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-advanced-cluster-security-central
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-advanced-cluster-security-central
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: local-cluster, operator: In, values: ["true"]}

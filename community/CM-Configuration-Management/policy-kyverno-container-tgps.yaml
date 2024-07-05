@@ -51,25 +51,3 @@ spec:
                         patchStrategicMerge:
                           spec:
                             terminationGracePeriodSeconds: 50
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-kyverno-container-tgps
-placementRef:
-  name: placement-policy-kyverno-container-tgps
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-kyverno-container-tgps
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-kyverno-container-tgps
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

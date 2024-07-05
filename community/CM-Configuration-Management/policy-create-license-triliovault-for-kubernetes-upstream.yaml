@@ -39,32 +39,3 @@ spec:
                   key: xYsNDgwKD3jajZFPj4IwEMXv/RRN9tyEUlxgEw6KzYbIohFwz0M77DZRJPwx67df1MMaMGbn0ENf573pb14+UdN5/0WpoJy/2fabY1Hbsm0SNgidOVZL6JD+VXARmeUxSxCpzeUFHVWwgNYoAqozJ6QTtWt6JHujsGpxh0177xDY5ANM1WEFlUL5U5vmfBvgkutec10SHg81VOeJc7aN4mjNVvlCbhOZyZTFUSiTVLJ3mbDFPI1CkvSHApt1mbdD9F0v4yTF5oRNtBzblgIKbTsuA1cgc7gHzHN8l5VKixJnjnacoVkm9EEFwz3zZ4V2PB8ZF3w4OGpWCBADQiV0wX3kIEh8IzKOD7LdPI+zm4dvw1OPKzCY7OSe3aZv1De0+GStqTrW+OArat+33UDtImuy6gvMJ7D+SSuEGpTpxisM+KtFw03e/gL3OqHJMC0CFHH459/Qe76ztoGQGLcHHWb1X1zYAhUAj0X1sX2KJDgewP/aaCML+WiMJwE=X02gc
                 status:
                   status: Active
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: tvk-license-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: vendor
-        operator: NotIn
-        values:
-          - OpenShift
-      - key: protected-by
-        operator: In
-        values:
-          - triliovault
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: tvk-license-placement
-placementRef:
-  name: tvk-license-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: add-tvk-license
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy

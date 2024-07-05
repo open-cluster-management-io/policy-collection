@@ -146,32 +146,3 @@ spec:
         remediationAction: inform
         severity: high
   remediationAction: enforce
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: install-trilio-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: protected-by
-        operator: In
-        values:
-          - trilio
-      - key: vendor
-        operator: In
-        values:
-          - OpenShift
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: install-trilio-placement
-placementRef:
-  name: install-trilio-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: install-trilio
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy

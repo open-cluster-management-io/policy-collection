@@ -73,35 +73,3 @@ spec:
         remediationAction: enforce
         severity: medium
   remediationAction: enforce
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  labels:
-    app: sso
-  name: placement-setup-rhsso-for-acm
-  namespace: rhsso-policies
-spec:
-  clusterSelector:
-    matchExpressions:
-    - key: local-cluster
-      operator: In
-      values:
-      - "true"
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  labels:
-    app: sso
-  name: binding-setup-rhsso-for-acm
-  namespace: rhsso-policies
-placementRef:
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-  name: placement-setup-rhsso-for-acm
-subjects:
-- apiGroup: policy.open-cluster-management.io
-  kind: Policy
-  name: setup-rhsso-for-acm
----

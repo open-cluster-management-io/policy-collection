@@ -36,8 +36,8 @@ similar script [argoDeploy.sh](deploy/argoDeploy.sh) is provided that does not r
 Application Lifecycle addon.
 
 The policies are applied to all managed clusters that are available, and have the `environment` set
-to `dev`. If policies need to be applied to another set of clusters, update the
-`PlacementRule.spec.clusterSelector.matchExpressions` section in the policies.
+to `dev`. If policies need to be applied to another set of clusters, update the 
+`Placement.spec.predicates.requiredClusterSelector.labelSelector.matchExpressions` section in the policies.
 
 **Note**: As new clusters are added that fit the criteria previously mentioned, the policies are
 applied automatically.
