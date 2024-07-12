@@ -9,21 +9,21 @@ This repository hosts policies for Open Cluster Management. You can deploy these
 that is available as an addon. Policies are organized in two ways:
 
 1. By support expectations which are detailed below.
-2. By [NIST Special Publication 800-53](https://nvd.nist.gov/800-53). 
+2. By [NIST Special Publication 800-53](https://nvd.nist.gov/800-53).
 
 The following folders are used to separate policies by the support expectations:
 
 - [stable](stable) -- Policies in the `stable` folder are contributions that are being supported by
   the Open Cluster Management Policy SIG.
 - [3rd-party](3rd-party) -- Policies in the `3rd-party` folder are contributions that are being
-  supported, but not by the Open Cluster Management Policy SIG.  See the details of the policy to understand
-  the support being provided.
+  supported, but not by the Open Cluster Management Policy SIG. See the details of the policy to
+  understand the support being provided.
 - [community](community) -- Policies in the `community` folder are contributed from the open source
-  community.  Contributions should start in the community.
+  community. Contributions should start in the community.
 
 In addition to policy contributions, there is the option to contribute groups of policies as a set.
 This is known as `PolicySets` and these contributions are made in directories organized as
-`PolicyGenerator` projects.  The folder containing these contributions is located here:
+`PolicyGenerator` projects. The folder containing these contributions is located here:
 [`PolicySet` projects](https://github.com/open-cluster-management-io/policy-collection/tree/main/policygenerator/policy-sets).
 
 ## Using GitOps to deploy policies to a cluster
@@ -42,15 +42,15 @@ namespace something else, you can run `kubectl create ns <custom ns>` instead.
 
 From within this directory in terminal, run `cd deploy` to access the deployment directory, then run
 `bash ./deploy.sh -u <url> -p <path> -n <namespace>`. (Details on all of the parameters for this
-command can be viewed in its [README](deploy/README.md).) This script assumes you have enabled 
+command can be viewed in its [README](deploy/README.md).) This script assumes you have enabled
 Application lifecycle management as an addon in your Open Cluster Management installation. See
-[Application lifecycle management](https://open-cluster-management.io/getting-started/integration/app-lifecycle/) 
-for details on installing the Application addon.
-**Note**: If you are using ArgoCD for gitops, a similar script [argoDeploy.sh](deploy/argoDeploy.sh) is provided that does
-not require the Application Lifecycle addon.
+[Application lifecycle management](https://open-cluster-management.io/getting-started/integration/app-lifecycle/)
+for details on installing the Application addon. **Note**: If you are using ArgoCD for gitops, a
+similar script [argoDeploy.sh](deploy/argoDeploy.sh) is provided that does not require the
+Application Lifecycle addon.
 
 The policies are applied to all managed clusters that are available, and have the `environment` set
-to `dev`. If policies need to be applied to another set of clusters, update the 
+to `dev`. If policies need to be applied to another set of clusters, update the
 `PlacementRule.spec.clusterSelector.matchExpressions` section in the policies.
 
 **Note**: As new clusters are added that fit the criteria previously mentioned, the policies are
@@ -82,7 +82,8 @@ subjects:
     name: my-username
 ```
 
-After updating the `ClusterRoleBinding`, you need to delete the subscription and deploy the subscription again.
+After updating the `ClusterRoleBinding`, you need to delete the subscription and deploy the
+subscription again.
 
 ### Policy Generator
 
@@ -99,6 +100,132 @@ For additional information about the Policy Generator:
 - [Policy Generator reference YAML](https://github.com/stolostron/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml)
 - [Policy Generator examples](policygenerator)
 
+## Distributing Policies to Managed Clusters
+
+Distributing a `Policy` to a managed cluster requires four parts, all of which must be in the same
+namespace:
+
+- [Policy](https://open-cluster-management.io/concepts/policy/) is a grouping mechanism for Policy
+  Templates and is the smallest deployable unit on the hub cluster. Embedded Policy Templates are
+  distributed to applicable managed clusters and acted upon by the appropriate `policy controller`.
+
+- [PlacementBinding](https://open-cluster-management.io/concepts/policy/#placementbinding) binds a
+  Placement to a `Policy` or `PolicySet`.
+
+- [Placement](https://open-cluster-management.io/concepts/placement/): Dynamically selects a set of
+  `ManagedClusters` in one or multiple `ManagedClusterSet`s.
+
+- [ManagedClusterSetBinding](https://open-cluster-management.io/concepts/managedclusterset/): Binds
+  a `ManagedClusterSet` to a namespace, making this group of managed clusters available for
+  selection by `Placement`.
+
+When the `Policy` is bound to a `Placement` using a `PlacementBinding`, the `Policy` is distributed
+to the managed clusters and the `Policy` status will report on each cluster returned by the bound
+`Placement`.
+
+### Using `Placement` with `Policies`
+
+See the [Placement documentation](https://open-cluster-management.io/concepts/placement/) for
+additional details on selecting managed clusters using `Placement`.
+
+- **NOTE:** `PlacementRule` is **deprecated**. See the
+  [migration section](#transitioning-from-placementruledeprecated-to-placement) for detail on
+  migrating to `Placement`.
+
+To use `Placement` to distribute `Policies`, bind the `Policy` to the `Placement` using a
+`PlacementBinding`. All of the objects must be in the same namespace. View the following sample
+`Placement` and `PlacementBinding` bound to a `Policy` named `policy-example` in the namespace
+`example-ns`. The `Placement` selects managed clusters that have the label `environment: dev`:
+
+```yaml
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: placement-policy-example
+  namespace: example-ns
+spec:
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - { key: environment, operator: In, values: ["dev"] }
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-example
+  namespace: example-ns
+placementRef:
+  name: placement-policy-example
+  kind: Placement
+  apiGroup: cluster.open-cluster-management.io
+subjects:
+  - name: policy-example
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+```
+
+### Transitioning from `PlacementRule`(deprecated) to `Placement`
+
+`PlacementRule` had unrestricted access to selecting managed clusters. However, `Placement` requires
+binding managed clusters to the `Policy` namespace in order for `Policies` to be distributed to
+those managed clusters, bringing an additional layer of control to system administrators. View the
+following steps on migrating from `PlacementRule` to `Placement`:
+
+1. The desired managed clusters must be contained in a `ManagedClusterSet`. See the
+   [ManagedClusterSet documentation](https://open-cluster-management.io/concepts/managedclusterset/)
+   to read more, including the default sets that are available that include all managed clusters
+   that would replicate `PlacementRule` behavior.
+
+2. Create a `ManagedClusterSetBinding` to bind the `ManagedClusterSet` to the namespace where you
+   are authoring policies. See the
+   [ManagedClusterSet documentation](https://open-cluster-management.io/concepts/managedclusterset/).
+
+3. Create the `Placement` manifest to replace the `PlacementRule`. To do this, take the selector
+   `spec.clusterSelector` from the `PlacementRule` and put it into
+   `spec.predicates.requiredClusterSelector.labelSelector`. For example, to select managed clusters
+   with the label `environment: dev`:
+   ```yaml
+   apiVersion: cluster.open-cluster-management.io/v1beta1
+   kind: Placement
+   metadata:
+     name: placement-policy-example
+     namespace: example-ns // Ensure this namespace matches the ManagedClusterSetBinding
+   spec:
+     predicates:
+     - requiredClusterSelector:
+         labelSelector:
+           matchExpressions: // From PlacementRule
+           - {key: environment, operator: In, values: ["dev"]}
+   ```
+
+  See the [Placement documentation](https://open-cluster-management.io/concepts/placement/) for
+  additional details on selecting managed clusters using `Placement`.
+
+4. Identify any `PlacementBinding` resources that reference a `PlacementRule`. Update the
+   `PlacementBinding` to reference the new `Placement`:
+
+   - Change the `placementRef.kind` to `Placement`
+   - Update the `placementRef.apiGroup` to `cluster.open-cluster-management.io` to reflect the
+     `Placement`'s API version
+
+   View the following sample `PlacementBinding` that references a `Placement`:
+
+   ```yaml
+   apiVersion: policy.open-cluster-management.io/v1
+   kind: PlacementBinding
+   metadata:
+     name: binding-policy-example
+   placementRef:
+     apiGroup: cluster.open-cluster-management.io // Set to cluster.open-cluster-management.io
+     kind: Placement                              // Set to Placement
+     name: placement-policy-example
+   subjects:
+     - name: policy-example
+       kind: Policy
+       apiGroup: policy.open-cluster-management.io
+   ```
+
 ## Community, discussion, contribution, and support
 
 Check the [Contributing policies](CONTRIBUTING.md) document for guidelines on how to contribute to
@@ -110,4 +237,3 @@ the repository.
 are implemented in the product governance framework.
 
 - [Open Cluster Management Quick Start](https://https://open-cluster-management.io/getting-started/quick-start/)
-
