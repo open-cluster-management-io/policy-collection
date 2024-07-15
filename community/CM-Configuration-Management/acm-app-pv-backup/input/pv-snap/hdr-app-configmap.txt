@@ -36,7 +36,6 @@ data:
   # the BackupStorageLocation resource doesn't have the same name
   # on both backup and restore cluster 
   dpaName: dpa
-  backupVolumeSnapshotLocation: dpa-1
   dpaBackupCloudCredentialsName: cloud-credentials
 #######
 # DPA spec
