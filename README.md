@@ -14,11 +14,11 @@ folders:
 
 ## Using GitOps to deploy policies to a cluster
 
-Fork this repository and use the forked version as the target to run the sync against. This is to
-avoid unintended changes to be applied to your cluster automatically. To get latest policies from
-the `policy-collection` repository, you can pull the latest changes from `policy-collection` to your
-own repository through a pull request. Any further changes to your repository are automatically be
-applied to your cluster.
+Fork this repository and use the forked version as the target to run the sync. This avoids
+unintended changes to your cluster. To get the latest policies from the `policy-collection`
+repository, pull the latest changes from `policy-collection` and then create a pull request to merge
+these changes into your forked repository. Any further changes to your repository will be applied to
+your cluster automatically.
 
 Make sure you have [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) installed and
 that you are logged into your hub cluster in terminal.
