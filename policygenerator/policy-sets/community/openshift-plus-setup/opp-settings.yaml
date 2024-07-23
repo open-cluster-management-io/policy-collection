@@ -16,6 +16,7 @@ data:
   us-east-1-4.14: ami-0b56cb92505dea7ed
   us-east-1-4.15: ami-0b56cb92505dea7ed
   us-east-1-4.16: ami-057df4d0cb8cbae0d
+  us-east-1-4.17: ami-0463e565b20b32acf
   us-east-2-4.10: ami-09e637fc5885c13cc
   us-east-2-4.11: ami-026e5701f495c94a2
   us-east-2-4.12: ami-0ff64f495c7e977cf
@@ -23,6 +24,7 @@ data:
   us-east-2-4.14: ami-0dc6c4d1bd5161f13
   us-east-2-4.15: ami-0b577c67f5371f6d1
   us-east-2-4.16: ami-0f736c64d5751d7d3
+  us-east-2-4.17: ami-0dc8f3a200b9a6b1f
   zone1: a
   zone2: b
   zone3: c
