@@ -76,25 +76,3 @@ spec:
                   labels:
                     compliance.openshift.io/check-status: FAIL
                     compliance.openshift.io/suite: nerc-cip
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-nerc-cip-scan
-placementRef:
-  name: placement-policy-nerc-cip-scan
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-nerc-cip-scan
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-nerc-cip-scan
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: vendor, operator: In, values: ["OpenShift"]}

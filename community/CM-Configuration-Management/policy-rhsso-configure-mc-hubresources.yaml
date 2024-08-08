@@ -95,36 +95,3 @@ spec:
                 name: rhsso-ca-crt
                 namespace: rhsso
   remediationAction: enforce
----
-
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  labels:
-    app: sso
-  name: placement-configure-mc-rhsso-hubresources
-  namespace: rhsso-policies
-spec:
-  clusterSelector:
-    matchExpressions:
-    - key: local-cluster
-      operator: In
-      values:
-      - "true"
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  labels:
-    app: sso
-  name: binding-configure-mc-rhsso-hubresources
-  namespace: rhsso-policies
-placementRef:
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-  name: placement-configure-mc-rhsso-hubresources
-subjects:
-- apiGroup: policy.open-cluster-management.io
-  kind: Policy
-  name: configure-mc-rhsso-hubresources
----

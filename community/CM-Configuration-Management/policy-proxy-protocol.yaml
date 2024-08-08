@@ -32,28 +32,3 @@ spec:
                     type: HostNetwork
           remediationAction: inform
           severity: low
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: policy-proxy-protocol-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: local-cluster
-        operator: In
-        values:
-          - "true"
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: policy-proxy-protocol-placement
-placementRef:
-  name: policy-proxy-protocol-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: policy-proxy-protocol
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy

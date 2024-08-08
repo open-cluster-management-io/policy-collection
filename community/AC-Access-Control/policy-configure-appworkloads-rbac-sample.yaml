@@ -163,25 +163,3 @@ spec:
                   apiGroup: rbac.authorization.k8s.io
                   kind: ClusterRole
                   name: view
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-configure-appworkloads-rbac
-placementRef:
-  name: placement-policy-configure-appworkloads-rbac
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-configure-appworkloads-rbac
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-configure-appworkloads-rbac
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

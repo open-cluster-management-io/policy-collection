@@ -273,28 +273,3 @@ spec:
           remediationAction: inform
           severity: high
   remediationAction: inform
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: policy-oauth-ldap-placement
-placementRef:
-  name: policy-oauth-ldap-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: policy-oauth-ldap
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: policy-oauth-ldap-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: environment
-        operator: In
-        values:
-          - dev

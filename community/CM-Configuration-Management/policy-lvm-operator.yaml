@@ -76,28 +76,3 @@ spec:
                           overprovisionRatio: 10
           remediationAction: enforce
           severity: low
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-install-odf-lvm-operator
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: environment
-        operator: In
-        values:
-          - dev
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-install-odf-lvm-operator
-placementRef:
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-  name: placement-install-odf-lvm-operator
-subjects:
-  - apiGroup: policy.open-cluster-management.io
-    kind: Policy
-    name: policy-odf-lvm-operator

@@ -102,26 +102,3 @@ spec:
                     collector:
                       collection: EBPF
                       imageFlavor: Regular
-                    taintToleration: TolerateTaints
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-advanced-managed-cluster-security
-placementRef:
-  name: placement-policy-advanced-managed-cluster-security
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-advanced-managed-cluster-security
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-advanced-managed-cluster-security
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: vendor, operator: In, values: ["OpenShift"]}

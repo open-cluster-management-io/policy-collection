@@ -88,33 +88,4 @@ spec:
                   skipIfAlreadyExists: true
                 status:
                   status: Completed
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: tvk-cr-restore-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: protected-by
-        operator: In
-        values:
-          - triliovault
-      - key: tvk-continuous-restore-cluster
-        operator: In
-        values:
-          - target
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: tvk-cr-restore-placement
-placementRef:
-  name: tvk-cr-restore-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: tvk-continuous-restore
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy
 

@@ -110,23 +110,6 @@ spec:
                               initialDelaySeconds: 35
                               periodSeconds: 20
                             securityContext: null
-                  placement:
-                    placementRef:
-                      name: kyverno-placement-1
-                      kind: PlacementRule
-            - complianceType: mustonlyhave
-              objectDefinition:
-                apiVersion: apps.open-cluster-management.io/v1
-                kind: PlacementRule
-                metadata:
-                  name: kyverno-placement-1
-                  namespace: kyverno
-                  labels:
-                    app: kyverno
-                spec:
-                  clusterSelector:
-                    matchLabels:
-                      environment: dev
             - complianceType: musthave
               objectDefinition:
                 apiVersion: apps.open-cluster-management.io/v1
@@ -139,28 +122,3 @@ spec:
                 spec:
                   pathname: https://kyverno.github.io/kyverno
                   type: HelmRepo
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-install-kyverno
-placementRef:
-  name: placement-policy-install-kyverno
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-install-kyverno
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-install-kyverno
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: local-cluster
-        operator: In
-        values:
-          - 'true'

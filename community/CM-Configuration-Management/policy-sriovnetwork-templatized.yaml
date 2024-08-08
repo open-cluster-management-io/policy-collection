@@ -38,31 +38,6 @@ spec:
                   vlan: '{{hub fromConfigMap "" "site-config"  (printf "%s-vlan" .ManagedClusterName) | toInt hub}}'
 ---
 apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-site-nw-templatized-common
-placementRef:
-  name: placement-policy-site-nw-templatized-common
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-site-nw-templatized
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-site-nw-templatized-common
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: local-cluster
-        operator: In
-        values:
-          - 'true'
----
-apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-site-nw-templatized-config
@@ -99,30 +74,4 @@ spec:
                   cluster0002-phc2sysOpts: "-a -r -n 24"
                   cluster0002-resourceName: "du_mh"
                   cluster0002-vlan: "3621"
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-site-nw-templatized-config
-placementRef:
-  name: placement-policy-site-nw-templatized-config
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-site-nw-templatized-config
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-site-nw-templatized-config
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: local-cluster
-        operator: In
-        values:
-          - 'true'
----
 

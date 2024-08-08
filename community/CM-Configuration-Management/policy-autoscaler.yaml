@@ -48,28 +48,3 @@ spec:
                     delayAfterDelete: 5m
                     delayAfterFailure: 30s
                     unneededTime: 5m
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-autoscaler
-placementRef:
-  name: placement-policy-autoscaler
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-autoscaler
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-autoscaler
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: environment
-        operator: In
-        values:
-          - 'dev'

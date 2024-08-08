@@ -76,25 +76,3 @@ spec:
                   labels:
                     compliance.openshift.io/check-status: FAIL
                     compliance.openshift.io/suite: high
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-high-scan
-placementRef:
-  name: placement-policy-high-scan
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-high-scan
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-high-scan
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: vendor, operator: In, values: ["OpenShift"]}

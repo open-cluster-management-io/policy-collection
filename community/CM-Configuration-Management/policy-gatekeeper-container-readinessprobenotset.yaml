@@ -432,25 +432,3 @@ spec:
                     constraint_kind: ContainerReadinessprobeNotset
                     constraint_name: containerreadinessprobenotset
                     event_type: violation
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-gatekeeper-containerreadinessprobenotset
-placementRef:
-  name: placement-policy-gatekeeper-containerreadinessprobenotset
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-gatekeeper-containerreadinessprobenotset
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-gatekeeper-containerreadinessprobenotset
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

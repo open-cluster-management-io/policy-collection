@@ -88,35 +88,3 @@ spec:
         remediationAction: enforce
         severity: medium
   remediationAction: enforce
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  labels:
-    app: sso
-  name: placement-configure-mc-rhsso-spokeresources
-  namespace: rhsso
-spec:
-  clusterSelector:
-    matchExpressions:
-    - key: rhsso
-      operator: In
-      values:
-      - "true"
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  labels:
-    app: sso
-  name: binding-configure-mc-rhsso-spokeresources
-  namespace: rhsso
-placementRef:
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-  name: placement-configure-mc-rhsso-spokeresources
-subjects:
-- apiGroup: policy.open-cluster-management.io
-  kind: Policy
-  name: configure-mc-rhsso-spokeresources
----

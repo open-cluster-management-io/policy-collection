@@ -170,26 +170,3 @@ spec:
                 kind: Pod
                 metadata:
                   labels:
-                    com.blackducksoftware.com.pod.overall-status: IN_VIOLATION
-                  namespace: default
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-blackduck-operator
-placementRef:
-  name: placement-blackduck-operator
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: blackduck-operator
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-blackduck-operator
-spec:
-  clusterSelector:
-    matchExpressions: [] # selects all clusters if not specified

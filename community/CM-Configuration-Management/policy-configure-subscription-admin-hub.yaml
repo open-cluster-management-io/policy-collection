@@ -63,25 +63,3 @@ spec:
                   - apiGroup: rbac.authorization.k8s.io
                     kind: User
                     name: system:admin
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-configure-subscription-admin-hub
-placementRef:
-  name: placement-policy-configure-subscription-admin-hub
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-configure-subscription-admin-hub
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-configure-subscription-admin-hub
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: name, operator: In, values: ["local-cluster"]}

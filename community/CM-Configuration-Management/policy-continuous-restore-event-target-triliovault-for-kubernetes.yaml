@@ -98,33 +98,3 @@ spec:
                   thresholdCapacity: '{{hub fromConfigMap "" "aws-s3-configmap" "thresholdCapacity" hub}}'
                 status:
                   status: Available
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: tvk-cr-event-target-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: protected-by
-        operator: In
-        values:
-          - triliovault
-      - key: tvk-continuous-restore
-        operator: In
-        values:
-          - enabled
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: tvk-cr-event-target-placement
-placementRef:
-  name: tvk-cr-event-target-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: tvk-continuous-restore-event-target
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy
-

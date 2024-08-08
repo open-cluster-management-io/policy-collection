@@ -1,9 +1,5 @@
 # Install falco using helm instead of using the operator. 
 
-# You must make sure the PlacementRule for the Policy installs the policy on the
-# Open Cluster Management hub.  The PlacementRule inside the Policy is what determines which clusters
-# falco will be installed on.
-
 # Edit the parameters for the helm chart inside the Subscription resource to
 # customize falco for your needs.  If installing falco on openshift, be aware of
 # the following:
@@ -216,56 +212,3 @@ spec:
                           tolerations:
                           - effect: NoSchedule
                             key: node-role.kubernetes.io/master
-                  placement:
-                    placementRef:
-                      name: placement-policy-falco-1
-                      kind: PlacementRule
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: policy-falco-placement
-        spec:
-          remediationAction: enforce # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
-          severity: high
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["*"]
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: apps.open-cluster-management.io/v1
-                kind: PlacementRule
-                metadata:
-                  name: placement-policy-falco-1
-                  namespace: falco
-                  labels:
-                    app: falco
-                spec:
-                  clusterSelector:
-                    matchLabels:
-                      environment: dev
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-falco-app
-placementRef:
-  name: placement-policy-falco-app
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-- name: policy-falco-app
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-falco-app
-  labels:
-    app: falco
-spec:
-  clusterSelector:
-    matchLabels:
-      name: local-cluster

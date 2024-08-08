@@ -80,25 +80,3 @@ spec:
                                   cpu: 200m
                                   memory: 256Mi
                                 type: Container
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-kyverno-add-quota
-placementRef:
-  name: placement-policy-kyverno-add-quota
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-kyverno-add-quota
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-kyverno-add-quota
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

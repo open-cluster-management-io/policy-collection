@@ -138,34 +138,3 @@ spec:
                   namespace: <POLICIESNS>
                 spec: # disable is set to true if policy status != complaint else it is set to false , 
                   disabled: '{{ ne (lookup "policy.open-cluster-management.io/v1" "Policy" "<POLICIESNS>" "policy-autoscaler-templatized-config").status.compliant "Compliant" |  print | toBool }}'
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-autoscaler-templatized-common
-placementRef:
-  name: placement-policy-autoscaler-templatized-common
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-autoscaler-templatized
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
-  - name: policy-autoscaler-templatized-config
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
-  - name: policy-autoscaler-templatized-enabler
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-autoscaler-templatized-common
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: local-cluster
-        operator: In
-        values:
-          - 'true'

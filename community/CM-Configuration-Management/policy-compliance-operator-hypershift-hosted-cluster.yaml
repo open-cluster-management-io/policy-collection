@@ -192,28 +192,3 @@ spec:
                   labels:
                     compliance.openshift.io/check-status: FAIL
                     compliance.openshift.io/suite: cis
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-hypershift-cis-scan
-placementRef:
-  name: hypershift-cis-scan-placement
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-hypershift-scan
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: hypershift-cis-scan-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: name
-        operator: In
-        values:
-          - local-cluster

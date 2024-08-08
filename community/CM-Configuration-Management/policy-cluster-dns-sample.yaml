@@ -31,25 +31,3 @@ spec:
                   tags:
                     Name: <infrastructureID>-int
                     kubernetes.io/cluster/<infrastructureID>-wfpg4: owned
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-config-dns
-placementRef:
-  name: placement-policy-config-dns
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-config-dns
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-config-dns
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: environment, operator: In, values: ["dev"]}

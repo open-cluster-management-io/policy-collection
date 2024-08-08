@@ -85,28 +85,3 @@ spec:
                             server: <vCenterServer>
           pruneObjectBehavior: DeleteIfCreated
           remediationAction: inform
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: policy-vsphere-machineset-infra-placement
-placementRef:
-  name: policy-vsphere-machineset-infra-placement
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-subjects:
-  - name: policy-vsphere-machineset-infra
-    apiGroup: policy.open-cluster-management.io
-    kind: Policy
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: policy-vsphere-machineset-infra-placement
-spec:
-  clusterSelector:
-    matchExpressions:
-      - key: environment
-        operator: In
-        values:
-          - dev

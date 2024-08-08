@@ -116,25 +116,3 @@ spec:
                   nodeSelector:
                     matchLabels:
                       node-role.kubernetes.io/worker-cnf: ""
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-ptp
-placementRef:
-  name: placement-policy-ptp
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: policy-ptp-operator
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-ptp
-spec:
-  clusterSelector:
-    matchExpressions:
-      - {key: ptp, operator: In, values: ["true"]}

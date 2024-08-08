@@ -233,25 +233,3 @@ spec:
                           name: worker-user-data
                     versions:
                       kubelet: ""
----
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: binding-policy-ocs-machinesets
-placementRef:
-  name: placement-policy-ocs-machinesets
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-- name: policy-ocs-machinesets
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: placement-policy-ocs-machinesets
-spec:
-  clusterSelector:
-    matchLabels:
-      local-cluster: 'true'
