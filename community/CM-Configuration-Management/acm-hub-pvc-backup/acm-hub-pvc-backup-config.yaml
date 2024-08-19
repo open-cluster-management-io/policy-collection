@@ -123,13 +123,12 @@ spec:
             {{- $volsync_pvcs := "hub-pvc-backup-pvcs" }}
             {{- $volsync_restore_cond := eq ( lookup "v1" "ConfigMap" $ns $volsync_pvcs ).metadata.name $volsync_pvcs }}
             {{- $has_local_cluster_ns := eq (lookup "cluster.open-cluster-management.io/v1" "ManagedCluster" "" "local-cluster").metadata.name "local-cluster" }}
-            {{- $is_hub := "is-hub" }}
-            {{- $local_cls := "local-cluster" }}
+            {{- $local_cls_name := index (lookup "cluster.open-cluster-management.io/v1" "ManagedCluster" "" "" "local-cluster=true") "items" 0 "metadata" "name" }}
 
             {{- /* Create the volsync addon - if BackupSchedule exists and there are PVCs with volsync label */ -}}
             {{ if or (and $pv_claim_cond $volsync_backup_cond) $volsync_restore_cond  }}
-                {{- range $hub_managed_cls := (lookup "cluster.open-cluster-management.io/v1" "ManagedCluster" "" "" $is_hub).items }}
-                  {{ if not ( eq $hub_managed_cls.metadata.name $local_cls ) }}
+                {{- range $hub_managed_cls := (lookup "cluster.open-cluster-management.io/v1" "ManagedCluster" "" "" "is-hub").items }}
+                  {{ if not ( eq $hub_managed_cls.metadata.name $local_cls_name ) }}
                 - complianceType: musthave
                   objectDefinition:
                     apiVersion: addon.open-cluster-management.io/v1alpha1
@@ -147,14 +146,14 @@ spec:
                           type: Available  
                   {{- end }}      
                 {{- end }}
-                {{ if $has_local_cluster_ns }}
+                {{ if $local_cls_name }}
                 - complianceType: musthave
                   objectDefinition:
                     apiVersion: addon.open-cluster-management.io/v1alpha1
                     kind: ManagedClusterAddOn
                     metadata:
                       name: volsync
-                      namespace: {{ $local_cls }}
+                      namespace: {{ $local_cls_name }}
                       labels:
                         cluster.open-cluster-management.io/backup: volsync
                     spec:
