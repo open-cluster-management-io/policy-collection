@@ -8,4 +8,4 @@ spec:
   - requiredClusterSelector:
       labelSelector:
         matchExpressions:
-          - {key: name, operator: In, values: ["local-cluster"]}
+          - {key: "local-cluster", operator: In, values: ["true"]}
