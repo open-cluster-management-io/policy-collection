@@ -17,7 +17,7 @@ policyDefaults:
   placement:
     labelSelector:
       matchLabels:
-        name: local-cluster
+        local-cluster: 'true'
 
 policies:
   - name: acm-policygenerator-downloader
