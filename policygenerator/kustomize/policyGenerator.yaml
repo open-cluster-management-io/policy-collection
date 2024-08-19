@@ -8,8 +8,9 @@ policyDefaults:
   namespace: policies
   placement:
     name: demo-placement-rule
-    clusterSelectors:
-      name: local-cluster
+    labelSelector:
+      matchExpressions:
+        - {key: "local-cluster", operator: In, values: ["true"]}
   remediationAction: inform
   severity: medium
 policies:
