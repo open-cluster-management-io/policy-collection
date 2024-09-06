@@ -1,0 +1,162 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: argocd-policy-healthchecks
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/description: >-
+      This policy configures healthchecks for open-cluster-management-io Policy kinds on any ArgoCD
+      instances found on the cluster.
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: config-argocd-policy-healthchecks
+        spec:
+          severity: medium
+          # Apply the healthcheck configuration to all ArgoCD instances that are
+          # found - this helps it to work on different environments, and ensures
+          # that the configuration is not applied before the GitOps operator
+          # creates the initial instance.
+          object-templates-raw: |
+            {{- range (lookup "argoproj.io/v1beta1" "ArgoCD" "" "").items }}
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: argoproj.io/v1beta1
+                kind: ArgoCD
+                metadata:
+                  name: {{ .metadata.name }}
+                  namespace: {{ .metadata.namespace }}
+                spec:
+                  resourceHealthChecks:
+                    - group: policy.open-cluster-management.io
+                      kind: CertificatePolicy
+                      check: |
+                        hs = {}
+                        if obj.status == nil or obj.status.compliant == nil then
+                          hs.status = "Progressing"
+                          hs.message = "Waiting for the status to be reported"
+                          return hs
+                        end
+                        if obj.status.compliant == "Compliant" then
+                          hs.status = "Healthy"
+                          hs.message = "All certificates found comply with the policy"
+                          return hs
+                        else
+                          hs.status = "Degraded"
+                          hs.message = "At least once certificate does not comply with the policy"
+                          return hs
+                        end
+                    - group: policy.open-cluster-management.io
+                      kind: ConfigurationPolicy
+                      check: |
+                        hs = {}
+                        if obj.status == nil or obj.status.compliant == nil then
+                          hs.status = "Progressing"
+                          hs.message = "Waiting for the status to be reported"
+                          return hs
+                        end
+                        if obj.status.lastEvaluatedGeneration ~= obj.metadata.generation then
+                          hs.status = "Progressing"
+                          hs.message = "Waiting for the status to be updated"
+                          return hs  
+                        end
+                        if obj.status.compliant == "Compliant" then
+                          hs.status = "Healthy"
+                        else
+                          hs.status = "Degraded"
+                        end
+                        if obj.status.compliancyDetails ~= nil then
+                          messages = {}
+                          for i, compliancy in ipairs(obj.status.compliancyDetails) do
+                            if compliancy.conditions ~= nil then
+                              for i, condition in ipairs(compliancy.conditions) do
+                                if condition.message ~= nil and condition.type ~= nil then
+                                  table.insert(messages, condition.type .. " - " .. condition.message)
+                                end
+                              end
+                            end
+                          end
+                          hs.message = table.concat(messages, "; ")
+                          return hs
+                        end
+                        hs.status = "Progressing"
+                        hs.message = "Waiting for compliance"
+                        return hs
+                    - group: policy.open-cluster-management.io
+                      kind: OperatorPolicy
+                      check: |
+                        hs = {}
+                        if obj.status == nil or obj.status.conditions == nil then
+                          hs.status = "Progressing"
+                          hs.message = "Waiting for the status to be reported"
+                          return hs
+                        end
+                        if obj.status.observedGeneration ~= nil and obj.status.observedGeneration ~= obj.metadata.generation then
+                          hs.status = "Progressing"
+                          hs.message = "Waiting for the status to be updated"
+                          return hs  
+                        end
+                        for i, condition in ipairs(obj.status.conditions) do
+                          if condition.type == "Compliant" then
+                            hs.message = condition.message
+                            if condition.status == "True" then
+                              hs.status = "Healthy"
+                              return hs
+                            else
+                              hs.status = "Degraded"
+                              return hs
+                            end
+                          end
+                        end
+                        hs.status = "Progressing"
+                        hs.message = "Waiting for the compliance condition"
+                        return hs
+                    - group: policy.open-cluster-management.io
+                      kind: Policy
+                      check: |
+                        hs = {}
+                        if obj.status == nil or obj.status.compliant == nil then
+                          hs.status = "Progressing"
+                          hs.message = "Waiting for the status to be reported"
+                          return hs
+                        end
+                        if obj.status.compliant == "Compliant" then
+                          hs.status = "Healthy"
+                        else
+                          hs.status = "Degraded"
+                        end
+                        noncompliants = {}
+                        if obj.status.status ~= nil then
+                          -- "root" policy
+                          for i, entry in ipairs(obj.status.status) do
+                            if entry.compliant ~= "Compliant" then
+                              noncompliants[i] = entry.clustername
+                            end
+                          end
+                          if table.getn(noncompliants) == 0 then
+                            hs.message = "All clusters are compliant"
+                          else
+                            hs.message = "NonCompliant clusters: " .. table.concat(noncompliants, ", ")
+                          end
+                        elseif obj.status.details ~= nil then
+                          -- "replicated" policy
+                          for i, entry in ipairs(obj.status.details) do
+                            if entry.compliant ~= "Compliant" then
+                              noncompliants[i] = entry.templateMeta.name
+                            end
+                          end
+                          if table.getn(noncompliants) == 0 then
+                            hs.message = "All templates are compliant"
+                          else
+                            hs.message = "NonCompliant templates: " .. table.concat(noncompliants, ", ")
+                          end
+                        end
+                        return hs
+            {{- end }}
