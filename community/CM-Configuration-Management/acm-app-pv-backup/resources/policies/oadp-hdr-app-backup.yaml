@@ -78,29 +78,12 @@ spec:
             {{hub end hub}}
           remediationAction: inform
           severity: high
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: check-backup-completed
-        spec:
-          object-templates-raw: |
-            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: velero.io/v1
-                kind: Backup
-                metadata:
-                  namespace: '{{hub $configMap.data.backupNS hub}}'
-                  labels:
-                    velero.io/schedule-name: '{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-{{ fromClusterClaim "name" }}'
-                    cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
-                    cluster-name: '{{ fromClusterClaim "name" }}'
-                status:
-                  phase: Completed
-                  startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
-          remediationAction: inform
-          severity: high
+          customMessage:
+            compliant: |
+              The schedule {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}} {{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-<clusterName> phase is not FailedValidation.{{hub end hub}}
+            noncompliant: |
+              The schedule {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}} {{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-<clusterName> phase is FailedValidation. {{hub end hub}}
+
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -124,6 +107,12 @@ spec:
                   startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
+          customMessage:
+            compliant: |
+              There is no Backup with a startTimestamp matching the schedule {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}} {{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-<clusterName> Schedule.status.lastBackup and having an Error phase.{{hub end hub}}
+            noncompliant: |
+              The Backup with a startTimestamp matching the {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}} {{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-<clusterName> Schedule.status.lastBackup was found and has an Error phase. {{hub end hub}}
+
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -147,6 +136,12 @@ spec:
                   startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
+          customMessage:
+            compliant: |
+              There is no Backup with a startTimestamp matching the schedule {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}} {{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-<clusterName> Schedule.status.lastBackup and having a FailedValidation phase.{{hub end hub}}
+            noncompliant: |
+              The Backup with a startTimestamp matching the {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}} {{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-<clusterName> Schedule.status.lastBackup was found and has a FailedValidation phase. {{hub end hub}}
+
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -170,6 +165,12 @@ spec:
                   startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
+          customMessage:
+            compliant: |
+              There is no Backup with a startTimestamp matching the schedule {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}} {{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-<clusterName> Schedule.status.lastBackup and having a PartiallyFailed phase.{{hub end hub}}
+            noncompliant: |
+              The Backup with a startTimestamp matching the {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}} {{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-<clusterName> Schedule.status.lastBackup was found and has a PartiallyFailed phase. {{hub end hub}}
+
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -193,3 +194,37 @@ spec:
                   startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: low
+          customMessage:
+            compliant: |
+              There is no Backup with a startTimestamp matching the schedule {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}} {{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-<clusterName> Schedule.status.lastBackup and having an empty phase.{{hub end hub}}
+            noncompliant: |
+              The Backup with a startTimestamp matching the {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}} {{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-<clusterName> Schedule.status.lastBackup was found and has an empty state. {{hub end hub}}
+
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: check-backup-completed
+        spec:
+          object-templates-raw: |
+            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: velero.io/v1
+                kind: Backup
+                metadata:
+                  namespace: '{{hub $configMap.data.backupNS hub}}'
+                  labels:
+                    velero.io/schedule-name: '{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-{{ fromClusterClaim "name" }}'
+                    cluster-id: '{{ fromClusterClaim "id.openshift.io" }}'
+                    cluster-name: '{{ fromClusterClaim "name" }}'
+                status:
+                  phase: Completed
+              {{hub end hub}}
+          remediationAction: inform
+          severity: high
+          customMessage:
+            compliant: |
+              There is at least one completed Backup generated by the {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}} {{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-<clusterName> Schedule.{{hub end hub}}
+            noncompliant: |
+              There is no completed Backup generated by the {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}} {{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}-<clusterName> Schedule.{{hub end hub}}
