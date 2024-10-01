@@ -1,15 +1,18 @@
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: OperatorPolicy
 metadata:
+  name: operatorpolicy-quay-bridge-operator
   labels:
     operators.coreos.com/quay-bridge-operator.openshift-operators: ""
-  name: quay-bridge-operator
-  namespace: openshift-operators
 spec:
-  installPlanApproval: Automatic
-  name: quay-bridge-operator
-  source: redhat-operators
-  sourceNamespace: openshift-marketplace
+  remediationAction: enforce
+  severity: high
+  complianceType: musthave
+  upgradeApproval: Automatic
+  subscription:
+    name: quay-bridge-operator
+    source: redhat-operators
+    sourceNamespace: openshift-marketplace
 ---
 apiVersion: quay.redhat.com/v1
 kind: QuayIntegration

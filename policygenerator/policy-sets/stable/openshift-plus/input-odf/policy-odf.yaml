@@ -5,25 +5,25 @@ metadata:
     openshift.io/cluster-monitoring: "true"
   name: openshift-storage
 ---
-apiVersion: operators.coreos.com/v1alpha2
-kind: OperatorGroup
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: OperatorPolicy
 metadata:
-  name: openshift-storage-operatorgroup
-  namespace: openshift-storage
+  name: operatorpolicy-odf-operator
 spec:
-  targetNamespaces:
-    - openshift-storage
----
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: odf-operator
-  namespace: openshift-storage
-spec:
-  installPlanApproval: Automatic
-  name: odf-operator
-  source: redhat-operators
-  sourceNamespace: openshift-marketplace
+  remediationAction: enforce
+  severity: high
+  complianceType: musthave
+  upgradeApproval: Automatic
+  operatorGroup:
+    name: openshift-storage-operatorgroup
+    namespace: openshift-storage
+    targetNamespaces:
+      - openshift-storage
+  subscription:
+    name: odf-operator
+    namespace: openshift-storage
+    source: redhat-operators
+    sourceNamespace: openshift-marketplace
 ---
 apiVersion: odf.openshift.io/v1alpha1
 kind: StorageSystem
