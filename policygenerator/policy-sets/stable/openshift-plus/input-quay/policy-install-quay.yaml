@@ -58,27 +58,27 @@ subjects:
   name: create-admin-user
   namespace: local-quay
 ---
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: OperatorPolicy
 metadata:
-  name: local-quay
-  namespace: local-quay
-spec:
-  targetNamespaces:
-  - local-quay
----
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
+  name: operatorpolicy-quay-operator
   labels:
     operators.coreos.com/quay-operator.local-quay: ""
-  name: quay-operator
-  namespace: local-quay
 spec:
-  installPlanApproval: Automatic
-  name: quay-operator
-  source: redhat-operators
-  sourceNamespace: openshift-marketplace
+  remediationAction: enforce
+  severity: high
+  complianceType: musthave
+  upgradeApproval: Automatic
+  operatorGroup:
+    name: local-quay
+    namespace: local-quay
+    targetNamespaces:
+      - local-quay
+  subscription:
+    name: quay-operator
+    namespace: local-quay
+    source: redhat-operators
+    sourceNamespace: openshift-marketplace
 ---
 apiVersion: v1
 data:

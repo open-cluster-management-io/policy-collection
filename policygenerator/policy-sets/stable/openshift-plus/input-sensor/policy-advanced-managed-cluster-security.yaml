@@ -8,24 +8,24 @@ kind: Namespace
 metadata:
   name: rhacs-operator
 ---
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: OperatorPolicy
 metadata:
-  name: rhacs-operator-group
-  namespace: rhacs-operator
-spec: {}
----
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: rhacs-operator
-  namespace: rhacs-operator
+  name: operatorpolicy-rhacs-operator
 spec:
-  channel: stable
-  installPlanApproval: Automatic
-  name: rhacs-operator
-  source: redhat-operators
-  sourceNamespace: openshift-marketplace
+  remediationAction: enforce
+  severity: high
+  complianceType: musthave
+  upgradeApproval: Automatic
+  operatorGroup:
+    name: rhacs-operator-group
+    namespace: rhacs-operator
+  subscription:
+    channel: stable
+    name: rhacs-operator
+    namespace: rhacs-operator
+    source: redhat-operators
+    sourceNamespace: openshift-marketplace
 ---
 apiVersion: v1
 data:
