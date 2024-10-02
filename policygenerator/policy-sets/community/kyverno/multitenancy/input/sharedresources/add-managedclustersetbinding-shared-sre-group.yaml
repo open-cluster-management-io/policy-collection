@@ -9,7 +9,7 @@ metadata:
     policies.kyverno.io/subject: ClusterRoleBinding
     policies.kyverno.io/description: >-
       Note that binding a cluster set to a namespace means that granting access from that namespace to its member clusters. And the bind process requires “managedclustersets/bind” access in the hub cluster which is clarified below. This means you can deploy an ApplicationSet to that namespace and it will be deployed on all Clusters which match the label in the Placement
-      read more at https://open-cluster-management.io/concepts/managedclusterset/#bind-the-clusterset-to-a-workspace-namespace 
+      read more at https://open-cluster-management.io/docs/concepts/managedclusterset/#bind-the-clusterset-to-a-workspace-namespace
 spec:
   background: false
   rules:
@@ -23,7 +23,7 @@ spec:
         - kind: Group
           name: "blue-sre-group"
         - kind: Group
-          name: "red-sre-group"          
+          name: "red-sre-group"
     preconditions:
       any:
       - key: "{{request.operation}}"
@@ -33,7 +33,7 @@ spec:
         - UPDATE
       - key: "{{request.object.metadata.name}}"
         operator: AnyNotIn
-        value: shared*              
+        value: shared*
     generate:
       apiVersion: cluster.open-cluster-management.io/v1beta2
       kind: ManagedClusterSetBinding
@@ -53,17 +53,17 @@ spec:
         - kind: Group
           name: "red-sre-group"
         - kind: Group
-          name: "blue-sre-group"          
+          name: "blue-sre-group"
     preconditions:
       any:
       - key: "{{request.operation}}"
         operator: In
         value:
         - CREATE
-        - UPDATE  
+        - UPDATE
       - key: "{{request.object.metadata.name}}"
         operator: AnyNotIn
-        value: shared*           
+        value: shared*
     generate:
       apiVersion: cluster.open-cluster-management.io/v1beta2
       kind: ManagedClusterSetBinding
@@ -83,7 +83,7 @@ spec:
         - kind: Group
           name: "red-sre-group"
         - kind: Group
-          name: "blue-sre-group"          
+          name: "blue-sre-group"
     preconditions:
       any:
       - key: "{{request.operation}}"
@@ -101,8 +101,4 @@ spec:
         - requiredClusterSelector:
             labelSelector:
               matchLabels:
-                env: dev   
-          
-          
-          
-
+                env: dev
