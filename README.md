@@ -91,17 +91,17 @@ For additional information about the Policy Generator:
 Distributing a `Policy` to a managed cluster requires four parts, all of which must be in the same
 namespace:
 
-- [Policy](https://open-cluster-management.io/concepts/policy/) is a grouping mechanism for Policy
+- [Policy](https://open-cluster-management.io/docs/concepts/policy/) is a grouping mechanism for Policy
   Templates and is the smallest deployable unit on the hub cluster. Embedded Policy Templates are
   distributed to applicable managed clusters and acted upon by the appropriate `policy controller`.
 
-- [PlacementBinding](https://open-cluster-management.io/concepts/policy/#placementbinding) binds a
+- [PlacementBinding](https://open-cluster-management.io/docs/concepts/policy/#placementbinding) binds a
   Placement to a `Policy` or `PolicySet`.
 
-- [Placement](https://open-cluster-management.io/concepts/placement/): Dynamically selects a set of
+- [Placement](https://open-cluster-management.io/docs/concepts/placement/): Dynamically selects a set of
   `ManagedClusters` in one or multiple `ManagedClusterSet`s.
 
-- [ManagedClusterSetBinding](https://open-cluster-management.io/concepts/managedclusterset/): Binds
+- [ManagedClusterSetBinding](https://open-cluster-management.io/docs/concepts/managedclusterset/): Binds
   a `ManagedClusterSet` to a namespace, making this group of managed clusters available for
   selection by `Placement`.
 
@@ -111,7 +111,7 @@ to the managed clusters and the `Policy` status will report on each cluster retu
 
 ### Using `Placement` with `Policies`
 
-See the [Placement documentation](https://open-cluster-management.io/concepts/placement/) for
+See the [Placement documentation](https://open-cluster-management.io/docs/concepts/placement/) for
 additional details on selecting managed clusters using `Placement`.
 
 - **NOTE:** `PlacementRule` is **deprecated**. See the
@@ -159,13 +159,13 @@ those managed clusters, bringing an additional layer of control to system admini
 following steps on migrating from `PlacementRule` to `Placement`:
 
 1. The desired managed clusters must be contained in a `ManagedClusterSet`. See the
-   [ManagedClusterSet documentation](https://open-cluster-management.io/concepts/managedclusterset/)
+   [ManagedClusterSet documentation](https://open-cluster-management.io/docs/concepts/managedclusterset/)
    to read more, including the default sets that are available that include all managed clusters
    that would replicate `PlacementRule` behavior.
 
 2. Create a `ManagedClusterSetBinding` to bind the `ManagedClusterSet` to the namespace where you
    are authoring policies. See the
-   [ManagedClusterSet documentation](https://open-cluster-management.io/concepts/managedclusterset/).
+   [ManagedClusterSet documentation](https://open-cluster-management.io/docs/concepts/managedclusterset/).
 
 3. Create the `Placement` manifest to replace the `PlacementRule`. To do this, take the selector
    `spec.clusterSelector` from the `PlacementRule` and put it into
@@ -185,7 +185,7 @@ following steps on migrating from `PlacementRule` to `Placement`:
            - {key: environment, operator: In, values: ["dev"]}
    ```
 
-See the [Placement documentation](https://open-cluster-management.io/concepts/placement/) for
+See the [Placement documentation](https://open-cluster-management.io/docs/concepts/placement/) for
 additional details on selecting managed clusters using `Placement`.
 
 4. Identify any `PlacementBinding` resources that reference a `PlacementRule`. Update the

@@ -49,7 +49,7 @@ For more information, see [GitHub documentation](https://docs.github.com/en/free
 Learn how to create a custom policy, validate that the custom policy is added, and add your policy to the `policy-collection` repository. Complete the following steps to create a custom policy:
 
 1. Create a new branch to develop a custom policy:
-   
+
    ```
    git checkout -b no-wildcard-roles
    ```
@@ -61,7 +61,7 @@ Learn how to create a custom policy, validate that the custom policy is added, a
    ```
    [policy-name](./control-family/path/to/yaml) | <description> | <prerequisites>
    ```
-   
+
 ### Validate
 
 To validate the creation of your policy, use the Red Hat Advanced Cluster Management web console to create a new policy using our custom YAML file. 
@@ -74,13 +74,13 @@ To validate the creation of your policy, use the Red Hat Advanced Cluster Manage
 
    **Note**: You can also validate your policy using GitOps instead of manually creating the policy.
 
-It is important to remember to set your policy to only inform users of policy violations by default and not enforce. You can test the enforcement of the policy if your policy supports it. For more information on which policies support enforcement, see [Policy controllers](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/security/governance-and-risk#policy-controllers). 
+It is important to remember to set your policy to only inform users of policy violations by default and not enforce. You can test the enforcement of the policy if your policy supports it. For more information on which policies support enforcement, see [Policy controllers](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/security/governance-and-risk#policy-controllers).
 
 Be sure that your contributed policy is set to `enforce` if the intent of your policy requires something to be created. For example, a policy that creates an operator would be expected to enforce creation of the operator. On the other hand, it is recommended for a configuration policy to be set to `inform` by default so that the policy does not change cluster resources automatically when it is applied.
 
 ### Contribute
 
-Create a pull request that can be reviewed by the product team. See the following instructions to populate a pull request: 
+Create a pull request that can be reviewed by the product team. See the following instructions to populate a pull request:
 
 1. Return to the `policy-collection` directory and add all changed files with the following command:
 
