@@ -9,22 +9,20 @@ data:
   vmwareMemory: "32768" 
   awsReplicas: "2"
   awsInstanceType: m6a.2xlarge
-  us-east-1-4.10: ami-0c72f473496a7b1c2
-  us-east-1-4.11: ami-0722eb0819717090f
-  us-east-1-4.12: ami-0fe05b1aa8dacfa90
-  us-east-1-4.13: ami-0624891c612b5eaa0
-  us-east-1-4.14: ami-0b56cb92505dea7ed
-  us-east-1-4.15: ami-0b56cb92505dea7ed
-  us-east-1-4.16: ami-057df4d0cb8cbae0d
-  us-east-1-4.17: ami-0463e565b20b32acf
-  us-east-2-4.10: ami-09e637fc5885c13cc
-  us-east-2-4.11: ami-026e5701f495c94a2
-  us-east-2-4.12: ami-0ff64f495c7e977cf
-  us-east-2-4.13: ami-0dc6c4d1bd5161f13
-  us-east-2-4.14: ami-0dc6c4d1bd5161f13
-  us-east-2-4.15: ami-0b577c67f5371f6d1
-  us-east-2-4.16: ami-0f736c64d5751d7d3
-  us-east-2-4.17: ami-0dc8f3a200b9a6b1f
+  us-east-1-4.12: ami-0c321aac14de997e3
+  us-east-2-4.12: ami-0fce6015e3592d4a5
+  us-east-1-4.13: ami-03efc0188afd5f5b9
+  us-east-2-4.13: ami-031d6e5e3d4f2f192
+  us-east-1-4.14: ami-058af1563befa5c0e
+  us-east-2-4.14: ami-0dd810c1f47c5c233
+  us-east-1-4.15: ami-0d653d86d4113326a
+  us-east-2-4.15: ami-0d6c4efce8daf7d2d
+  us-east-1-4.16: ami-075cc98266f9df501
+  us-east-2-4.16: ami-08bb6907b96d2a024
+  us-east-1-4.17: ami-0e79bb8acc37d2696
+  us-east-2-4.17: ami-08997afda521c28fa
+  us-east-1-4.18: ami-012d486b4a2bd1c08
+  us-east-2-4.18: ami-0197c5c22c44c04f1
   zone1: a
   zone2: b
   zone3: c
