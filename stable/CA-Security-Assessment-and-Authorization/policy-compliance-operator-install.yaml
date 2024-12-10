@@ -51,3 +51,9 @@ spec:
             namespace: openshift-compliance
             source: redhat-operators
             sourceNamespace: openshift-marketplace
+            # Conditionally configure a nodeSelector for installing on ROSA hosted control planes
+            config: '{{ if and (eq "ROSA" (fromClusterClaim
+              "product.open-cluster-management.io")) (eq "true"
+              (fromClusterClaim "hostedcluster.hypershift.openshift.io"))
+              }}{"nodeSelector":{"node-role.kubernetes.io/worker":""} }{{ else
+              }}{{ "{}" | toLiteral }}{{ end }}'
