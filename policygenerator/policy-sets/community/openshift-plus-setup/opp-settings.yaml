@@ -17,12 +17,14 @@ data:
   us-east-2-4.14: ami-0dd810c1f47c5c233
   us-east-1-4.15: ami-0d653d86d4113326a
   us-east-2-4.15: ami-0d6c4efce8daf7d2d
-  us-east-1-4.16: ami-075cc98266f9df501
-  us-east-2-4.16: ami-08bb6907b96d2a024
-  us-east-1-4.17: ami-0e79bb8acc37d2696
-  us-east-2-4.17: ami-08997afda521c28fa
-  us-east-1-4.18: ami-012d486b4a2bd1c08
-  us-east-2-4.18: ami-0197c5c22c44c04f1
+  us-east-1-4.16: ami-03ca8605aa130b597
+  us-east-2-4.16: ami-09ab4b62c2f0a4555
+  us-east-1-4.17: ami-0eddfa7634d2beba0
+  us-east-2-4.17: ami-022fbb77a3226215f
+  us-east-1-4.18: ami-08f1807771f4e468b
+  us-east-2-4.18: ami-078e26f293629fe91
+  us-east-1-4.19: ami-04025e24e1e0ef752
+  us-east-2-4.19: ami-0bd7465e9989694c9
   zone1: a
   zone2: b
   zone3: c
