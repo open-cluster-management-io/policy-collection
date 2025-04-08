@@ -1,0 +1,121 @@
+# ## **Summary **
+# This policy enables the standalone-hub-templating addon on the `mycluster` managed cluster, and
+# allows it access to `ConfigMaps` in that cluster's namespace on the hub. This policy can easily
+# be adjusted to provide different permissions for the addon, or to apply to a different cluster.
+# This policy should only be placed on the hub cluster.
+#
+# ## **Prerequisites **
+# The standalone-hub-templating feature was introduced in the config-policy-controller v0.16.0,
+# included in RHACM 2.13 - using this policy with earlier versions will not be efffective.
+#
+# ## **Background **
+# Policy templates like `ConfigurationPolicies` can be applied directly to managed clusters either
+# by users or automated processes (eg GitOps and other CI systems). Those resources can be placed in
+# the managed cluster namespace, or the `open-cluster-management-policies` namespace since community
+# version v0.15.0 (included in RHACM 2.12). Both `ConfigurationPolicies` and `OperatorPolicies`
+# allow templates, but when they are applied directly to the cluster, they can only access resources
+# present on that managed cluster.
+# 
+# The `standalone-hub-templating` feature allows those policy templates to access resources on the
+# hub cluster. By default, they will only have access to the `ManagedCluster` resource, but other
+# permissions can be added on the hub cluster, as this sample demonstrates.
+#
+# ## **Usage **
+# All instances of `mycluster` in the policy can be replaced by a specific managed cluster name. The
+# Role can be modified to provide access to other resources by changing its `rules`. The Role and
+# RoleBinding can be defined in a different namespace to provide access to resources in that
+# namespace, or they can be changed to a ClusterRole and ClusterRoleBinding to provide access to
+# resources in any namespace on the hub cluster. The Policy should only ever be placed on the hub
+# cluster, since that is where all of these details are configured.
+
+# ## **Example standalone policy**
+# This ConfigurationPolicy can be applied directly to the managed cluster, and would use the access
+# granted by the `standalone-hubtemplate-config` Policy to resolve its hub template, looking up the
+# "cloud" label on the ManagedCluster and some data from a "hub-cm" ConfigMap present on the hub
+# cluster.
+#
+# ```yaml
+# apiVersion: policy.open-cluster-management.io/v1
+# kind: ConfigurationPolicy
+# metadata:
+#   name: standalone-hubtemplates-example
+#   namespace: open-cluster-management-policies
+# spec:
+#   remediationAction: inform
+#   severity: low
+#   object-templates:
+#     - complianceType: musthave
+#       objectDefinition:
+#         kind: ConfigMap
+#         apiVersion: v1
+#         metadata:
+#           name: standalone-hubtemplates-example
+#           namespace: default
+#         data:
+#           cloud: '{{hub .ManagedClusterLabels.cloud hub}}'
+#           hubFoo: '{{hub fromConfigMap "mycluster" "hub-cm" "foo" hub}}'
+# ```
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: standalone-hubtemplate-config
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: standalone-hubtemplate-addon
+        spec:
+          remediationAction: inform
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: addon.open-cluster-management.io/v1alpha1
+                kind: ManagedClusterAddOn
+                metadata:
+                  name: governance-standalone-hub-templating
+                  namespace: mycluster 
+                spec:
+                  installNamespace: open-cluster-management-agent-addon
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: standalone-hubtemplate-mycluster-rbac
+        spec:
+          remediationAction: inform
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: Role
+                metadata:
+                  name: cm-reader
+                  namespace: mycluster 
+                rules:
+                - apiGroups:
+                  - ""
+                  resources:
+                  - configmaps
+                  verbs:
+                  - get
+                  - list
+                  - watch
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: RoleBinding
+                metadata:
+                  name: cm-reader-binding
+                  namespace: mycluster 
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: Role
+                  name: cm-reader
+                subjects:
+                - apiGroup: rbac.authorization.k8s.io
+                  kind: Group
+                  name: system:open-cluster-management:cluster:mycluster:addon:governance-standalone-hub-templating
