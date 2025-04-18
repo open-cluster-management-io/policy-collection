@@ -1,0 +1,57 @@
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  annotations:
+    machine.openshift.io/memoryMb: "32768"
+    machine.openshift.io/vCPU: "8"
+  labels:
+    machine.openshift.io/cluster-api-cluster: ci-op-ldb7hpt4-d53f7-srxtz
+  name: ci-op-ldb7hpt4-d53f7-srxtz-storage
+  namespace: openshift-machine-api
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: ci-op-ldb7hpt4-d53f7-srxtz
+      machine.openshift.io/cluster-api-machineset: ci-op-ldb7hpt4-d53f7-srxtz-storage
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: ci-op-ldb7hpt4-d53f7-srxtz
+        machine.openshift.io/cluster-api-machine-role: storage
+        machine.openshift.io/cluster-api-machine-type: storage
+        machine.openshift.io/cluster-api-machineset: ci-op-ldb7hpt4-d53f7-srxtz-storage
+    spec:
+      lifecycleHooks: {}
+      metadata:
+        labels:
+          cluster.ocs.openshift.io/openshift-storage: ""
+      providerSpec:
+        value:
+          apiVersion: machine.openshift.io/v1beta1
+          credentialsSecret:
+            name: vsphere-cloud-credentials
+          diskGiB: 120
+          kind: VSphereMachineProviderSpec
+          memoryMiB: 32768
+          metadata:
+            creationTimestamp: null
+          network:
+            devices:
+            - networkName: ci-vlan-1148
+          numCPUs: 8
+          numCoresPerSocket: 4
+          snapshot: ""
+          template: ci-op-ldb7hpt4-d53f7-srxtz-rhcos-generated-failure-domain
+          userDataSecret:
+            name: worker-user-data
+          workspace:
+            datacenter: DEVQEdatacenter
+            datastore: /DEVQEdatacenter/datastore/vsanDatastore
+            folder: /DEVQEdatacenter/vm/ci-op-ldb7hpt4-d53f7-srxtz
+            resourcePool: /DEVQEdatacenter/host/DEVQEcluster/Resources/ipi-ci-clusters
+            server: vcenter.devqe.example.devcluster.openshift.com
+status:
+  fullyLabeledReplicas: 6
+  observedGeneration: 1
+  replicas: 6

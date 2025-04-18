@@ -149,7 +149,7 @@ spec:
                   numCPUs: '{{ fromConfigMap "policies" "opp-settings" "vmwareCPU" | toInt }}'
                   numCoresPerSocket: 4
                   snapshot: ""
-                  template: {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-rhcos-generated-region-generated-zone
+                  template: {{ (index (split "/" (index (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.vsphere.failureDomains 0).topology.template) "_3") }}
                   userDataSecret:
                     name: worker-user-data
                   workspace:

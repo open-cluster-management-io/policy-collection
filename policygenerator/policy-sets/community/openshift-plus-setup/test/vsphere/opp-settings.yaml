@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opp-settings
+  namespace: policies
+data:
+  vmwareReplicas: "6"
+  vmwareCPU: "8"
+  vmwareMemory: "32768" 
+  awsReplicas: "2"
+  awsInstanceType: m6a.2xlarge
+  us-east-1-4.12: ami-0c321aac14de997e3
+  us-east-2-4.12: ami-0fce6015e3592d4a5
+  us-east-1-4.13: ami-03efc0188afd5f5b9
+  us-east-2-4.13: ami-031d6e5e3d4f2f192
+  us-east-1-4.14: ami-058af1563befa5c0e
+  us-east-2-4.14: ami-0dd810c1f47c5c233
+  us-east-1-4.15: ami-0d653d86d4113326a
+  us-east-2-4.15: ami-0d6c4efce8daf7d2d
+  us-east-1-4.16: ami-075cc98266f9df501
+  us-east-2-4.16: ami-08bb6907b96d2a024
+  us-east-1-4.17: ami-0e79bb8acc37d2696
+  us-east-2-4.17: ami-08997afda521c28fa
+  us-east-1-4.18: ami-012d486b4a2bd1c08
+  us-east-2-4.18: ami-0197c5c22c44c04f1
+  zone1: a
+  zone2: b
+  zone3: c
