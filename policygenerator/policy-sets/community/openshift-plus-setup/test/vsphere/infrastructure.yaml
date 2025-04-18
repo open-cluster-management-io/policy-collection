@@ -1,0 +1,64 @@
+  apiVersion: config.openshift.io/v1
+  kind: Infrastructure
+  metadata:
+    name: cluster
+  spec:
+    cloudConfig:
+      key: config
+      name: cloud-provider-config
+    platformSpec:
+      type: VSphere
+      vsphere:
+        apiServerInternalIPs:
+        - 10.241.103.2
+        failureDomains:
+        - name: generated-failure-domain
+          region: generated-region
+          server: vcenter.devqe.example.devcluster.openshift.com
+          topology:
+            computeCluster: /DEVQEdatacenter/host/DEVQEcluster
+            datacenter: DEVQEdatacenter
+            datastore: /DEVQEdatacenter/datastore/vsanDatastore
+            networks:
+            - ci-vlan-1148
+            resourcePool: /DEVQEdatacenter/host/DEVQEcluster/Resources/ipi-ci-clusters
+            template: /DEVQEdatacenter/vm/ci-op-ldb7hpt4-d53f7-srxtz-rhcos-generated-failure-domain
+          zone: generated-zone
+        ingressIPs:
+        - 10.241.103.3
+        machineNetworks:
+        - 10.241.103.0/25
+        - 10.241.103.2/32
+        - 10.241.103.3/32
+        nodeNetworking:
+          external: {}
+          internal: {}
+        vcenters:
+        - datacenters:
+          - DEVQEdatacenter
+          port: 443
+          server: vcenter.devqe.example.devcluster.openshift.com
+  status:
+    apiServerInternalURI: https://api-int.ci-op-ldb7hpt4-d53f7.vmc-ci.devcluster.openshift.com:6443
+    apiServerURL: https://api.ci-op-ldb7hpt4-d53f7.vmc-ci.devcluster.openshift.com:6443
+    controlPlaneTopology: HighlyAvailable
+    cpuPartitioning: None
+    etcdDiscoveryDomain: ""
+    infrastructureName: ci-op-ldb7hpt4-d53f7-srxtz
+    infrastructureTopology: HighlyAvailable
+    platform: VSphere
+    platformStatus:
+      type: VSphere
+      vsphere:
+        apiServerInternalIP: 10.241.103.2
+        apiServerInternalIPs:
+        - 10.241.103.2
+        ingressIP: 10.241.103.3
+        ingressIPs:
+        - 10.241.103.3
+        loadBalancer:
+          type: OpenShiftManagedDefault
+        machineNetworks:
+        - 10.241.103.0/25
+        - 10.241.103.2/32
+        - 10.241.103.3/32
