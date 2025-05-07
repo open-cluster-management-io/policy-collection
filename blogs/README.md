@@ -34,7 +34,15 @@ Read our blogs for more information and best practices for Open Cluster Manageme
 
 * [Tips for using templating in Governance Policies - Part 2](https://www.redhat.com/en/blog/tips-for-using-templating-in-governance-policies-part-2)
 
+* [Tips for using templating in Governance Policies - Part 3](https://developers.redhat.com/articles/2025/03/19/tips-using-templating-governance-policies-part-3)
+
 * [Using Policy Dependencies to Apply Resources in a Specific Order](https://cloud.redhat.com/blog/using-policy-dependencies-to-apply-resources-in-a-specific-order)
+
+## Operator Policy
+
+* [Use OperatorPolicy to manage Kubernetes-native applications](https://developers.redhat.com/articles/2024/05/14/use-operatorpolicy-manage-kubernetes-native-applications)
+
+* [Getting started with OperatorPolicy](https://developers.redhat.com/articles/2024/08/08/getting-started-operatorpolicy)
 
 ## Community created blogs
 
