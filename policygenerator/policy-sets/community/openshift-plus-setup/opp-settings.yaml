@@ -23,8 +23,10 @@ data:
   us-east-2-4.17: ami-022fbb77a3226215f
   us-east-1-4.18: ami-08f1807771f4e468b
   us-east-2-4.18: ami-078e26f293629fe91
-  us-east-1-4.19: ami-04025e24e1e0ef752
-  us-east-2-4.19: ami-0bd7465e9989694c9
+  us-east-1-4.19: ami-0b6b825641a2ea530
+  us-east-2-4.19: ami-0f13d2cbfbca6203b
+  us-east-1-4.20: ami-0b6b825641a2ea530
+  us-east-2-4.20: ami-0f13d2cbfbca6203b
   zone1: a
   zone2: b
   zone3: c
