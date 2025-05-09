@@ -47,6 +47,24 @@ spec:
         claimName: stackrox-db
   egress:
     connectivityPolicy: Online
+  scannerV4:
+    db:
+      persistence:
+        persistentVolumeClaim:
+          claimName: scanner-v4-db
+    indexer:
+      scaling:
+        autoScaling: Enabled
+        maxReplicas: 5
+        minReplicas: 2
+        replicas: 3
+    matcher:
+      scaling:
+        autoScaling: Enabled
+        maxReplicas: 5
+        minReplicas: 2
+        replicas: 3
+    scannerComponent: Default
   scanner:
     analyzer:
       scaling:
