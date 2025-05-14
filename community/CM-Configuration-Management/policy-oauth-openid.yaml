@@ -1,0 +1,111 @@
+# This policy configures the OAuth for using a supported OpenID Connect (OIDC) provider.
+# This uses Azure Active Directory as an example OIDC identity provider
+# For more information on configuring the OAuth server, consult the OpenShift documentation: 
+# https://docs.openshift.com/container-platform/4.15/authentication/identity_providers/configuring-oidc-identity-provider.html
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-oauth-openid
+  namespace: <policy-oauth-openid-namespace>
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management, AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+spec:
+  disabled: false
+  policy-templates:
+    # Create a secret that stores the OIDC client secret
+    # clientSecret: <base64_encoded_client_secret>
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: openid-client-secret-azuread
+        spec:
+          object-templates:
+            - complianceType: mustonlyhave
+              objectDefinition:
+                apiVersion: v1
+                kind: Secret
+                metadata:
+                  name: openid-client-secret-azuread
+                  namespace: openshift-config
+                type: Opaque
+                data:
+                  clientSecret: '{{hub (fromSecret "<policy-oauth-openid-namespace>" "<policy-oauth-openid-secret-name>" "clientSecret") hub}}'
+          pruneObjectBehavior: DeleteIfCreated
+          remediationAction: inform
+          severity: high
+    # Configure the OAuth for using OIDC as the identity provider
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-oauth
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: config.openshift.io/v1
+                kind: OAuth
+                metadata:
+                  name: cluster
+                spec:
+                  identityProviders:
+                  - name: AAD
+                    mappingMethod: claim
+                    type: OpenID
+                    openID:
+                      clientID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+                      clientSecret:
+                        name: openid-client-secret-azuread
+                      extraScopes:
+                      - email
+                      - profile
+                      extraAuthorizeParameters:
+                        include_granted_scopes: "true"
+                      claims:
+                        preferredUsername:
+                        - email
+                        - upn
+                        name:
+                        - name
+                        email:
+                        - email
+                      issuer: https://login.microsoftonline.com/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+          pruneObjectBehavior: DeleteIfCreated
+          remediationAction: inform
+          severity: high
+  remediationAction: inform
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: policy-oauth-openid
+spec:
+  tolerations:
+    - key: cluster.open-cluster-management.io/unreachable
+      operator: Exists
+    - key: cluster.open-cluster-management.io/unavailable
+      operator: Exists
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - key: vendor
+              operator: In
+              values:
+                - OpenShift
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: policy-oauth-openid
+placementRef:
+  name: policy-oauth-openid
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+subjects:
+  - name: policy-oauth-openid
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
