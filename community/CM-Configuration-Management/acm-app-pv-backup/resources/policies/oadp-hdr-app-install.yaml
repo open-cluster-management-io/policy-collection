@@ -76,21 +76,84 @@ spec:
           name: create-oadp-operator-subscription
         spec:
           object-templates-raw: |
-            {{hub with $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
+            {{- /* inferre the oadp channel from the cluster ocp version */ -}}
+            {{- $oadp_channel := "stable-1.4" }}
+            {{- $ocp_version := "" }}
+            {{- $cluster_version := (lookup "config.openshift.io/v1" "ClusterVersion" "" "version")  }}
+            {{- if eq $cluster_version.metadata.name  "version" }}
+              {{- range $hist := $cluster_version.status.history}}
+                {{- $ocp_version = $hist.version }}
+              {{- end }}
+            {{- end }}
+            {{ if or (hasPrefix "4.19" $ocp_version) (hasPrefix "4.2" $ocp_version) }}
+            {{- $oadp_channel = "stable" }}
+            {{- end }}
+            {{ if hasPrefix "4.12" $ocp_version }}
+            {{- $oadp_channel = "stable-1.3" }}
+            {{- end }}
+            {{- $subscriptionInstallPlanApproval := "Automatic" }}
+            {{- /* channelName - optional, set this property for custom installation only */ -}}
+            {{- $channelName := "redhat-oadp-operator" }}
+            {{- $subscriptionSourceNamespace := "openshift-marketplace" }}
+            {{- $subscriptionSource := "redhat-operators" }}
+
+            {{- /* use the subscription name and operator group from the existing OADP installation, if one exists in this ns  */ -}}
+            {{- $subscription_name := "redhat-oadp-operator-subscription" }}
+            {{- /* if another OADP version was installed don't try to install this version  */ -}}
+            {{- $found_other_version := false }}
+            {{- range $ss := (lookup "operators.coreos.com/v1alpha1" "Subscription" "" "").items }}
+              {{ if and (not $found_other_version) (eq $ss.spec.name "redhat-oadp-operator") }}
+                {{ if eq $ss.spec.channel $oadp_channel }}
+                  {{- $subscription_name = $ss.metadata.name }}
+                  {{- $channelName = $ss.spec.name }}
+                  {{- $subscriptionInstallPlanApproval := $ss.spec.installPlanApproval }}
+                  {{- $subscriptionSource = $ss.spec.source }}
+                  {{- $subscriptionSourceNamespace = $ss.spec.sourceNamespace }}
+                {{- else }}
+                  {{- $found_other_version = true }}
+                {{- end }}
+              {{- end }}
+            {{- end }}
+
+            {{- $oadp_channel_version := "{{hub fromConfigMap "" "hdr-app-configmap" "channel" hub}}" }}
+            {{ if not (eq "" $oadp_channel_version) }}
+              {{- $oadp_channel = $oadp_channel_version }}
+            {{- end }}
+
+              {{- $subscPlanConfig := "{{hub fromConfigMap "" "hdr-app-configmap" "subscriptionInstallPlanApproval" hub}}" }}
+              {{ if not (eq "" $subscPlanConfig) }}
+                {{- $subscriptionInstallPlanApproval = $subscPlanConfig }}
+              {{- end }}
+              {{- $channelNameConfig := "{{hub fromConfigMap "" "hdr-app-configmap" "channelName" hub}}" }}
+              {{ if not (eq "" $channelNameConfig) }}
+                {{- $channelName = $channelNameConfig }}
+              {{- end }}
+              {{- $subscriptionNsConfig := "{{hub fromConfigMap "" "hdr-app-configmap" "subscriptionSourceNamespace" hub}}" }}
+              {{ if not (eq "" $subscriptionNsConfig) }}
+                {{- $subscriptionSourceNamespace = $subscriptionNsConfig }}
+              {{- end }}
+              {{- $subscriptionSourceConfig := "{{hub fromConfigMap "" "hdr-app-configmap" "subscriptionSource" hub}}" }}
+              {{ if not (eq "" $subscriptionSourceConfig) }}
+                {{- $subscriptionSource = $subscriptionSourceConfig }}
+              {{- end }}
+              {{- $startingCSV := "{{hub fromConfigMap "" "hdr-app-configmap" "subscriptionStartingCSV" hub}}" }}
+
             - complianceType: musthave
               objectDefinition:
                 apiVersion: operators.coreos.com/v1alpha1
                 kind: Subscription
                 metadata:
-                  name: redhat-oadp-operator-subscription
-                  namespace: '{{hub $configMap.data.backupNS hub}}'
+                  name: {{ $subscription_name }}
+                  namespace: '{{hub fromConfigMap "" "hdr-app-configmap" "backupNS" hub}}'
                 spec:
-                  name: '{{hub $configMap.data.subscriptionName hub}}'
-                  channel: '{{hub $configMap.data.channel hub}}'
-                  installPlanApproval: Automatic
-                  source: redhat-operators
-                  sourceNamespace: openshift-marketplace
-            {{hub end hub}}
+                  channel: {{ $oadp_channel }}
+                  installPlanApproval: {{ $subscriptionInstallPlanApproval }}
+                  name: {{ $channelName }}
+                  source: {{ $subscriptionSource }}
+                  sourceNamespace: {{ $subscriptionSourceNamespace }}
+                  {{ if not (eq "" $startingCSV) }}
+                  startingCSV: {{ $startingCSV }}
+                  {{- end }}
           remediationAction: enforce
           pruneObjectBehavior: DeleteIfCreated
           severity: high
@@ -220,3 +283,4 @@ spec:
             {{hub end hub}}
           remediationAction: inform
           severity: high
+
