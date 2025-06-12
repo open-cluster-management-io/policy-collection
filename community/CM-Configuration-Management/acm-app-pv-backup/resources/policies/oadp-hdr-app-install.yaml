@@ -86,8 +86,8 @@ spec:
             {{- $oadp_channel = "stable-1.3" }}
             {{- end }}
             {{- $subscriptionInstallPlanApproval := "Automatic" }}
-            {{- /* channelName - optional, set this property for custom installation only */ -}}
-            {{- $channelName := "redhat-oadp-operator" }}
+            {{- /* packageName - optional, set this property for custom installation only */ -}}
+            {{- $packageName := "redhat-oadp-operator" }}
             {{- $subscriptionSourceNamespace := "openshift-marketplace" }}
             {{- $subscriptionSource := "redhat-operators" }}
 
@@ -100,9 +100,9 @@ spec:
               {{ if not (eq "" $subscPlanConfig) }}
                 {{- $subscriptionInstallPlanApproval = $subscPlanConfig }}
               {{- end }}
-              {{- $channelNameConfig := "{{hub fromConfigMap "" "hdr-app-configmap" "channelName" hub}}" }}
-              {{ if not (eq "" $channelNameConfig) }}
-                {{- $channelName = $channelNameConfig }}
+              {{- $packageNameConfig := "{{hub fromConfigMap "" "hdr-app-configmap" "packageName" hub}}" }}
+              {{ if not (eq "" $packageNameConfig) }}
+                {{- $packageName = $packageNameConfig }}
               {{- end }}
               {{- $subscriptionNsConfig := "{{hub fromConfigMap "" "hdr-app-configmap" "subscriptionSourceNamespace" hub}}" }}
               {{ if not (eq "" $subscriptionNsConfig) }}
@@ -124,7 +124,7 @@ spec:
                 spec:
                   channel: {{ $oadp_channel }}
                   installPlanApproval: {{ $subscriptionInstallPlanApproval }}
-                  name: {{ $channelName }}
+                  name: {{ $packageName }}
                   source: {{ $subscriptionSource }}
                   sourceNamespace: {{ $subscriptionSourceNamespace }}
                   {{ if not (eq "" $startingCSV) }}
