@@ -79,7 +79,7 @@ spec:
             {{- /* inferre the oadp channel from the cluster ocp version */ -}}
             {{- $oadp_channel := "stable-1.4" }}
             {{- $ocp_version := fromClusterClaim "version.openshift.io" }}
-            {{ if or ((hasPrefix "4.19" $ocp_version) (not (hasPrefix "4.1" $ocp_version)) }}
+            {{ if or (hasPrefix "4.19" $ocp_version) (not (hasPrefix "4.1" $ocp_version)) }}
             {{- $oadp_channel = "stable" }}
             {{- end }}
             {{ if hasPrefix "4.12" $ocp_version }}
