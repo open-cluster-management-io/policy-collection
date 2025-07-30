@@ -30,6 +30,8 @@ kind: StorageSystem
 metadata:
   name: ocs-storagecluster-storagesystem
   namespace: openshift-storage
+  labels:
+    removed-in-ocp419: '{{ skipObject (semverCompare  ">= 4.19" (fromClusterClaim "version.openshift.io")) }}'
 spec:
   kind: storagecluster.ocs.openshift.io/v1
   name: ocs-storagecluster
