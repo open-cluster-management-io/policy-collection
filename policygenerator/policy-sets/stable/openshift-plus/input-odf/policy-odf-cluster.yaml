@@ -47,6 +47,10 @@ spec:
             cephRBDMirror: {}
             cephToolbox: {}
           multiCloudGateway:
+    {{- if (eq (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type "VSphere") }}
+            dbStorageClassName: thin-csi-odf
+    {{- else }}
             dbStorageClassName: gp3-csi
+    {{- end }}
             reconcileStrategy: standalone
           resourceProfile: balanced
