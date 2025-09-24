@@ -31,26 +31,37 @@ spec:
           name: ocs-storagecluster
           namespace: openshift-storage
         spec:
-          arbiter: {}
-          encryption:
-            kms: {}
-          externalStorage: {}
-          managedResources:
-            cephBlockPools: {}
-            cephCluster: {}
-            cephConfig: {}
-            cephDashboard: {}
-            cephFilesystems: {}
-            cephNonResilientPools: {}
-            cephObjectStoreUsers: {}
-            cephObjectStores: {}
-            cephRBDMirror: {}
-            cephToolbox: {}
-          multiCloudGateway:
+          resources:
+            mds: {}
+            mgr: {}
+            mon: {}
+            noobaa-core: {}
+            noobaa-db: {}
+            noobaa-endpoint:
+              limits:
+                cpu: 1
+                memory: 500Mi
+              requests:
+                cpu: 1
+                memory: 500Mi
+            rgw: {}
+          storageDeviceSets:
+          - count: 1
+            dataPVCTemplate:
+              spec:
+                accessModes:
+                - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: "100Gi"
     {{- if (eq (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type "VSphere") }}
-            dbStorageClassName: thin-csi-odf
+                storageClassName: "thin-csi-odf"
     {{- else }}
-            dbStorageClassName: gp3-csi
+                storageClassName: "gp3-csi"
     {{- end }}
-            reconcileStrategy: standalone
-          resourceProfile: balanced
+                volumeMode: Block
+            name: ocs-deviceset
+            placement: {}
+            portable: true
+            replica: 3
+            resources: {}

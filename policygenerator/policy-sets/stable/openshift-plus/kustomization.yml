@@ -1,6 +1,10 @@
 generators:
 - ./policyGenerator.yaml
-commonLabels:
-  open-cluster-management.io/policy-set: openshift-plus
 commonAnnotations:
   argocd.argoproj.io/compare-options: IgnoreExtraneous
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+labels:
+- includeSelectors: true
+  pairs:
+    open-cluster-management.io/policy-set: openshift-plus
