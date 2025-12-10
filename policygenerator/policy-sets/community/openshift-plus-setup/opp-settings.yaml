@@ -17,18 +17,18 @@ data:
   us-east-2-4.14: ami-0dd810c1f47c5c233
   us-east-1-4.15: ami-0d653d86d4113326a
   us-east-2-4.15: ami-0d6c4efce8daf7d2d
-  us-east-1-4.16: ami-03ca8605aa130b597
-  us-east-2-4.16: ami-09ab4b62c2f0a4555
-  us-east-1-4.17: ami-0f9c714368e26039d
-  us-east-2-4.17: ami-0c6bc5601d2375cb5
-  us-east-1-4.18: ami-0b707ea3cf1a5a0e0
-  us-east-2-4.18: ami-0adb8862ffe5cc2ab
-  us-east-1-4.19: ami-09d23adad19cdb25c
-  us-east-2-4.19: ami-082a55a580d5538ed
-  us-east-1-4.20: ami-09d23adad19cdb25c
-  us-east-2-4.20: ami-082a55a580d5538ed
-  us-east-1-4.21: ami-09d23adad19cdb25c
-  us-east-2-4.21: ami-082a55a580d5538ed
+  us-east-1-4.16: ami-009f29d08fb2f839b
+  us-east-2-4.16: ami-03c0f42e69e0f6758
+  us-east-1-4.17: ami-0cc8cb8dd910e7e7a
+  us-east-2-4.17: ami-0ecdc399124b6250b
+  us-east-1-4.18: ami-0ccb061ea4996e851
+  us-east-2-4.18: ami-0a611e6a24a551a2b
+  us-east-1-4.19: ami-01095d1967818437c
+  us-east-2-4.19: ami-0bc8dda494f111572
+  us-east-1-4.20: ami-01095d1967818437c
+  us-east-2-4.20: ami-0bc8dda494f111572
+  us-east-1-4.21: ami-01095d1967818437c
+  us-east-2-4.21: ami-0bc8dda494f111572
   zone1: a
   zone2: b
   zone3: c
