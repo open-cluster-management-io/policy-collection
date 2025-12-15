@@ -52,7 +52,18 @@ spec:
               providerSpec:
                 value:
                   ami:
-                    id: '{{ fromConfigMap "policies" "opp-settings" (printf "%s-%s" (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region (fromClusterClaim "openshiftversion-major-minor")) }}'
+                    id: '{{- $dynamicAMI := "" -}}
+                         {{- $machinesets := (lookup "machine.openshift.io/v1beta1" "MachineSet" "openshift-machine-api" "") -}}
+                         {{- if $machinesets.items -}}
+                           {{- if gt (len $machinesets.items) 0 -}}
+                             {{- $dynamicAMI = (index $machinesets.items 0).spec.template.spec.providerSpec.value.ami.id -}}
+                           {{- end -}}
+                         {{- end -}}
+                         {{- if $dynamicAMI -}}
+                           {{ $dynamicAMI }}
+                         {{- else -}}
+                           {{ fromConfigMap "policies" "opp-settings" (printf "%s-%s" (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region (fromClusterClaim "openshiftversion-major-minor")) }}
+                         {{- end -}}'
                   apiVersion: awsproviderconfig.openshift.io/v1beta1
                   blockDevices:
                   - ebs:
@@ -64,7 +75,19 @@ spec:
                   deviceIndex: 0
                   iamInstanceProfile:
                     id: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-worker-profile'
-                  instanceType: '{{ fromConfigMap "policies" "opp-settings" "awsInstanceType" }}'
+                  instanceType: '{{- $dynamicInstanceType := "" -}}
+                                 {{- $machinesets := (lookup "machine.openshift.io/v1beta1" "MachineSet" "openshift-machine-api" "") -}}
+                                 {{- if $machinesets.items -}}
+                                   {{- if gt (len $machinesets.items) 0 -}}
+                                     {{- $dynamicInstanceType = (index $machinesets.items 0).spec.template.spec.providerSpec.value.instanceType -}}
+                                     {{- $dynamicInstanceType = replace ".metal" ".2xlarge" $dynamicInstanceType -}}
+                                   {{- end -}}
+                                 {{- end -}}
+                                 {{- if $dynamicInstanceType -}}
+                                   {{ $dynamicInstanceType }}
+                                 {{- else -}}
+                                   {{ fromConfigMap "policies" "opp-settings" "awsInstanceType" }}
+                                 {{- end -}}'
                   kind: AWSMachineProviderConfig
                   metadata:
                     creationTimestamp: null
