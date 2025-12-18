@@ -13,14 +13,13 @@ spec:
     initContainers:
     - args:
       - -c
-      - cp /etc/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator/PolicyGenerator
-        /policy-generator/PolicyGenerator
+      - tar -xzf /acm-cli/PolicyGenerator-rhel9.tar.gz -C /tmp/
       command:
       - /bin/bash
-      image: 'registry.redhat.io/rhacm2/multicluster-operators-subscription-rhel8:v{{ (lookup "operator.open-cluster-management.io/v1" "MultiClusterHub" "open-cluster-management" "multiclusterhub").status.currentVersion }}'
+      image: '{{ (index (lookup "apps/v1" "Deployment" "open-cluster-management" "acm-cli-downloads").spec.template.spec.containers 0).image }}'
       name: policy-generator-install
       volumeMounts:
-      - mountPath: /policy-generator
+      - mountPath: /tmp
         name: policy-generator
     volumeMounts:
     - mountPath: /etc/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator
