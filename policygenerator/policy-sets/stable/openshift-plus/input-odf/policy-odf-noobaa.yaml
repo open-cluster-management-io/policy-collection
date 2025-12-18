@@ -1,0 +1,43 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: ConfigurationPolicy
+metadata:
+  name: policy-odf-noobaa
+spec:
+  remediationAction: enforce
+  severity: medium
+  object-templates:
+    # Create pvPool BackingStore for local Ceph storage
+    - complianceType: musthave
+      objectDefinition:
+        apiVersion: noobaa.io/v1alpha1
+        kind: BackingStore
+        metadata:
+          name: noobaa-pv-backing-store
+          namespace: openshift-storage
+        spec:
+          type: pv-pool
+          pvPool:
+            numVolumes: 3
+            resources:
+              limits:
+                cpu: "2"
+                memory: 8Gi
+              requests:
+                cpu: "1"
+                memory: 4Gi
+                storage: 100Gi
+            storageClass: ocs-storagecluster-ceph-rbd
+    # Update default BucketClass to use only pvPool BackingStore
+    # This will override the auto-created BucketClass that uses aws-s3
+    - complianceType: musthave
+      objectDefinition:
+        apiVersion: noobaa.io/v1alpha1
+        kind: BucketClass
+        metadata:
+          name: noobaa-default-bucket-class
+          namespace: openshift-storage
+        spec:
+          placementPolicy:
+            tiers:
+              - backingStores:
+                  - noobaa-pv-backing-store

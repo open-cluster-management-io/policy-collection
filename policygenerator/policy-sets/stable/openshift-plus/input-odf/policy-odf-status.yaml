@@ -33,19 +33,3 @@ metadata:
   namespace: openshift-storage
 status:
   phase: Ready
----
-apiVersion: noobaa.io/v1alpha1
-kind: BackingStore
-metadata:
-  name: noobaa-default-backing-store
-  namespace: openshift-storage
-status:
-  phase: Ready
----
-apiVersion: noobaa.io/v1alpha1
-kind: BucketClass
-metadata:
-  name: noobaa-default-bucket-class
-  namespace: openshift-storage
-status:
-  phase: Ready

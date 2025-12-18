@@ -35,15 +35,27 @@ spec:
             mds: {}
             mgr: {}
             mon: {}
-            noobaa-core: {}
-            noobaa-db: {}
-            noobaa-endpoint:
+            noobaa-core:
               limits:
-                cpu: 1
-                memory: 500Mi
+                cpu: 2
+                memory: 8Gi
               requests:
                 cpu: 1
-                memory: 500Mi
+                memory: 4Gi
+            noobaa-db:
+              limits:
+                cpu: 2
+                memory: 8Gi
+              requests:
+                cpu: 1
+                memory: 4Gi
+            noobaa-endpoint:
+              limits:
+                cpu: 2
+                memory: 4Gi
+              requests:
+                cpu: 1
+                memory: 2Gi
             rgw: {}
           storageDeviceSets:
           - count: 1

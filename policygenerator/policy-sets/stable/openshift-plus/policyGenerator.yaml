@@ -154,13 +154,22 @@ policies:
 - name: policy-odf-status
   categories:
     - SI System and Information Integrity
-  controls: 
+  controls:
     - SI-7 Software Firmware and Information Integrity
   dependencies:
     - name: policy-odf
   manifests:
     - path: input-odf/policy-odf-status.yaml
   remediationAction: inform
+- name: policy-odf-noobaa
+  categories:
+    - SI System and Information Integrity
+  controls:
+    - SI-7 Software Firmware and Information Integrity
+  dependencies:
+    - name: policy-odf-status
+  manifests:
+    - path: input-odf/policy-odf-noobaa.yaml
 # ODF Policies - end
 # Quay Policies - start
 - name: policy-install-quay
