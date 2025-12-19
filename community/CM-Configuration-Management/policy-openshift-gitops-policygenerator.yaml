@@ -39,7 +39,7 @@ spec:
                       - cp /policy-generator/PolicyGenerator-not-fips-compliant /policy-generator-tmp/PolicyGenerator
                       command:
                       - /bin/bash
-                      image: '{{ (index (lookup "apps/v1" "Deployment" "open-cluster-management" "multicluster-operators-hub-subscription").spec.template.spec.containers 0).image }}'
+                      image: '{{ (index (lookup "apps/v1" "Deployment" "open-cluster-management" "acm-cli-downloads").spec.template.spec.containers 0).image }}'
                       name: policy-generator-install
                       volumeMounts:
                       - mountPath: /policy-generator

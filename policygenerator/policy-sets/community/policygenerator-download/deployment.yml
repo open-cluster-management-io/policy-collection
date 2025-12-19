@@ -7,10 +7,10 @@ spec:
   remediationAction: enforce
   severity: low
   object-templates-raw: |
-    {{- $ocmDeployment := (lookup "apps/v1" "Deployment" "open-cluster-management" "multicluster-operators-hub-subscription") }}
+    {{- $ocmDeployment := (lookup "apps/v1" "Deployment" "open-cluster-management" "acm-cli-downloads") }}
     {{- $ocmContainer := "" }}
     {{- range $cn := $ocmDeployment.spec.template.spec.containers }}
-      {{- if eq $cn.name "multicluster-operators-hub-subscription" }}
+      {{- if eq $cn.name "acm-cli-downloads" }}
         {{- $ocmContainer = $cn }}
         {{- break }}
       {{- end }}
