@@ -1,0 +1,46 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: remove-legacy-apiserver-binding
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: SC System and Communications Protection
+    policy.open-cluster-management.io/controls: SC-1 SYSTEM AND COMMUNICATIONS PROTECTION POLICY AND PROCEDURES
+    policy.open-cluster-management.io/description: >-
+      This policy removes an obsolete legacy entry in the kube-apiserver
+      ClusterRoleBinding that used to be created during cluster installation
+      by default, and would grant elevated privileges to a regular user
+      whose name happens to match
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: remove-legacy-apiserver-binding
+        spec:
+          remediationAction: inform
+          severity: low
+          customMessage:
+            noncompliant: >-
+              ClusterRoleBinding kube-apiserver includes obsolete legacy entry
+              that should be removed (see
+              <https://access.redhat.com/solutions/7136094>)
+          object-templates:
+            - complianceType: mustonlyhave
+              metadataComplianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: ClusterRoleBinding
+                metadata:
+                  name: kube-apiserver
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: kube-apiserver
+                subjects:
+                  - apiGroup: rbac.authorization.k8s.io
+                    kind: User
+                    name: system:kube-apiserver
