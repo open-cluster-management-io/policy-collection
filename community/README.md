@@ -249,6 +249,7 @@ Policy  | Description | Prerequisites
 [OpenShift Cluster Operator state policy](./SC-System-and-Communications-Protection/policy-checkclusteroperator.yaml) | This policy alerts when an OpenShift `ClusterOperator` becomes unhealthy. See [ClusterOperator config](https://docs.openshift.com/container-platform/latest/rest_api/config_apis/clusteroperator-config-openshift-io-v1.html) for additional details. | OpenShift 4.x only.
 [Check namespaces in Terminating status](./SC-System-and-Communications-Protection/policy-checknamespaces-terminating.yaml)| check for namespaces in terminating status | check e.g. this [link](https://www.redhat.com/sysadmin/troubleshooting-terminating-namespaces) how to fix this.
 [Disable self-provisioner](./SC-System-and-Communications-Protection/policy-disable-self-provisioner.yaml)| Disable ability to for users to create their own projects | OpenShift 4.x only.
+[ClusterRoleBinding cleanup for kube-apiserver](./SC-System-and-Communications-Protection/policy-remove-legacy-apiserver-binding.yaml)| Remove elevated privileges from regular user kube-apiserver | OpenShift 4.x only.
 
 
 ### System and Information Integrity
