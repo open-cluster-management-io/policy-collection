@@ -1,3 +1,8 @@
+# WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
+# To update your policy, browse the official Kyverno policy collection 
+# for current examples: https://kyverno.io/policies
+# Then convert the Kyverno manifest to an OCM policy with the Policy Generator plugin
+
 # This policy creates a namespace based backup using Triliovault for Kubernetes (TVK)
 # on all OpenShift managed clusters with a label "protected-by=triliovault".
 #
