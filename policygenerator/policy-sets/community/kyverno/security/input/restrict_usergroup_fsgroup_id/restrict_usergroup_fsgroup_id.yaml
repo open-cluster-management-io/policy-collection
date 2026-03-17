@@ -1,3 +1,7 @@
+# WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
+# To update your policy, browse the official Kyverno policy collection 
+# for current examples: https://kyverno.io/policies
+
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
