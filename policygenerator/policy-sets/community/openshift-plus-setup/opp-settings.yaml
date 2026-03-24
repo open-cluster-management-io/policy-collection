@@ -11,24 +11,24 @@ data:
   awsInstanceType: m6a.2xlarge
   us-east-1-4.12: ami-0c321aac14de997e3
   us-east-2-4.12: ami-0fce6015e3592d4a5
-  us-east-1-4.13: ami-03efc0188afd5f5b9
-  us-east-2-4.13: ami-031d6e5e3d4f2f192
   us-east-1-4.14: ami-058af1563befa5c0e
   us-east-2-4.14: ami-0dd810c1f47c5c233
-  us-east-1-4.15: ami-0d653d86d4113326a
-  us-east-2-4.15: ami-0d6c4efce8daf7d2d
   us-east-1-4.16: ami-009f29d08fb2f839b
   us-east-2-4.16: ami-03c0f42e69e0f6758
-  us-east-1-4.17: ami-0cc8cb8dd910e7e7a
-  us-east-2-4.17: ami-0ecdc399124b6250b
-  us-east-1-4.18: ami-0ccb061ea4996e851
-  us-east-2-4.18: ami-0a611e6a24a551a2b
-  us-east-1-4.19: ami-01095d1967818437c
-  us-east-2-4.19: ami-0bc8dda494f111572
-  us-east-1-4.20: ami-01095d1967818437c
-  us-east-2-4.20: ami-0bc8dda494f111572
-  us-east-1-4.21: ami-01095d1967818437c
-  us-east-2-4.21: ami-0bc8dda494f111572
+  us-east-1-4.17: ami-00e3cdf8f8b9ba6be
+  us-east-2-4.17: ami-0c47b217d38cc926f
+  us-east-1-4.18: ami-06ba758975c79332b
+  us-east-2-4.18: ami-0b9fcc2f8bed8771e
+  us-east-1-4.19: ami-0e0850e74100f0f31
+  us-east-2-4.19: ami-0fd7c367ed8a90d52
+  us-east-1-4.20: ami-081de8a3a5826a7d1
+  us-east-2-4.20: ami-021a620474c1cd2fe
+  us-east-1-4.21: ami-04018496b0a1da2d2
+  us-east-2-4.21: ami-0b264801b0e00009c
+  us-east-1-4.22: ami-01095d1967818437c
+  us-east-2-4.22: ami-0bc8dda494f111572
+  us-east-1-4.23: ami-01095d1967818437c
+  us-east-2-4.23: ami-0bc8dda494f111572
   zone1: a
   zone2: b
   zone3: c
