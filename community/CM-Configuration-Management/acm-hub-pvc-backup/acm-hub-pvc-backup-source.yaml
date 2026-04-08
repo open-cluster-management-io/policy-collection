@@ -27,9 +27,9 @@ spec:
             {{- $velero_api := "velero.io/v1" }}
             {{- $kind_schedule := "Schedule" }}
             {{- $schedule_label := "cluster.open-cluster-management.io/backup-schedule-type, cluster.open-cluster-management.io/backup-schedule-type in (resources)"}}
-            {{- $ns := "open-cluster-management-backup" }}   
-            {{- $volsync_secret := "acm-hub-pvc-backup-restic-secret" }} 
-            {{- $volsync_map := "hub-pvc-backup" }} 
+            {{- $ns := "open-cluster-management-backup" }}
+            {{- $volsync_secret := "acm-hub-pvc-backup-restic-secret" }}
+            {{- $global_volsync_map := "hub-pvc-backup" }}
             {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}
             {{- $pv_claim_cond := gt (len ( lookup "v1" "PersistentVolumeClaim" "" "" $volsync_label).items ) 0 }}
             {{- $volsync_backup_cond := gt (len ( lookup $velero_api $kind_schedule $ns "" $schedule_label).items ) 0  }}
@@ -67,10 +67,12 @@ spec:
               {{- range $pvc := (lookup "v1" "PersistentVolumeClaim" "" "" $volsync_label).items }}
 
                 {{- if eq $pvc.status.phase "Bound" }}
+                  {{- /* Compute iteration-local effective map to avoid cross-PVC config bleed */ -}}
+                  {{- $effective_map := $global_volsync_map }}
                   {{- /* Use the hub-pvc-backup-pvcns-pvcname config instead of the default hub-pvc-backup map, if such map exists under the $ns */ -}}
-                  {{- $pvc_config_name := ( (cat $volsync_map "-" $pvc.metadata.namespace "-" $pvc.metadata.name ) | replace " " "" ) }}
+                  {{- $pvc_config_name := ( (cat $global_volsync_map "-" $pvc.metadata.namespace "-" $pvc.metadata.name ) | replace " " "" ) }}
 
-                  {{- $pvc_config_info_name := ( (cat $volsync_map "-" $pvc.metadata.name ) | replace " " "" ) }}
+                  {{- $pvc_config_info_name := ( (cat $global_volsync_map "-" $pvc.metadata.name ) | replace " " "" ) }}
 
                   - complianceType: musthave
                     objectDefinition:
@@ -97,8 +99,8 @@ spec:
                         accessModes: {{ $am_val }}
                         {{- end }}                        
 
-                  {{ if eq ( lookup "v1" "ConfigMap" $ns $pvc_config_name ).metadata.name  $pvc_config_name }}   
-                    {{ $volsync_map = $pvc_config_name }}
+                  {{ if eq ( lookup "v1" "ConfigMap" $ns $pvc_config_name ).metadata.name  $pvc_config_name }}
+                    {{ $effective_map = $pvc_config_name }}
                   {{- end }}   
 
                   {{- $volsync_pvcs_str = ( (cat $volsync_pvcs_str "##" $pvc.metadata.namespace "#" $pvc.metadata.name ) | replace " " "" ) }}
@@ -131,23 +133,28 @@ spec:
                           {{ $volsync_label }}: acm
                       spec:
                         restic:
-                          {{ $cacheCapacity := trimAll " " (fromConfigMap $ns $volsync_map "cacheCapacity") }}
+                          {{ $cacheCapacity := trimAll " " (fromConfigMap $ns $effective_map "cacheCapacity") }}
                           {{- if not (eq $cacheCapacity "" ) }}
                           cacheCapacity: '{{ $cacheCapacity }}'
                           {{- end }}
+                          {{ $copyMethod := trimAll " " (fromConfigMap $ns $effective_map "copyMethod") }}
+                          {{- if not (eq $copyMethod "" ) }}
+                          copyMethod: '{{ $copyMethod }}'
+                          {{- else }}
                           copyMethod: Snapshot
-                          {{ $pruneIntervalDays := trimAll " " (fromConfigMap $ns $volsync_map "pruneIntervalDays") }}
+                          {{- end }}
+                          {{ $pruneIntervalDays := trimAll " " (fromConfigMap $ns $effective_map "pruneIntervalDays") }}
                           {{- if not (eq $pruneIntervalDays "" ) }}
                           pruneIntervalDays: '{{ $pruneIntervalDays | toInt }}'
                           {{- end }}
                           repository: '{{ $secretName }}'
-                          {{ $retain_daily := trimAll " " (fromConfigMap $ns $volsync_map "retain_daily") }}
-                          {{ $retain_hourly := trimAll " " (fromConfigMap $ns $volsync_map "retain_hourly") }}
-                          {{ $retain_weekly := trimAll " " (fromConfigMap $ns $volsync_map "retain_weekly") }}
-                          {{ $retain_monthly := trimAll " " (fromConfigMap $ns $volsync_map "retain_monthly") }}
-                          {{ $retain_yearly := trimAll " " (fromConfigMap $ns $volsync_map "retain_yearly") }}
-                          {{ $retain_within := trimAll " " (fromConfigMap $ns $volsync_map "retain_within") }}
-                          {{ $retain_last := trimAll " " (fromConfigMap $ns $volsync_map "retain_last") }}
+                          {{ $retain_daily := trimAll " " (fromConfigMap $ns $effective_map "retain_daily") }}
+                          {{ $retain_hourly := trimAll " " (fromConfigMap $ns $effective_map "retain_hourly") }}
+                          {{ $retain_weekly := trimAll " " (fromConfigMap $ns $effective_map "retain_weekly") }}
+                          {{ $retain_monthly := trimAll " " (fromConfigMap $ns $effective_map "retain_monthly") }}
+                          {{ $retain_yearly := trimAll " " (fromConfigMap $ns $effective_map "retain_yearly") }}
+                          {{ $retain_within := trimAll " " (fromConfigMap $ns $effective_map "retain_within") }}
+                          {{ $retain_last := trimAll " " (fromConfigMap $ns $effective_map "retain_last") }}
                           {{- /* if any of the retain options are set, create the retain section */ -}}
                           {{- if or (not (eq $retain_within "" )) (not (eq $retain_last "" ))  (not (eq $retain_daily "" )) (not (eq $retain_hourly "" )) (not (eq $retain_weekly "" )) (not (eq $retain_monthly "" )) (not (eq $retain_yearly "" )) }}
                           retain:
@@ -173,9 +180,9 @@ spec:
                           {{- if not (eq $retain_last "" ) }}
                             last: '{{ $retain_last }}'
                           {{- end }}
-                          {{ $customCA_secretName := trimAll " " (fromConfigMap $ns $volsync_map "customCA_secretName") }}
-                          {{ $customCA_configMapName := trimAll " " (fromConfigMap $ns $volsync_map "customCA_configMapName") }}
-                          {{ $customCA_key := trimAll " " (fromConfigMap $ns $volsync_map "customCA_key") }}
+                          {{ $customCA_secretName := trimAll " " (fromConfigMap $ns $effective_map "customCA_secretName") }}
+                          {{ $customCA_configMapName := trimAll " " (fromConfigMap $ns $effective_map "customCA_configMapName") }}
+                          {{ $customCA_key := trimAll " " (fromConfigMap $ns $effective_map "customCA_key") }}
                           {{- /* if any of the customCA options are set, create the customCA section */ -}}
                           {{- if or (not (eq $customCA_secretName "" )) (not (eq $customCA_configMapName "" )) (not (eq $customCA_key "" )) }}
                           customCA:
@@ -189,35 +196,35 @@ spec:
                           {{- if not (eq $customCA_configMapName "" ) }}
                             configMapName: '{{ $customCA_configMapName }}'
                           {{- end }}
-                          {{ $volumeSnapshotClassName := trimAll " " (fromConfigMap $ns $volsync_map "volumeSnapshotClassName") }}
+                          {{ $volumeSnapshotClassName := trimAll " " (fromConfigMap $ns $effective_map "volumeSnapshotClassName") }}
                           {{- if not (eq $volumeSnapshotClassName "" ) }}
                           volumeSnapshotClassName: '{{ $volumeSnapshotClassName }}'
                           {{- end }}
-                          {{ $storageClassName := trimAll " " (fromConfigMap $ns $volsync_map "storageClassName") }}
+                          {{ $storageClassName := trimAll " " (fromConfigMap $ns $effective_map "storageClassName") }}
                           {{- if not (eq $storageClassName "" ) }}
                           storageClassName: '{{ $storageClassName }}'
                           {{- end }}
-                          {{ $cacheStorageClassName := trimAll " " (fromConfigMap $ns $volsync_map "cacheStorageClassName") }}
+                          {{ $cacheStorageClassName := trimAll " " (fromConfigMap $ns $effective_map "cacheStorageClassName") }}
                           {{- if not (eq $cacheStorageClassName "" ) }}
                           cacheStorageClassName: '{{ $cacheStorageClassName }}'
                           {{- end }}
-                          {{ $capacity := trimAll " " (fromConfigMap $ns $volsync_map "capacity") }}
+                          {{ $capacity := trimAll " " (fromConfigMap $ns $effective_map "capacity") }}
                           {{- if not (eq $capacity "" ) }}
                           capacity: '{{ $capacity }}'
                           {{- end }}
-                          {{ $accessModes := trimAll " " (fromConfigMap $ns $volsync_map "accessModes") }}
+                          {{ $accessModes := trimAll " " (fromConfigMap $ns $effective_map "accessModes") }}
                           {{- if not (eq $accessModes "" ) }}
-                          accessModes: 
+                          accessModes:
                             - '{{ $accessModes }}'
                           {{- end }}
-                          {{ $cacheAccessModes := trimAll " " (fromConfigMap $ns $volsync_map "cacheAccessModes") }}
+                          {{ $cacheAccessModes := trimAll " " (fromConfigMap $ns $effective_map "cacheAccessModes") }}
                           {{- if not (eq $cacheAccessModes "" ) }}
-                          cacheAccessModes: 
+                          cacheAccessModes:
                             - '{{ $cacheAccessModes }}'
                           {{- end }}
                         sourcePVC: {{ $pvc.metadata.name }}
                         trigger:
-                          schedule: '{{ fromConfigMap $ns $volsync_map "trigger_schedule" }}'
+                          schedule: '{{ fromConfigMap $ns $effective_map "trigger_schedule" }}'
                 {{- end }}        
               {{- end }}
                  {{ if not (eq $volsync_pvcs_str "") }}

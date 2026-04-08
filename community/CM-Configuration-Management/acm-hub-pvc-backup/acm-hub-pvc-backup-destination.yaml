@@ -155,7 +155,17 @@ spec:
                   {{- $restoreAsOf = fromConfigMap $ns $volsync_restore_ovw "restoreAsOf" }}   
                   {{ $customCA_secretName = trimAll " " (fromConfigMap $ns $volsync_restore_ovw "customCA_secretName") }}
                   {{ $customCA_configMapName = trimAll " " (fromConfigMap $ns $volsync_restore_ovw "customCA_configMapName") }}
-                  {{ $customCA_key = trimAll " " (fromConfigMap $ns $volsync_restore_ovw "customCA_key") }}               
+                  {{ $customCA_key = trimAll " " (fromConfigMap $ns $volsync_restore_ovw "customCA_key") }}
+                {{- end }}
+
+                {{- /* Read copyMethod from ConfigMap, fallback to hub-pvc-backup if not in restore ConfigMap */ -}}
+                {{- $copyMethod := "" }}
+                {{- if not (eq $volsync_restore_ovw "" ) }}
+                  {{ $copyMethod = trimAll " " (fromConfigMap $ns $volsync_restore_ovw "copyMethod") }}
+                {{- end }}
+                {{- if eq $copyMethod "" }}
+                  {{- /* If not set in restore ConfigMap, try to get it from backup ConfigMap */ -}}
+                  {{ $copyMethod = trimAll " " (fromConfigMap $ns $volsync_map "copyMethod") }}
                 {{- end }}
 
                   - complianceType: musthave
@@ -261,8 +271,12 @@ spec:
                           {{- end }}
                           {{- if not (eq $customCA_configMapName "" ) }}
                             configMapName: '{{ $customCA_configMapName }}'
-                          {{- end }}                                                                                                
+                          {{- end }}
+                          {{- if not (eq $copyMethod "" ) }}
+                          copyMethod: '{{ $copyMethod }}'
+                          {{- else }}
                           copyMethod: Snapshot
+                          {{- end }}
                         trigger:
                           manual: restore-once
                   {{- end }}  
