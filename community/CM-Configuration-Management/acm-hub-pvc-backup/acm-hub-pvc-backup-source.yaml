@@ -58,7 +58,7 @@ spec:
                       kind: ConfigMap
                       apiVersion: v1
                       metadata:
-                        name: {{( (cat $volsync_map "-" $rs.metadata.name ) | replace " " "") }}
+                        name: {{( (cat $global_volsync_map "-" $rs.metadata.name ) | replace " " "") }}
                         namespace: {{ $rs.metadata.namespace }} 
                 {{- end }}
               {{- end }}
