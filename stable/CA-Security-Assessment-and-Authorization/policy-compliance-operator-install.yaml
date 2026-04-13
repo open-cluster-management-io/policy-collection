@@ -52,9 +52,4 @@ spec:
             source: redhat-operators
             sourceNamespace: openshift-marketplace
             # Conditionally configure a nodeSelector for installing on ROSA hosted control planes
-            config: '{{ if and (eq "ROSA" (lookup "cluster.open-cluster-management.io/v1alpha1"
-              "ClusterClaim" "" "product.open-cluster-management.io").spec.value) (eq "true"
-              (lookup "cluster.open-cluster-management.io/v1alpha1" "ClusterClaim" ""
-              "hostedcluster.hypershift.openshift.io").spec.value)
-              }}{"nodeSelector":{"node-role.kubernetes.io/worker":""} }{{ else
-              }}{{ "{}" | toLiteral }}{{ end }}'
+            config: '{{ if and (eq "ROSA" (lookup "cluster.open-cluster-management.io/v1alpha1" "ClusterClaim" "" "product.open-cluster-management.io").spec.value) (eq "true" (lookup "cluster.open-cluster-management.io/v1alpha1" "ClusterClaim" "" "hostedcluster.hypershift.openshift.io").spec.value) }}{"nodeSelector":{"node-role.kubernetes.io/worker":""} }{{ else }}{{ "{}" | toLiteral }}{{ end }}'

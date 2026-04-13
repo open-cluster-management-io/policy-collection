@@ -3,4 +3,4 @@ kind: FileIntegrityNodeStatus
 metadata:
   namespace: openshift-file-integrity
 results:
-- condition: Failed
+  - condition: Failed

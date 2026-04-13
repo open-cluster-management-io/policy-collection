@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -12,9 +12,7 @@ metadata:
     policies.kyverno.io/severity: medium
     policies.kyverno.io/subject: Deployment
     policies.kyverno.io/description: >-
-      Deployments with a single replica cannot be highly available and thus the application
-      may suffer downtime if that one replica goes down. This policy validates that Deployments
-      have more than one replica.
+      Deployments with a single replica cannot be highly available and thus the application may suffer downtime if that one replica goes down. This policy validates that Deployments have more than one replica.
 spec:
   validationFailureAction: audit
   background: true
@@ -23,13 +21,13 @@ spec:
       match:
         resources:
           kinds:
-          - Deployment
+            - Deployment
       validate:
         message: "Deployments should have RollingUpdate strategy"
         pattern:
           spec:
-           strategy:
-             type: RollingUpdate
-             rollingUpdate:
-             maxSurge: 1
-             maxUnavailable: 0
+            strategy:
+              type: RollingUpdate
+              rollingUpdate:
+              maxSurge: 1
+              maxUnavailable: 0

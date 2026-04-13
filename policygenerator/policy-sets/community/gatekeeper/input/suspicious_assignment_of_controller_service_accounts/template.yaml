@@ -15,7 +15,7 @@ spec:
               type: array
               items:
                 type: object
-                properties: 
+                properties:
                   name:
                     type: string
                   namespace:

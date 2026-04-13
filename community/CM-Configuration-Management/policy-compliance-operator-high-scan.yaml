@@ -1,6 +1,6 @@
 # This policy assumes that the Compliance Operator is installed and running on
 # the managed clusters. It deploys a scan that checks the master and worker
-# nodes, and verifies compliance with the NIST 800-53 High-Impact Baseline for 
+# nodes, and verifies compliance with the NIST 800-53 High-Impact Baseline for
 # Red Hat OpenShift benchmark.
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy

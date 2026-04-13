@@ -7,7 +7,7 @@ placementBindingDefaults:
 policyDefaults:
   categories:
     - CM Configuration Management
-  controls: 
+  controls:
     - CM-2 Baseline Configuration
   namespace: policies
   policySets:
@@ -17,239 +17,233 @@ policyDefaults:
   standards:
     - NIST SP 800-53
 policies:
-# ACS Policies - start
-- name: policy-acs-operator-central
-  categories:
-    - SC System and Communications Protection
-  controls: 
-    - SC-1 Policy and Procedures
-  manifests:
-    - path: input-acs-central/policy-acs-operator-central.yaml
-- name: policy-acs-central-status
-  categories:
-    - SI System and Information Integrity
-  controls:
-    - SI-5 Security Alerts Advisories and Directives
-  dependencies:
-    - name: policy-acs-operator-central
-  manifests:
-    - path: input-acs-central/policy-acs-central-status.yaml
-  remediationAction: inform
-- name: policy-acs-central-ca-bundle
-  categories:
-    - SI System and Information Integrity
-  consolidateManifests: false
-  controls:
-    - SI-5 Security Alerts Advisories and Directives
-  dependencies:
-    - name: policy-acs-central-status
-  manifests:
-    - path: input-sensor/policy-acs-central-ca-bundle.yaml
-    - path: input-sensor/policy-acs-central-ca-bundle-v2.yaml
-    - path: input-sensor/policy-acs-central-ca-bundle-v1.yaml
-      complianceType: mustnothave
-- name: policy-acs-sync-resources
-  categories:
-    - SI System and Information Integrity
-  consolidateManifests: false
-  controls:
-    - SI-5 Security Alerts Advisories and Directives
-  dependencies:
-    - name: policy-acs-central-ca-bundle
-  manifests:
-    - path: input-sensor/policy-acs-sync-resources.yaml
-- name: policy-acs-monitor-certs
-  categories:
-    - SC System and Communications Protection
-  consolidateManifests: false
-  controls:
-    - SC-8 Transmission Confidentiality and Integrity
-  dependencies:
-    - name: policy-acs-central-ca-bundle
-  manifests:
-    - path: input-sensor/acs-check-certificates.yaml
-    - path: input-sensor/policy-acs-central-ca-bundle-expired.yaml
-      remediationAction: inform
-- name: policy-acs-central-ca-bundle-expired
-  categories:
-    - SC System and Communications Protection
-  consolidateManifests: false
-  complianceType: mustnothave
-  controls:
-    - SC-8 Transmission Confidentiality and Integrity
-  dependencies:
-    - name: policy-acs-monitor-certs
-      compliance: "NonCompliant"
-  policyAnnotations:
-    policy.open-cluster-management.io/description: 'Policy will remove expired certificates created by the init-bundle in policy policy-acs-central-ca-bundle so we can create a new init-bundle'
-  evaluationInterval:
-    compliant: 1m
-    noncompliant: 45s
-  ## ignorePending prevents the NotCompliant dependency from causing this policy to always report as pending
-  ignorePending: true
-  manifests:
-    - path: input-sensor/policy-acs-central-ca-bundle-expired.yaml
-    - path: input-sensor/policy-acs-central-ca-bundle-v2.yaml
-- name: policy-advanced-managed-cluster-security
-  categories:
-    - SI System and Information Integrity
-  consolidateManifests: false
-  controls:
-    - SI-5 Security Alerts Advisories and Directives
-  manifests:
-    - path: input-sensor/policy-advanced-managed-cluster-security.yaml
-  policySets:
-    - openshift-plus-clusters
-- name: policy-advanced-managed-cluster-status
-  categories:
-    - SI System and Information Integrity
-  controls:
-    - SI-5 Security Alerts Advisories and Directives
-  manifests:
-    - path: input-sensor/policy-advanced-managed-cluster-status.yaml
-  policySets:
-    - openshift-plus-hub
-    - openshift-plus-clusters
-  remediationAction: inform
-# ACS Policies - end
-# Observability Policy - start
-- name: policy-observability-storage
-  consolidateManifests: false
-  categories:
-    - CA Assessment Authorization and Monitoring
-  controls: 
-    - CA-7 Continuous Monitoring
-  dependencies:
-    - name: policy-odf-status
-  manifests:
-    - path: input-acm-observability/storage.yaml
-- name: policy-observability-operator
-  consolidateManifests: false
-  categories:
-    - CA Assessment Authorization and Monitoring
-  controls: 
-    - CA-7 Continuous Monitoring
-  dependencies:
-    - name: policy-observability-storage
-  manifests:
-    - path: input-acm-observability/operator.yaml
-# Observability Policy - end
-# ODF Policies - start
-- name: policy-odf
-  categories:
-    - SI System and Information Integrity
-  controls: 
-    - SI-7 Software Firmware and Information Integrity
-  manifests:
-    - path: input-odf/policy-odf.yaml
-- name: policy-odf-cluster
-  categories:
-    - SI System and Information Integrity
-  controls: 
-    - SI-7 Software Firmware and Information Integrity
-  dependencies:
-    - name: policy-odf
-  manifests:
-    - path: input-odf/policy-odf-cluster.yaml
-- name: policy-odf-status
-  categories:
-    - SI System and Information Integrity
-  controls:
-    - SI-7 Software Firmware and Information Integrity
-  dependencies:
-    - name: policy-odf
-  manifests:
-    - path: input-odf/policy-odf-status.yaml
-  remediationAction: inform
-- name: policy-odf-noobaa
-  categories:
-    - SI System and Information Integrity
-  controls:
-    - SI-7 Software Firmware and Information Integrity
-  dependencies:
-    - name: policy-odf-status
-  manifests:
-    - path: input-odf/policy-odf-noobaa.yaml
-# ODF Policies - end
-# Quay Policies - start
-- name: policy-install-quay
-  categories:
-    - SI System and Information Integrity
-  controls:
-    - SI-7 Software Firmware and Information Integrity
-  dependencies:
-    - name: policy-odf-status
-  manifests:
-    - path: input-quay/policy-install-quay.yaml
-- name: policy-config-quay
-  categories:
-    - SI System and Information Integrity
-  controls: 
-    - SI-7 Software Firmware and Information Integrity
-  dependencies:
-    - name: policy-install-quay
-  manifests:
-    - path: input-quay/policy-config-quay.yaml
-- name: policy-quay-status
-  categories:
-    - SI System and Information Integrity
-  controls:
-    - SI-7 Software Firmware and Information Integrity
-  dependencies:
-    - name: policy-install-quay
-  manifests:
-    - path: input-quay/policy-quay-status.yaml
-  remediationAction: inform
-# Quay Bridge is configured with a temporary token that will expire quickly after
-# deployment.  After quay is running, see the instructions:
-# https://hybrid-cloud-patterns.io/devsecops/getting-started/#completing-the-quay-bridge-with-a-bearer-token
-# Update the token in the quayadmin secret in the local-quay namespace with your
-# bearer token.  It will be propagated to the managed clusters automatically.
-- name: policy-hub-quay-bridge
-  categories:
-    - SI System and Information Integrity
-  controls:
-    - SI-7 Software Firmware and Information Integrity
-  dependencies:
-    - name: policy-quay-status
-  manifests:
-    - path: input-quay/policy-hub-quay-bridge.yaml
-- name: policy-quay-bridge
-  categories:
-    - SI System and Information Integrity
-  controls:
-    - SI-7 Software Firmware and Information Integrity
-  manifests:
-    - path: input-quay/policy-quay-bridge.yaml
-  orderManifests: true
-  policySets:
-    - openshift-plus-clusters
-# Quay Policies - end
-# Compliance Operator Policies - start
-- name: policy-compliance-operator-install
-  categories:
-    - CA Security Assessment and Authorization
-  controls:
-    - CA-2 Security Assessments
-    - CA-7 Continuous Monitoring
-  manifests:
-    - path: input-compliance/
-  policySets:
-    - openshift-plus-clusters
-    - openshift-plus-hub
+  # ACS Policies - start
+  - name: policy-acs-operator-central
+    categories:
+      - SC System and Communications Protection
+    controls:
+      - SC-1 Policy and Procedures
+    manifests:
+      - path: input-acs-central/policy-acs-operator-central.yaml
+  - name: policy-acs-central-status
+    categories:
+      - SI System and Information Integrity
+    controls:
+      - SI-5 Security Alerts Advisories and Directives
+    dependencies:
+      - name: policy-acs-operator-central
+    manifests:
+      - path: input-acs-central/policy-acs-central-status.yaml
+    remediationAction: inform
+  - name: policy-acs-central-ca-bundle
+    categories:
+      - SI System and Information Integrity
+    consolidateManifests: false
+    controls:
+      - SI-5 Security Alerts Advisories and Directives
+    dependencies:
+      - name: policy-acs-central-status
+    manifests:
+      - path: input-sensor/policy-acs-central-ca-bundle.yaml
+      - path: input-sensor/policy-acs-central-ca-bundle-v2.yaml
+      - path: input-sensor/policy-acs-central-ca-bundle-v1.yaml
+        complianceType: mustnothave
+  - name: policy-acs-sync-resources
+    categories:
+      - SI System and Information Integrity
+    consolidateManifests: false
+    controls:
+      - SI-5 Security Alerts Advisories and Directives
+    dependencies:
+      - name: policy-acs-central-ca-bundle
+    manifests:
+      - path: input-sensor/policy-acs-sync-resources.yaml
+  - name: policy-acs-monitor-certs
+    categories:
+      - SC System and Communications Protection
+    consolidateManifests: false
+    controls:
+      - SC-8 Transmission Confidentiality and Integrity
+    dependencies:
+      - name: policy-acs-central-ca-bundle
+    manifests:
+      - path: input-sensor/acs-check-certificates.yaml
+      - path: input-sensor/policy-acs-central-ca-bundle-expired.yaml
+        remediationAction: inform
+  - name: policy-acs-central-ca-bundle-expired
+    categories:
+      - SC System and Communications Protection
+    consolidateManifests: false
+    complianceType: mustnothave
+    controls:
+      - SC-8 Transmission Confidentiality and Integrity
+    dependencies:
+      - name: policy-acs-monitor-certs
+        compliance: "NonCompliant"
+    policyAnnotations:
+      policy.open-cluster-management.io/description: 'Policy will remove expired certificates created by the init-bundle in policy policy-acs-central-ca-bundle so we can create a new init-bundle'
+    evaluationInterval:
+      compliant: 1m
+      noncompliant: 45s
+    ## ignorePending prevents the NotCompliant dependency from causing this policy to always report as pending
+    ignorePending: true
+    manifests:
+      - path: input-sensor/policy-acs-central-ca-bundle-expired.yaml
+      - path: input-sensor/policy-acs-central-ca-bundle-v2.yaml
+  - name: policy-advanced-managed-cluster-security
+    categories:
+      - SI System and Information Integrity
+    consolidateManifests: false
+    controls:
+      - SI-5 Security Alerts Advisories and Directives
+    manifests:
+      - path: input-sensor/policy-advanced-managed-cluster-security.yaml
+    policySets:
+      - openshift-plus-clusters
+  - name: policy-advanced-managed-cluster-status
+    categories:
+      - SI System and Information Integrity
+    controls:
+      - SI-5 Security Alerts Advisories and Directives
+    manifests:
+      - path: input-sensor/policy-advanced-managed-cluster-status.yaml
+    policySets:
+      - openshift-plus-hub
+      - openshift-plus-clusters
+    remediationAction: inform
+  # ACS Policies - end
+  # Observability Policy - start
+  - name: policy-observability-storage
+    consolidateManifests: false
+    categories:
+      - CA Assessment Authorization and Monitoring
+    controls:
+      - CA-7 Continuous Monitoring
+    dependencies:
+      - name: policy-odf-status
+    manifests:
+      - path: input-acm-observability/storage.yaml
+  - name: policy-observability-operator
+    consolidateManifests: false
+    categories:
+      - CA Assessment Authorization and Monitoring
+    controls:
+      - CA-7 Continuous Monitoring
+    dependencies:
+      - name: policy-observability-storage
+    manifests:
+      - path: input-acm-observability/operator.yaml
+  # Observability Policy - end
+  # ODF Policies - start
+  - name: policy-odf
+    categories:
+      - SI System and Information Integrity
+    controls:
+      - SI-7 Software Firmware and Information Integrity
+    manifests:
+      - path: input-odf/policy-odf.yaml
+  - name: policy-odf-cluster
+    categories:
+      - SI System and Information Integrity
+    controls:
+      - SI-7 Software Firmware and Information Integrity
+    dependencies:
+      - name: policy-odf
+    manifests:
+      - path: input-odf/policy-odf-cluster.yaml
+  - name: policy-odf-status
+    categories:
+      - SI System and Information Integrity
+    controls:
+      - SI-7 Software Firmware and Information Integrity
+    dependencies:
+      - name: policy-odf
+    manifests:
+      - path: input-odf/policy-odf-status.yaml
+    remediationAction: inform
+  - name: policy-odf-noobaa
+    categories:
+      - SI System and Information Integrity
+    controls:
+      - SI-7 Software Firmware and Information Integrity
+    dependencies:
+      - name: policy-odf-status
+    manifests:
+      - path: input-odf/policy-odf-noobaa.yaml
+  # ODF Policies - end
+  # Quay Policies - start
+  - name: policy-install-quay
+    categories:
+      - SI System and Information Integrity
+    controls:
+      - SI-7 Software Firmware and Information Integrity
+    dependencies:
+      - name: policy-odf-status
+    manifests:
+      - path: input-quay/policy-install-quay.yaml
+  - name: policy-config-quay
+    categories:
+      - SI System and Information Integrity
+    controls:
+      - SI-7 Software Firmware and Information Integrity
+    dependencies:
+      - name: policy-install-quay
+    manifests:
+      - path: input-quay/policy-config-quay.yaml
+  - name: policy-quay-status
+    categories:
+      - SI System and Information Integrity
+    controls:
+      - SI-7 Software Firmware and Information Integrity
+    dependencies:
+      - name: policy-install-quay
+    manifests:
+      - path: input-quay/policy-quay-status.yaml
+    remediationAction: inform
+  # Quay Bridge is configured with a temporary token that will expire quickly after
+  # deployment.  After quay is running, see the instructions:
+  # https://hybrid-cloud-patterns.io/devsecops/getting-started/#completing-the-quay-bridge-with-a-bearer-token
+  # Update the token in the quayadmin secret in the local-quay namespace with your
+  # bearer token.  It will be propagated to the managed clusters automatically.
+  - name: policy-hub-quay-bridge
+    categories:
+      - SI System and Information Integrity
+    controls:
+      - SI-7 Software Firmware and Information Integrity
+    dependencies:
+      - name: policy-quay-status
+    manifests:
+      - path: input-quay/policy-hub-quay-bridge.yaml
+  - name: policy-quay-bridge
+    categories:
+      - SI System and Information Integrity
+    controls:
+      - SI-7 Software Firmware and Information Integrity
+    manifests:
+      - path: input-quay/policy-quay-bridge.yaml
+    orderManifests: true
+    policySets:
+      - openshift-plus-clusters
+  # Quay Policies - end
+  # Compliance Operator Policies - start
+  - name: policy-compliance-operator-install
+    categories:
+      - CA Security Assessment and Authorization
+    controls:
+      - CA-2 Security Assessments
+      - CA-7 Continuous Monitoring
+    manifests:
+      - path: input-compliance/
+    policySets:
+      - openshift-plus-clusters
+      - openshift-plus-hub
 # Compliance Operator Policies - end
 policySets:
-  - description: The OpenShift Platform Plus policy set applies several policies
-      that will install the OpenShift Platform Plus products using best practices
-      that allow them to work well together. This policy set is focused on 
-      the components that install to the Advanced Cluster Management hub.
+  - description: The OpenShift Platform Plus policy set applies several policies that will install the OpenShift Platform Plus products using best practices that allow them to work well together. This policy set is focused on the components that install to the Advanced Cluster Management hub.
     name: openshift-plus-hub
     placement:
       placementPath: input/hub-placement.yaml
-  - description: The OpenShift Platform Plus policy set applies several policies
-      that install the OpenShift Platform Plus products using best practices
-      that allow them to work well together. This policy set is focused on 
-      the components that install to every managed cluster.
+  - description: The OpenShift Platform Plus policy set applies several policies that install the OpenShift Platform Plus products using best practices that allow them to work well together. This policy set is focused on the components that install to every managed cluster.
     name: openshift-plus-clusters
     placement:
       placementPath: input/clusters-placement.yaml

@@ -1,9 +1,9 @@
 #
 # This policy creates a velero schedule to all managed clusters with a label "acm-pv-dr=backup".
 # The schedule is used to backup applications resources and PVs.
-# The schedule uses the `backupNSToBackup` hdr-app-configmap property to specify the namespaces for the applications to backup. 
-# 
-# Create this policy on the hub managing clusters where you want to create stateful applications backups. 
+# The schedule uses the `backupNSToBackup` hdr-app-configmap property to specify the namespaces for the applications to backup.
+#
+# Create this policy on the hub managing clusters where you want to create stateful applications backups.
 # This policy depends on the oadp-hdr-app-install policy so the install policy must be successfully placed before the backup policy executes.
 #
 # Note that it is set to enforce by default.
@@ -18,10 +18,10 @@ metadata:
     policy.open-cluster-management.io/standards: NIST SP 800-53
 spec:
   dependencies:
-  - apiVersion: policy.open-cluster-management.io/v1
-    compliance: Compliant
-    kind: Policy
-    name: oadp-hdr-app-install
+    - apiVersion: policy.open-cluster-management.io/v1
+      compliance: Compliant
+      kind: Policy
+      name: oadp-hdr-app-install
   disabled: false
   policy-templates:
     - objectDefinition:
@@ -78,7 +78,6 @@ spec:
             {{hub end hub}}
           remediationAction: inform
           severity: high
-
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -102,7 +101,6 @@ spec:
                   startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
-
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -126,7 +124,6 @@ spec:
                   startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
-
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -150,7 +147,6 @@ spec:
                   startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: high
-
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -174,7 +170,6 @@ spec:
                   startTimestamp: '{{ (lookup "velero.io/v1" "Schedule" "{{hub $configMap.data.backupNS hub}}" "{{hub $configMap.data.backupPrefix hub}}-{{hub $configMap.data.backupVolumeSnapshotLocation hub}}{{hub end hub}}-{{hub (printf "%s" .ManagedClusterName) hub}}").status.lastBackup }}'
           remediationAction: inform
           severity: low
-
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -182,34 +177,34 @@ spec:
           name: check-backup-completed
         spec:
           object-templates-raw: |
-           {{hub $clusterName := (printf "%s" .ManagedClusterName) hub}}
-           {{hub $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
-           {{hub $backupNS := $configMap.data.backupNS hub}}
-           {{hub $backupPrefix := $configMap.data.backupPrefix hub}}
-           {{hub $backupVolumeSnapshotLocation := $configMap.data.backupVolumeSnapshotLocation hub}}
-           {{hub $scheduleName := ((cat $backupPrefix "-" $backupVolumeSnapshotLocation "-" $clusterName) | replace " " "") hub}}
+            {{hub $clusterName := (printf "%s" .ManagedClusterName) hub}}
+            {{hub $configMap := (lookup "v1" "ConfigMap" "" "hdr-app-configmap") hub}}
+            {{hub $backupNS := $configMap.data.backupNS hub}}
+            {{hub $backupPrefix := $configMap.data.backupPrefix hub}}
+            {{hub $backupVolumeSnapshotLocation := $configMap.data.backupVolumeSnapshotLocation hub}}
+            {{hub $scheduleName := ((cat $backupPrefix "-" $backupVolumeSnapshotLocation "-" $clusterName) | replace " " "") hub}}
 
-           {{- $scheduleObj := (lookup "velero.io/v1" "Schedule" "{{hub $backupNS hub}}" "{{hub $scheduleName hub}}") }}
-           {{- $scheduleObjName := $scheduleObj.metadata.name }}
-           {{- $scheduleExists := eq $scheduleObjName "{{hub $scheduleName hub}}" }}
+            {{- $scheduleObj := (lookup "velero.io/v1" "Schedule" "{{hub $backupNS hub}}" "{{hub $scheduleName hub}}") }}
+            {{- $scheduleObjName := $scheduleObj.metadata.name }}
+            {{- $scheduleExists := eq $scheduleObjName "{{hub $scheduleName hub}}" }}
 
-            {{- if $scheduleExists }}
-              {{- $scheduleObjLastBckTime := ($scheduleObj.status.lastBackup) }}
-              {{- range $backupList := (lookup "velero.io/v1" "Backup" "{{hub $backupNS hub}}" "").items }}
-                {{- $backupCreation := $backupList.status.startTimestamp  }}
-                {{- if eq $backupCreation $scheduleObjLastBckTime }}
+             {{- if $scheduleExists }}
+               {{- $scheduleObjLastBckTime := ($scheduleObj.status.lastBackup) }}
+               {{- range $backupList := (lookup "velero.io/v1" "Backup" "{{hub $backupNS hub}}" "").items }}
+                 {{- $backupCreation := $backupList.status.startTimestamp  }}
+                 {{- if eq $backupCreation $scheduleObjLastBckTime }}
 
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: velero.io/v1
-                kind: Backup
-                metadata:
-                  namespace: '{{hub $backupNS hub}}'
-                  name: {{ $backupList.metadata.name }}
-                status:
-                  phase: Completed
-                {{- end }}
-              {{- end }}
-            {{- end }}
+             - complianceType: musthave
+               objectDefinition:
+                 apiVersion: velero.io/v1
+                 kind: Backup
+                 metadata:
+                   namespace: '{{hub $backupNS hub}}'
+                   name: {{ $backupList.metadata.name }}
+                 status:
+                   phase: Completed
+                 {{- end }}
+               {{- end }}
+             {{- end }}
           remediationAction: inform
           severity: high

@@ -1,12 +1,12 @@
-# This policy deploys Triliovault for Kubernetes (TVK) to all non-OpenShift clusters 
+# This policy deploys Triliovault for Kubernetes (TVK) to all non-OpenShift clusters
 # with a label "protected-by=triliovault" using Helm. To deploy a basic (trial) license,
-# use the policy to deploy license for Triliovault for Kubernetes available at 
-# ./CM-Configuration-Management/policy-create-license-triliovault-for-kubernetes-upstream.yaml.  
+# use the policy to deploy license for Triliovault for Kubernetes available at
+# ./CM-Configuration-Management/policy-create-license-triliovault-for-kubernetes-upstream.yaml.
 # Please conact sales@trilio.io for further support.
 #
 # Note that it is set to enforce by default.
 #
-# Please refer product documentation at https://docs.trilio.io/kubernetes/overview/readme 
+# Please refer product documentation at https://docs.trilio.io/kubernetes/overview/readme
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
@@ -55,7 +55,7 @@ spec:
         metadata:
           name: policy-tvk-application
         spec:
-          remediationAction: enforce 
+          remediationAction: enforce
           severity: high
           object-templates:
             - complianceType: musthave
@@ -121,6 +121,5 @@ spec:
                   name: k8s-triliovault-operator
                   channel: hchartsk8strilionet-trilio-chart-ns/hchartsk8strilionet-trilio-chart
                   packageOverrides:
-                  - packageName: k8s-triliovault-operator
-                    packageAlias: k8s-triliovault-operator
-       
+                    - packageName: k8s-triliovault-operator
+                      packageAlias: k8s-triliovault-operator

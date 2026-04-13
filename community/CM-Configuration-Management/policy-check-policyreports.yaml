@@ -1,8 +1,8 @@
 # This policy looks for PolicyReport resources that contain failures.
-# These failures mean a compliance action was taken and there are resources that 
+# These failures mean a compliance action was taken and there are resources that
 # do not meet the compliance rules.
 #
-# Set remediationAction to "inform" to receive a list of PolicyReport 
+# Set remediationAction to "inform" to receive a list of PolicyReport
 # resources that have a status of "fail".
 
 apiVersion: policy.open-cluster-management.io/v1

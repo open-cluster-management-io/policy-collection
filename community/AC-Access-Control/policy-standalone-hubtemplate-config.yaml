@@ -15,7 +15,7 @@
 # version v0.15.0 (included in RHACM 2.12). Both `ConfigurationPolicies` and `OperatorPolicies`
 # allow templates, but when they are applied directly to the cluster, they can only access resources
 # present on that managed cluster.
-# 
+#
 # The `standalone-hub-templating` feature allows those policy templates to access resources on the
 # hub cluster. By default, they will only have access to the `ManagedCluster` resource, but other
 # permissions can be added on the hub cluster, as this sample demonstrates.
@@ -77,7 +77,7 @@ spec:
                 kind: ManagedClusterAddOn
                 metadata:
                   name: governance-standalone-hub-templating
-                  namespace: mycluster 
+                  namespace: mycluster
                 spec:
                   installNamespace: open-cluster-management-agent-addon
     - objectDefinition:
@@ -94,28 +94,28 @@ spec:
                 kind: Role
                 metadata:
                   name: cm-reader
-                  namespace: mycluster 
+                  namespace: mycluster
                 rules:
-                - apiGroups:
-                  - ""
-                  resources:
-                  - configmaps
-                  verbs:
-                  - get
-                  - list
-                  - watch
+                  - apiGroups:
+                      - ""
+                    resources:
+                      - configmaps
+                    verbs:
+                      - get
+                      - list
+                      - watch
             - complianceType: musthave
               objectDefinition:
                 apiVersion: rbac.authorization.k8s.io/v1
                 kind: RoleBinding
                 metadata:
                   name: cm-reader-binding
-                  namespace: mycluster 
+                  namespace: mycluster
                 roleRef:
                   apiGroup: rbac.authorization.k8s.io
                   kind: Role
                   name: cm-reader
                 subjects:
-                - apiGroup: rbac.authorization.k8s.io
-                  kind: Group
-                  name: system:open-cluster-management:cluster:mycluster:addon:governance-standalone-hub-templating
+                  - apiGroup: rbac.authorization.k8s.io
+                    kind: Group
+                    name: system:open-cluster-management:cluster:mycluster:addon:governance-standalone-hub-templating

@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -15,30 +15,28 @@ metadata:
     policies.kyverno.io/minversion: 1.6.0
     kyverno.io/kubernetes-version: "1.23"
     policies.kyverno.io/description: >-
-      Add labels to blueteam. see for detailled description https://cloud.redhat.com/blog/managing-applications-via-a-gitops-control-plane
-      This demonstrates the ability of a development team to manage OCP objects in multiple namespaces from one Git repo.
+      Add labels to blueteam. see for detailled description https://cloud.redhat.com/blog/managing-applications-via-a-gitops-control-plane This demonstrates the ability of a development team to manage OCP objects in multiple namespaces from one Git repo.
 spec:
   background: false
   rules:
-  - name: add-labelsnamespace-blueteam
-    match:
-      any:
-      - resources:
-          kinds:
-            - Namespace
-        subjects:
-        - kind: Group
-          name: blue-sre-group    
-    preconditions:
-      any:
-      - key: "{{request.operation}}"
-        operator: In
-        value:
-        - CREATE
-        - UPDATE             
-    mutate:
-      patchStrategicMerge:
-        metadata:
-          labels:
-            argocd.argoproj.io/managed-by: blueteam 
-
+    - name: add-labelsnamespace-blueteam
+      match:
+        any:
+          - resources:
+              kinds:
+                - Namespace
+            subjects:
+              - kind: Group
+                name: blue-sre-group
+      preconditions:
+        any:
+          - key: "{{request.operation}}"
+            operator: In
+            value:
+              - CREATE
+              - UPDATE
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            labels:
+              argocd.argoproj.io/managed-by: blueteam

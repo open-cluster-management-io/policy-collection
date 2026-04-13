@@ -29,27 +29,27 @@ spec:
                 spec:
                   repo:
                     env:
-                    - name: KUSTOMIZE_PLUGIN_HOME
-                      value: /etc/kustomize/plugin
-                    - name: POLICY_GEN_ENABLE_HELM
-                      value: "true"
+                      - name: KUSTOMIZE_PLUGIN_HOME
+                        value: /etc/kustomize/plugin
+                      - name: POLICY_GEN_ENABLE_HELM
+                        value: "true"
                     initContainers:
-                    - args:
-                      - -c
-                      - tar -xzf /acm-cli/PolicyGenerator-rhel9.tar.gz -C /tmp/
-                      command:
-                      - /bin/bash
-                      image: '{{ (index (lookup "apps/v1" "Deployment" "open-cluster-management" "acm-cli-downloads").spec.template.spec.containers 0).image }}'
-                      name: policy-generator-install
-                      volumeMounts:
-                      - mountPath: /tmp
-                        name: policy-generator
+                      - args:
+                          - -c
+                          - tar -xzf /acm-cli/PolicyGenerator-rhel9.tar.gz -C /tmp/
+                        command:
+                          - /bin/bash
+                        image: '{{ (index (lookup "apps/v1" "Deployment" "open-cluster-management" "acm-cli-downloads").spec.template.spec.containers 0).image }}'
+                        name: policy-generator-install
+                        volumeMounts:
+                          - mountPath: /tmp
+                            name: policy-generator
                     volumeMounts:
-                    - mountPath: /etc/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator
-                      name: policy-generator
+                      - mountPath: /etc/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator
+                        name: policy-generator
                     volumes:
-                    - emptyDir: {}
-                      name: policy-generator
+                      - emptyDir: {}
+                        name: policy-generator
                   kustomizeBuildOptions: --enable-alpha-plugins
             - complianceType: musthave
               objectDefinition:

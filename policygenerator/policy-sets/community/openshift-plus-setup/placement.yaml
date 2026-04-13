@@ -5,7 +5,7 @@ metadata:
   namespace: open-cluster-management-global-set
 spec:
   predicates:
-  - requiredClusterSelector:
-      labelSelector:
-        matchExpressions:
-          - {key: "local-cluster", operator: In, values: ["true"]}
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - {key: "local-cluster", operator: In, values: ["true"]}

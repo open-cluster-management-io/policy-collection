@@ -6,11 +6,7 @@ metadata:
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
-    policy.open-cluster-management.io/description: Discovered clusters that are of
-      type ROSA can be automatically imported into ACM as managed clusters.  This
-      policy helps you select those managed clusters and configure them so the import
-      will happen.  If you do not want all of your ROSA clusters to be automatically
-      imported, you can configure filters or add an annotation.
+    policy.open-cluster-management.io/description: Discovered clusters that are of type ROSA can be automatically imported into ACM as managed clusters.  This policy helps you select those managed clusters and configure them so the import will happen.  If you do not want all of your ROSA clusters to be automatically imported, you can configure filters or add an annotation.
 spec:
   # Remove the default remediation below to enforce the policies.
   remediationAction: inform
@@ -54,7 +50,7 @@ spec:
                 {{- end }}
               {{- end }}
               {{- /* if the type is ROSA and the status is Active */ -}}
-              {{- if and (eq $dc.spec.status "Active") 
+              {{- if and (eq $dc.spec.status "Active")
                          (contains (fromConfigMap "open-cluster-management-global-set" "discovery-config" "rosa-filter") $dc.spec.displayName)
                          (eq $dc.spec.type "ROSA")
                          (eq $skip "false") }}

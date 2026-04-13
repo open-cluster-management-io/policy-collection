@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -15,11 +15,7 @@ metadata:
     policies.kyverno.io/minversion: 1.6.0
     kyverno.io/kubernetes-version: "1.23"
     policies.kyverno.io/description: >-
-      Wildcards ('*') in resources grants access to all of the resources referenced by
-      the given API group and does not follow the principal of least privilege. As much as possible,
-      avoid such open resources unless scoped to perhaps a custom API group.
-      This policy blocks any Role or ClusterRole that contains a wildcard entry in
-      the resources list found in any rule.
+      Wildcards ('*') in resources grants access to all of the resources referenced by the given API group and does not follow the principal of least privilege. As much as possible, avoid such open resources unless scoped to perhaps a custom API group. This policy blocks any Role or ClusterRole that contains a wildcard entry in the resources list found in any rule.
 spec:
   validationFailureAction: audit
   background: false
@@ -27,15 +23,15 @@ spec:
     - name: wildcard-resources
       match:
         any:
-        - resources:
-            kinds:
-              - Role
-              - ClusterRole
+          - resources:
+              kinds:
+                - Role
+                - ClusterRole
       validate:
         message: "Use of a wildcard ('*') in any resources is forbidden."
         deny:
           conditions:
             any:
-            - key: "{{ contains(request.object.rules[].resources[], '*') }}"
-              operator: Equals
-              value: true
+              - key: "{{ contains(request.object.rules[].resources[], '*') }}"
+                operator: Equals
+                value: true

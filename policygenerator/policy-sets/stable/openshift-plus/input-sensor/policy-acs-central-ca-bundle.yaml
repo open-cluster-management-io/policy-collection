@@ -20,32 +20,32 @@ metadata:
   name: create-cluster-init
   namespace: stackrox
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
-  - list
-  - create
-  - patch
-  - update
-- apiGroups:
-  - platform.stackrox.io
-  resources:
-  - securedclusters
-  verbs:
-  - get
-  - list
-  - patch
-  - update
-- apiGroups:
-  - route.openshift.io
-  resources:
-  - routes
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - create
+      - patch
+      - update
+  - apiGroups:
+      - platform.stackrox.io
+    resources:
+      - securedclusters
+    verbs:
+      - get
+      - list
+      - patch
+      - update
+  - apiGroups:
+      - route.openshift.io
+    resources:
+      - routes
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -59,6 +59,6 @@ roleRef:
   kind: Role
   name: create-cluster-init
 subjects:
-- kind: ServiceAccount
-  name: create-cluster-init
-  namespace: stackrox
+  - kind: ServiceAccount
+    name: create-cluster-init
+    namespace: stackrox

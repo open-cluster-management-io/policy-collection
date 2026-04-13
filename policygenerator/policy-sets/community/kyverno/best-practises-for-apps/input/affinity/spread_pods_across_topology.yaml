@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -11,10 +11,7 @@ metadata:
     policies.kyverno.io/category: Sample
     policies.kyverno.io/subject: Deployment, Pod
     policies.kyverno.io/description: >-
-      Deployments to a Kubernetes cluster with multiple availability zones often need to
-      distribute those replicas to align with those zones to ensure site-level failures
-      do not impact availability. This policy matches Deployments with the label
-      `distributed=required` and mutates them to spread Pods across zones.
+      Deployments to a Kubernetes cluster with multiple availability zones often need to distribute those replicas to align with those zones to ensure site-level failures do not impact availability. This policy matches Deployments with the label `distributed=required` and mutates them to spread Pods across zones.
 spec:
   rules:
     - name: spread-pods-across-nodes
@@ -22,7 +19,7 @@ spec:
       match:
         resources:
           kinds:
-          - Deployment
+            - Deployment
           selector:
             matchLabels:
               distributed: required
@@ -34,9 +31,9 @@ spec:
               spec:
                 # Adds the topologySpreadConstraints field if non-existent in the request.
                 +(topologySpreadConstraints):
-                - maxSkew: 1
-                  topologyKey: zone
-                  whenUnsatisfiable: DoNotSchedule
-                  labelSelector:
-                    matchLabels:
-                      distributed: required
+                  - maxSkew: 1
+                    topologyKey: zone
+                    whenUnsatisfiable: DoNotSchedule
+                    labelSelector:
+                      matchLabels:
+                        distributed: required

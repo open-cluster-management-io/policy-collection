@@ -5,8 +5,8 @@ metadata:
   namespace: policies
 spec:
   predicates:
-  - requiredClusterSelector:
-      labelSelector:
-        matchExpressions:
-          - {key: vendor, operator: In, values: ["OpenShift"]}
-          - {key: "local-cluster", operator: NotIn, values: ["true"]}
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - {key: vendor, operator: In, values: ["OpenShift"]}
+            - {key: "local-cluster", operator: NotIn, values: ["true"]}

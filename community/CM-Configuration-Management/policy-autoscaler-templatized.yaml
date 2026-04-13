@@ -1,15 +1,15 @@
 # This demonstrates configuring ClusterAutoscaler  with values  customized to the target cluster using  HUB-templates
-# the below shows three policies 
+# the below shows three policies
 # 1.policy-autoscaler-templatized-config:  configures a ConfigMap on the HUB which contains the managedcluster specific values for  ClusterAutoscaler resource
 # 2.policy-autoscaler-templatized: configures  ClusterAutoScaler resources on target managedclusters with  cluster specific values retrieved from the above ConfigMap
-#                            , this policy is disabled  on creation initially. 
-# 3.policy-autoscaler-templatized-enabler: checks the status of the policy "policy-autoscaler-templatized-config"  and when it is complaint , 
-#                            enables policy-autoscaler-templatized by setting disabled=false on the policy resource. 
+#                            , this policy is disabled  on creation initially.
+# 3.policy-autoscaler-templatized-enabler: checks the status of the policy "policy-autoscaler-templatized-config"  and when it is complaint ,
+#                            enables policy-autoscaler-templatized by setting disabled=false on the policy resource.
 #                            This ensures that configmap  with cluster specific values data is created before the policy that retrieves the values from that configmap.
 
 
 # NOTE
-# The file has 3 related policies clubbed together, 
+# The file has 3 related policies clubbed together,
 # when deploying through GRC UI Editor pls copy paste each policy resource individually as the ui can handle only one policy at a time.
 # pls make sure to deploy all 3 policies in the same namespace and replace any placeholder <POLICIESNS> in this file with the policy namespace.
 
@@ -136,5 +136,5 @@ spec:
                 metadata:
                   name: policy-autoscaler-templatized
                   namespace: <POLICIESNS>
-                spec: # disable is set to true if policy status != complaint else it is set to false , 
+                spec: # disable is set to true if policy status != complaint else it is set to false
                   disabled: '{{ ne (lookup "policy.open-cluster-management.io/v1" "Policy" "<POLICIESNS>" "policy-autoscaler-templatized-config").status.compliant "Compliant" |  print | toBool }}'

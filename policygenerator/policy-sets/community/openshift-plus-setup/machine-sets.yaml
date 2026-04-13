@@ -6,7 +6,7 @@
 # More details on installing OCS including the creation of the MachineSets is located here:
 # https://red-hat-storage.github.io/ocs-training/training/ocs4/ocs.html#_scale_ocp_cluster_and_add_new_worker_nodes
 #
-# This policy contains an Amazon Machine Identifier which must be updated in the policy.  Obtain the AMI id from: 
+# This policy contains an Amazon Machine Identifier which must be updated in the policy.  Obtain the AMI id from:
 # https://access.redhat.com/documentation/en-us/openshift_container_platform/4.12/html/installing/installing-on-aws#installation-aws-user-infra-rhcos-ami_installing-aws-user-infra
 # AMI IDs are provided in a settings configmap which can be adjusted as desired.
 #

@@ -31,7 +31,7 @@ metadata:
   name: cluster
 spec:
   plugins:
-  - odf-console
+    - odf-console
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: ConfigurationPolicy

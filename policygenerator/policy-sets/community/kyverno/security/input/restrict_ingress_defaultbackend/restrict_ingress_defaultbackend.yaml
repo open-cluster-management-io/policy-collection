@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -15,24 +15,19 @@ metadata:
     kyverno.io/kubernetes-version: "1.23"
     policies.kyverno.io/subject: Ingress
     policies.kyverno.io/description: >-
-      An Ingress with no rules sends all traffic to a single default backend. The defaultBackend
-      is conventionally a configuration option of the Ingress controller and is not specified in
-      your Ingress resources. If none of the hosts or paths match the HTTP request in the Ingress
-      objects, the traffic is routed to your default backend. In a multi-tenant environment, you
-      want users to use explicit hosts, they should not be able to overwrite the global default backend
-      service. This policy prohibits the use of the defaultBackend field.
+      An Ingress with no rules sends all traffic to a single default backend. The defaultBackend is conventionally a configuration option of the Ingress controller and is not specified in your Ingress resources. If none of the hosts or paths match the HTTP request in the Ingress objects, the traffic is routed to your default backend. In a multi-tenant environment, you want users to use explicit hosts, they should not be able to overwrite the global default backend service. This policy prohibits the use of the defaultBackend field.
 spec:
   validationFailureAction: audit
   background: false
   rules:
-  - name: restrict-ingress-defaultbackend
-    match:
-      any:
-      - resources:
-          kinds:
-          - Ingress
-    validate:
-      message: Setting the defaultBackend field is prohibited.
-      pattern:
-        spec:
-          X(defaultBackend): "null"
+    - name: restrict-ingress-defaultbackend
+      match:
+        any:
+          - resources:
+              kinds:
+                - Ingress
+      validate:
+        message: Setting the defaultBackend field is prohibited.
+        pattern:
+          spec:
+            X(defaultBackend): "null"

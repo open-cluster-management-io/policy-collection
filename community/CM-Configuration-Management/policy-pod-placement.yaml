@@ -29,10 +29,10 @@ spec:
                   name: sample-nginx-pod
                 spec:
                   containers:
-                  - image: nginx:1.18.0
-                    name: nginx
-                    ports:
-                    - containerPort: 80
+                    - image: nginx:1.18.0
+                      name: nginx
+                      ports:
+                        - containerPort: 80
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -43,9 +43,9 @@ placementRef:
   kind: Placement
   apiGroup: cluster.open-cluster-management.io
 subjects:
-- name: policy-pod
-  kind: Policy
-  apiGroup: policy.open-cluster-management.io
+  - name: policy-pod
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
@@ -53,7 +53,7 @@ metadata:
   name: placement-policy-pod
 spec:
   predicates:
-  - requiredClusterSelector:
-      labelSelector:
-        matchExpressions:
-          - {key: environment, operator: In, values: ["dev"]}
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - {key: environment, operator: In, values: ["dev"]}

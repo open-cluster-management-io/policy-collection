@@ -1,11 +1,11 @@
-# This policy deploys Triliovault for Kubernetes (T4K) to all OpenShift managed clusters 
-# with a label "protected-by=triliovault". 
+# This policy deploys Triliovault for Kubernetes (T4K) to all OpenShift managed clusters
+# with a label "protected-by=triliovault".
 # It will also deploy a license that you provide in a ConfigMap
 # Please conact sales@trilio.io for further support.
 #
 # Note that it is set to enforce by default.
 #
-# Please refer product documentation at https://docs.trilio.io/kubernetes/overview/readme 
+# Please refer product documentation at https://docs.trilio.io/kubernetes/overview/readme
 #
 # IMPORTANT: Please follow below instructions for the policy to work
 # 1. On the hub cluster, create a configmap trilio-license in the namespace
@@ -31,118 +31,119 @@ metadata:
 spec:
   disabled: false
   policy-templates:
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: check-ns-trilio-system
-      spec:
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: v1
-            kind: Namespace
-            metadata:
-              name: trilio-system
-        remediationAction: inform
-        severity: high
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: trilio-operator-subscription
-      spec:
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: operators.coreos.com/v1alpha1
-            kind: Subscription
-            metadata:
-              name: k8s-triliovault
-              namespace: trilio-system
-            spec:
-              name: k8s-triliovault
-              channel: 4.0.x
-              installPlanApproval: Automatic
-              source: certified-operators
-              sourceNamespace: openshift-marketplace
-        remediationAction: inform
-        severity: high
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: trilio-operator-status
-      spec:
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: operators.coreos.com/v1alpha1
-            kind: ClusterServiceVersion
-            metadata:
-              namespace: trilio-system
-            spec:
-              displayName: Trilio for Kubernetes
-            status:
-              phase: Succeeded
-        remediationAction: inform
-        severity: high
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: trilio-manager-configuration
-      spec:
-        remediationAction: enforce
-        severity: high
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: triliovault.trilio.io/v1
-            kind: TrilioVaultManager
-            metadata:
-              name: triliovault-manager
-              namespace: trilio-system
-            spec:
-              applicationScope: Cluster
-              componentConfiguration:
-                ingress-controller:
-                  enabled: false
-              dataJobResources:
-                limits:
-                  cpu: 1500m
-                  memory: 5Gi
-                requests:
-                  cpu: 100m
-                  memory: 800Mi
-              logLevel: Info
-              metadataJobResources:
-                limits:
-                  cpu: 500m
-                  memory: 1Gi
-                requests:
-                  cpu: 10m
-                  memory: 10Mi
-              tvkInstanceName: >
-                {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}
-  - objectDefinition:
-      apiVersion: policy.open-cluster-management.io/v1
-      kind: ConfigurationPolicy
-      metadata:
-        name: trilio-license
-      spec:
-        object-templates:
-        - complianceType: musthave
-          objectDefinition:
-            apiVersion: triliovault.trilio.io/v1
-            kind: License
-            metadata:
-              name: trilio-license
-              namespace: trilio-system
-            spec:
-              key: '{{hub fromConfigMap "" "trilio-license" "key" hub}}'
-            status:
-              status: Active
-        remediationAction: inform
-        severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: check-ns-trilio-system
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: trilio-system
+          remediationAction: inform
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: trilio-operator-subscription
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  name: k8s-triliovault
+                  namespace: trilio-system
+                spec:
+                  name: k8s-triliovault
+                  channel: 4.0.x
+                  installPlanApproval: Automatic
+                  source: certified-operators
+                  sourceNamespace: openshift-marketplace
+          remediationAction: inform
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: trilio-operator-status
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: ClusterServiceVersion
+                metadata:
+                  namespace: trilio-system
+                spec:
+                  displayName: Trilio for Kubernetes
+                status:
+                  phase: Succeeded
+          remediationAction: inform
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: trilio-manager-configuration
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: TrilioVaultManager
+                metadata:
+                  name: triliovault-manager
+                  namespace: trilio-system
+                spec:
+                  applicationScope: Cluster
+                  componentConfiguration:
+                    ingress-controller:
+                      enabled: false
+                  dataJobResources:
+                    limits:
+                      cpu: 1500m
+                      memory: 5Gi
+                    requests:
+                      cpu: 100m
+                      memory: 800Mi
+                  logLevel: Info
+                  metadataJobResources:
+                    limits:
+                      cpu: 500m
+                      memory: 1Gi
+                    requests:
+                      cpu: 10m
+                      memory: 10Mi
+                  tvkInstanceName: >
+                    {{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}
+
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: trilio-license
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: triliovault.trilio.io/v1
+                kind: License
+                metadata:
+                  name: trilio-license
+                  namespace: trilio-system
+                spec:
+                  key: '{{hub fromConfigMap "" "trilio-license" "key" hub}}'
+                status:
+                  status: Active
+          remediationAction: inform
+          severity: high
   remediationAction: enforce

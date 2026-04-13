@@ -2,7 +2,7 @@
 # It customizes the values in  PodDisruptionBudget resource based on whether the managedcluster has the custom label environment=prod
 
 # NOTES
-# All cluster labels are available on the managed cluster env  as clusterclaim resources. 
+# All cluster labels are available on the managed cluster env  as clusterclaim resources.
 
 # fromClusterClaim() should be used for default labels\clusterclaims like id.openshift.io, version.openshift.io etc are available on all managed clusters
 # using it on custom labels that may not be avaliable on all clusters may cause a policy violation on the clusters where it doesnt exist.

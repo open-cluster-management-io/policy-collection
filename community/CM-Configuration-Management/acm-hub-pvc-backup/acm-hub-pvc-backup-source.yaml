@@ -10,10 +10,10 @@ metadata:
 spec:
   disabled: false
   dependencies:
-  - apiVersion: policy.open-cluster-management.io/v1
-    compliance: Compliant
-    kind: Policy
-    name: acm-hub-pvc-backup-config
+    - apiVersion: policy.open-cluster-management.io/v1
+      compliance: Compliant
+      kind: Policy
+      name: acm-hub-pvc-backup-config
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
@@ -43,7 +43,7 @@ spec:
               {{- range $rs := (lookup "volsync.backube/v1alpha1" "ReplicationSource" "" "" $volsync_label).items }}
                 {{- $pvc_rs := (lookup "v1" "PersistentVolumeClaim" $rs.metadata.namespace "" $volsync_label).items }}
                 {{- /* If the PVC in the ReplicationSource ns no longer exists or doesn't have the volsync label, delete the ReplicationSource */ -}}
-                {{ if eq (len $pvc_rs ) 0 }}  
+                {{ if eq (len $pvc_rs ) 0 }}
                   - complianceType: mustnothave
                     objectDefinition:
                       kind: ReplicationSource
@@ -59,7 +59,7 @@ spec:
                       apiVersion: v1
                       metadata:
                         name: {{( (cat $global_volsync_map "-" $rs.metadata.name ) | replace " " "") }}
-                        namespace: {{ $rs.metadata.namespace }} 
+                        namespace: {{ $rs.metadata.namespace }}
                 {{- end }}
               {{- end }}
 
@@ -90,22 +90,22 @@ spec:
                         {{- end }}
                         {{- if not ( eq  $pvc.spec.resources.requests.storage "") }}
                         capacity: {{ $pvc.spec.resources.requests.storage }}
-                        {{- end }}                        
+                        {{- end }}
                         {{- if not (empty $pvc.spec.accessModes ) }}
                           {{ $am_val := ""}}
                           {{- range $av := $pvc.spec.accessModes }}
                              {{ $am_val =  cat $am_val $av }}
                           {{- end }}
                         accessModes: {{ $am_val }}
-                        {{- end }}                        
+                        {{- end }}
 
                   {{ if eq ( lookup "v1" "ConfigMap" $ns $pvc_config_name ).metadata.name  $pvc_config_name }}
                     {{ $effective_map = $pvc_config_name }}
-                  {{- end }}   
+                  {{- end }}
 
                   {{- $volsync_pvcs_str = ( (cat $volsync_pvcs_str "##" $pvc.metadata.namespace "#" $pvc.metadata.name ) | replace " " "" ) }}
                   {{- $common_restic_repo := ( lookup "v1" "Secret" $ns $volsync_secret ).data.RESTIC_REPOSITORY | base64dec }}
-                  {{- $secretName := ( (cat $pvc.metadata.name "-"  $restic_secret_suffix ) | replace " " "" ) }}                 
+                  {{- $secretName := ( (cat $pvc.metadata.name "-"  $restic_secret_suffix ) | replace " " "" ) }}
                   - complianceType: musthave
                     objectDefinition:
                       apiVersion: v1
@@ -117,11 +117,11 @@ spec:
                 {{- range $key, $value := ( lookup "v1" "Secret" $ns $volsync_secret ).data }}
                     {{- if not (eq $key "RESTIC_REPOSITORY")}}
                         {{ $key }}: {{ $value }}
-                    {{- end }}    
+                    {{- end }}
                 {{- end }}
-                        RESTIC_REPOSITORY: {{ ( ( (cat $common_restic_repo "/" $pvc.metadata.namespace "-" $pvc.metadata.name ) | replace " " "" ) | base64enc ) }}                      
+                        RESTIC_REPOSITORY: {{ ( ( (cat $common_restic_repo "/" $pvc.metadata.namespace "-" $pvc.metadata.name ) | replace " " "" ) | base64enc ) }}
                       type: Opaque
-                      
+
                   - complianceType: mustonlyhave
                     objectDefinition:
                       kind: ReplicationSource
@@ -225,7 +225,7 @@ spec:
                         sourcePVC: {{ $pvc.metadata.name }}
                         trigger:
                           schedule: '{{ fromConfigMap $ns $effective_map "trigger_schedule" }}'
-                {{- end }}        
+                {{- end }}
               {{- end }}
                  {{ if not (eq $volsync_pvcs_str "") }}
                   - complianceType: musthave
@@ -240,9 +240,9 @@ spec:
                           app: {{ $volsync_pvcs }}
                       data:
                         pvcs: {{ trimAll "##" $volsync_pvcs_str }}
-                  {{- end }}      
+                  {{- end }}
             {{- else }}
-              {{- range $pvc := (lookup "v1" "PersistentVolumeClaim" "" "" $volsync_label).items }}  
+              {{- range $pvc := (lookup "v1" "PersistentVolumeClaim" "" "" $volsync_label).items }}
                   - complianceType: mustnothave
                     objectDefinition:
                       kind: ReplicationSource
@@ -257,16 +257,16 @@ spec:
               {{- end }}
             {{- end }}
           remediationAction: enforce
-          severity: high 
+          severity: high
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-hub-source-replication-success 
+          name: check-hub-source-replication-success
         spec:
           object-templates-raw: |
             {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}
-            {{- $ns := "open-cluster-management-backup" }} 
+            {{- $ns := "open-cluster-management-backup" }}
             {{- $schedule_label := "cluster.open-cluster-management.io/backup-schedule-type, cluster.open-cluster-management.io/backup-schedule-type in (resources)"}}
             {{- $velero_api := "velero.io/v1" }}
             {{- $kind_schedule := "Schedule" }}
@@ -283,8 +283,8 @@ spec:
                     namespace: {{ $pvc.metadata.namespace }}
                   status:
                     latestMoverStatus:
-                      result: Successful       
-              {{- end }}  
+                      result: Successful
+              {{- end }}
             {{- end }}
           remediationAction: inform
           severity: high
@@ -292,11 +292,11 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-hub-source-replication-errors 
+          name: check-hub-source-replication-errors
         spec:
           object-templates-raw: |
             {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}
-            {{- $ns := "open-cluster-management-backup" }} 
+            {{- $ns := "open-cluster-management-backup" }}
             {{- $schedule_label := "cluster.open-cluster-management.io/backup-schedule-type, cluster.open-cluster-management.io/backup-schedule-type in (resources)"}}
             {{- $velero_api := "velero.io/v1" }}
             {{- $kind_schedule := "Schedule" }}
@@ -304,7 +304,7 @@ spec:
 
             {{- /* The volsync replication-source should not be failed */ -}}
             {{- range $pvc := (lookup "v1" "PersistentVolumeClaim" "" "" $volsync_label).items }}
-              {{ if $volsync_backup_cond }}      
+              {{ if $volsync_backup_cond }}
               - complianceType: mustnothave
                 objectDefinition:
                   apiVersion: volsync.backube/v1alpha1
@@ -314,7 +314,7 @@ spec:
                   status:
                     latestMoverStatus:
                       result: Failed
-              {{- end }}  
+              {{- end }}
             {{- end }}
           remediationAction: inform
           severity: high
@@ -322,11 +322,11 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: check-hub-pvc-filesystem 
+          name: check-hub-pvc-filesystem
         spec:
           object-templates-raw: |
             {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}
-            {{- $ns := "open-cluster-management-backup" }} 
+            {{- $ns := "open-cluster-management-backup" }}
             {{- $schedule_label := "cluster.open-cluster-management.io/backup-schedule-type, cluster.open-cluster-management.io/backup-schedule-type in (resources)"}}
             {{- $velero_api := "velero.io/v1" }}
             {{- $kind_schedule := "Schedule" }}
@@ -334,7 +334,7 @@ spec:
 
             {{- /* The PVC with a volsync_label should only use volumeMode: Filesystem */ -}}
             {{- range $pvc := (lookup "v1" "PersistentVolumeClaim" "" "" $volsync_label).items }}
-              {{ if $volsync_backup_cond }}      
+              {{ if $volsync_backup_cond }}
               - complianceType: musthave
                 objectDefinition:
                   apiVersion: v1
@@ -344,7 +344,7 @@ spec:
                     name: {{ $pvc.metadata.name }}
                   spec:
                     volumeMode: Filesystem
-              {{- end }}  
+              {{- end }}
             {{- end }}
           remediationAction: inform
           severity: high

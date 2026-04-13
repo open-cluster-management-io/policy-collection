@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -23,21 +23,20 @@ spec:
     - name: require-tls-routes
       match:
         any:
-        - resources:
-            kinds:
-              - route.openshift.io/v1/Route
+          - resources:
+              kinds:
+                - route.openshift.io/v1/Route
       preconditions:
         all:
-        - key: "{{ request.operation }}"
-          operator: NotEquals
-          value: ["DELETE"]
+          - key: "{{ request.operation }}"
+            operator: NotEquals
+            value: ["DELETE"]
       validate:
         message: >-
           HTTP routes are not allowed. Configure TLS for secure routes.
         deny:
           conditions:
             all:
-            - key: "{{ keys(request.object.spec) | contains(@, 'tls') }}"
-              operator: Equals
-              value: false
-
+              - key: "{{ keys(request.object.spec) | contains(@, 'tls') }}"
+                operator: Equals
+                value: false

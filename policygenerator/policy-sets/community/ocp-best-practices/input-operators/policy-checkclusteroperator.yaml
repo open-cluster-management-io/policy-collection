@@ -10,4 +10,4 @@ kind: ClusterOperator
 status:
   conditions:
     - status: 'True'
-      type: Degraded                         
+      type: Degraded

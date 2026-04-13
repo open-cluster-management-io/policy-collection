@@ -1,6 +1,6 @@
 # This policy verifies the installation of the supported version of
 # the Black Duck Connector Operator & the Black Duck Connector on the managed clusters.
-# It also verifies all the containers on the specified namespace are are not 
+# It also verifies all the containers on the specified namespace are are not
 # in Black Duck's policy violation.
 #
 # If set to "enforce" it'll install the operator & connector.

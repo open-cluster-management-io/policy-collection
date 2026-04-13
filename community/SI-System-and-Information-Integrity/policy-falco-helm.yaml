@@ -1,4 +1,4 @@
-# Install falco using helm instead of using the operator. 
+# Install falco using helm instead of using the operator.
 
 # Edit the parameters for the helm chart inside the Subscription resource to
 # customize falco for your needs.  If installing falco on openshift, be aware of
@@ -138,77 +138,77 @@ spec:
                     - packageAlias: falco
                       packageName: falco
                       packageOverrides:
-                      - path: spec
-                        value:
-                          auditLog:
-                            enabled: true
-                          customRules:
-                            rules-ocm.yaml: |-
-                              - macro: user_known_write_below_etc_activities
-                                condition: (k8s.ns.name = "openshift-dns")
-                              - macro: user_known_network_tool_activities
-                                condition: (k8s.ns.name = "openshift-dns")
-                              - macro: k8s_containers
-                                condition: >
-                                  (container.image.repository in (gcr.io/google_containers/hyperkube-amd64,
-                                  gcr.io/google_containers/kube2sky, sysdig/agent, sysdig/falco,
-                                  sysdig/sysdig, falcosecurity/falco, quay.io/stolostron,
-                                  quay.io/open-cluster-management) or (k8s.ns.name in (kube-system, 
-                                  openshift-multus, openshift-monitoring, open-cluster-management, 
-                                  openshift-sdn, openshift-dns, openshift-machine-config-operator, 
-                                  openshift-cluster-machine-approver, openshift-dns-operator, 
-                                  openshift-cloud-credential-operator, openshift-machine-api, 
-                                  openshift-ingress-operator, openshift-console, openshift-ovn-kubernetes)))
-                              - list: allowed_k8s_users
-                                items: [
-                                  "minikube", "minikube-user", "kubelet", "kops", "admin", "kube", "kube-proxy", "kube-apiserver-healthcheck",
-                                  "kubernetes-admin",
-                                  vertical_pod_autoscaler_users,
-                                  cluster-autoscaler,
-                                  "system:addon-manager",
-                                  "cloud-controller-manager",
-                                  "eks:node-manager",
-                                  "system:kube-controller-manager",
-                                  "kube:admin"
-                                  ]
-                          falco:
-                            httpOutput:
+                        - path: spec
+                          value:
+                            auditLog:
                               enabled: true
-                              url: http://falcosidekick:2801/
-                            jsonIncludeOutputProperty: true
-                            jsonOutput: true
-                            rulesFile:
-                            - /etc/falco/falco_rules.yaml
-                            - /etc/falco/falco_rules.local.yaml
-                            - /etc/falco/k8s_audit_rules.yaml
-                            - /etc/falco/rules.d
-                            stdoutOutput:
-                              enabled: true
-                            syscallEventDrops:
-                              actions:
-                              - log
-                              - alert
-                              maxBurst: 10
-                              rate: 0.03333
-                            webserver:
-                              enabled: true
-                              k8sAuditEndpoint: /k8s-audit
-                              listenPort: 8765
-                              nodePort: 32765
-                              sslCertificate: /etc/falco/certs/server.pem
-                              sslEnabled: false
-                          falcosidekick:
-                            enabled: false
-                            fullfdqn: false
-                          image:
-                            pullPolicy: IfNotPresent
-                            registry: docker.io
-                            repository: falcosecurity/falco
-                            tag: latest
-                          podSecurityPolicy:
-                            create: false
-                          scc:
-                            create: true
-                          tolerations:
-                          - effect: NoSchedule
-                            key: node-role.kubernetes.io/master
+                            customRules:
+                              rules-ocm.yaml: |-
+                                - macro: user_known_write_below_etc_activities
+                                  condition: (k8s.ns.name = "openshift-dns")
+                                - macro: user_known_network_tool_activities
+                                  condition: (k8s.ns.name = "openshift-dns")
+                                - macro: k8s_containers
+                                  condition: >
+                                    (container.image.repository in (gcr.io/google_containers/hyperkube-amd64,
+                                    gcr.io/google_containers/kube2sky, sysdig/agent, sysdig/falco,
+                                    sysdig/sysdig, falcosecurity/falco, quay.io/stolostron,
+                                    quay.io/open-cluster-management) or (k8s.ns.name in (kube-system,
+                                    openshift-multus, openshift-monitoring, open-cluster-management,
+                                    openshift-sdn, openshift-dns, openshift-machine-config-operator,
+                                    openshift-cluster-machine-approver, openshift-dns-operator,
+                                    openshift-cloud-credential-operator, openshift-machine-api,
+                                    openshift-ingress-operator, openshift-console, openshift-ovn-kubernetes)))
+                                - list: allowed_k8s_users
+                                  items: [
+                                    "minikube", "minikube-user", "kubelet", "kops", "admin", "kube", "kube-proxy", "kube-apiserver-healthcheck",
+                                    "kubernetes-admin",
+                                    vertical_pod_autoscaler_users,
+                                    cluster-autoscaler,
+                                    "system:addon-manager",
+                                    "cloud-controller-manager",
+                                    "eks:node-manager",
+                                    "system:kube-controller-manager",
+                                    "kube:admin"
+                                    ]
+                            falco:
+                              httpOutput:
+                                enabled: true
+                                url: http://falcosidekick:2801/
+                              jsonIncludeOutputProperty: true
+                              jsonOutput: true
+                              rulesFile:
+                                - /etc/falco/falco_rules.yaml
+                                - /etc/falco/falco_rules.local.yaml
+                                - /etc/falco/k8s_audit_rules.yaml
+                                - /etc/falco/rules.d
+                              stdoutOutput:
+                                enabled: true
+                              syscallEventDrops:
+                                actions:
+                                  - log
+                                  - alert
+                                maxBurst: 10
+                                rate: 0.03333
+                              webserver:
+                                enabled: true
+                                k8sAuditEndpoint: /k8s-audit
+                                listenPort: 8765
+                                nodePort: 32765
+                                sslCertificate: /etc/falco/certs/server.pem
+                                sslEnabled: false
+                            falcosidekick:
+                              enabled: false
+                              fullfdqn: false
+                            image:
+                              pullPolicy: IfNotPresent
+                              registry: docker.io
+                              repository: falcosecurity/falco
+                              tag: latest
+                            podSecurityPolicy:
+                              create: false
+                            scc:
+                              create: true
+                            tolerations:
+                              - effect: NoSchedule
+                                key: node-role.kubernetes.io/master

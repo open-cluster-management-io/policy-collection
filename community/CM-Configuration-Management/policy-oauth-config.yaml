@@ -1,5 +1,5 @@
 # This policy applies configuration to OpenShift OAuth custom resources.
-# For more information on configuring the OAuth server, consult the OpenShift documentation: 
+# For more information on configuring the OAuth server, consult the OpenShift documentation:
 # https://docs.openshift.com/container-platform/4.7/authentication/configuring-oauth-clients.html
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy

@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -20,40 +20,40 @@ spec:
   validationFailureAction: enforce
   background: false
   rules:
-  - name: check-security-context-constraint
-    match:
-      any:
-      - resources:
-          kinds:
-          - ClusterRole
-          - Role
-    validate:
-      message: >-
-        Use of the SecurityContextConstraint (SCC) anyuid is not allowed
-      foreach:
-      - list: request.object.rules[]
+    - name: check-security-context-constraint
+      match:
+        any:
+          - resources:
+              kinds:
+                - ClusterRole
+                - Role
+      validate:
+        message: >-
+          Use of the SecurityContextConstraint (SCC) anyuid is not allowed
+        foreach:
+          - list: request.object.rules[]
+            deny:
+              conditions:
+                all:
+                  - key: anyuid
+                    operator: AnyIn
+                    value: "{{element.resourceNames[]}}"
+                  - key: "{{ element.verbs[]  | contains(@, 'use') || contains(@, '*') }}"
+                    operator: Equals
+                    value: true
+    - name: check-security-context-roleref
+      match:
+        any:
+          - resources:
+              kinds:
+                - ClusterRoleBinding
+                - RoleBinding
+      validate:
+        message: >-
+          Use of the SecurityContextConstraint (SCC) anyuid is not allowed
         deny:
           conditions:
             all:
-            - key: anyuid
-              operator: AnyIn
-              value: "{{element.resourceNames[]}}"
-            - key: "{{ element.verbs[]  | contains(@, 'use') || contains(@, '*') }}"
-              operator: Equals
-              value: true
-  - name: check-security-context-roleref
-    match:
-      any:
-      - resources:
-          kinds:
-          - ClusterRoleBinding
-          - RoleBinding
-    validate:
-      message: >-
-        Use of the SecurityContextConstraint (SCC) anyuid is not allowed
-      deny:
-        conditions:
-          all:
-          - key: system:openshift:scc:anyuid
-            operator: Equals
-            value: "{{request.object.roleRef.name}}"
+              - key: system:openshift:scc:anyuid
+                operator: Equals
+                value: "{{request.object.roleRef.name}}"

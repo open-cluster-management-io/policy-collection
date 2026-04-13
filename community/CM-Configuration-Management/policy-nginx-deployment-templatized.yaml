@@ -1,6 +1,6 @@
 # This sample policy demonstrates configuring a nginx pod on managedclusters with the configuration customized to the target cluster using managedcluster templates
 
-# In the below policy, 
+# In the below policy,
 # container image tag is dynamically set based on the ocp version of  the target cluster using  the fromclusterclaim template
 # a couple of example env-variables on the container are also dyanmically set from values of a Secret resource on the target managedcluster using fromSecret template
 

@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 # Then convert the Kyverno manifest to an OCM policy with the Policy Generator plugin
 
@@ -94,7 +94,7 @@ spec:
                 spec:
                   scheduleConfig:
                     schedule:
-                    - 0 23 * * *
+                      - 0 23 * * *
                   type: Schedule
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
@@ -140,8 +140,7 @@ spec:
                     kyverno.io/kubernetes-version: "1.21-1.22"
                     policies.kyverno.io/subject: Policy
                     policies.kyverno.io/description: >-
-                      Create Target, BackupPlan and Backup for any namespace with the label "protected-by: tvk-ns-backup"
-                      This policy works best to protect a namespace by creating backup via lables.
+                      Create Target, BackupPlan and Backup for any namespace with the label "protected-by: tvk-ns-backup" This policy works best to protect a namespace by creating backup via lables.
                 spec:
                   background: true
                   rules:
@@ -227,4 +226,3 @@ spec:
                             backupPlan:
                               name: tvk-{{ `{{request.object.metadata.name}}` }}-backupplan
                               namespace: "{{ `{{request.object.metadata.name}}` }}"
-

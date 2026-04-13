@@ -15,7 +15,7 @@
 #    - Re-encode the file: cat webhook-config.yaml | base64
 #    - Update the policy with this new encoded value.
 #    - Recognize this must be done separately for each cluster you want to configure falco audit
-#      processing on. This is not required for processing falco rules, it is only needed on 
+#      processing on. This is not required for processing falco rules, it is only needed on
 #      OpenShift clusters where you want to process the falco auditing rules.
 
 apiVersion: policy.open-cluster-management.io/v1

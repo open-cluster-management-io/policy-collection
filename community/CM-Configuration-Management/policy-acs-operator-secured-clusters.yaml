@@ -2,8 +2,8 @@
 # Services to all OpenShift managed clusters.  Note that it is set to
 # enforce by default and it requires Open Cluster Management template support.
 #
-# Prior to applying this policy you must visit 
-# https://github.com/stolostron/advanced-cluster-security 
+# Prior to applying this policy you must visit
+# https://github.com/stolostron/advanced-cluster-security
 # and follow the instructions there to deploy prerequisite bundles
 # needed by the Secure Cluster Services for communicating with the
 # Central server.

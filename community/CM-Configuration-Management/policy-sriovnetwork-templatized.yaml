@@ -1,5 +1,5 @@
- #This demonstrates configuring SriovNetwork resource  with values  customized to the target cluster using  HUB-templates
-# the below shows three policies 
+# This demonstrates configuring SriovNetwork resource  with values  customized to the target cluster using  HUB-templates
+# the below shows three policies
 # 1.policy-site-nw-templatized-config:  configures a ConfigMap on the HUB which contains the managedcluster specific values for  Cluster network resource
 # 2.policy-site-nw-templatized: configures  SriovNetwork resources on target managedclusters with  cluster specific values retrieved from the above ConfigMap
 
@@ -74,4 +74,3 @@ spec:
                   cluster0002-phc2sysOpts: "-a -r -n 24"
                   cluster0002-resourceName: "du_mh"
                   cluster0002-vlan: "3621"
-

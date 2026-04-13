@@ -5,13 +5,13 @@ metadata:
 spec:
   match:
     kinds:
-    - apiGroups:
-      - ""
-      kinds:
-      - Pod
-    - apiGroups:
-      - apps
-      kinds:
-      - DaemonSet
-      - Deployment
-      - StatefulSet
+      - apiGroups:
+          - ""
+        kinds:
+          - Pod
+      - apiGroups:
+          - apps
+        kinds:
+          - DaemonSet
+          - Deployment
+          - StatefulSet

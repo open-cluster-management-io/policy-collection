@@ -4,9 +4,9 @@ metadata:
   name: cluster
 spec:
   audit:
-    customRules:                        
-    - group: system:authenticated:oauth
-      profile: WriteRequestBodies
-    - group: system:authenticated
-      profile: AllRequestBodies
-  profile: Default  
+    customRules:
+      - group: system:authenticated:oauth
+        profile: WriteRequestBodies
+      - group: system:authenticated
+        profile: AllRequestBodies
+  profile: Default

@@ -4,7 +4,7 @@
   scope: namespace
   singular: binding
   verbs:
-  - create
+    - create
   version: v1
 - group: ""
   kind: ComponentStatus
@@ -12,8 +12,8 @@
   scope: root
   singular: componentstatus
   verbs:
-  - get
-  - list
+    - get
+    - list
   version: v1
 - group: ""
   kind: ConfigMap
@@ -45,13 +45,13 @@
   scope: root
   singular: namespace
   verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
   version: v1
 - group: ""
   kind: Node
@@ -209,7 +209,7 @@
   scope: root
   singular: selfsubjectreview
   verbs:
-  - create
+    - create
   version: v1
 - group: authentication.k8s.io
   kind: TokenReview
@@ -217,7 +217,7 @@
   scope: root
   singular: tokenreview
   verbs:
-  - create
+    - create
   version: v1
 - group: authorization.k8s.io
   kind: LocalSubjectAccessReview
@@ -225,7 +225,7 @@
   scope: namespace
   singular: localsubjectaccessreview
   verbs:
-  - create
+    - create
   version: v1
 - group: authorization.k8s.io
   kind: SelfSubjectAccessReview
@@ -233,7 +233,7 @@
   scope: root
   singular: selfsubjectaccessreview
   verbs:
-  - create
+    - create
   version: v1
 - group: authorization.k8s.io
   kind: SelfSubjectRulesReview
@@ -241,7 +241,7 @@
   scope: root
   singular: selfsubjectrulesreview
   verbs:
-  - create
+    - create
   version: v1
 - group: authorization.k8s.io
   kind: SubjectAccessReview
@@ -249,7 +249,7 @@
   scope: root
   singular: subjectaccessreview
   verbs:
-  - create
+    - create
   version: v1
 - group: authorization.openshift.io
   kind: ClusterRoleBinding
@@ -257,12 +257,12 @@
   scope: root
   singular: clusterrolebinding
   verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
   version: v1
 - group: authorization.openshift.io
   kind: ClusterRole
@@ -270,12 +270,12 @@
   scope: root
   singular: clusterrole
   verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
   version: v1
 - group: authorization.openshift.io
   kind: LocalResourceAccessReview
@@ -283,7 +283,7 @@
   scope: namespace
   singular: localresourceaccessreview
   verbs:
-  - create
+    - create
   version: v1
 - group: authorization.openshift.io
   kind: LocalSubjectAccessReview
@@ -291,7 +291,7 @@
   scope: namespace
   singular: localsubjectaccessreview
   verbs:
-  - create
+    - create
   version: v1
 - group: authorization.openshift.io
   kind: ResourceAccessReview
@@ -299,7 +299,7 @@
   scope: root
   singular: localresourceaccessreview
   verbs:
-  - create
+    - create
   version: v1
 - group: authorization.openshift.io
   kind: RoleBindingRestriction
@@ -313,12 +313,12 @@
   scope: namespace
   singular: rolebinding
   verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
   version: v1
 - group: authorization.openshift.io
   kind: Role
@@ -326,12 +326,12 @@
   scope: namespace
   singular: role
   verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
   version: v1
 - group: authorization.openshift.io
   kind: SelfSubjectRulesReview
@@ -339,7 +339,7 @@
   scope: namespace
   singular: selfsubjectrulesreview
   verbs:
-  - create
+    - create
   version: v1
 - group: authorization.openshift.io
   kind: SubjectAccessReview
@@ -347,7 +347,7 @@
   scope: root
   singular: subjectaccessreview
   verbs:
-  - create
+    - create
   version: v1
 - group: authorization.openshift.io
   kind: SubjectRulesReview
@@ -355,7 +355,7 @@
   scope: namespace
   singular: subjectrulesreview
   verbs:
-  - create
+    - create
   version: v1
 - group: autoscaling.openshift.io
   kind: ClusterAutoscaler
@@ -675,8 +675,8 @@
   scope: root
   singular: imagesignature
   verbs:
-  - create
-  - delete
+    - create
+    - delete
   version: v1
 - group: image.openshift.io
   kind: ImageStreamImage
@@ -684,7 +684,7 @@
   scope: namespace
   singular: imagestreamimage
   verbs:
-  - get
+    - get
   version: v1
 - group: image.openshift.io
   kind: ImageStreamImport
@@ -692,7 +692,7 @@
   scope: namespace
   singular: imagestreamimport
   verbs:
-  - create
+    - create
   version: v1
 - group: image.openshift.io
   kind: ImageStreamMapping
@@ -700,7 +700,7 @@
   scope: namespace
   singular: imagestreammapping
   verbs:
-  - create
+    - create
   version: v1
 - group: image.openshift.io
   kind: ImageStream
@@ -714,12 +714,12 @@
   scope: namespace
   singular: imagestreamtag
   verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
   version: v1
 - group: image.openshift.io
   kind: ImageTag
@@ -727,12 +727,12 @@
   scope: namespace
   singular: imagetag
   verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
   version: v1
 - group: imageregistry.operator.openshift.io
   kind: Config
@@ -974,8 +974,8 @@
   scope: root
   singular: ""
   verbs:
-  - get
-  - list
+    - get
+    - list
   version: v1beta1
 - group: metrics.k8s.io
   kind: PodMetrics
@@ -983,8 +983,8 @@
   scope: namespace
   singular: ""
   verbs:
-  - get
-  - list
+    - get
+    - list
   version: v1beta1
 - group: migration.k8s.io
   kind: StorageState
@@ -1130,7 +1130,7 @@
   scope: root
   singular: tokenreview
   verbs:
-  - create
+    - create
   version: v1
 - group: oauth.openshift.io
   kind: UserOAuthAccessToken
@@ -1138,10 +1138,10 @@
   scope: root
   singular: useroauthaccesstoken
   verbs:
-  - delete
-  - get
-  - list
-  - watch
+    - delete
+    - get
+    - list
+    - watch
   version: v1
 - group: olm.operatorframework.io
   kind: ClusterCatalog
@@ -1353,8 +1353,8 @@
   scope: namespace
   singular: packagemanifest
   verbs:
-  - get
-  - list
+    - get
+    - list
   version: v1
 - group: performance.openshift.io
   kind: PerformanceProfile
@@ -1398,8 +1398,8 @@
   scope: root
   singular: projectrequest
   verbs:
-  - create
-  - list
+    - create
+    - list
   version: v1
 - group: project.openshift.io
   kind: Project
@@ -1407,13 +1407,13 @@
   scope: root
   singular: project
   verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
   version: v1
 - group: quota.openshift.io
   kind: AppliedClusterResourceQuota
@@ -1421,8 +1421,8 @@
   scope: namespace
   singular: appliedclusterresourcequota
   verbs:
-  - get
-  - list
+    - get
+    - list
   version: v1
 - group: quota.openshift.io
   kind: ClusterResourceQuota
@@ -1484,7 +1484,7 @@
   scope: namespace
   singular: podsecuritypolicyreview
   verbs:
-  - create
+    - create
   version: v1
 - group: security.openshift.io
   kind: PodSecurityPolicySelfSubjectReview
@@ -1492,7 +1492,7 @@
   scope: namespace
   singular: podsecuritypolicyselfsubjectreview
   verbs:
-  - create
+    - create
   version: v1
 - group: security.openshift.io
   kind: PodSecurityPolicySubjectReview
@@ -1500,7 +1500,7 @@
   scope: namespace
   singular: podsecuritypolicysubjectreview
   verbs:
-  - create
+    - create
   version: v1
 - group: security.openshift.io
   kind: RangeAllocation
@@ -1574,7 +1574,7 @@
   scope: namespace
   singular: processedtemplate
   verbs:
-  - create
+    - create
   version: v1
 - group: template.openshift.io
   kind: TemplateInstance
@@ -1618,11 +1618,11 @@
   scope: root
   singular: useridentitymapping
   verbs:
-  - create
-  - delete
-  - get
-  - patch
-  - update
+    - create
+    - delete
+    - get
+    - patch
+    - update
   version: v1
 - group: user.openshift.io
   kind: User

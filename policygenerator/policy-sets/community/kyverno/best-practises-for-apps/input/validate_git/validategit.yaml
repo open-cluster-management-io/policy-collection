@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -15,20 +15,17 @@ metadata:
     kyverno.io/kubernetes-version: "1.23"
     policies.kyverno.io/subject: GitRepository, Bucket, HelmRepository, ImageRepository
     policies.kyverno.io/description: >-
-      In a production environment,
-      it may be desired to restrict these to only known sources to prevent
-      accessing outside sources. This policy verifies that each of the Git
-      sources comes from a trusted location.      
-spec:  
+      In a production environment, it may be desired to restrict these to only known sources to prevent accessing outside sources. This policy verifies that each of the Git sources comes from a trusted location.
+spec:
   validationFailureAction: audit
   rules:
     - name: validate-github-repositories
       match:
         any:
-        - resources:
-            kinds:
-              - argoproj.io/v1alpha1/Application
-              - argoproj.io/v1alpha1/ApplicationSet
+          - resources:
+              kinds:
+                - argoproj.io/v1alpha1/Application
+                - argoproj.io/v1alpha1/ApplicationSet
       validate:
         message: ".spec.url must be from a repository within the myorg organization."
         pattern:

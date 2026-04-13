@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -12,22 +12,18 @@ metadata:
     policies.kyverno.io/severity: medium
     policies.kyverno.io/subject: Service
     policies.kyverno.io/description: >-
-      Especially in cloud provider environments, a Service having type LoadBalancer will cause the
-      provider to respond by creating a load balancer somewhere in the customer account. This adds
-      cost and complexity to a deployment. Without restricting this ability, users may easily
-      overrun established budgets and security practices set by the organization. This policy restricts
-      use of the Service type LoadBalancer.
+      Especially in cloud provider environments, a Service having type LoadBalancer will cause the provider to respond by creating a load balancer somewhere in the customer account. This adds cost and complexity to a deployment. Without restricting this ability, users may easily overrun established budgets and security practices set by the organization. This policy restricts use of the Service type LoadBalancer.
 spec:
   validationFailureAction: audit
   background: false
   rules:
-  - name: no-LoadBalancer
-    match:
-      resources:
-        kinds:
-        - Service
-    validate:
-      message: "Service of type LoadBalancer is not allowed."
-      pattern:
-        spec:
-          type: "!LoadBalancer"
+    - name: no-LoadBalancer
+      match:
+        resources:
+          kinds:
+            - Service
+      validate:
+        message: "Service of type LoadBalancer is not allowed."
+        pattern:
+          spec:
+            type: "!LoadBalancer"

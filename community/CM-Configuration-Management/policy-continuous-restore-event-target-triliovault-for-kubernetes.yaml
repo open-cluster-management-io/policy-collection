@@ -1,8 +1,8 @@
 # This is the first policy to setup Continuous Restore Functionality using
-# Triliovault for Kubernetes (TVK). 
+# Triliovault for Kubernetes (TVK).
 #
-# This policy creates an event target on 2 clusters (source and target) participating in the 
-# Continuous Restore Functionality defined with labels "protected-by=triliovault" and 
+# This policy creates an event target on 2 clusters (source and target) participating in the
+# Continuous Restore Functionality defined with labels "protected-by=triliovault" and
 # "tvk-continuous-restore=enabled"
 #
 # The event target is a shared backup target between 2 clusters (source and target).

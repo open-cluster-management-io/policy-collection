@@ -1,5 +1,5 @@
 #
-# This policy creates a velero restore resource to all managed clusters 
+# This policy creates a velero restore resource to all managed clusters
 # with a label "acm-app-restore=<backup-name>". The restore resource is used to restore applications resources and PVs
 # from the <backup-name> specified with this label.
 #
@@ -18,10 +18,10 @@ metadata:
     policy.open-cluster-management.io/standards: NIST-CSF
 spec:
   dependencies:
-  - apiVersion: policy.open-cluster-management.io/v1
-    compliance: Compliant
-    kind: Policy
-    name: oadp-hdr-app-install
+    - apiVersion: policy.open-cluster-management.io/v1
+      compliance: Compliant
+      kind: Policy
+      name: oadp-hdr-app-install
   disabled: false
   policy-templates:
     - objectDefinition:

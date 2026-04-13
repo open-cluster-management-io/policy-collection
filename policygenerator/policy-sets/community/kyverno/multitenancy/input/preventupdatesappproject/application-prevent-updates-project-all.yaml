@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -15,7 +15,7 @@ metadata:
     kyverno.io/kubernetes-version: "1.23"
     policies.kyverno.io/subject: Application
     policies.kyverno.io/description: >-
-            This policy prevents updates to the project field after an Application is created.
+      This policy prevents updates to the project field after an Application is created.
 spec:
   validationFailureAction: audit
   background: false
@@ -23,21 +23,21 @@ spec:
     - name: project-updates
       match:
         any:
-        - resources:
-            kinds:
-              - argoproj.io/v1alpha1/Application
+          - resources:
+              kinds:
+                - argoproj.io/v1alpha1/Application
       preconditions:
         any:
-        - key: "{{request.operation}}"
-          operator: In
-          value:
-          - CREATE
-          - UPDATE   
+          - key: "{{request.operation}}"
+            operator: In
+            value:
+              - CREATE
+              - UPDATE
       validate:
         message: "The spec.project cannot be changed once the Application is created."
         deny:
           conditions:
             any:
-            - key: "{{request.object.spec.project}}"
-              operator: NotEquals
-              value: "{{request.oldObject.spec.project}}"
+              - key: "{{request.object.spec.project}}"
+                operator: NotEquals
+                value: "{{request.oldObject.spec.project}}"
