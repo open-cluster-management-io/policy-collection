@@ -2,3 +2,4 @@ deploy/manifests.yaml
 .idea
 bin
 schemas
+*.sarif
