@@ -67,24 +67,24 @@ data:
 ---
 apiVersion: v1
 data:
-  etcd-backup.sh: |+
-    
+  etcd-backup.sh: |2+
+
     DATE=$(date +%Y%m%dT%H%M%S)
 
     /usr/local/bin/etcd-snapshot-backup-disconnected.sh /assets/backup
- 
+
     if [ $? -eq 0 ]; then
         mkdir /etcd-backup/${DATE}
         cp -r /assets/backup/*  /etcd-backup/${DATE}/
         echo 'Copied backup files to PVC mount point.'
         exit 0
     fi
- 
+
     echo "Backup attempts failed. Please FIX !!!"
     exit 1
 
-  etcd-snapshot-backup-disconnected.sh: |+
-    
+  etcd-snapshot-backup-disconnected.sh: |2+
+
     set -o errexit
     set -o pipefail
     set -o errtrace
@@ -103,13 +103,13 @@ data:
     if [ -z "$1" ] || [ -f "$1" ]; then
       usage
     fi
-    
+
     if [ ! -d "$1" ]; then
       mkdir -p $1
     fi
 
     function backup_latest_kube_static_resources {
-      
+
       RESOURCES=("$@")
 
       LATEST_RESOURCE_DIRS=()
@@ -128,19 +128,19 @@ data:
      }
 
       BACKUP_DIR="$1"
-      
+
       DATESTRING=$(date "+%F_%H%M%S")
-      
+
       BACKUP_TAR_FILE=${BACKUP_DIR}/static_kuberesources_${DATESTRING}.tar.gz
-      
+
       SNAPSHOT_FILE="${BACKUP_DIR}/snapshot_${DATESTRING}.db"
-      
+
       BACKUP_RESOURCE_LIST=("kube-apiserver-pod" "kube-controller-manager-pod" "kube-scheduler-pod" "etcd-pod")
 
       trap "rm -f ${BACKUP_TAR_FILE} ${SNAPSHOT_FILE}" ERR
 
       source /etc/kubernetes/static-pod-resources/etcd-certs/configmaps/etcd-scripts/etcd.env
-      
+
       source /etc/kubernetes/static-pod-resources/etcd-certs/configmaps/etcd-scripts/etcd-common-tools
 
       if [ ! -f "$ETCDCTL_CACERT" ] && [ ! -d "${CONFIG_FILE_DIR}/static-pod-certs" ]; then
@@ -148,9 +148,9 @@ data:
       fi
 
       backup_latest_kube_static_resources "${BACKUP_RESOURCE_LIST[@]}"
-      
+
       etcdctl snapshot save ${SNAPSHOT_FILE}
-      
+
       echo "snapshot db and kube resources are successfully saved to ${BACKUP_DIR}"
 
 kind: ConfigMap
@@ -177,9 +177,7 @@ spec:
                 - /bin/sh
                 - '-c'
                 - >-
-                  /usr/local/bin/etcd-backup.sh && ls -1
-                  /etcd-backup/* | sort -r | tail -n +6 | xargs
-                  rm -rf > /dev/null 2>&1
+                  /usr/local/bin/etcd-backup.sh && ls -1 /etcd-backup/* | sort -r | tail -n +6 | xargs rm -rf > /dev/null 2>&1
               env: null
               image: >-
                 quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:6a2378154881e6f9a4638f41242518d850e19b0d7d9ef74a2be55b87f4625e87

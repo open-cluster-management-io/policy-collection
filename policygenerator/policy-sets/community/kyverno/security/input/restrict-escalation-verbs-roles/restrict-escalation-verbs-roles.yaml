@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -15,11 +15,7 @@ metadata:
     policies.kyverno.io/minversion: 1.6.0
     kyverno.io/kubernetes-version: "1.23"
     policies.kyverno.io/description: >-
-      The verbs `impersonate`, `bind`, and `escalate` may all potentially lead to
-      privilege escalation and should be tightly controlled. This policy prevents
-      use of these verbs in Role or ClusterRole resources. In order to
-      fully implement this control, it is recommended to pair this policy with another which
-      also prevents use of the wildcard ('*') in the verbs list.
+      The verbs `impersonate`, `bind`, and `escalate` may all potentially lead to privilege escalation and should be tightly controlled. This policy prevents use of these verbs in Role or ClusterRole resources. In order to fully implement this control, it is recommended to pair this policy with another which also prevents use of the wildcard ('*') in the verbs list.
 spec:
   validationFailureAction: audit
   background: false
@@ -27,15 +23,15 @@ spec:
     - name: escalate
       match:
         any:
-        - resources:
-            kinds:
-              - Role
-              - ClusterRole
+          - resources:
+              kinds:
+                - Role
+                - ClusterRole
       validate:
         message: "Use of verbs `escalate`, `bind`, and `impersonate` are forbidden."
         deny:
           conditions:
             any:
-            - key: ["escalate","bind","impersonate"]
-              operator: AnyIn
-              value: "{{ request.object.rules[].verbs[] }}"
+              - key: ["escalate", "bind", "impersonate"]
+                operator: AnyIn
+                value: "{{ request.object.rules[].verbs[] }}"

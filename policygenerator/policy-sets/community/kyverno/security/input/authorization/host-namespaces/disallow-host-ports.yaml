@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -7,8 +7,7 @@ kind: ClusterPolicy
 metadata:
   name: disallow-host-ports
   annotations:
-    policies.kyverno.io/description: Provides a list of allowed ports in the host network namespace.
-      Access to host ports allows potential snooping of network traffic and should be forbidden / minimized.
+    policies.kyverno.io/description: Provides a list of allowed ports in the host network namespace. Access to host ports allows potential snooping of network traffic and should be forbidden / minimized.
 spec:
   background: false
   validationFailureAction: audit
@@ -40,8 +39,7 @@ spec:
             - "kube*"
       validate:
         message: >-
-          Use of host ports is disallowed. The fields spec.containers[*].ports[*].hostPort
-          and spec.initContainers[*].ports[*].hostPort must be empty.
+          Use of host ports is disallowed. The fields spec.containers[*].ports[*].hostPort and spec.initContainers[*].ports[*].hostPort must be empty.
         pattern:
           spec:
             =(initContainers):

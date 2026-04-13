@@ -6,7 +6,7 @@ metadata:
 data:
   vmwareReplicas: "6"
   vmwareCPU: "8"
-  vmwareMemory: "32768" 
+  vmwareMemory: "32768"
   awsReplicas: "2"
   awsInstanceType: m6a.2xlarge
   us-east-1-4.12: ami-0c321aac14de997e3

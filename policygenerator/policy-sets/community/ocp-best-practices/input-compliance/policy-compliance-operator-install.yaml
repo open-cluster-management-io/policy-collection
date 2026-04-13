@@ -30,4 +30,4 @@ metadata:
 spec:
   displayName: Compliance Operator
 status:
-  phase: Succeeded   # check the csv status to determine if operator is running or not
+  phase: Succeeded # check the csv status to determine if operator is running or not

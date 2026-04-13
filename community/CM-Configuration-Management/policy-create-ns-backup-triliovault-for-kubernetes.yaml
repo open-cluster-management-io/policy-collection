@@ -3,9 +3,9 @@
 #
 # To create the namespace backup, following process is followed
 # 1. Create the target object to store backup data
-#    This policy creates AWS S3 based target storage for storing backup images. 
+#    This policy creates AWS S3 based target storage for storing backup images.
 # 2. Create a backup plan that references the following:
-#      Namespace to be backed up 
+#      Namespace to be backed up
 #      Default Scheduling Policy - create daily 1 backup
 #      Target to where the data should be backed up
 # 3. Apply the Backup CR that references the Backup
@@ -85,7 +85,7 @@ spec:
                 spec:
                   scheduleConfig:
                     schedule:
-                    - 0 23 * * *
+                      - 0 23 * * *
                   type: Schedule
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
@@ -211,6 +211,5 @@ spec:
                   backupPlan:
                     name: tvk-ns-backupplan
                     namespace: '{{hub fromConfigMap "" "aws-s3-configmap" "backupNS" hub}}'
-                status: 
+                status:
                   status: Available
-

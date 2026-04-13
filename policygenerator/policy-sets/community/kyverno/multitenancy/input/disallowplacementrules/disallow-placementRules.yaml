@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -10,12 +10,11 @@ spec:
   validationFailureAction: audit
   background: false
   rules:
-  - name: disallow-placementrules
-    match:
-      resources:
-        kinds:
-        - apps.open-cluster-management.io/v1/PlacementRule
-    validate:
-      message: "Using Placement Rules not allowed"
-      deny: {}          
- 
+    - name: disallow-placementrules
+      match:
+        resources:
+          kinds:
+            - apps.open-cluster-management.io/v1/PlacementRule
+      validate:
+        message: "Using Placement Rules not allowed"
+        deny: {}

@@ -7,7 +7,7 @@ placementBindingDefaults:
 policyDefaults:
   categories:
     - SI System and Information Integrity
-  controls: 
+  controls:
     - SI-5 Security Alerts Advisories and Directives
   namespace: policies
   policySets:
@@ -17,33 +17,31 @@ policyDefaults:
   standards:
     - NIST SP 800-53
 policies:
-- name: policy-acs-sync-resources
-  consolidateManifests: false
-  manifests:
-    - path: input-sensor/policy-acs-sync-resources.yaml
-- name: policy-acs-monitor-certs
-  dependencies:
-    - name: policy-acs-sync-resources
-  manifests:
-    - path: input-sensor/acs-check-certificates.yaml
-- name: policy-advanced-managed-cluster-security
-  consolidateManifests: false
-  manifests:
-    - path: input-sensor/policy-advanced-managed-cluster-security.yaml
-    - path: input-sensor/policy-advanced-managed-cluster-status.yaml
-      remediationAction: informOnly
-  policySets:
-    - acs-sensor-clusters
+  - name: policy-acs-sync-resources
+    consolidateManifests: false
+    manifests:
+      - path: input-sensor/policy-acs-sync-resources.yaml
+  - name: policy-acs-monitor-certs
+    dependencies:
+      - name: policy-acs-sync-resources
+    manifests:
+      - path: input-sensor/acs-check-certificates.yaml
+  - name: policy-advanced-managed-cluster-security
+    consolidateManifests: false
+    manifests:
+      - path: input-sensor/policy-advanced-managed-cluster-security.yaml
+      - path: input-sensor/policy-advanced-managed-cluster-status.yaml
+        remediationAction: informOnly
+    policySets:
+      - acs-sensor-clusters
 policySets:
-  - description: The Advanced Cluster Security components to setup the hub for securing
-      each managed cluster.
+  - description: The Advanced Cluster Security components to setup the hub for securing each managed cluster.
     name: acs-sensors-hub-info
     placement:
       labelSelector:
         matchExpressions:
           - {key: "local-cluster", operator: In, values: ["true"]}
-  - description: The Advanced Cluster Security components distributed to all OpenShift
-      managed clusters to secure the clusters.
+  - description: The Advanced Cluster Security components distributed to all OpenShift managed clusters to secure the clusters.
     name: acs-sensor-clusters
     placement:
       labelSelector:

@@ -1,6 +1,6 @@
 # This policy configures the OAuth for using an LDAP provider, and creates a job to sync with an external LDAP.
 # In this example, Active Directory is used as external IDP.
-# For more information on configuring the OAuth server, consult the OpenShift documentation: 
+# For more information on configuring the OAuth server, consult the OpenShift documentation:
 # https://docs.openshift.com/container-platform/4.10/authentication/identity_providers/configuring-ldap-identity-provider.html
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
@@ -109,33 +109,27 @@ spec:
               objectDefinition:
                 apiVersion: v1
                 data:
-                  ldap-sync.yml: >
+                  ldap-sync.yml: |
                     kind: LDAPSyncConfig
-
                     apiVersion: v1
-
                     url: ldap://<ldapurl>
-
                     insecure: true
-
                     bindDN: "<ldapbindDN>"
-
                     bindPassword: '<ldapbindPassword>'
-
                     augmentedActiveDirectory:
-                        groupsQuery:
-                            derefAliases: never
-                            pageSize: 0
-                        groupUIDAttribute: dn
-                        groupNameAttributes: [ cn ]
-                        groupMembershipAttributes: [ memberOf ]
-                        usersQuery:
-                            baseDN: "<baseDN>"
-                            scope: sub
-                            derefAliases: never
-                            pageSize: 0
-                            filter: <filter>
-                        userNameAttributes: [ sAMAccountName ]
+                      groupsQuery:
+                        derefAliases: never
+                        pageSize: 0
+                      groupUIDAttribute: dn
+                      groupNameAttributes: [ cn ]
+                      groupMembershipAttributes: [ memberOf ]
+                      usersQuery:
+                        baseDN: "<baseDN>"
+                        scope: sub
+                        derefAliases: never
+                        pageSize: 0
+                        filter: <filter>
+                      userNameAttributes: [ sAMAccountName ]
                 kind: ConfigMap
                 metadata:
                   name: ldap-config
@@ -174,9 +168,7 @@ spec:
                               command:
                                 - /bin/bash
                                 - -c
-                                - "oc adm groups sync
-                                  --sync-config=/etc/config/ldap-group-sync.yaml
-                                  --confirm || :"
+                                - "oc adm groups sync --sync-config=/etc/config/ldap-group-sync.yaml --confirm || :"
                               image: registry.redhat.io/openshift4/ose-cli:latest
                               volumeMounts:
                                 - name: ldap-sync-volume

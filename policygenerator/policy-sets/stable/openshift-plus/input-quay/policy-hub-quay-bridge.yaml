@@ -35,16 +35,16 @@ data:
 apiVersion: quay.redhat.com/v1
 kind: QuayIntegration
 metadata:
- name: quay
- annotations:
-   argocd.argoproj.io/sync-wave: "8"
+  name: quay
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
 spec:
- clusterID: openshift
- credentialsSecret:
-   name: quay-integration
-   namespace: policies
- insecureRegistry: false
- quayHostname: https://{{ fromConfigMap "policies" "quay-config" "host" }}
+  clusterID: openshift
+  credentialsSecret:
+    name: quay-integration
+    namespace: policies
+  insecureRegistry: false
+  quayHostname: https://{{ fromConfigMap "policies" "quay-config" "host" }}
 ---
 apiVersion: v1
 data:
@@ -58,7 +58,7 @@ metadata:
 apiVersion: config.openshift.io/v1
 kind: Image
 metadata:
- name: cluster
+  name: cluster
 spec:
   additionalTrustedCA:
     name: opp-ingres-ca

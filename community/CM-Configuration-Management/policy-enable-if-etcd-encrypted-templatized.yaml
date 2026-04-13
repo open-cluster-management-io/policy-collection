@@ -4,7 +4,7 @@
 # 2 - policy-conditionalsecret-enabler : Checks if etcd encryption is set  and enables the above policy #1 that enforces a secure secret.
 
 # NOTE
-# The file has 2 related policies clubbed together, 
+# The file has 2 related policies clubbed together,
 # when deploying through GRC UI Editor pls copy paste each policy resource individually as the ui can handle only one policy at a time.
 # pls make sure to deploy both policies in the same namespace and replace any placeholder <POLICIESNS> in this file with the policy namespace.
 
@@ -71,5 +71,5 @@ spec:
                   name: policy-conditionalsecret #name should match the name of the root policy that is being enabled
                   namespace: <POLICIESNS> #namespace should match the ns of the root policy that is being enabled
                 spec:
-                  # disable is set to true if encryption.type != aescbc else it is set to false , 
+                  # disable is set to true if encryption.type != aescbc else it is set to false ,
                   disabled: '{{ ne (lookup "config.openshift.io/v1" "APIServer" "" "cluster").spec.encryption.type "aescbc" |  print | toBool }}'

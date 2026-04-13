@@ -19,7 +19,7 @@ spec:
             - key: is-hub
               operator: In
               values:
-                - 'true'                
+                - 'true'
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -34,4 +34,3 @@ subjects:
   - name: acm-hub-pvc-backup-policyset
     apiGroup: policy.open-cluster-management.io
     kind: PolicySet
-

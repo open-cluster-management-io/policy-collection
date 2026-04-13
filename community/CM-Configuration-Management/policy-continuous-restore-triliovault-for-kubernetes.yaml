@@ -1,7 +1,7 @@
 # This is the 3rd policy to setup Continuous Restore Functionality using
 # Triliovault for Kubernetes (TVK).
 #
-# This policy recovers the application backed up from the source cluster 
+# This policy recovers the application backed up from the source cluster
 # to the target cluster participating in the Continuous Restore Functionality.
 # The target cluster i defined with labels "protected-by=triliovault" and
 # "tvk-continuous-restore-cluster=target"
@@ -11,8 +11,8 @@
 # ./CM-Configuration-Management/policy-continuous-restore-event-target-triliovault-for-kubernetes.yaml
 # before applying this policy.
 #
-# Also, this policy retrieves the consistent set created based on the backup 
-# created using below policy 
+# Also, this policy retrieves the consistent set created based on the backup
+# created using below policy
 #  ./CM-Configuration-Management/policy-continuous-restore-backup-triliovault-for-kubernetes.yaml
 #
 # Refer - https://docs.trilio.io/kubernetes/management-console/index/continuous-restore - Restore
@@ -88,4 +88,3 @@ spec:
                   skipIfAlreadyExists: true
                 status:
                   status: Completed
-

@@ -2,5 +2,5 @@ apiVersion: addon.open-cluster-management.io/v1alpha1
 kind: ManagedClusterAddOn
 status:
   conditions:
-  - type: Available
-    status: "False"
+    - type: Available
+      status: "False"

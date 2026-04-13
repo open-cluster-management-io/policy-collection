@@ -23,12 +23,12 @@ spec:
             {{- $kind_schedule := "Schedule" }}
             {{- $schedule_label := "cluster.open-cluster-management.io/backup-schedule-type, cluster.open-cluster-management.io/backup-schedule-type in (resources)"}}
             {{- $kind_restore := "Restore" }}
-            {{- $ns := "open-cluster-management-backup" }}   
-            {{- $volsync_map := "hub-pvc-backup" }} 
+            {{- $ns := "open-cluster-management-backup" }}
+            {{- $volsync_map := "hub-pvc-backup" }}
             {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}
             {{- $pv_claim_cond := gt (len ( lookup "v1" "PersistentVolumeClaim" "" "" $volsync_label).items ) 0 }}
             {{- $volsync_pvcs := "hub-pvc-backup-pvcs" }}
-            
+
             {{- /* check if volsync_pvcs configmap exists */ -}}
             {{- $volsync_pvcs_map := lookup "v1" "ConfigMap" $ns $volsync_pvcs }}
             {{- $volsync_pvcs_exists := eq $volsync_pvcs_map.metadata.name $volsync_pvcs }}
@@ -66,13 +66,13 @@ spec:
             {{- $kind_schedule := "Schedule" }}
             {{- $schedule_label := "cluster.open-cluster-management.io/backup-schedule-type, cluster.open-cluster-management.io/backup-schedule-type in (resources)"}}
             {{- $kind_restore := "Restore" }}
-            {{- $ns := "open-cluster-management-backup" }}   
-            {{- $volsync_secret := "acm-hub-pvc-backup-restic-secret" }} 
-            {{- $volsync_map := "hub-pvc-backup" }} 
+            {{- $ns := "open-cluster-management-backup" }}
+            {{- $volsync_secret := "acm-hub-pvc-backup-restic-secret" }}
+            {{- $volsync_map := "hub-pvc-backup" }}
             {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}
             {{- $pv_claim_cond := gt (len ( lookup "v1" "PersistentVolumeClaim" "" "" $volsync_label).items ) 0 }}
             {{- $volsync_pvcs := "hub-pvc-backup-pvcs" }}
-            
+
             {{- $volsync_backup_cond := gt (len ( lookup $velero_api $kind_schedule $ns "" $schedule_label).items ) 0  }}
             {{- $volsync_restore_cond := eq ( lookup "v1" "ConfigMap" $ns $volsync_pvcs ).metadata.name $volsync_pvcs }}
 
@@ -101,7 +101,7 @@ spec:
                 type: Opaque
             {{- end }}
           remediationAction: inform
-          severity: high 
+          severity: high
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -115,8 +115,8 @@ spec:
             {{- $kind_schedule := "Schedule" }}
             {{- $schedule_label := "cluster.open-cluster-management.io/backup-schedule-type, cluster.open-cluster-management.io/backup-schedule-type in (resources)"}}
             {{- $kind_restore := "Restore" }}
-            {{- $ns := "open-cluster-management-backup" }}   
-            {{- $volsync_map := "hub-pvc-backup" }} 
+            {{- $ns := "open-cluster-management-backup" }}
+            {{- $volsync_map := "hub-pvc-backup" }}
             {{- $volsync_label := "cluster.open-cluster-management.io/backup-hub-pvc" }}
             {{- $pv_claim_cond := gt (len ( lookup "v1" "PersistentVolumeClaim" "" "" $volsync_label).items ) 0 }}
             {{- $volsync_backup_cond := gt (len ( lookup $velero_api $kind_schedule $ns "" $schedule_label).items ) 0  }}
@@ -143,8 +143,8 @@ spec:
                     status:
                       conditions:
                         - status: 'True'
-                          type: Available  
-                  {{- end }}      
+                          type: Available
+                  {{- end }}
                 {{- end }}
                 {{ if $local_cls_name }}
                 - complianceType: musthave
@@ -161,8 +161,8 @@ spec:
                     status:
                       conditions:
                         - status: 'True'
-                          type: Available     
-                {{- end }}        
+                          type: Available
+                {{- end }}
             {{- end }}
           remediationAction: enforce
           severity: high

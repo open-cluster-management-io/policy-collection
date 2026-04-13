@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -9,7 +9,7 @@ metadata:
     policies.kyverno.io/title: Add TTL to dangling Job
     policies.kyverno.io/category: The cool company policy collection
     policies.kyverno.io/description: >-
-            Autoclean dangling jobs by add TTL to spec.
+      Autoclean dangling jobs by add TTL to spec.
   name: add-ttl-to-dangling-job
 spec:
   background: false

@@ -4,12 +4,12 @@ metadata:
   name: moderate
   namespace: openshift-compliance
 profiles:
-- apiGroup: compliance.openshift.io/v1alpha1
-  kind: Profile
-  name: ocp4-moderate
-- apiGroup: compliance.openshift.io/v1alpha1
-  kind: Profile
-  name: ocp4-moderate-node
+  - apiGroup: compliance.openshift.io/v1alpha1
+    kind: Profile
+    name: ocp4-moderate
+  - apiGroup: compliance.openshift.io/v1alpha1
+    kind: Profile
+    name: ocp4-moderate-node
 settingsRef:
   apiGroup: compliance.openshift.io/v1alpha1
   kind: ScanSetting

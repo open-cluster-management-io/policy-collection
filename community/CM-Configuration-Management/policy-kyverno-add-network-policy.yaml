@@ -1,11 +1,11 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 # Then convert the Kyverno manifest to an OCM policy with the Policy Generator plugin
 
 # Use this policy to create NetworkPolicies in new namespaces.
 # This policy requires the Kyverno policy enforcement point to be installed
-# separately.  The policy is based off of a kyverno community policy 
+# separately.  The policy is based off of a kyverno community policy
 # located here: https://kyverno.io/policies/best-practices/add_network_policy/add_network_policy/
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
@@ -39,13 +39,7 @@ spec:
                     policies.kyverno.io/category: Multi-Tenancy
                     policies.kyverno.io/subject: NetworkPolicy
                     policies.kyverno.io/description: >-
-                      By default, Kubernetes allows communications across all Pods within a cluster.
-                      The NetworkPolicy resource and a CNI plug-in that supports NetworkPolicy must be used to restrict
-                      communications. A default NetworkPolicy should be configured for each Namespace to
-                      default deny all ingress and egress traffic to the Pods in the Namespace. Application
-                      teams can then configure additional NetworkPolicy resources to allow desired traffic
-                      to application Pods from select sources. This policy will create a new NetworkPolicy resource
-                      named `default-deny` which will deny all traffic anytime a new Namespace is created.      
+                      By default, Kubernetes allows communications across all Pods within a cluster. The NetworkPolicy resource and a CNI plug-in that supports NetworkPolicy must be used to restrict communications. A default NetworkPolicy should be configured for each Namespace to default deny all ingress and egress traffic to the Pods in the Namespace. Application teams can then configure additional NetworkPolicy resources to allow desired traffic to application Pods from select sources. This policy will create a new NetworkPolicy resource named `default-deny` which will deny all traffic anytime a new Namespace is created.
                 spec:
                   rules:
                     - name: default-deny
