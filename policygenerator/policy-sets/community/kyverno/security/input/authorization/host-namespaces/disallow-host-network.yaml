@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -7,9 +7,7 @@ kind: ClusterPolicy
 metadata:
   name: disallow-host-network
   annotations:
-    policies.kyverno.io/description: Host network Controls whether the pod may use the host's network namespace.
-      Providing access to the host's network gives the pod access to the host's network devices.
-      Pods with access to the host's network devices can be used to snoop on network activity of other pods on the same node.
+    policies.kyverno.io/description: Host network Controls whether the pod may use the host's network namespace. Providing access to the host's network gives the pod access to the host's network devices. Pods with access to the host's network devices can be used to snoop on network activity of other pods on the same node.
 spec:
   background: false
   validationFailureAction: audit

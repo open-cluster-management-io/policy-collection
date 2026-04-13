@@ -8,7 +8,7 @@ policyDefaults:
   configurationPolicyAnnotations: {"policy.open-cluster-management.io/disable-templates": "true"}
   categories:
     - AC Access Control
-  controls: 
+  controls:
     - AC-3 Access Enforcement
   namespace: policies
   remediationAction: enforce
@@ -18,57 +18,56 @@ policyDefaults:
   standards:
     - NIST SP 800-53
 policies:
-- name: add-labels-to-tenant
-  disabled: false
-  manifests:
-    - path: input/addlabelstotenant
-- name: disallow-placementrules
-  disabled: false
-  manifests:
-    - path: input/disallowplacementrules
-- name: generate-all
-  disabled: false
-  manifests:
-    - path: input/generateall
-- name: gen-argocdpersmissions
-  disabled: false
-  manifests:
-    - path: input/generateargocdpersmissions
-- name: gen-managed-clusterset-binding
-  disabled: false
-  manifests:
-    - path: input/generateManagedClusterSetBinding
-- name: gen-placement-rules
-  disabled: false
-  manifests:
-    - path: input/generatePlacementRules
-- name: add-job-ttl
-  disabled: false
-  manifests:
-    - path: input/other
-- name: preventupdatesappproject
-  disabled: false
-  manifests:
-    - path: input/preventupdatesappproject
-- name: team-restrictions
-  disabled: false
-  manifests:
-    - path: input/restrictions
-- name: team-sharedresources
-  disabled: false
-  manifests:
-    - path: input/sharedresources
-- name: team-validate-ns
-  disabled: false
-  manifests:
-    - path: input/validatens
-- name: validate-placement
-  disabled: false
-  manifests:
-    - path: input/validateplacement
+  - name: add-labels-to-tenant
+    disabled: false
+    manifests:
+      - path: input/addlabelstotenant
+  - name: disallow-placementrules
+    disabled: false
+    manifests:
+      - path: input/disallowplacementrules
+  - name: generate-all
+    disabled: false
+    manifests:
+      - path: input/generateall
+  - name: gen-argocdpersmissions
+    disabled: false
+    manifests:
+      - path: input/generateargocdpersmissions
+  - name: gen-managed-clusterset-binding
+    disabled: false
+    manifests:
+      - path: input/generateManagedClusterSetBinding
+  - name: gen-placement-rules
+    disabled: false
+    manifests:
+      - path: input/generatePlacementRules
+  - name: add-job-ttl
+    disabled: false
+    manifests:
+      - path: input/other
+  - name: preventupdatesappproject
+    disabled: false
+    manifests:
+      - path: input/preventupdatesappproject
+  - name: team-restrictions
+    disabled: false
+    manifests:
+      - path: input/restrictions
+  - name: team-sharedresources
+    disabled: false
+    manifests:
+      - path: input/sharedresources
+  - name: team-validate-ns
+    disabled: false
+    manifests:
+      - path: input/validatens
+  - name: validate-placement
+    disabled: false
+    manifests:
+      - path: input/validateplacement
 policySets:
   - description: kyverno-multitenancy-policyset to apply set of kyverno-policies.
     name: kyverno-multitenancy-policyset
     placement:
       placementPath: placement.yaml
-

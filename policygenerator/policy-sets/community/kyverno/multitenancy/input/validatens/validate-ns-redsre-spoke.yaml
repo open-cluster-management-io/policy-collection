@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -15,38 +15,37 @@ metadata:
     kyverno.io/kubernetes-version: "1.23"
     policies.kyverno.io/subject: Group
     policies.kyverno.io/description: >-
-      Denies the creation of a namespace is the name of the namespace does
-      not follow a specific naming defined by the cluster admins.
+      Denies the creation of a namespace is the name of the namespace does not follow a specific naming defined by the cluster admins.
 spec:
   validationFailureAction: enforce
   background: false
   rules:
-  - name: namespace-name
-    match:
-      any:
-      - resources:
-          kinds:
-            - Namespace
-            - ProjectRequest
-            - Project
-        subjects:
-        - kind: Group
-          name: "red-sre-group"
-    preconditions:
-      any:
-      - key: "{{request.operation}}"
-        operator: In
-        value:
-        - CREATE
-        - UPDATE        
-    validate:
-      message: The only names approved for your namespaces are the ones starting by redteam*
-      foreach:
-      - list: "request.userInfo.groups[?contains(@,':') == `false`][].{name:@}"
-        elementScope: true
-        deny:
-          conditions:
-            any:
-            - key: "{{request.object.metadata.name}}"
-              operator: AnyNotIn
-              value: "redteam*"
+    - name: namespace-name
+      match:
+        any:
+          - resources:
+              kinds:
+                - Namespace
+                - ProjectRequest
+                - Project
+            subjects:
+              - kind: Group
+                name: "red-sre-group"
+      preconditions:
+        any:
+          - key: "{{request.operation}}"
+            operator: In
+            value:
+              - CREATE
+              - UPDATE
+      validate:
+        message: The only names approved for your namespaces are the ones starting by redteam*
+        foreach:
+          - list: "request.userInfo.groups[?contains(@,':') == `false`][].{name:@}"
+            elementScope: true
+            deny:
+              conditions:
+                any:
+                  - key: "{{request.object.metadata.name}}"
+                    operator: AnyNotIn
+                    value: "redteam*"

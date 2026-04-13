@@ -11,25 +11,23 @@ defaultAddCapabilities: null
 fsGroup:
   type: MustRunAs
 groups:
-- system:authenticated
+  - system:authenticated
 kind: SecurityContextConstraints
 metadata:
   annotations:
     include.release.openshift.io/ibm-cloud-managed: "true"
     include.release.openshift.io/self-managed-high-availability: "true"
     include.release.openshift.io/single-node-developer: "true"
-    kubernetes.io/description: restricted denies access to all host features and requires
-      pods to be run with a UID, and SELinux context that are allocated to the namespace.  This
-      is the most restrictive SCC and it is used by default for authenticated users.
+    kubernetes.io/description: restricted denies access to all host features and requires pods to be run with a UID, and SELinux context that are allocated to the namespace.  This is the most restrictive SCC and it is used by default for authenticated users.
     release.openshift.io/create-only: "true"
   name: restricted
 priority: null
 readOnlyRootFilesystem: false
 requiredDropCapabilities:
-- KILL
-- MKNOD
-- SETUID
-- SETGID
+  - KILL
+  - MKNOD
+  - SETUID
+  - SETGID
 runAsUser:
   type: MustRunAsRange
 seLinuxContext:
@@ -38,9 +36,9 @@ supplementalGroups:
   type: RunAsAny
 users: []
 volumes:
-- configMap
-- downwardAPI
-- emptyDir
-- persistentVolumeClaim
-- projected
-- secret
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - persistentVolumeClaim
+  - projected
+  - secret

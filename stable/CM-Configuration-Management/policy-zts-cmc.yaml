@@ -1,5 +1,5 @@
 # This policy uses the Config Map reloader to restart the deployment
-# when the Configmap changes.  
+# when the Configmap changes.
 # https://github.com/stakater/Reloader/blob/master/LICENSE
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy

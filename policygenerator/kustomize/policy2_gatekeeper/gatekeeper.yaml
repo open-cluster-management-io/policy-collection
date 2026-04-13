@@ -3,8 +3,7 @@ kind: ConstraintTemplate
 metadata:
   name: k8srequiredlabels
   annotations:
-    description: Requires all resources to contain a specified label with a value
-      matching a provided regular expression.
+    description: Requires all resources to contain a specified label with a value matching a provided regular expression.
 spec:
   crd:
     spec:

@@ -10,7 +10,7 @@ metadata:
   namespace: openshift-file-integrity
 spec:
   targetNamespaces:
-  - openshift-file-integrity
+    - openshift-file-integrity
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
@@ -35,6 +35,6 @@ spec:
   nodeSelector:
     node-role.kubernetes.io/worker: ""
   tolerations:
-  - effect: NoSchedule
-    key: node-role.kubernetes.io/master
-    operator: Exists
+    - effect: NoSchedule
+      key: node-role.kubernetes.io/master
+      operator: Exists

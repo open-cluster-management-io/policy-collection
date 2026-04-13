@@ -37,11 +37,11 @@ spec:
             id: ami-0197c5c22c44c04f1
           apiVersion: awsproviderconfig.openshift.io/v1beta1
           blockDevices:
-          - ebs:
-              iops: 0
-              kmsKey: {}
-              volumeSize: 120
-              volumeType: gp3
+            - ebs:
+                iops: 0
+                kmsKey: {}
+                volumeSize: 120
+                volumeType: gp3
           capacityReservationId: ""
           credentialsSecret:
             name: aws-cloud-credentials
@@ -57,27 +57,27 @@ spec:
             availabilityZone: us-east-2b
             region: us-east-2
           securityGroups:
-          - filters:
-            - name: tag:Name
-              values:
-              - example-drtt7-worker-sg
-          - filters:
-            - name: tag:Name
-              values:
-              - example-drtt7-node
-          - filters:
-            - name: tag:Name
-              values:
-              - example-drtt7-lb
+            - filters:
+                - name: tag:Name
+                  values:
+                    - example-drtt7-worker-sg
+            - filters:
+                - name: tag:Name
+                  values:
+                    - example-drtt7-node
+            - filters:
+                - name: tag:Name
+                  values:
+                    - example-drtt7-lb
           subnet:
             filters:
-            - name: tag:Name
-              values:
-              - example-drtt7-private-us-east-2b
-              - example-drtt7-subnet-private-us-east-2b
+              - name: tag:Name
+                values:
+                  - example-drtt7-private-us-east-2b
+                  - example-drtt7-subnet-private-us-east-2b
           tags:
-          - name: kubernetes.io/cluster/example-drtt7
-            value: owned
+            - name: kubernetes.io/cluster/example-drtt7
+              value: owned
           userDataSecret:
             name: worker-user-data
 status:

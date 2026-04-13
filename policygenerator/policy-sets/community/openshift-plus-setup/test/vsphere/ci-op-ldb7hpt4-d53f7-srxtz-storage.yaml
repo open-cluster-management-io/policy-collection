@@ -38,7 +38,7 @@ spec:
             creationTimestamp: null
           network:
             devices:
-            - networkName: ci-vlan-1148
+              - networkName: ci-vlan-1148
           numCPUs: 8
           numCoresPerSocket: 4
           snapshot: ""

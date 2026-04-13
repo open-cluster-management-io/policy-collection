@@ -19,9 +19,9 @@ spec:
     namespaces: ["kube-system"] # should contain all namespaces specified under forbiddenSAs
   parameters:
     forbiddenSAs:
-    # Not every controller SA is powerful, but there's no reason 
-    # for either of them to be assigned to a pod
-      - name: attachdetach-controller 
+      # Not every controller SA is powerful, but there's no reason
+      # for either of them to be assigned to a pod
+      - name: attachdetach-controller
         namespace: kube-system
       - name: certificate-controller
         namespace: kube-system
@@ -75,4 +75,3 @@ spec:
         namespace: kube-system
       - name: vpc-resource-controller
         namespace: kube-system
-

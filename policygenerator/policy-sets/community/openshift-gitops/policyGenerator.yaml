@@ -7,7 +7,7 @@ placementBindingDefaults:
 policyDefaults:
   categories:
     - CM Configuration Management
-  controls: 
+  controls:
     - CM-2 Baseline Configuration
   namespace: open-cluster-management-global-set
   policySets:
@@ -17,17 +17,16 @@ policyDefaults:
   standards:
     - NIST SP 800-53
 policies:
-- name: openshift-gitops
-  manifests:
-    - path: policy-openshift-gitops.yaml
-- name: openshift-gitops-grc
-  dependencies:
-    - name: openshift-gitops
-  manifests:
-    - path: policy-openshift-gitops-grc.yaml
+  - name: openshift-gitops
+    manifests:
+      - path: policy-openshift-gitops.yaml
+  - name: openshift-gitops-grc
+    dependencies:
+      - name: openshift-gitops
+    manifests:
+      - path: policy-openshift-gitops-grc.yaml
 policySets:
-  - description: Applies the OpenShift Gitops subscription and configures
-      OpenShift Gitops to work with the Governance APIs
+  - description: Applies the OpenShift Gitops subscription and configures OpenShift Gitops to work with the Governance APIs
     name: openshift-gitops
     placement:
       placementPath: placement.yaml

@@ -7,8 +7,7 @@ metadata:
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
     policy.open-cluster-management.io/description: >-
-      This policy configures healthchecks for open-cluster-management-io Policy kinds on any ArgoCD
-      instances found on the cluster.
+      This policy configures healthchecks for open-cluster-management-io Policy kinds on any ArgoCD instances found on the cluster.
 spec:
   remediationAction: inform
   disabled: false
@@ -65,7 +64,7 @@ spec:
                         if obj.status.lastEvaluatedGeneration ~= obj.metadata.generation then
                           hs.status = "Progressing"
                           hs.message = "Waiting for the status to be updated"
-                          return hs  
+                          return hs
                         end
                         if obj.status.compliant == "Compliant" then
                           hs.status = "Healthy"
@@ -101,7 +100,7 @@ spec:
                         if obj.status.observedGeneration ~= nil and obj.status.observedGeneration ~= obj.metadata.generation then
                           hs.status = "Progressing"
                           hs.message = "Waiting for the status to be updated"
-                          return hs  
+                          return hs
                         end
                         for i, condition in ipairs(obj.status.conditions) do
                           if condition.type == "Compliant" then

@@ -107,7 +107,6 @@ roleRef:
   name: zts-xcrypt-operator
   apiGroup: rbac.authorization.k8s.io
 ---
-
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -153,7 +152,6 @@ rules:
       - hostmount-anyuid
       - hostnetwork
 ---
-
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -166,9 +164,7 @@ roleRef:
   kind: ClusterRole
   name: zts-external-provisioner-role
   apiGroup: rbac.authorization.k8s.io
-
 ---
-
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -202,7 +198,6 @@ rules:
       - hostmount-anyuid
       - hostnetwork
 ---
-
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:

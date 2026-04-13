@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -10,17 +10,17 @@ spec:
   validationFailureAction: enforce
   background: false
   rules:
-  - name: restrict-to-argoproject
-    match:
-      resources:
-        kinds:
-        - Placement
-      subjects:
-      - kind: Group
-        name: red-sre-group
-    validate:
-      message: "For any `red-sre-group` member, creation of Placement must be bound to its clusterset"
-      pattern:
-        spec:
-         clusterSets:
-         - redteam
+    - name: restrict-to-argoproject
+      match:
+        resources:
+          kinds:
+            - Placement
+        subjects:
+          - kind: Group
+            name: red-sre-group
+      validate:
+        message: "For any `red-sre-group` member, creation of Placement must be bound to its clusterset"
+        pattern:
+          spec:
+            clusterSets:
+              - redteam

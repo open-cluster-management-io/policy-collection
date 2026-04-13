@@ -1,12 +1,12 @@
 # This is the 2nd policy to setup Continuous Restore Functionality using
 # Triliovault for Kubernetes (TVK).
 #
-# This policy creates backup on the source cluster participating in the Continuous 
+# This policy creates backup on the source cluster participating in the Continuous
 # Restore Functionality defined with labels "protected-by=triliovault" and
 # "tvk-continuous-restore-cluster=source"
 #
-# Please note TVK should be installed and configured on the cluster and the event 
-# target created using policy 
+# Please note TVK should be installed and configured on the cluster and the event
+# target created using policy
 # ./CM-Configuration-Management/policy-continuous-restore-event-target-triliovault-for-kubernetes.yaml
 # before applying this policy.
 #
@@ -79,7 +79,7 @@ spec:
                 spec:
                   scheduleConfig:
                     schedule:
-                    - 0 23 * * *
+                      - 0 23 * * *
                   type: Schedule
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
@@ -156,12 +156,12 @@ spec:
                     skipImageBackup: true
                   continuousRestoreConfig:
                     continuousRestoreInstances:
-                    - continuousRestorePolicy:
-                        apiVersion: triliovault.trilio.io/v1
-                        kind: Policy
-                        name: tvk-cr-policy
-                        namespace: default
-                      instanceID: '{{with lookup "triliovault.trilio.io/v1" "Target" "default" "tvk-s3-event-target"}}{{- range $k, $v := .status.availableContinuousRestoreInstances }}{{ $k }}{{- end }}{{- end }}'
+                      - continuousRestorePolicy:
+                          apiVersion: triliovault.trilio.io/v1
+                          kind: Policy
+                          name: tvk-cr-policy
+                          namespace: default
+                        instanceID: '{{with lookup "triliovault.trilio.io/v1" "Target" "default" "tvk-s3-event-target"}}{{- range $k, $v := .status.availableContinuousRestoreInstances }}{{ $k }}{{- end }}{{- end }}'
                   retainHelmApps: true
                 status:
                   status: Available
@@ -186,5 +186,5 @@ spec:
                   backupPlan:
                     name: tvk-cr-backupplan
                     namespace: '{{hub fromConfigMap "" "tvk-cr-backup-configmap" "backupNS" hub}}'
-                status: 
+                status:
                   status: Available

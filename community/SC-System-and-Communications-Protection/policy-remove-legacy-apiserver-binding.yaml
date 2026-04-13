@@ -7,10 +7,7 @@ metadata:
     policy.open-cluster-management.io/categories: SC System and Communications Protection
     policy.open-cluster-management.io/controls: SC-1 SYSTEM AND COMMUNICATIONS PROTECTION POLICY AND PROCEDURES
     policy.open-cluster-management.io/description: >-
-      This policy removes an obsolete legacy entry in the kube-apiserver
-      ClusterRoleBinding that used to be created during cluster installation
-      by default, and would grant elevated privileges to a regular user
-      whose name happens to match
+      This policy removes an obsolete legacy entry in the kube-apiserver ClusterRoleBinding that used to be created during cluster installation by default, and would grant elevated privileges to a regular user whose name happens to match
 spec:
   remediationAction: inform
   disabled: false
@@ -25,9 +22,7 @@ spec:
           severity: low
           customMessage:
             noncompliant: >-
-              ClusterRoleBinding kube-apiserver includes obsolete legacy entry
-              that should be removed (see
-              <https://access.redhat.com/solutions/7136094>)
+              ClusterRoleBinding kube-apiserver includes obsolete legacy entry that should be removed (see <https://access.redhat.com/solutions/7136094>)
           object-templates:
             - complianceType: mustonlyhave
               metadataComplianceType: musthave

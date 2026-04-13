@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -14,36 +14,32 @@ metadata:
 spec:
   background: false
   rules:
-  - name: generate-clusterrolebinding-red
-    match:
-      any:
-      - resources:
-          kinds:
-            - Namespace
-        subjects:
-        - kind: Group
-          name: "red-sre-group"
-    preconditions:
-      any:
-      - key: "{{request.operation}}"
-        operator: In
-        value:
-        - CREATE
-    generate:
-      kind: RoleBinding
-      name: redteamargocdaccess
-      namespace: "{{request.object.metadata.name}}"
-      synchronize: true
-      data:
-        roleRef:
-          apiGroup: rbac.authorization.k8s.io
-          kind: ClusterRole
-          name: admin
-        subjects:
-        - apiGroup: rbac.authorization.k8s.io
-          kind: Group
-          name: red-sre-group
-
-
-             
-
+    - name: generate-clusterrolebinding-red
+      match:
+        any:
+          - resources:
+              kinds:
+                - Namespace
+            subjects:
+              - kind: Group
+                name: "red-sre-group"
+      preconditions:
+        any:
+          - key: "{{request.operation}}"
+            operator: In
+            value:
+              - CREATE
+      generate:
+        kind: RoleBinding
+        name: redteamargocdaccess
+        namespace: "{{request.object.metadata.name}}"
+        synchronize: true
+        data:
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: admin
+          subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: red-sre-group

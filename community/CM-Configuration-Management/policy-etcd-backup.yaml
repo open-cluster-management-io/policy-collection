@@ -165,9 +165,7 @@ spec:
                                 - /bin/sh
                                 - "-c"
                                 - >-
-                                  /usr/local/bin/etcd-backup.sh && ls -1
-                                  /etcd-backup/* | sort -r | tail -n +6 | xargs
-                                  rm -rf > /dev/null 2>&1
+                                  /usr/local/bin/etcd-backup.sh && ls -1 /etcd-backup/* | sort -r | tail -n +6 | xargs rm -rf > /dev/null 2>&1
                               env: null
                               image: >-
                                 quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:6a2378154881e6f9a4638f41242518d850e19b0d7d9ef74a2be55b87f4625e87

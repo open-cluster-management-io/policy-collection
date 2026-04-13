@@ -30,9 +30,9 @@ spec:
           namespace: open-cluster-management-observability
         type: Opaque
         data:
-          thanos.yaml: {{ (printf $thanosConfig $objBucket.spec.endpoint.bucketName 
-                                                $objBucket.spec.endpoint.bucketHost 
-                                                ($awsAccess.data.AWS_ACCESS_KEY_ID | base64dec) 
+          thanos.yaml: {{ (printf $thanosConfig $objBucket.spec.endpoint.bucketName
+                                                $objBucket.spec.endpoint.bucketHost
+                                                ($awsAccess.data.AWS_ACCESS_KEY_ID | base64dec)
                                                 ($awsAccess.data.AWS_SECRET_ACCESS_KEY | base64dec)
                           ) | base64enc }}
 ---

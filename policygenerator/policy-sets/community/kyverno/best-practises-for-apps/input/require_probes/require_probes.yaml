@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -13,28 +13,22 @@ metadata:
     policies.kyverno.io/severity: medium
     policies.kyverno.io/subject: Pod
     policies.kyverno.io/description: >-
-      Liveness and readiness probes need to be configured to correctly manage a Pod's
-      lifecycle during deployments, restarts, and upgrades. For each Pod, a periodic
-      `livenessProbe` is performed by the kubelet to determine if the Pod's containers
-      are running or need to be restarted. A `readinessProbe` is used by Services
-      and Deployments to determine if the Pod is ready to receive network traffic.
-      This policy validates that all containers have liveness and readiness probes by
-      ensuring the `periodSeconds` field is greater than zero.
+      Liveness and readiness probes need to be configured to correctly manage a Pod's lifecycle during deployments, restarts, and upgrades. For each Pod, a periodic `livenessProbe` is performed by the kubelet to determine if the Pod's containers are running or need to be restarted. A `readinessProbe` is used by Services and Deployments to determine if the Pod is ready to receive network traffic. This policy validates that all containers have liveness and readiness probes by ensuring the `periodSeconds` field is greater than zero.
 spec:
   validationFailureAction: audit
   background: true
   rules:
-  - name: validate-livenessProbe-readinessProbe
-    match:
-      resources:
-        kinds:
-        - Pod
-    validate:
-      message: "Liveness and readiness probes are required."
-      pattern:
-        spec:
-          containers:
-          - livenessProbe:
-              periodSeconds: ">0"
-            readinessProbe:
-              periodSeconds: ">0"
+    - name: validate-livenessProbe-readinessProbe
+      match:
+        resources:
+          kinds:
+            - Pod
+      validate:
+        message: "Liveness and readiness probes are required."
+        pattern:
+          spec:
+            containers:
+              - livenessProbe:
+                  periodSeconds: ">0"
+                readinessProbe:
+                  periodSeconds: ">0"

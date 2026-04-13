@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -14,19 +14,17 @@ metadata:
     kyverno.io/kyverno-version: 1.5.1
     kyverno.io/kubernetes-version: "1.21"
     policies.kyverno.io/description: >-
-      Node affinity, similar to node selection, is a way to specify which node(s) on which Pods will be scheduled
-      but based on more complex conditions. This policy will add node affinity to a Deployment and if one already
-      exists an expression will be added to it.
+      Node affinity, similar to node selection, is a way to specify which node(s) on which Pods will be scheduled but based on more complex conditions. This policy will add node affinity to a Deployment and if one already exists an expression will be added to it.
 spec:
   background: false
   rules:
-  - name: add-node-affinity-deployment
-    match:
-      resources:
-        kinds:
-        - Deployment
-    mutate:
-      patchesJson6902: |-
-        - path: "/spec/template/spec/affinity/nodeAffinity/requiredDuringSchedulingIgnoredDuringExecution/nodeSelectorTerms/-1/matchExpressions/-1"
-          op: add
-          value: {"key":"zone_weight","operator":"Lt","values":["400"]}
+    - name: add-node-affinity-deployment
+      match:
+        resources:
+          kinds:
+            - Deployment
+      mutate:
+        patchesJson6902: |-
+          - path: "/spec/template/spec/affinity/nodeAffinity/requiredDuringSchedulingIgnoredDuringExecution/nodeSelectorTerms/-1/matchExpressions/-1"
+            op: add
+            value: {"key":"zone_weight","operator":"Lt","values":["400"]}

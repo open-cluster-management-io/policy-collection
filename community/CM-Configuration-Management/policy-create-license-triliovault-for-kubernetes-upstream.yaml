@@ -1,12 +1,12 @@
 # This policy deploys a basic (trial) license for Triliovault for Kubernetes (TVK) to all
 # non-OpenShift clusters with a label "protected-by=triliovault". The TVK needs to be
 # deployed using ./CM-Configuration-Management/policy-install-triliovault-for-kubernetes-using-helm.yaml.
-# 
+#
 # Please conact sales@trilio.io for further support.
 #
 # Note that it is set to enforce by default.
 #
-# Please refer product documentation at https://docs.trilio.io/kubernetes/overview/readme 
+# Please refer product documentation at https://docs.trilio.io/kubernetes/overview/readme
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:

@@ -1,5 +1,5 @@
 # WARNING: ClusterPolicy was DEPRECATED in Kyverno v1.17
-# To update your policy, browse the official Kyverno policy collection 
+# To update your policy, browse the official Kyverno policy collection
 # for current examples: https://kyverno.io/policies
 
 apiVersion: kyverno.io/v1
@@ -15,23 +15,19 @@ metadata:
     kyverno.io/kubernetes-version: "1.23"
     policies.kyverno.io/subject: Service
     policies.kyverno.io/description: >-
-      Services which are allowed to expose any port number may be able
-      to impact other applications running on the Node which require them,
-      or may make specifying security policy externally more challenging.
-      This policy enforces that only the port range 32000 to 33000 may
-      be used for Service resources.
+      Services which are allowed to expose any port number may be able to impact other applications running on the Node which require them, or may make specifying security policy externally more challenging. This policy enforces that only the port range 32000 to 33000 may be used for Service resources.
 spec:
   validationFailureAction: audit
   rules:
-  - name: restrict-port-range
-    match:
-      any:
-      - resources:
-          kinds:
-          - Service
-    validate:
-      message: Ports must be between 32000-33000
-      pattern:
-        spec:
-          ports:
-          - port: 32000-33000
+    - name: restrict-port-range
+      match:
+        any:
+          - resources:
+              kinds:
+                - Service
+      validate:
+        message: Ports must be between 32000-33000
+        pattern:
+          spec:
+            ports:
+              - port: 32000-33000
