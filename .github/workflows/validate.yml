@@ -33,7 +33,7 @@ jobs:
 
       - name: Install template-resolver CLI
         run: |
-          go install github.com/stolostron/go-template-utils/v7/cmd/template-resolver@main
+          go install github.com/stolostron/go-template-utils/v7/cmd/template-resolver@linting-tweaks
 
       - name: Lint policies
         run: |
