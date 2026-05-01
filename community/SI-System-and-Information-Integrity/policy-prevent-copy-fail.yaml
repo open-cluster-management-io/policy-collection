@@ -1,0 +1,37 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-prevent-copy-fail-cve
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: SI System and Information Integrity
+    policy.open-cluster-management.io/controls: SI-5 Security Alerts Advisories and Directives
+    policy.open-cluster-management.io/description: This policy deploys a mitigation
+      for CVE-2026-31431 by applying an OpenShift  MachineConfig that makes an update
+      to the cluster nodes.  This update will cause the nodes to reboot.  The policy
+      is set to inform by default and can be enforced when you are prepared for the
+      nodes to be restarted.
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: prevent-copy-fail-cve
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: machineconfiguration.openshift.io/v1
+                kind: MachineConfig
+                metadata:
+                  labels:
+                    machineconfiguration.openshift.io/role: worker # Repeat for 'master' if needed
+                  name: 99-disable-algif-builtin
+                spec:
+                  kernelArguments:
+                    - initcall_blacklist=algif_aead_init
+          remediationAction: enforce
+          severity: high
+  remediationAction: inform
