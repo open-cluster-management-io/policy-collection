@@ -1,0 +1,121 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-prevent-copy-fail-cve-ds
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: SI System and Information Integrity
+    policy.open-cluster-management.io/controls: SI-5 Security Alerts Advisories and Directives
+    policy.open-cluster-management.io/description: This policy deploys a mitigation
+      for CVE-2026-31431 which runs a BPF LSM DaemonSet that blocks all AF_ALG AEAD binds
+      on the cluster nodes.  This update does not require rebooting nodes.  The policy
+      is set to inform by default and can be enforced when you are prepared to apply the
+      DaemonSet to your clusters.
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: prevent-copy-fail-cve-ds
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: cve-2026-31431-mitigation-ebpf
+                  labels:
+                    pod-security.kubernetes.io/enforce: privileged
+                    pod-security.kubernetes.io/audit: privileged
+                    pod-security.kubernetes.io/warn: privileged
+                  annotations:
+                    kubernetes.io/description: Remediating CVE-2026-31431 with an eBPF DaemonSet.  This is a temporary workaround until the cluster can be updated to pick up a patched kernel.
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: RoleBinding
+                metadata:
+                  name: system:openshift:scc:privileged
+                  namespace: cve-2026-31431-mitigation-ebpf
+                  annotations:
+                    kubernetes.io/description: Remediating CVE-2026-31431 with an eBPF DaemonSet.  This is a temporary workaround until the cluster can be updated to pick up a patched kernel.
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: system:openshift:scc:privileged
+                subjects:
+                  - kind: ServiceAccount
+                    name: default
+                    namespace: cve-2026-31431-mitigation-ebpf
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: apps/v1
+                kind: DaemonSet
+                metadata:
+                  name: cve-2026-31431-mitigation-ebpf
+                  namespace: cve-2026-31431-mitigation-ebpf
+                  labels:
+                    app: block-copyfail
+                  annotations:
+                    kubernetes.io/description: Remediating CVE-2026-31431 with an eBPF DaemonSet.  This is a temporary workaround until the cluster can be updated to pick up a patched kernel.
+                spec:
+                  selector:
+                    matchLabels:
+                      app: block-copyfail
+                  template:
+                    metadata:
+                      labels:
+                        app: block-copyfail
+                    spec:
+                      affinity:
+                        nodeAffinity:
+                          requiredDuringSchedulingIgnoredDuringExecution:
+                            nodeSelectorTerms:
+                              - matchExpressions:
+                                  - key: kubernetes.io/arch
+                                    operator: NotIn
+                                    values:
+                                      - arm64
+                                      - ppc64le
+                                      - s390x
+                                  - key: kubernetes.io/os
+                                    operator: In
+                                    values:
+                                      - linux
+                      priorityClassName: system-node-critical
+                      tolerations:
+                        - operator: Exists
+                      containers:
+                        - name: blocker
+                          image: registry.redhat.io/openshift4/ose-block-copyfail-rhel9@sha256:2ad45164bed4ef8b8661175ac02e891b8bf2bdcdf69bed3526777b4746c3b46a
+                          securityContext:
+                            privileged: true
+                          volumeMounts:
+                            - name: bpf
+                              mountPath: /sys/fs/bpf
+                            - name: btf
+                              mountPath: /sys/kernel/btf/vmlinux
+                              readOnly: true
+                          resources:
+                            requests:
+                              cpu: 10m
+                              memory: 32Mi
+                            limits:
+                              cpu: 100m
+                              memory: 64Mi
+                      volumes:
+                        - name: bpf
+                          hostPath:
+                            path: /sys/fs/bpf
+                            type: DirectoryOrCreate
+                        - name: btf
+                          hostPath:
+                            path: /sys/kernel/btf/vmlinux
+                            type: File
+                      terminationGracePeriodSeconds: 5
+          remediationAction: enforce
+          severity: high
+  remediationAction: inform
