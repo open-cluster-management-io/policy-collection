@@ -1,0 +1,37 @@
+# 4. Audit Existing Operators Policy - INFORM
+object-templates-raw: |
+  {{- /* Lookup all existing Operator Subscriptions on the local managed cluster */ -}}
+  {{- $subscriptions := (lookup "operators.coreos.com/v1alpha1" "Subscription" "" "").items }}
+
+  {{- /* Fetch the Hub allowlist/denylist and convert to local arrays */ -}}
+  {{- $allowedPackages := "{{hub fromConfigMap "policies" "operator-allowlist" "packages" | default "" hub}}" | splitList "," }}
+  {{- $deniedPackages := "{{hub fromConfigMap "policies" "operator-denylist" "packages" | default "" hub}}" | splitList "," }}
+
+  {{- /* 5. Loop through every subscription and evaluate the Default-Deny logic */ -}}
+  {{- range $sub := $subscriptions }}
+    {{- $operatorName := $sub.spec.name }}
+    {{- $isAllowed := false }}
+
+    {{- range $pkg := $allowedPackages }}
+      {{- if eq (trim $pkg) $operatorName }}
+        {{- $isAllowed = true }}
+      {{- end }}
+    {{- end }}
+
+    {{- range $pkg := $deniedPackages }}
+      {{- if eq (trim $pkg) $operatorName }}
+        {{- $isAllowed = false }}
+      {{- end }}
+    {{- end }}
+
+    {{- /* 6. If the operator is not allowed, generate a mustnothave rule for it */ -}}
+    {{- if not $isAllowed }}
+  - complianceType: mustnothave
+    objectDefinition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: {{ $sub.metadata.name }}
+        namespace: {{ $sub.metadata.namespace }}
+    {{- end }}
+  {{- end }}

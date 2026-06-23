@@ -1,0 +1,19 @@
+---
+# 1. operator-allowlist ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: operator-allowlist
+  namespace: policies
+data:
+  packages: "web-terminal, openshift-gitops-operator"
+---
+# 2. operator-denylist ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: operator-denylist
+  namespace: policies
+data:
+  packages: "cluster-logging, compliance-operator"
+---
