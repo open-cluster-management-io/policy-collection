@@ -18,7 +18,7 @@ jobs:
     name: Schema and Kustomize
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Verify content
         run: |
@@ -33,7 +33,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install template-resolver CLI
         run: |
