@@ -120,10 +120,10 @@ policies:
     controls:
       - CA-7 Continuous Monitoring
     dependencies:
-      - name: policy-odf-status
+      - name: policy-odf-noobaa
     manifests:
       - path: input-acm-observability/storage.yaml
-  - name: policy-observability-operator
+  - name: policy-observability-storage-status
     consolidateManifests: false
     categories:
       - CA Assessment Authorization and Monitoring
@@ -132,7 +132,24 @@ policies:
     dependencies:
       - name: policy-observability-storage
     manifests:
+      - path: input-acm-observability/storage-status.yaml
+    remediationAction: inform
+    evaluationInterval:
+      compliant: 2m
+      noncompliant: 30s
+  - name: policy-observability-operator
+    consolidateManifests: false
+    categories:
+      - CA Assessment Authorization and Monitoring
+    controls:
+      - CA-7 Continuous Monitoring
+    dependencies:
+      - name: policy-observability-storage-status
+    manifests:
       - path: input-acm-observability/operator.yaml
+    evaluationInterval:
+      compliant: 2m
+      noncompliant: 1m
   # Observability Policy - end
   # ODF Policies - start
   - name: policy-odf
@@ -190,6 +207,9 @@ policies:
       - name: policy-install-quay
     manifests:
       - path: input-quay/policy-config-quay.yaml
+    evaluationInterval:
+      compliant: 2m
+      noncompliant: 1m
   - name: policy-quay-status
     categories:
       - SI System and Information Integrity
@@ -200,6 +220,9 @@ policies:
     manifests:
       - path: input-quay/policy-quay-status.yaml
     remediationAction: inform
+    evaluationInterval:
+      compliant: 2m
+      noncompliant: 1m
   # Quay Bridge is configured with a temporary token that will expire quickly after
   # deployment.  After quay is running, see the instructions:
   # https://hybrid-cloud-patterns.io/devsecops/getting-started/#completing-the-quay-bridge-with-a-bearer-token
@@ -211,9 +234,12 @@ policies:
     controls:
       - SI-7 Software Firmware and Information Integrity
     dependencies:
-      - name: policy-quay-status
+      - name: policy-config-quay
     manifests:
       - path: input-quay/policy-hub-quay-bridge.yaml
+    evaluationInterval:
+      compliant: 2m
+      noncompliant: 1m
   - name: policy-quay-bridge
     categories:
       - SI System and Information Integrity

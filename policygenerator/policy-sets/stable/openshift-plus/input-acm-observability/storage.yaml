@@ -6,5 +6,3 @@ metadata:
 spec:
   generateBucketName: obc-observability-bucket
   storageClassName: openshift-storage.noobaa.io
-status:
-  phase: Bound
