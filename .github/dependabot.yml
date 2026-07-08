@@ -6,7 +6,36 @@ updates:
       interval: cron
       cronjob: "0 7 * * MON#1"
       timezone: America/New_York
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 14
     groups:
       github-actions:
         patterns:
           - "*"
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: cron
+      cronjob: "0 7 * * MON#1"
+      timezone: America/New_York
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 14
+    groups:
+      gomod:
+        patterns:
+          - "*"
+    allow:
+      - dependency-type: all
+    ignore:
+      - dependency-name: "k8s.io/*"
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
+      - dependency-name: "*.k8s.io/*"
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
