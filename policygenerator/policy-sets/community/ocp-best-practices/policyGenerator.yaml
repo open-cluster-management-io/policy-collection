@@ -12,6 +12,7 @@ policyDefaults:
   namespace: policies
   policySets:
     - openshift-best-practices
+    - openshift-best-practices-hub
   remediationAction: enforce
   severity: medium
   standards:
@@ -26,6 +27,8 @@ policies:
     manifests:
       - path: input-admin/policy-remove-kubeadmin.yaml
     remediationAction: "inform"
+    policySets:
+      - openshift-best-practices
   - name: policy-config-audit
     categories:
       - AU Audit and Accountability
@@ -34,6 +37,8 @@ policies:
     manifests:
       - path: input-audit/policy-config-audit.yaml
     remediationAction: "enforce"
+    policySets:
+      - openshift-best-practices
   #- name: policy-cert-ocp4
   #  categories:
   #    - SC System and Communications Protection
@@ -45,15 +50,21 @@ policies:
     manifests:
       - path: input-compliance/policy-compliance-operator-install.yaml
     remediationAction: "enforce"
+    policySets:
+      - openshift-best-practices
   - name: policy-compliance-operator-moderate-scan
     manifests:
       - path: input-compliance/policy-compliance-operator-moderate-scan.yaml
     remediationAction: "enforce"
+    policySets:
+      - openshift-best-practices
   - name: policy-compliance-operator-moderate-scan-results
     complianceType: "mustnothave"
     manifests:
       - path: input-compliance/policy-compliance-operator-scan-results.yaml
     remediationAction: "inform"
+    policySets:
+      - openshift-best-practices
   #- name: policy-etcd-backup
   #  manifests:
   #    - path: input-etcd/policy-etcd-backup.yaml
@@ -66,6 +77,8 @@ policies:
     manifests:
       - path: input-etcd/policy-etcdencryption.yaml
     remediationAction: "enforce"
+    policySets:
+      - openshift-best-practices
   - name: policy-file-integrity-operator
     categories:
       - SC System and Communications Protection
@@ -74,6 +87,8 @@ policies:
     manifests:
       - path: input-files/policy-file-integrity-operator.yaml
     remediationAction: "enforce"
+    policySets:
+      - openshift-best-practices
   - name: policy-file-integrity-node-status
     complianceType: "mustnothave"
     categories:
@@ -83,6 +98,8 @@ policies:
     manifests:
       - path: input-files/policy-file-integrity-node-status.yaml
     remediationAction: "inform"
+    policySets:
+      - openshift-best-practices
   - name: policy-checkfipscompliance
     categories:
       - CA Security Assessment and Authorization
@@ -91,11 +108,15 @@ policies:
     manifests:
       - path: input-fips/policy-check-fips.yaml
     remediationAction: "inform"
+    policySets:
+      - openshift-best-practices
   - name: policy-checkclusteroperator
     complianceType: "mustnothave"
     manifests:
       - path: input-operators/
     remediationAction: "inform"
+    policySets:
+      - openshift-best-practices
   - name: policy-scc-restricted
     categories:
       - SC System and Communications Protection
@@ -104,8 +125,21 @@ policies:
     manifests:
       - path: input-scc/
     remediationAction: "inform"
+    policySets:
+      - openshift-best-practices
+  - name: policy-placement-tolerations
+    severity: critical
+    remediationAction: inform
+    manifests:
+      - path: input-tolerations/placement-tolerations.yaml
+    policySets:
+      - openshift-best-practices-hub
 policySets:
   - description: Applies the OpenShift best practices for how to harden your OpenShift clusters.
     name: openshift-best-practices
     placement:
       placementPath: input/placement.yaml
+  - description: Applies the OpenShift best practices for how to harden your OpenShift clusters on the hub.
+    name: openshift-best-practices-hub
+    placement:
+      placementPath: input/hub-placement.yaml
