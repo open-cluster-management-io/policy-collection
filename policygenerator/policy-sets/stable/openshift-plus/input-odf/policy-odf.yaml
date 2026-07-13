@@ -22,7 +22,6 @@ spec:
   subscription:
     name: odf-operator
     namespace: openshift-storage
-    channel: stable-4.22
     source: redhat-operators
     sourceNamespace: openshift-marketplace
 ---
