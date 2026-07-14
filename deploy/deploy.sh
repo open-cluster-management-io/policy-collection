@@ -4,7 +4,7 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 # Display help information
-help () {
+Help () {
   echo "Deploy policies to Open Cluster Management via GitOps"
   echo ""
   echo "Prerequisites:"
@@ -35,10 +35,10 @@ help () {
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
-        key="$1"
+        typeset key="$1"
         case $key in
             -h|--help)
-            help
+            Help
             exit 0
             ;;
             -u|--url)
@@ -128,45 +128,51 @@ if [ "$DRY_RUN" != "true" ]; then
 fi
 
 # Populate the Channel template
-CHAN_CFG=$(cat "channel_template.json" |
+typeset chanCfg=""
+chanCfg=$(cat "channel_template.json" |
   sed "s/##NAME##/${NAME}/g" |
   sed "s%##GH_URL##%${GH_URL}%g" |
   sed "s%##RATE##%${RATE}%g")
-echo "$CHAN_CFG" > channel_patch.json
+echo "$chanCfg" > channel_patch.json
 
 # Populate the Subscription template
-SUBSCRIPTION_CFG=$(cat "subscription_template.json" |
+typeset subscriptionCfg=""
+subscriptionCfg=$(cat "subscription_template.json" |
   sed "s%##GH_PATH##%${GH_PATH}%g" |
   sed "s/##GH_BRANCH##/${GH_BRANCH}/g" |
   sed "s/##NAME##/${NAME}/g" |
   sed "s/##NAMESPACE##/${NAMESPACE}/g")
-echo "$SUBSCRIPTION_CFG" > subscription_patch.json
+echo "$subscriptionCfg" > subscription_patch.json
 
 # The Application and Placement are only needed for `--deploy-app`
 if [ "${DEPLOY_APP}" = "true" ]; then
   # Populate the Application template
-  APPLICATION_CFG=$(cat "application_template.json" |
+  typeset applicationCfg=""
+  applicationCfg=$(cat "application_template.json" |
     sed "s/##NAME##/${NAME}/g")
-  echo "$APPLICATION_CFG" > application_patch.json
+  echo "$applicationCfg" > application_patch.json
 
   # Populate the Placement templates
-  PLACEMENT_CFG=$(cat "placement_template.json" |
+  typeset placementCfg=""
+  placementCfg=$(cat "placement_template.json" |
     sed "s/##NAME##/${NAME}/g")
-  echo "$PLACEMENT_CFG" > placement_patch.json
-  SUB_PLACEMENT_CFG=$(cat "subscription_placement_template.json" |
+  echo "$placementCfg" > placement_patch.json
+  typeset subPlacementCfg=""
+  subPlacementCfg=$(cat "subscription_placement_template.json" |
     sed "s/##NAME##/${NAME}/g")
-  echo "$SUB_PLACEMENT_CFG" > subscription_placement_patch.json
+  echo "$subPlacementCfg" > subscription_placement_patch.json
 fi
 
 # Populate the Kustomize template
-KUST_CFG=$(cat "kustomization_template.yaml" |
+typeset kustCfg=""
+kustCfg=$(cat "kustomization_template.yaml" |
   sed "s/##NAME##/${NAME}/g" |
   sed "s/##NAMESPACE##/${NAMESPACE}/g")
 # Uncomment Application manifests to generate them
 if [ "${DEPLOY_APP}" = "true" ]; then
-  KUST_CFG=$(echo "$KUST_CFG" | sed "s/##//g")
+  kustCfg=$(echo "$kustCfg" | sed "s/##//g")
 fi
-echo "$KUST_CFG" > kustomization.yaml
+echo "$kustCfg" > kustomization.yaml
 
 # Deploy the resources to the cluster
 kubectl kustomize . > manifests.yaml

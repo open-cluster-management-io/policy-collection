@@ -9,12 +9,12 @@ KUSTOMIZE_VERSION=v5.8.1
 GENERATOR_PATH=policy.open-cluster-management.io/v1/policygenerator
 
 # Validate the policy resource file under the directory provided
-validatePolicies() {
+ValidatePolicies() {
 	find "${1}" -name "*.yaml" -exec kubeconform -schema-location 'schemas/{{ .ResourceKind }}_{{ .ResourceAPIVersion }}.json' -summary {} +
 }
 
 # Validate the generator based policyset projects under the directory provided
-validatePolicySets() {
+ValidatePolicySets() {
 	find "./policygenerator/policy-sets/${1}" -name "kustomization.y*ml" -exec dirname {} \; | while read -r set; do
 		echo "Generating PolicySet ${set}"
 		kustomize build --enable-alpha-plugins "${set}" 1>/dev/null
@@ -61,10 +61,10 @@ fi
 # Validate the policies
 
 echo "Checking stable policies"
-validatePolicies stable
+ValidatePolicies stable
 
 echo "Checking community policies"
-validatePolicies community
+ValidatePolicies community
 
 # Switching to check generator projects now
 
@@ -82,10 +82,10 @@ echo "::endgroup::"
 # Validate the generator projects
 
 echo "Checking stable policy sets"
-validatePolicySets stable
+ValidatePolicySets stable
 
 echo "Checking community policy sets"
-validatePolicySets community
+ValidatePolicySets community
 
 # Cleanup
 rm -rf schemas

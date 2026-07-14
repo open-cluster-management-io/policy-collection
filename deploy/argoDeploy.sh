@@ -4,7 +4,7 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 # Display help information
-help () {
+Help () {
   echo "Deploy policies to Open Cluster Management via OpenShift GitOps"
   echo ""
   echo "Prerequisites:"
@@ -32,10 +32,10 @@ help () {
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
-        key="$1"
+        typeset key="$1"
         case $key in
             -h|--help)
-            help
+            Help
             exit 0
             ;;
             -u|--url)

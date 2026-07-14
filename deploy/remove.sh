@@ -22,7 +22,7 @@ help () {
 }
 
 # Parse through resources to find matching Subscription and Channel
-collectResources () {
+CollectResources () {
   subprefix=($(kubectl -n ${ns} get appsub --no-headers -o custom-columns=NAME:.metadata.name | awk '/'${NAME}'-sub$/ {print "'${ns}'/"$1}' | sed "s/-sub\$//"))
   chanprefix=($(kubectl -n ${ns} get channels --no-headers -o custom-columns=NAME:.metadata.name | awk '/'${NAME}'-chan$/ {print "'${ns}'/"$1}' | sed "s/-chan\$//"))
   matchprefix=("${matchprefix[@]}" $(comm -1 -2 <(printf '%s\n' ${subprefix[@]}) <(printf '%s\n' ${chanprefix[@]})))
@@ -30,10 +30,10 @@ collectResources () {
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
-        key="$1"
+        typeset key="$1"
         case $key in
             -h|--help)
-            help
+            Help
             exit 0
             ;;
             -a|--name)
@@ -104,13 +104,13 @@ if [[ "${NAMESPACE}" == "${SEARCH_ALL}" ]]; then
     # No clusterwide access--iterate through each namespace individually
     for ns in "${namespaces[@]}"; do
       echo "Searching namespace: ${ns}..."
-      collectResources
+      CollectResources
     done
   fi
 else
   # Check specific namespace
   ns=${NAMESPACE}
-  collectResources
+  CollectResources
 fi
 
 # Check for matches and have user choose match to remove
