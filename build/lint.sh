@@ -1,6 +1,7 @@
-#! /bin/bash
+#!/bin/bash
 
-set -e
+set -euo pipefail
+shopt -s inherit_errexit
 
 exit_code=0
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-set -e
-set -o pipefail
+set -euo pipefail
+shopt -s inherit_errexit
 
 # Display help information
 help () {

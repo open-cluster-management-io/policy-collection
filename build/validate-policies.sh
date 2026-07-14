@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -euo pipefail
+shopt -s inherit_errexit
+
 KUBECONFORM=kubeconform
 KC_VERSION=v0.7.0
 KUSTOMIZE_VERSION=v5.8.1
@@ -30,8 +33,6 @@ if [ -z "${GITHUB_REPOSITORY_OWNER}" ]; then
 	echo "Set GITHUB_REPOSITORY_OWNER=[github org], using open-cluster-management-io by default"
 	GITHUB_REPOSITORY_OWNER=open-cluster-management-io
 fi
-
-set -euo pipefail # exit on errors and unset vars, and stop on the first error in a "pipeline"
 
 # Install kubeconform
 echo "::group::Installing kubeconform"
