@@ -235,6 +235,7 @@ policies:
       - SI-7 Software Firmware and Information Integrity
     dependencies:
       - name: policy-config-quay
+      - name: policy-quay-status
     manifests:
       - path: input-quay/policy-hub-quay-bridge.yaml
     evaluationInterval:
