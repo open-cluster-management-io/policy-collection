@@ -76,7 +76,7 @@ if [ -z "${NAMESPACE}" ]; then
     done
   # `oc` CLI doesn't exist--use namespace from `kubectl` config
   else
-    NAMESPACE=$(kubectl config get-contexts | awk '/^\052/ {print $5}')
+    NAMESPACE=$(kubectl config view --minify -o jsonpath='{.contexts[0].context.namespace}')
     echo "Using namespace from kubectl config."
   fi
 fi
@@ -85,7 +85,7 @@ fi
 echo "====="
 echo "Searching for resources using the following configuration:"
 echo "----------------------------------------------------------"
-echo "kubectl config:  $(kubectl config get-contexts | awk '/^\052/ {print $4"/"$3}')"
+echo "kubectl config:  $(kubectl config view --minify -o jsonpath='{.contexts[0].context.cluster}/{.contexts[0].context.user}')"
 echo "Using namespace: ${NAMESPACE}"
 if [ -n "${NAME}" ]; then
   echo "Using prefix:    ${NAME}"
@@ -134,8 +134,8 @@ else
 fi
 
 # Parse matches and double check that Subscription still points to Channel
-NAMESPACE=$(echo "${RESOURCE}" | awk -F/ '{print $1}')
-PREFIX=$(echo "${RESOURCE}" | awk -F/ '{print $2}')
+NAMESPACE="${RESOURCE%%/*}"
+PREFIX="${RESOURCE#*/}"
 CHANREF=$(kubectl get appsub -n ${NAMESPACE} ${PREFIX}-sub -o jsonpath='{.spec.channel}')
 if [[ "${RESOURCE}-chan" != "${CHANREF}" ]]; then
   echo 'WARNING: The Subscription "'${PREFIX}'-sub" points to an unexpected Channel, "'${CHANREF}'".'
@@ -176,3 +176,5 @@ if [ "${PLACEMENT_FOUND}" != "false" ]; then
 fi
 kubectl delete appsub -n ${NAMESPACE} ${PREFIX}-sub
 kubectl delete channels -n ${NAMESPACE} ${PREFIX}-chan
+
+true
