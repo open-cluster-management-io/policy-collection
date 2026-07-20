@@ -23,8 +23,8 @@ help () {
 
 # Parse through resources to find matching Subscription and Channel
 CollectResources () {
-  subprefix=($(kubectl -n ${ns} get appsub --no-headers -o custom-columns=NAME:.metadata.name | awk '/'${NAME}'-sub$/ {print "'${ns}'/"$1}' | sed "s/-sub\$//"))
-  chanprefix=($(kubectl -n ${ns} get channels --no-headers -o custom-columns=NAME:.metadata.name | awk '/'${NAME}'-chan$/ {print "'${ns}'/"$1}' | sed "s/-chan\$//"))
+  subprefix=($(kubectl -n "${ns}" get appsub -o json | jq -r --arg ns "${ns}" --arg name "${NAME}" '.items[] | select(.metadata.name == ($name + "-sub")) | $ns + "/" + .metadata.name' | sed "s/-sub\$//"))
+  chanprefix=($(kubectl -n "${ns}" get channels -o json | jq -r --arg ns "${ns}" --arg name "${NAME}" '.items[] | select(.metadata.name == ($name + "-chan")) | $ns + "/" + .metadata.name' | sed "s/-chan\$//"))
   matchprefix=("${matchprefix[@]}" $(comm -1 -2 <(printf '%s\n' ${subprefix[@]}) <(printf '%s\n' ${chanprefix[@]})))
 }
 
@@ -97,8 +97,8 @@ echo "====="
 if [[ "${NAMESPACE}" == "${SEARCH_ALL}" ]]; then
   # Determine whether user has clusterwide access
   if kubectl get appsub --all-namespaces &>/dev/null && kubectl get channels --all-namespaces &>/dev/null; then
-    subprefix=$(kubectl get appsub --all-namespaces --no-headers -o custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name 2>/dev/null | awk '/'${NAME}'-sub$/ {print $1"/"$2}' | sed "s/-sub\$//")
-    chanprefix=$(kubectl get channels --all-namespaces --no-headers -o custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name 2>/dev/null | awk '/'${NAME}'-chan$/  {print $1"/"$2}' | sed "s/-chan\$//")
+    subprefix=$(kubectl get appsub --all-namespaces -o json | jq -r --arg name "${NAME}" '.items[] | select(.metadata.name == ($name + "-sub")) | .metadata.namespace + "/" + .metadata.name' | sed "s/-sub\$//")
+    chanprefix=$(kubectl get channels --all-namespaces -o json | jq -r --arg name "${NAME}" '.items[] | select(.metadata.name == ($name + "-chan")) | .metadata.namespace + "/" + .metadata.name' | sed "s/-chan\$//")
     matchprefix=($(comm -1 -2 <(printf '%s\n' ${subprefix[@]}) <(printf '%s\n' ${chanprefix[@]})))
   else
     # No clusterwide access--iterate through each namespace individually

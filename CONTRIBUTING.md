@@ -83,10 +83,10 @@ Create a pull request that can be reviewed by the product team. See the followin
 1. Return to the `policy-collection` directory and add all changed files with the following command:
 
    ```
-   git add .
+   git add <specific-files>
    ```
 
-   * Run `git status` and make sure all of the changes that you expect have been added to the commit. If you make any additional changes, you’ll need to make sure to run `git add` again for those files.
+   * Run `git status` and make sure all of the changes that you expect have been added to the commit. Never use `git add .` or `git add -A` as they may stage unintended files. If you make any additional changes, you’ll need to make sure to run `git add` again for those files.
 
 2. Commit the changes with a descriptive message with the following command:
 
