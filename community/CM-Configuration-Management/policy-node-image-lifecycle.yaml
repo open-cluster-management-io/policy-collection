@@ -37,177 +37,52 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-image-prune-ns
+          name: policy-image-prune-timer
         spec:
           remediationAction: inform
           severity: medium
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                apiVersion: v1
-                kind: Namespace
+                apiVersion: machineconfiguration.openshift.io/v1
+                kind: MachineConfig
                 metadata:
-                  name: openshift-image-gc
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: policy-image-prune-rbac
-        spec:
-          remediationAction: inform
-          severity: medium
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: v1
-                kind: ServiceAccount
-                metadata:
-                  name: image-gc-sa
-                  namespace: openshift-image-gc
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: rbac.authorization.k8s.io/v1
-                kind: ClusterRole
-                metadata:
-                  name: image-gc-node-reader
-                rules:
-                  - apiGroups: [""]
-                    resources: ["nodes"]
-                    verbs: ["get", "list"]
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: rbac.authorization.k8s.io/v1
-                kind: ClusterRoleBinding
-                metadata:
-                  name: image-gc-node-reader-binding
-                roleRef:
-                  apiGroup: rbac.authorization.k8s.io
-                  kind: ClusterRole
-                  name: image-gc-node-reader
-                subjects:
-                  - kind: ServiceAccount
-                    name: image-gc-sa
-                    namespace: openshift-image-gc
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: security.openshift.io/v1
-                kind: SecurityContextConstraints
-                metadata:
-                  name: image-gc-privileged
-                allowPrivilegedContainer: true
-                allowHostDirVolumePlugin: true
-                allowHostPID: false
-                allowHostIPC: false
-                allowHostNetwork: false
-                runAsUser:
-                  type: RunAsAny
-                seLinuxContext:
-                  type: RunAsAny
-                fsGroup:
-                  type: RunAsAny
-                supplementalGroups:
-                  type: RunAsAny
-                volumes:
-                  - hostPath
-                  - secret
-                  - configMap
-                  - projected
-                  - downwardAPI
-                users:
-                  - system:serviceaccount:openshift-image-gc:image-gc-sa
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: policy-image-prune-cronjob
-        spec:
-          remediationAction: inform
-          severity: medium
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: batch/v1
-                kind: CronJob
-                metadata:
-                  name: image-gc-prune
-                  namespace: openshift-image-gc
+                  name: 99-worker-image-gc-prune
+                  labels:
+                    machineconfiguration.openshift.io/role: worker
                 spec:
-                  schedule: "0 2 * * 0"
-                  concurrencyPolicy: Allow
-                  successfulJobsHistoryLimit: 3
-                  failedJobsHistoryLimit: 3
-                  jobTemplate:
-                    spec:
-                      backoffLimit: 0
-                      template:
-                        spec:
-                          serviceAccountName: image-gc-sa
-                          restartPolicy: Never
-                          nodeSelector:
-                            node-role.kubernetes.io/worker: ""
-                          tolerations:
-                            - operator: Exists
-                          hostPID: false
-                          containers:
-                            - name: image-gc
-                              image: registry.redhat.io/openshift4/ose-cli:latest
-                              command:
-                                - /bin/bash
-                                - -c
-                                - |
-                                  MAX_AGE_DAYS=7
-                                  echo "Starting image prune on $(hostname) — removing unreferenced images older than ${MAX_AGE_DAYS} days"
-                                  NOW=$(date +%s)
-                                  CUTOFF=$((NOW - MAX_AGE_DAYS * 86400))
-                                  REMOVED=0
-                                  SKIPPED=0
-                                  REFERENCED=0
-                                  for IMG_ID in $(chroot /host crictl images -q); do
-                                    REF_COUNT=$(chroot /host crictl ps -a --image "$IMG_ID" -q 2>/dev/null | wc -l)
-                                    if [ "$REF_COUNT" -gt 0 ]; then
-                                      REFERENCED=$((REFERENCED + 1))
-                                      continue
-                                    fi
-                                    CREATED_TS=$(chroot /host crictl inspecti "$IMG_ID" 2>/dev/null | chroot /host python3 -c "
-                                  import sys, json
-                                  from datetime import datetime, timezone
-                                  try:
-                                      d = json.load(sys.stdin)
-                                      ts = d.get('info', {}).get('imageSpec', {}).get('created', '')
-                                      if not ts:
-                                          ts = d.get('status', {}).get('createdAt', '')
-                                      if ts:
-                                          clean = ts[:26].rstrip('Z') + '+00:00'
-                                          try:
-                                              dt = datetime.fromisoformat(clean)
-                                          except ValueError:
-                                              dt = datetime.strptime(ts[:19], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=timezone.utc)
-                                          print(int(dt.timestamp()))
-                                      else:
-                                          print(0)
-                                  except Exception:
-                                      print(0)
-                                  " 2>/dev/null)
-                                    CREATED_TS=${CREATED_TS:-0}
-                                    if [ "$CREATED_TS" -eq 0 ]; then
-                                      SKIPPED=$((SKIPPED + 1))
-                                      continue
-                                    fi
-                                    if [ "$CREATED_TS" -lt "$CUTOFF" ]; then
-                                      echo "Removing: $IMG_ID (age=$(( (NOW - CREATED_TS) / 86400 ))d)"
-                                      chroot /host crictl rmi "$IMG_ID" 2>&1 || true
-                                      REMOVED=$((REMOVED + 1))
-                                    else
-                                      SKIPPED=$((SKIPPED + 1))
-                                    fi
-                                  done
-                                  echo "Image prune complete: referenced=$REFERENCED removed=$REMOVED skipped=$SKIPPED"
-                              securityContext:
-                                privileged: true
-                              volumeMounts:
-                                - name: host
-                                  mountPath: /host
-                          volumes:
-                            - name: host
-                              hostPath:
-                                path: /
+                  config:
+                    ignition:
+                      version: 3.2.0
+                    storage:
+                      files:
+                        - path: /usr/local/bin/image-gc-prune.sh
+                          mode: 0755
+                          contents:
+                            source: data:text/plain;charset=utf-8;base64,IyEvYmluL2Jhc2gKIyBQcnVuZSB1bnJlZmVyZW5jZWQgY29udGFpbmVyIGltYWdlcyBvbGRlciB0aGFuIE1BWF9BR0VfREFZUwpNQVhfQUdFX0RBWVM9NwpOT1c9JChkYXRlICslcykKQ1VUT0ZGPSQoKE5PVyAtIE1BWF9BR0VfREFZUyAqIDg2NDAwKSkKUkVNT1ZFRD0wClNLSVBQRUQ9MApSRUZFUkVOQ0VEPTAKVU5QQVJTQUJMRT0wCgojIEJ1aWxkIHNldCBvZiBpbWFnZSBJRHMgcmVmZXJlbmNlZCBieSBhbnkgY29udGFpbmVyIChvbmUgY2FsbCwgbm90IE4pCkNPTlRBSU5FUl9JTUFHRVM9JChjcmljdGwgcHMgLWEgLW8ganNvbiAyPi9kZXYvbnVsbCBcCiAgfCBweXRob24zIC1jICIKaW1wb3J0IHN5cywganNvbgp0cnk6CiAgICBkID0ganNvbi5sb2FkKHN5cy5zdGRpbikKICAgIGZvciBjIGluIGQuZ2V0KCdjb250YWluZXJzJywgW10pOgogICAgICAgIHByaW50KGMuZ2V0KCdpbWFnZVJlZicsICcnKSkKZXhjZXB0IEV4Y2VwdGlvbjoKICAgIHBhc3MKIiAyPi9kZXYvbnVsbCB8IHNvcnQgLXUpCgpmb3IgSU1HX0lEIGluICQoY3JpY3RsIGltYWdlcyAtcSk7IGRvCiAgaWYgZWNobyAiJENPTlRBSU5FUl9JTUFHRVMiIHwgZ3JlcCAtcUYgIiRJTUdfSUQiOyB0aGVuCiAgICBSRUZFUkVOQ0VEPSQoKFJFRkVSRU5DRUQgKyAxKSkKICAgIGNvbnRpbnVlCiAgZmkKCiAgIyBFeHRyYWN0IGNyZWF0aW9uIHRpbWVzdGFtcCAocHl0aG9uMyBmb3IgSlNPTiwgZGF0ZSAtZCBmb3IgcGFyc2luZykKICBUUz0kKGNyaWN0bCBpbnNwZWN0aSAiJElNR19JRCIgMj4vZGV2L251bGwgXAogICAgfCBweXRob24zIC1jICIKaW1wb3J0IHN5cywganNvbgp0cnk6CiAgICBkID0ganNvbi5sb2FkKHN5cy5zdGRpbikKICAgIHByaW50KGQuZ2V0KCdpbmZvJywge30pLmdldCgnaW1hZ2VTcGVjJywge30pLmdldCgnY3JlYXRlZCcsICcnKSBvciBkLmdldCgnc3RhdHVzJywge30pLmdldCgnY3JlYXRlZEF0JywgJycpKQpleGNlcHQgRXhjZXB0aW9uOgogICAgcGFzcwoiIDI+L2Rldi9udWxsKQogIENSRUFURURfVFM9JChkYXRlIC1kICIkVFMiICslcyAyPi9kZXYvbnVsbCB8fCBlY2hvIDApCgogIGlmIFsgIiRDUkVBVEVEX1RTIiAtZXEgMCBdOyB0aGVuCiAgICBVTlBBUlNBQkxFPSQoKFVOUEFSU0FCTEUgKyAxKSkKICAgIGNvbnRpbnVlCiAgZmkKCiAgaWYgWyAiJENSRUFURURfVFMiIC1sdCAiJENVVE9GRiIgXTsgdGhlbgogICAgY3JpY3RsIHJtaSAiJElNR19JRCIgMj4mMSB8fCB0cnVlCiAgICBSRU1PVkVEPSQoKFJFTU9WRUQgKyAxKSkKICBlbHNlCiAgICBTS0lQUEVEPSQoKFNLSVBQRUQgKyAxKSkKICBmaQpkb25lCgpsb2dnZXIgLXQgaW1hZ2UtZ2MtcHJ1bmUgInJlZmVyZW5jZWQ9JFJFRkVSRU5DRUQgcmVtb3ZlZD0kUkVNT1ZFRCBza2lwcGVkPSRTS0lQUEVEIHVucGFyc2FibGU9JFVOUEFSU0FCTEUiCg==
+                    systemd:
+                      units:
+                        - name: image-gc-prune.service
+                          enabled: false
+                          contents: |
+                            [Unit]
+                            Description=Prune unreferenced container images older than 7 days
+                            Wants=crio.service
+                            After=crio.service
+
+                            [Service]
+                            Type=oneshot
+                            ExecStart=/usr/local/bin/image-gc-prune.sh
+                        - name: image-gc-prune.timer
+                          enabled: true
+                          contents: |
+                            [Unit]
+                            Description=Weekly container image prune
+
+                            [Timer]
+                            OnCalendar=Sun *-*-* 02:00:00
+                            RandomizedDelaySec=3600
+                            Persistent=true
+
+                            [Install]
+                            WantedBy=timers.target
