@@ -1,3 +1,17 @@
+# This policy uses hub templates to read GC thresholds from a ConfigMap on the hub.
+# Create the ConfigMap in the same namespace as this policy before enforcing:
+#
+#   apiVersion: v1
+#   kind: ConfigMap
+#   metadata:
+#     name: image-gc-config
+#   data:
+#     imageGCHighThresholdPercent: "65"
+#     imageGCLowThresholdPercent: "50"
+#     imageMinimumGCAge: "5m"
+#
+# The prune script's MAX_AGE_DAYS (default: 7) is set inside the MachineConfig.
+# To change it, re-encode the script with the desired value and update the base64 blob.
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
@@ -10,6 +24,26 @@ spec:
   remediationAction: inform
   disabled: false
   policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-image-gc-config
+        spec:
+          remediationAction: inform
+          severity: low
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: ConfigMap
+                metadata:
+                  name: image-gc-config
+                  namespace: '{{hub .ManagedClusterName hub}}'
+                data:
+                  imageGCHighThresholdPercent: "65"
+                  imageGCLowThresholdPercent: "50"
+                  imageMinimumGCAge: "5m"
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
@@ -30,9 +64,9 @@ spec:
                     matchLabels:
                       pools.operator.machineconfiguration.openshift.io/worker: ""
                   kubeletConfig:
-                    imageGCHighThresholdPercent: 65
-                    imageGCLowThresholdPercent: 50
-                    imageMinimumGCAge: 5m
+                    imageGCHighThresholdPercent: '{{hub fromConfigMap .ManagedClusterName "image-gc-config" "imageGCHighThresholdPercent" | toInt hub}}'
+                    imageGCLowThresholdPercent: '{{hub fromConfigMap .ManagedClusterName "image-gc-config" "imageGCLowThresholdPercent" | toInt hub}}'
+                    imageMinimumGCAge: '{{hub fromConfigMap .ManagedClusterName "image-gc-config" "imageMinimumGCAge" hub}}'
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
