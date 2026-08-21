@@ -6,9 +6,9 @@
 # More details on installing OCS including the creation of the MachineSets is located here:
 # https://red-hat-storage.github.io/ocs-training/training/ocs4/ocs.html#_scale_ocp_cluster_and_add_new_worker_nodes
 #
-# This policy contains an Amazon Machine Identifier which must be updated in the policy.  Obtain the AMI id from:
-# https://access.redhat.com/documentation/en-us/openshift_container_platform/4.12/html/installing/installing-on-aws#installation-aws-user-infra-rhcos-ami_installing-aws-user-infra
-# AMI IDs are provided in a settings configmap which can be adjusted as desired.
+# AMI IDs are sourced dynamically from the coreos-bootimages ConfigMap in the
+# openshift-machine-config-operator namespace (the MCO's own source of truth).
+# Existing workerocs MachineSets keep their current AMI to avoid conflicts with MSBIC.
 #
 apiVersion: policy.open-cluster-management.io/v1
 kind: ConfigurationPolicy
@@ -52,24 +52,12 @@ spec:
               providerSpec:
                 value:
                   ami:
-                    id: '{{- $dynamicAMI := "" -}}
-                         {{- $machinesets := (lookup "machine.openshift.io/v1beta1" "MachineSet" "openshift-machine-api" "") -}}
-                         {{- if $machinesets.items -}}
-                           {{- if gt (len $machinesets.items) 0 -}}
-                             {{- $dynamicAMI = (index $machinesets.items 0).spec.template.spec.providerSpec.value.ami.id -}}
-                           {{- end -}}
-                         {{- end -}}
-                         {{- if $dynamicAMI -}}
-                           {{ $dynamicAMI }}
-                         {{- else -}}
-                           {{ fromConfigMap "policies" "opp-settings" (printf "%s-%s" (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region (fromClusterClaim "openshiftversion-major-minor")) }}
-                         {{- end -}}'
+                    id: '{{- $region := (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region -}}
+                         {{- $msName := printf "%s-workerocs-%s%s" (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName $region $zone -}}
+                         {{- $bootImages := fromJson (fromConfigMap "openshift-machine-config-operator" "coreos-bootimages" "stream") -}}
+                         {{- $ami_default := (index $bootImages "architectures" "x86_64" "images" "aws" "regions" $region "image") -}}
+                         {{- dig "spec" "template" "spec" "providerSpec" "value" "ami" "id" $ami_default (lookup "machine.openshift.io/v1beta1" "MachineSet" "openshift-machine-api" $msName) -}}'
                   apiVersion: awsproviderconfig.openshift.io/v1beta1
-                  blockDevices:
-                  - ebs:
-                      iops: 0
-                      volumeSize: 120
-                      volumeType: gp3
                   credentialsSecret:
                     name: aws-cloud-credentials
                   deviceIndex: 0
