@@ -36,12 +36,6 @@ spec:
           ami:
             id: ami-0197c5c22c44c04f1
           apiVersion: awsproviderconfig.openshift.io/v1beta1
-          blockDevices:
-            - ebs:
-                iops: 0
-                kmsKey: {}
-                volumeSize: 120
-                volumeType: gp3
           capacityReservationId: ""
           credentialsSecret:
             name: aws-cloud-credentials
