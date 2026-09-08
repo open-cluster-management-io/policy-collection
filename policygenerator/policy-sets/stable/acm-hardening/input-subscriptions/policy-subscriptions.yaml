@@ -1,4 +1,2 @@
 apiVersion: apps.open-cluster-management.io/v1
 kind: Subscription
-status:
-  phase: Failed
