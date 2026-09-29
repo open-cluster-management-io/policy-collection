@@ -9,6 +9,8 @@ data:
   vmwareMemory: "32768"
   awsReplicas: "2"
   awsInstanceType: m6a.2xlarge
+  awsVolumeSize: "120"
+  awsVolumeType: gp3
   us-east-1-4.12: ami-0c321aac14de997e3
   us-east-2-4.12: ami-0fce6015e3592d4a5
   us-east-1-4.14: ami-058af1563befa5c0e
