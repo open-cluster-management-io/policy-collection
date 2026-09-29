@@ -49,6 +49,10 @@ spec:
                 labels:
                   cluster.ocs.openshift.io/openshift-storage: ""
                   node-role.kubernetes.io/worker: ""
+              taints:
+              - key: node.ocs.openshift.io/storage
+                value: "true"
+                effect: NoSchedule
               providerSpec:
                 value:
                   ami:
@@ -61,6 +65,11 @@ spec:
                   credentialsSecret:
                     name: aws-cloud-credentials
                   deviceIndex: 0
+                  blockDevices:
+                  - ebs:
+                      volumeSize: '{{ fromConfigMap "policies" "opp-settings" "awsVolumeSize" | toInt }}'
+                      volumeType: '{{ fromConfigMap "policies" "opp-settings" "awsVolumeType" }}'
+                      encrypted: true
                   iamInstanceProfile:
                     id: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-worker-profile'
                   instanceType: '{{- $dynamicInstanceType := "" -}}
