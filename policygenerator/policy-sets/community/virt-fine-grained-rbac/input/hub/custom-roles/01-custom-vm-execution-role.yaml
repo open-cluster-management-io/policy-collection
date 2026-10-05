@@ -1,0 +1,35 @@
+# Start, stop, and restart VMs. Layer with kubevirt.io:view.
+# custom-role=true selects this ClusterRole for policy-virt-custom-roles-propagate.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: custom-vm-execution-role
+  labels:
+    rbac.open-cluster-management.io/filter: vm-clusterroles
+    clusterview.open-cluster-management.io/discoverable: "true"
+    rbac.open-cluster-management.io/custom-role: "true"
+rules:
+  - apiGroups:
+      - kubevirt.io
+    resources:
+      - virtualmachines
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - subresources.kubevirt.io
+    resources:
+      - virtualmachines/start
+      - virtualmachines/stop
+      - virtualmachines/restart
+    verbs:
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
+      - watch

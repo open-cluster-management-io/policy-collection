@@ -1,0 +1,55 @@
+# Scenario 3: cross-cluster live migration.
+# Apply this on both the source and destination by selecting both with virt-clusters.
+# acm-vm-cluster-migration:view is a ClusterRoleBinding, so targetNamespaces is omitted.
+# kubevirt.io:admin and acm-vm-extended:admin stay namespace-scoped.
+# ACM-47215 leaves these CCLM roles as documented. Storage-migrate stays on
+# policy-virt-assign-admin.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: virt-migrators-fleet-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: acm-vm-fleet:admin
+subjects:
+  - kind: Group
+    name: virt-migrators
+    apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.open-cluster-management.io/v1beta1
+kind: MulticlusterRoleAssignment
+metadata:
+  name: virt-migrators
+  namespace: policies
+spec:
+  subject:
+    kind: Group
+    name: virt-migrators
+    apiGroup: rbac.authorization.k8s.io
+  roleAssignments:
+    - name: kubevirt-admin
+      clusterRole: kubevirt.io:admin
+      targetNamespaces:
+        - team-vms
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
+    - name: acm-vm-extended-admin
+      clusterRole: acm-vm-extended:admin
+      targetNamespaces:
+        - team-vms
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
+    - name: acm-vm-cluster-migration-view
+      clusterRole: acm-vm-cluster-migration:view
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
