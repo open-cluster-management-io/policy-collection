@@ -1,0 +1,107 @@
+# Prerequisite: create a ConfigMap on the hub cluster in each managed cluster's
+# namespace BEFORE enforcing this policy. The hub templates below read from it.
+#
+#   apiVersion: v1
+#   kind: ConfigMap
+#   metadata:
+#     name: image-gc-config
+#     namespace: <managed-cluster-name>   # e.g. "prod-cluster-1"
+#   data:
+#     imageGCHighThresholdPercent: "65"
+#     imageGCLowThresholdPercent: "50"
+#     imageMinimumGCAge: "5m"
+#
+# The prune script's MAX_AGE_DAYS (default: 7) is set inside the MachineConfig.
+# To change it, re-encode the script with the desired value and update the base64 blob.
+#
+# remediationAction is set to inform by default because enforcing triggers an
+# MCP rollout that reboots worker nodes. Set to enforce only after reviewing
+# the ConfigMap values and scheduling an appropriate maintenance window.
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-node-image-lifecycle
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration, SI-2 Flaw Remediation
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-kubelet-image-gc
+        spec:
+          remediationAction: inform
+          severity: medium
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: machineconfiguration.openshift.io/v1
+                kind: KubeletConfig
+                metadata:
+                  name: image-gc-policy
+                spec:
+                  machineConfigPoolSelector:
+                    matchLabels:
+                      pools.operator.machineconfiguration.openshift.io/worker: ""
+                  kubeletConfig:
+                    imageGCHighThresholdPercent: '{{hub fromConfigMap .ManagedClusterName "image-gc-config" "imageGCHighThresholdPercent" | toInt hub}}'
+                    imageGCLowThresholdPercent: '{{hub fromConfigMap .ManagedClusterName "image-gc-config" "imageGCLowThresholdPercent" | toInt hub}}'
+                    imageMinimumGCAge: '{{hub fromConfigMap .ManagedClusterName "image-gc-config" "imageMinimumGCAge" hub}}'
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-image-prune-timer
+        spec:
+          remediationAction: inform
+          severity: medium
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: machineconfiguration.openshift.io/v1
+                kind: MachineConfig
+                metadata:
+                  name: 99-worker-image-gc-prune
+                  labels:
+                    machineconfiguration.openshift.io/role: worker
+                spec:
+                  config:
+                    ignition:
+                      version: 3.2.0
+                    storage:
+                      files:
+                        - path: /usr/local/bin/image-gc-prune.sh
+                          mode: 0755
+                          contents:
+                            source: data:text/plain;charset=utf-8;base64,IyEvYmluL2Jhc2gKIyBQcnVuZSB1bnJlZmVyZW5jZWQgY29udGFpbmVyIGltYWdlcyBvbGRlciB0aGFuIE1BWF9BR0VfREFZUwpNQVhfQUdFX0RBWVM9NwpOT1c9JChkYXRlICslcykKQ1VUT0ZGPSQoKE5PVyAtIE1BWF9BR0VfREFZUyAqIDg2NDAwKSkKUkVNT1ZFRD0wClNLSVBQRUQ9MApSRUZFUkVOQ0VEPTAKVU5QQVJTQUJMRT0wCkZBSUxFRD0wCgojIEJ1aWxkIHNldCBvZiBpbWFnZSBJRHMgcmVmZXJlbmNlZCBieSBhbnkgY29udGFpbmVyIChvbmUgY2FsbCwgbm90IE4pCkNPTlRBSU5FUl9JTUFHRVM9JChjcmljdGwgcHMgLWEgLW8ganNvbiAyPi9kZXYvbnVsbCBcCiAgfCBqcSAtciAnLmNvbnRhaW5lcnNbXT8gfCAuaW1hZ2VSZWYgLy8gZW1wdHknIDI+L2Rldi9udWxsIFwKICB8IHNlZCAnc3wuKkB8fDsgc3xec2hhMjU2Onx8JyB8IHNvcnQgLXUpCgpmb3IgSU1HX0lEIGluICQoY3JpY3RsIGltYWdlcyAtcSk7IGRvCiAgU0hPUlRfSUQ9JChlY2hvICIkSU1HX0lEIiB8IHNlZCAnc3xec2hhMjU2Onx8JykKICBpZiBlY2hvICIkQ09OVEFJTkVSX0lNQUdFUyIgfCBncmVwIC1xRiAiJFNIT1JUX0lEIjsgdGhlbgogICAgUkVGRVJFTkNFRD0kKChSRUZFUkVOQ0VEICsgMSkpCiAgICBjb250aW51ZQogIGZpCgogICMgRXh0cmFjdCBjcmVhdGlvbiB0aW1lc3RhbXAgKGpxIGZvciBKU09OLCBkYXRlIC1kIGZvciBwYXJzaW5nKQogIFRTPSQoY3JpY3RsIGluc3BlY3RpICIkSU1HX0lEIiAyPi9kZXYvbnVsbCBcCiAgICB8IGpxIC1yICcoLmluZm8uaW1hZ2VTcGVjLmNyZWF0ZWQgLy8gLnN0YXR1cy5jcmVhdGVkQXQgLy8gZW1wdHkpJyAyPi9kZXYvbnVsbCkKICBDUkVBVEVEX1RTPSQoZGF0ZSAtZCAiJFRTIiArJXMgMj4vZGV2L251bGwgfHwgZWNobyAwKQoKICBpZiBbICIkQ1JFQVRFRF9UUyIgLWVxIDAgXTsgdGhlbgogICAgVU5QQVJTQUJMRT0kKChVTlBBUlNBQkxFICsgMSkpCiAgICBjb250aW51ZQogIGZpCgogIGlmIFsgIiRDUkVBVEVEX1RTIiAtbHQgIiRDVVRPRkYiIF07IHRoZW4KICAgIGlmIGNyaWN0bCBybWkgIiRJTUdfSUQiIDI+JjE7IHRoZW4KICAgICAgUkVNT1ZFRD0kKChSRU1PVkVEICsgMSkpCiAgICBlbHNlCiAgICAgIEZBSUxFRD0kKChGQUlMRUQgKyAxKSkKICAgIGZpCiAgZWxzZQogICAgU0tJUFBFRD0kKChTS0lQUEVEICsgMSkpCiAgZmkKZG9uZQoKbG9nZ2VyIC10IGltYWdlLWdjLXBydW5lICJyZWZlcmVuY2VkPSRSRUZFUkVOQ0VEIHJlbW92ZWQ9JFJFTU9WRUQgc2tpcHBlZD0kU0tJUFBFRCB1bnBhcnNhYmxlPSRVTlBBUlNBQkxFIGZhaWxlZD0kRkFJTEVEIgo=
+                    systemd:
+                      units:
+                        - name: image-gc-prune.service
+                          enabled: false
+                          contents: |
+                            [Unit]
+                            Description=Prune unreferenced container images older than 7 days
+                            Wants=crio.service
+                            After=crio.service
+
+                            [Service]
+                            Type=oneshot
+                            ExecStart=/usr/local/bin/image-gc-prune.sh
+                        - name: image-gc-prune.timer
+                          enabled: true
+                          contents: |
+                            [Unit]
+                            Description=Weekly container image prune
+
+                            [Timer]
+                            OnCalendar=Sun *-*-* 02:00:00
+                            RandomizedDelaySec=3600
+                            Persistent=true
+
+                            [Install]
+                            WantedBy=timers.target
