@@ -71,14 +71,37 @@ spec:
     {{ fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "cluster-name" | base64dec }}
   auditLogs:
     collection: Auto
+  sensor:
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 2
+        memory: 4Gi
   centralEndpoint: |
     {{ fromSecret "stackrox" "sensor-tls" "acs-host" | base64dec }}
   admissionControl:
     listenOnCreates: false
     listenOnEvents: true
     listenOnUpdates: false
+    replicas: 1
+    resources:
+      requests:
+        cpu: 10m
+        memory: 50Mi
+      limits:
+        cpu: 250m
+        memory: 512Mi
   perNode:
     collector:
       collection: CORE_BPF
       imageFlavor: Regular
+      resources:
+        requests:
+          cpu: 10m
+          memory: 100Mi
+        limits:
+          cpu: 250m
+          memory: 512Mi
     taintToleration: TolerateTaints
