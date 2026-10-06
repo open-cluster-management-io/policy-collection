@@ -1,0 +1,25 @@
+# Copies every hub ClusterRole labeled
+# rbac.open-cluster-management.io/custom-role=true onto this managed cluster
+# and re-stamps the Fleet Management labels. The generated Policy sets
+# hubTemplateOptions.serviceAccountName to policy-virt-hub-clusterroles.
+apiVersion: policy.open-cluster-management.io/v1
+kind: ConfigurationPolicy
+metadata:
+  name: virt-custom-roles-from-hub
+spec:
+  remediationAction: enforce
+  severity: medium
+  object-templates-raw: |
+    {{hub- range $role := (lookup "rbac.authorization.k8s.io/v1" "ClusterRole" "" "" "rbac.open-cluster-management.io/custom-role=true").items hub}}
+    - complianceType: musthave
+      objectDefinition:
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata:
+          name: {{hub $role.metadata.name hub}}
+          labels:
+            rbac.open-cluster-management.io/filter: vm-clusterroles
+            clusterview.open-cluster-management.io/discoverable: "true"
+            rbac.open-cluster-management.io/custom-role: "true"
+        rules: {{hub $role.rules | toRawJson | toLiteral hub}}
+    {{hub- end hub}}

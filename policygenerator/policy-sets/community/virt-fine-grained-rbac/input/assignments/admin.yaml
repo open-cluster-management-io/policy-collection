@@ -1,0 +1,69 @@
+# Scenario 2: administrative privilege in the fleet virtualization console.
+# The hub console role for this scenario is acm-vm-fleet:view.
+# Edit the group and team-vms before setting policy-virt-assign-admin disabled: false.
+#
+# ACM-47215 folds the storage-migrate roles into acm-vm-extended:admin. Until
+# that ships, bind them here. Confirm the multi-namespace role name:
+#   oc get clusterrole -o name | grep migrations.kubevirt.io
+# This file uses migrations.kubevirt.io:storagemigrate_multins (underscore).
+# ACM-47215 writes storagemigrate-multins (hyphen). Use the name the command prints.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: virt-admins-fleet-view
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: acm-vm-fleet:view
+subjects:
+  - kind: Group
+    name: virt-admins
+    apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.open-cluster-management.io/v1beta1
+kind: MulticlusterRoleAssignment
+metadata:
+  name: virt-admins
+  namespace: policies
+spec:
+  subject:
+    kind: Group
+    name: virt-admins
+    apiGroup: rbac.authorization.k8s.io
+  roleAssignments:
+    - name: kubevirt-admin
+      clusterRole: kubevirt.io:admin
+      targetNamespaces:
+        - team-vms
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
+    - name: acm-vm-extended-admin
+      clusterRole: acm-vm-extended:admin
+      targetNamespaces:
+        - team-vms
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
+    - name: storage-migrate
+      clusterRole: migrations.kubevirt.io:storagemigrate
+      targetNamespaces:
+        - team-vms
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
+    - name: storage-migrate-multins
+      clusterRole: migrations.kubevirt.io:storagemigrate_multins
+      targetNamespaces:
+        - team-vms
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies

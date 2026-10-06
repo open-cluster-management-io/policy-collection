@@ -1,0 +1,21 @@
+# Clusters that receive virt role bindings. Label a managed cluster before
+# enabling an assignment policy:
+#   oc label managedcluster <name> acm.io/virtualization=true
+# Bind kubevirt.io:* only where OpenShift Virtualization has installed that
+# ClusterRole. A binding on any other cluster fails with the role not found.
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: virt-clusters
+  namespace: policies
+spec:
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchLabels:
+            acm.io/virtualization: "true"
+  tolerations:
+    - key: cluster.open-cluster-management.io/unreachable
+      operator: Equal
+    - key: cluster.open-cluster-management.io/unavailable
+      operator: Equal

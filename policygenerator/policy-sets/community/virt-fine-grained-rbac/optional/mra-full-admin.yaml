@@ -1,0 +1,70 @@
+# Cluster-wide full admin. targetNamespaces is omitted, so each entry becomes
+# a ClusterRoleBinding on every cluster selected by virt-clusters.
+# Not referenced by policyGenerator.yaml. Create the hub console binding separately:
+#   oc create clusterrolebinding virt-full-admins-fleet-admin \
+#     --clusterrole=acm-vm-fleet:admin --group=virt-full-admins
+#
+# The wildcard role does not replace the named scenario roles. The console
+# checks for those bindings. The migration entries cover ACM-47215 until
+# acm-vm-extended:admin includes them. Confirm storagemigrate_multins vs
+# storagemigrate-multins before apply.
+apiVersion: rbac.open-cluster-management.io/v1beta1
+kind: MulticlusterRoleAssignment
+metadata:
+  name: full-admin-vm-assignment
+  namespace: policies
+spec:
+  subject:
+    kind: Group
+    name: virt-full-admins
+    apiGroup: rbac.authorization.k8s.io
+  roleAssignments:
+    - name: custom-vm-full-admin
+      clusterRole: custom-vm-full-admin-role
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
+    - name: kubevirt-admin
+      clusterRole: kubevirt.io:admin
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
+    - name: acm-vm-extended-admin
+      clusterRole: acm-vm-extended:admin
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
+    - name: acm-vm-cluster-migration-view
+      clusterRole: acm-vm-cluster-migration:view
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
+    - name: migration-view
+      clusterRole: migrations.kubevirt.io:view
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
+    - name: storage-migrate
+      clusterRole: migrations.kubevirt.io:storagemigrate
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
+    - name: storage-migrate-multins
+      clusterRole: migrations.kubevirt.io:storagemigrate_multins
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies

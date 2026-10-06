@@ -1,0 +1,13 @@
+# Enables the fine-grained-rbac MultiClusterHub component on the hub.
+# musthave merges list items that share a name, so other component overrides stay.
+# https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.17/html-single/secure_clusters/index#fine-grain-enable
+apiVersion: operator.open-cluster-management.io/v1
+kind: MultiClusterHub
+metadata:
+  name: multiclusterhub
+  namespace: open-cluster-management
+spec:
+  overrides:
+    components:
+      - name: fine-grained-rbac
+        enabled: true

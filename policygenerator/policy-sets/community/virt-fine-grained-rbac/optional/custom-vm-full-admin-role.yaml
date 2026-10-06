@@ -1,0 +1,27 @@
+# Cluster-admin equivalent. Every API group, resource, verb, and non-resource URL.
+# kubevirt.io:admin and acm-vm-extended:admin do not narrow this role.
+# This file is not referenced by policyGenerator.yaml.
+#
+# The custom-role label puts the role in the Fleet Management dropdown and
+# causes policy-virt-custom-roles-propagate to copy it onto managed clusters
+# once the role exists on the hub. Add the manifest path under
+# policy-virt-custom-roles only for a group that should administer the whole cluster.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: custom-vm-full-admin-role
+  labels:
+    rbac.open-cluster-management.io/filter: vm-clusterroles
+    clusterview.open-cluster-management.io/discoverable: "true"
+    rbac.open-cluster-management.io/custom-role: "true"
+rules:
+  - apiGroups:
+      - '*'
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - nonResourceURLs:
+      - '*'
+    verbs:
+      - '*'

@@ -1,0 +1,174 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: virt-fine-grained-rbac
+placementBindingDefaults:
+  name: binding-virt-fg-rbac
+policyDefaults:
+  namespace: policies
+  remediationAction: enforce
+  complianceType: musthave
+  categories:
+    - AC Access Control
+  controls:
+    - AC-6 Least Privilege
+  standards:
+    - NIST SP 800-53
+  severity: medium
+  policySets:
+    - virt-fine-grained-rbac
+  # Hub policies and the managed-cluster copy must not share one placement.
+  generatePlacementWhenInSet: true
+policies:
+  - name: policy-virt-fine-grained-rbac-enable
+    placement:
+      labelSelector:
+        matchExpressions:
+          - key: local-cluster
+            operator: In
+            values:
+              - "true"
+    manifests:
+      - path: input/hub/enable-fine-grained-rbac.yaml
+
+  - name: policy-virt-custom-roles
+    dependencies:
+      - name: policy-virt-fine-grained-rbac-enable
+    placement:
+      labelSelector:
+        matchExpressions:
+          - key: local-cluster
+            operator: In
+            values:
+              - "true"
+    manifests:
+      - path: input/hub/custom-roles/01-custom-vm-execution-role.yaml
+      - path: input/hub/custom-roles/02-custom-vm-admin-role.yaml
+      - path: input/hub/custom-roles/03-custom-vm-snapshot-role.yaml
+      - path: input/hub/custom-roles/04-custom-vm-migration-role.yaml
+      - path: input/hub/custom-roles/05-custom-vm-storage-role.yaml
+      - path: input/hub/custom-roles/06-custom-vm-console-role.yaml
+
+  - name: policy-virt-hub-lookup-rbac
+    placement:
+      labelSelector:
+        matchExpressions:
+          - key: local-cluster
+            operator: In
+            values:
+              - "true"
+    manifests:
+      - path: input/hub/hub-lookup-rbac.yaml
+
+  - name: policy-virt-clusters-placement
+    placement:
+      labelSelector:
+        matchExpressions:
+          - key: local-cluster
+            operator: In
+            values:
+              - "true"
+    manifests:
+      - path: input/hub/placement-virt-clusters.yaml
+
+  # Same custom ClusterRoles as policy-virt-custom-roles, created on managed clusters
+  # from the hub lookup. Default product roles are already installed on both sides.
+  - name: policy-virt-custom-roles-propagate
+    hubTemplateOptions:
+      serviceAccountName: policy-virt-hub-clusterroles
+    dependencies:
+      - name: policy-virt-custom-roles
+      - name: policy-virt-hub-lookup-rbac
+    placement:
+      labelSelector:
+        matchExpressions:
+          - key: vendor
+            operator: In
+            values:
+              - OpenShift
+          - key: local-cluster
+            operator: NotIn
+            values:
+              - "true"
+    manifests:
+      - path: input/managed/propagate-custom-roles.yaml
+
+  # Assignment policies grant identities. They stay disabled until the group,
+  # namespace, and migration ClusterRole name are edited for this environment.
+  - name: policy-virt-assign-view
+    disabled: true
+    dependencies:
+      - name: policy-virt-fine-grained-rbac-enable
+      - name: policy-virt-clusters-placement
+    placement:
+      labelSelector:
+        matchExpressions:
+          - key: local-cluster
+            operator: In
+            values:
+              - "true"
+    manifests:
+      - path: input/assignments/view.yaml
+
+  - name: policy-virt-assign-admin
+    disabled: true
+    dependencies:
+      - name: policy-virt-fine-grained-rbac-enable
+      - name: policy-virt-clusters-placement
+    placement:
+      labelSelector:
+        matchExpressions:
+          - key: local-cluster
+            operator: In
+            values:
+              - "true"
+    manifests:
+      - path: input/assignments/admin.yaml
+
+  - name: policy-virt-assign-cclm
+    disabled: true
+    dependencies:
+      - name: policy-virt-fine-grained-rbac-enable
+      - name: policy-virt-clusters-placement
+    placement:
+      labelSelector:
+        matchExpressions:
+          - key: local-cluster
+            operator: In
+            values:
+              - "true"
+    manifests:
+      - path: input/assignments/cclm.yaml
+
+  - name: policy-virt-assign-custom-execution
+    disabled: true
+    dependencies:
+      - name: policy-virt-fine-grained-rbac-enable
+      - name: policy-virt-clusters-placement
+      - name: policy-virt-custom-roles-propagate
+    placement:
+      labelSelector:
+        matchExpressions:
+          - key: local-cluster
+            operator: In
+            values:
+              - "true"
+    manifests:
+      - path: input/assignments/custom-execution.yaml
+
+policySets:
+  - name: virt-fine-grained-rbac
+    description: >-
+      Enables fine-grained virtualization RBAC, creates custom VM ClusterRoles
+      on the hub, copies those roles to managed clusters, and provides
+      default-role and custom-role assignments.
+    # Hub-only. An empty selector would place every policy, including the
+    # MultiClusterHub update and the assignments, on all clusters.
+    # policy-virt-custom-roles-propagate adds managed clusters with its own placement.
+    placement:
+      labelSelector:
+        matchExpressions:
+          - key: local-cluster
+            operator: In
+            values:
+              - "true"
