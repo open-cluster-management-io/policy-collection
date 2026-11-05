@@ -34,6 +34,21 @@ metadata:
   name: stackrox-central-services
 spec:
   central:
+    resources:
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits:
+        cpu: 2
+        memory: 4Gi
+    db:
+      resources:
+        requests:
+          cpu: 500m
+          memory: 2Gi
+        limits:
+          cpu: 2
+          memory: 4Gi
     exposure:
       loadBalancer:
         enabled: false
@@ -49,27 +64,63 @@ spec:
     connectivityPolicy: Online
   scannerV4:
     db:
+      resources:
+        requests:
+          cpu: 250m
+          memory: 1Gi
+        limits:
+          cpu: 1
+          memory: 4Gi
       persistence:
         persistentVolumeClaim:
           claimName: scanner-v4-db
     indexer:
       scaling:
-        autoScaling: Enabled
-        maxReplicas: 5
-        minReplicas: 2
-        replicas: 3
+        autoScaling: Disabled
+        maxReplicas: 2
+        minReplicas: 1
+        replicas: 1
+      resources:
+        requests:
+          cpu: 250m
+          memory: 256Mi
+        limits:
+          cpu: 1
+          memory: 1500Mi
     matcher:
       scaling:
-        autoScaling: Enabled
-        maxReplicas: 5
-        minReplicas: 2
-        replicas: 3
+        autoScaling: Disabled
+        maxReplicas: 2
+        minReplicas: 1
+        replicas: 1
+      resources:
+        requests:
+          cpu: 250m
+          memory: 512Mi
+        limits:
+          cpu: 500m
+          memory: 1500Mi
     scannerComponent: Default
   scanner:
     analyzer:
       scaling:
-        autoScaling: Enabled
-        maxReplicas: 5
-        minReplicas: 2
-        replicas: 2
+        autoScaling: Disabled
+        maxReplicas: 2
+        minReplicas: 1
+        replicas: 1
+      resources:
+        requests:
+          cpu: 250m
+          memory: 512Mi
+        limits:
+          cpu: 1
+          memory: 2Gi
+    db:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 2Gi
     scannerComponent: Enabled

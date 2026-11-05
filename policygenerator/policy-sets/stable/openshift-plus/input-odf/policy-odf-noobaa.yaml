@@ -20,11 +20,11 @@ spec:
             numVolumes: 3
             resources:
               limits:
-                cpu: "2"
-                memory: 8Gi
-              requests:
                 cpu: "1"
                 memory: 4Gi
+              requests:
+                cpu: "250m"
+                memory: 1Gi
                 storage: 100Gi
             storageClass: ocs-storagecluster-ceph-rbd
     # Update default BucketClass to use only pvPool BackingStore

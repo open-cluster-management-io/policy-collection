@@ -99,5 +99,19 @@ spec:
   components:
     - kind: objectstorage
       managed: true
-    - managed: true
-      kind: tls
+    - kind: tls
+      managed: true
+    - kind: horizontalpodautoscaler
+      managed: false
+    - kind: clair
+      managed: true
+      overrides:
+        replicas: 1
+    - kind: mirror
+      managed: true
+      overrides:
+        replicas: 1
+    - kind: quay
+      managed: true
+      overrides:
+        replicas: 1
