@@ -1,0 +1,47 @@
+# Scenario 1: least-privilege console visibility.
+# Edit the group and team-vms before setting policy-virt-assign-view disabled: false.
+# ACM-47215: bind migrations.kubevirt.io:view until it is included in
+# acm-vm-extended:view. Drop targetNamespaces if the migration resources are
+# cluster-scoped (oc api-resources --api-group=migrations.kubevirt.io).
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: virt-viewers-fleet-view
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: acm-vm-fleet:view
+subjects:
+  - kind: Group
+    name: virt-viewers
+    apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.open-cluster-management.io/v1beta1
+kind: MulticlusterRoleAssignment
+metadata:
+  name: virt-viewers
+  namespace: policies
+spec:
+  subject:
+    kind: Group
+    name: virt-viewers
+    apiGroup: rbac.authorization.k8s.io
+  roleAssignments:
+    - name: kubevirt-view
+      clusterRole: kubevirt.io:view
+      targetNamespaces:
+        - team-vms
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
+    - name: migration-view
+      clusterRole: migrations.kubevirt.io:view
+      targetNamespaces:
+        - team-vms
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies

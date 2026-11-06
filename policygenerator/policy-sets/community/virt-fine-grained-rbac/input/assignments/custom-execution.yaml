@@ -1,0 +1,47 @@
+# Custom role layered on the default view role.
+# Copy this file for custom-vm-admin-role, custom-vm-snapshot-role,
+# custom-vm-migration-role, custom-vm-storage-role, or custom-vm-console-role.
+# The custom ClusterRole must already exist on the selected managed clusters
+# (policy-virt-custom-roles-propagate).
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: virt-operators-fleet-view
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: acm-vm-fleet:view
+subjects:
+  - kind: Group
+    name: virt-operators
+    apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.open-cluster-management.io/v1beta1
+kind: MulticlusterRoleAssignment
+metadata:
+  name: virt-operators-execution
+  namespace: policies
+spec:
+  subject:
+    kind: Group
+    name: virt-operators
+    apiGroup: rbac.authorization.k8s.io
+  roleAssignments:
+    - name: kubevirt-view
+      clusterRole: kubevirt.io:view
+      targetNamespaces:
+        - team-vms
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies
+    - name: custom-vm-execution
+      clusterRole: custom-vm-execution-role
+      targetNamespaces:
+        - team-vms
+      clusterSelection:
+        type: placements
+        placements:
+          - name: virt-clusters
+            namespace: policies

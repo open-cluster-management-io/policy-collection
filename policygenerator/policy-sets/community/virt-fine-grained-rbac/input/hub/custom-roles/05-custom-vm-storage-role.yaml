@@ -1,0 +1,54 @@
+# Manage VM disks (DataVolumes, PVCs, hot-plug). Layer with kubevirt.io:view.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: custom-vm-storage-role
+  labels:
+    rbac.open-cluster-management.io/filter: vm-clusterroles
+    clusterview.open-cluster-management.io/discoverable: "true"
+    rbac.open-cluster-management.io/custom-role: "true"
+rules:
+  - apiGroups:
+      - cdi.kubevirt.io
+    resources:
+      - datavolumes
+      - datasources
+      - dataimportcrons
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - subresources.kubevirt.io
+    resources:
+      - virtualmachines/addvolume
+      - virtualmachines/removevolume
+    verbs:
+      - update
+  - apiGroups:
+      - kubevirt.io
+    resources:
+      - virtualmachines
+    verbs:
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+      - persistentvolumeclaims
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
